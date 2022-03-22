@@ -1,0 +1,5 @@
+depend
+*.o
+*.pyc
+gnr
+/results

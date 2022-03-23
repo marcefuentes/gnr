@@ -14,8 +14,6 @@ if len(sys.argv) < 4:
     print('You must enter three arguments: scattergrain/barsgrain/fluct/change/fgrain/ffluct/fchange snap/movie uni/multi')
     exit(1)
 
-fwidth = 5.2*len(module.c_name_roots)
-fheight = 5.3
 fs = 16 # Label font size
 lc = 0.9 # Lightest color
 red = 1.0
@@ -30,12 +28,12 @@ else:
     outfile = f'{sys.argv[1]}.png'
 
 def create_figure(dfs, t):
-    fig = plt.figure(figsize=(fwidth, fheight))
+    fig = plt.figure(figsize=(module.width, module.height))
     if sys.argv[3] == 'multi':
         fig.supxlabel(module.x_label, fontsize=fs)
-        fig.supylabel(t=module.y_label, x=0.003*fwidth, fontsize=fs)
+        fig.supylabel(t=module.y_label, x=0.003*module.width, fontsize=fs)
     else:
-        fig.supylabel(t='Frequency', x=0.003*fwidth, fontsize=fs)
+        fig.supylabel(t='Frequency', x=0.003*module.width, fontsize=fs)
     if sys.argv[2] == 'movie':
         fig.text(0.89, 0.95, f'Time = {t}', fontsize=fs, ha='right')
     return fig
@@ -198,14 +196,16 @@ class scatterpr:
                     ax.set(xticks=[])
                 if (column > 0):
                     ax.set(yticks=[])
-                ax.set_ylim(48, 2.6)
+                ax.set_xlim(module.x_min, module.x_max)
+                ax.set_ylim(module.y_min, module.y_max)
                 s = s + df.loc[(df.Time == t) & (df.ChooseCost == 0.000061), name_root + 'SD']
                 ax.scatter(x, y, c=color, edgecolor='0.400', alpha=0.2, s=s*module.bubble_size)
                 if (row == 0):
                     ax.set(xticks=[])
                 if (column > 0):
                     ax.set(yticks=[])
-                ax.set_ylim(48, 2.6)
+                ax.set_xlim(module.x_min, module.x_max)
+                ax.set_ylim(module.y_min, module.y_max)
 
         plt.savefig(outfile)
         plt.close()

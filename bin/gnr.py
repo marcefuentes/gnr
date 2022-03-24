@@ -51,12 +51,12 @@ class barpr:
 
         self.bincount = int(sum(map(lambda x: module.c_name_roots[0] in x, [*dfs[0]]))/2) - 2
         self.c_name_suffixes = [x for x in range(self.bincount)]
-        for r in module.c_name_roots:
+        for root in module.c_name_roots:
             rootlist = []
             rootlist_sd = []
-            for s in self.c_name_suffixes:
-                rootlist.append(r + str(s)) 
-                rootlist_sd.append(r + 'SD' + str(s)) 
+            for suffix in self.c_name_suffixes:
+                rootlist.append(root + str(suffix)) 
+                rootlist_sd.append(root + 'SD' + str(suffix)) 
             self.c_names.append(rootlist)
             self.c_names_sd.append(rootlist_sd)
 
@@ -138,15 +138,26 @@ class barpr:
         for ax, title in zip(axs, module.titles):
             ax.set_xlabel(title, fontsize=fs)
 
-        for column, (ax, c_name, c_name_sd, ymax, xtick_label_list) in enumerate(zip(axs, self.c_names, self.c_names_sd, module.ymax, self.xtick_label_lists)):
+        for column, (ax, name_root, c_name, c_name_sd, ymax, xtick_label_list) in enumerate(zip(axs, module.c_name_roots, self.c_names, self.c_names_sd, module.ymax, self.xtick_label_lists)):
+            df = dfs[0]
+            median0 = df.loc[(df[module.x_axis] == mimiccost) & (df[module.y_axis] == choosecost) & (df.Time == t), name_root + 'median'].values[0]
+            df = dfs[1]
+            median1 = df.loc[(df[module.x_axis] == mimiccost) & (df[module.y_axis] == choosecost) & (df.Time == t), name_root + 'median'].values[0]
+            dif = median0 - median1
+            if (name_root == 'ChooseGrain') or (name_root == 'MimicGrain') or ('BD' in name_root):
+                dif = -dif
+            if dif < 0.0:
+                color=(red-0.95, green-0.95, blue-0.05)
+                colorsd=(red-0.30, green-0.30, blue-0.05)
+            else:
+                color=(red-0.95, green-0.05, blue-0.95)
+                colorsd=(red-0.30, green-0.05, blue-0.30)
             for b, name, namesd in zip(self.bins, c_name, c_name_sd):
                 df = dfs[0]
                 height = df.loc[(df[module.x_axis] == mimiccost) & (df[module.y_axis] == choosecost) & (df.Time == t), name]
                 heightsd = df.loc[(df[module.x_axis] == mimiccost) & (df[module.y_axis] == choosecost) & (df.Time == t), namesd]
-                color = (red-0.2, green-0.4, blue-0.7)
                 ax.bar(x=b, height=height, align='edge', color=color, linewidth=0, width=width, alpha=1.0)
-                color = (red-0.1, green-0.2, blue-0.4)
-                ax.bar(x=b, height=heightsd, align='edge', color=color, linewidth=0, width=width, bottom=height, alpha=1.0)
+                ax.bar(x=b, height=heightsd, align='edge', color=colorsd, linewidth=0, width=width, bottom=height, alpha=1.0)
             ax.set(ylim=[0, ymax])
             ax.set(xticks=self.xticks, xticklabels=xtick_label_list)
             if (column > 0):
@@ -155,8 +166,8 @@ class barpr:
                 df = dfs[1]
                 height = df.loc[(df[module.x_axis] == mimiccost) & (df[module.y_axis] == choosecost) & (df.Time == t), name]
                 heightsd = df.loc[(df[module.x_axis] == mimiccost) & (df[module.y_axis] == choosecost) & (df.Time == t), namesd]
-                ax.bar(x=b, height=height, align='edge', color=(red-0.15, green-0.15, blue-0.15), linewidth=0, width=width, alpha=0.8)
-                ax.bar(x=b, height=heightsd, align='edge', color=(red-0.1, green-0.1, blue-0.1), linewidth=0, width=width, bottom=height, alpha=0.8)
+                ax.bar(x=b, height=height, align='edge', color=(red-0.15, green-0.15, blue-0.15), linewidth=0, width=width, alpha=0.9)
+                ax.bar(x=b, height=heightsd, align='edge', color=(red-0.10, green-0.10, blue-0.10), linewidth=0, width=width, bottom=height, alpha=0.9)
             ax.set(ylim=[0, ymax])
             ax.set(xticks=self.xticks, xticklabels=xtick_label_list)
             if (column > 0):

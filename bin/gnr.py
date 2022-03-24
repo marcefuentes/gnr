@@ -91,21 +91,32 @@ class barpr:
 
         width = 2.0/self.bincount
 
-        for n, (c_name, ymax, title) in enumerate(zip(self.c_names, module.ymax, module.titles)):
+        for n, (c_name, name_root, ymax, title) in enumerate(zip(self.c_names, module.c_name_roots, module.ymax, module.titles)):
             inner_grid = outer_grid[n].subgridspec(nrows=len(self.inner_rows), ncols=len(self.inner_cols), wspace=0, hspace=0)
             axs = inner_grid.subplots()
-            #axs[int(len(self.inner_cols)/2)].set_title(title, fontsize=fs) # Prints the title of the middle column. Bad if there are even columns
+            axs[0, int(len(self.inner_cols)/2)].set_title(title, fontsize=fs) # Prints the title of the middle column. Bad if there are even columns
             for row, (rowax, inner_row) in enumerate(zip(axs, self.inner_rows)): 
                 for column, (ax, inner_col) in enumerate(zip(rowax, self.inner_cols)):
+                    df = dfs[0]
+                    median0 = df.loc[(df[module.x_axis] == inner_col) & (df[module.y_axis] == inner_row) & (df.Time == t), name_root + 'median'].values[0]
+                    df = dfs[1]
+                    median1 = df.loc[(df[module.x_axis] == inner_col) & (df[module.y_axis] == inner_row) & (df.Time == t), name_root + 'median'].values[0]
+                    dif = median0 - median1
+                    if (name_root == 'ChooseGrain') or (name_root == 'MimicGrain') or ('BD' in name_root):
+                        dif = -dif
+                    if dif < 0.0:
+                        color=(red-0.95, green-0.95, blue-0.05)
+                    else:
+                        color=(red-0.95, green-0.05, blue-0.95)
                     for b, name0, name1 in zip(self.bins[::2], c_name[::2], c_name[1::2]):
                         df = dfs[0]
                         height=df.loc[(df[module.x_axis] == inner_col) & (df[module.y_axis] == inner_row) & (df.Time == t), name0] + df.loc[(df[module.x_axis] == inner_col) & (df[module.y_axis] == inner_row) & (df.Time == t), name1]
-                        ax.bar(x=b, height=height, align = 'edge', color=(red-0.15, green-0.15, blue-0.15), linewidth=0, width=width)
+                        ax.bar(x=b, height=height, align='edge', color=color, linewidth=0, width=width)
                         ax.set(xticks=[], yticks=[], ylim=[0, ymax])
                     for b, name0, name1 in zip(self.bins[::2], c_name[::2], c_name[1::2]):
                         df = dfs[1]
                         height=df.loc[(df[module.x_axis] == inner_col) & (df[module.y_axis] == inner_row) & (df.Time == t), name0] + df.loc[(df[module.x_axis] == inner_col) & (df[module.y_axis] == inner_row) & (df.Time == t), name1]
-                        ax.bar(x=b, height=height, align = 'edge', color=(red-0.2, green-0.4, blue-0.7), linewidth=0, width=width)
+                        ax.bar(x=b, height=height, align='edge', color=(red-0.15, green-0.15, blue-0.15), linewidth=0, width=width, alpha=0.9)
                         ax.set(xticks=[], yticks=[], ylim=[0, ymax])
                     if (n == 0) & (column == 0):
                         if module.log == True:

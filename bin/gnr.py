@@ -92,6 +92,7 @@ class barpr:
             else:
                 self.color_lists.append(self.color_f)
                 self.xtick_label_lists.append(self.xtick_labels_f)
+        self.color2s = ('0.900', '0.400')
 
         return self
 
@@ -133,24 +134,21 @@ class barpr:
 
         fig = create_figure(dfs, t)
 
-        outer_grid = fig.add_gridspec(nrows=len(dfs), ncols=len(module.c_name_roots), wspace=0.1, hspace=0.1)
+        outer_grid = fig.add_gridspec(nrows=1, ncols=len(module.c_name_roots), wspace=0.1)
 
         axs = outer_grid.subplots()
 
-        for ax, title in zip(axs[1], module.titles):
+        for ax, title in zip(axs, module.titles):
             ax.set_xlabel(title, fontsize=fs)
 
-        for row, (rowax, df) in enumerate(zip(axs, dfs)):
-            for column, (ax, c_name, c_name_sd, ymax, color_list, xtick_label_list) in enumerate(zip(rowax, self.c_names, self.c_names_sd, module.ymax, self.color_lists, self.xtick_label_lists)):
-                for b, name, namesd, c in zip(self.bins, c_name, c_name_sd, color_list):
+        for color2, df in zip(self.color2s, dfs):
+            for column, (ax, c_name, c_name_sd, ymax, xtick_label_list) in enumerate(zip(axs, self.c_names, self.c_names_sd, module.ymax, self.xtick_label_lists)):
+                for b, name, namesd in zip(self.bins, c_name, c_name_sd):
                     height = df.loc[(df[module.x_axis] == mimiccost) & (df[module.y_axis] == choosecost) & (df.Time == t), name]
                     yerr = df.loc[(df[module.x_axis] == mimiccost) & (df[module.y_axis] == choosecost) & (df.Time == t), namesd]
-                    ax.bar(x=b, height=height, align = 'edge', color=c, linewidth=0, width=-1.0/self.bincount, yerr=yerr, ecolor=c)
+                    ax.bar(x=b, height=height, align = 'edge', color=color2, linewidth=0, width=-1.0/self.bincount, yerr=yerr, ecolor=color2, alpha=0.5)
                 ax.set(ylim=[0, ymax])
-                if (row == 0):
-                    ax.set(xticks=[])
-                else:
-                    ax.set(xticks=self.xticks, xticklabels=xtick_label_list)
+                ax.set(xticks=self.xticks, xticklabels=xtick_label_list)
                 if (column > 0):
                     ax.set(yticks=[])
 

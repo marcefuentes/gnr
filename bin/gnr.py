@@ -147,8 +147,8 @@ class barpr:
             for b, name, namesd in zip(self.bins, c_name, c_name_sd):
                 height = dfs[1].loc[(dfs[1][module.x_axis] == mimiccost) & (dfs[1][module.y_axis] == choosecost) & (dfs[1].Time == t), name]
                 heightsd = dfs[1].loc[(dfs[1][module.x_axis] == mimiccost) & (dfs[1][module.y_axis] == choosecost) & (dfs[1].Time == t), namesd]
-                ax.bar(x=b, height=height, align = 'edge', color='0.800', linewidth=0, width=width, alpha=1.0)
-                ax.bar(x=b, height=heightsd, align = 'edge', color='0.900', linewidth=0, width=width, bottom=height, alpha=1.0)
+                ax.bar(x=b, height=height, align = 'edge', color=(red-0.15, green-0.15, blue-0.15), linewidth=0, width=width, alpha=1.0)
+                ax.bar(x=b, height=heightsd, align = 'edge', color=(red-0.1, green-0.1, blue-0.1), linewidth=0, width=width, bottom=height, alpha=1.0)
             ax.set(ylim=[0, ymax])
             ax.set(xticks=self.xticks, xticklabels=xtick_label_list)
             if (column > 0):
@@ -156,8 +156,8 @@ class barpr:
             for b, name, namesd in zip(self.bins, c_name, c_name_sd):
                 height = dfs[0].loc[(dfs[0][module.x_axis] == mimiccost) & (dfs[0][module.y_axis] == choosecost) & (dfs[0].Time == t), name]
                 heightsd = dfs[0].loc[(dfs[0][module.x_axis] == mimiccost) & (dfs[0][module.y_axis] == choosecost) & (dfs[0].Time == t), namesd]
-                ax.bar(x=b, height=height, align = 'edge', color='0.000', linewidth=0, width=width, alpha=0.7)
-                ax.bar(x=b, height=heightsd, align = 'edge', color='0.500', linewidth=0, width=width, bottom=height, alpha=0.7)
+                ax.bar(x=b, height=height, align = 'edge', color=(red-0.2, green-0.4, blue-0.7), linewidth=0, width=width, alpha=0.7)
+                ax.bar(x=b, height=heightsd, align = 'edge', color=(red-0.1, green-0.2, blue-0.4), linewidth=0, width=width, bottom=height, alpha=0.7)
             ax.set(ylim=[0, ymax])
             ax.set(xticks=self.xticks, xticklabels=xtick_label_list)
             if (column > 0):

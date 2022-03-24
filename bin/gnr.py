@@ -145,19 +145,19 @@ class barpr:
 
         for column, (ax, c_name, c_name_sd, ymax, xtick_label_list) in enumerate(zip(axs, self.c_names, self.c_names_sd, module.ymax, self.xtick_label_lists)):
             for b, name, namesd in zip(self.bins, c_name, c_name_sd):
-                height = dfs[0].loc[(dfs[0][module.x_axis] == mimiccost) & (dfs[0][module.y_axis] == choosecost) & (dfs[0].Time == t), name]
-                heightsd = dfs[0].loc[(dfs[0][module.x_axis] == mimiccost) & (dfs[0][module.y_axis] == choosecost) & (dfs[0].Time == t), namesd]
-                ax.bar(x=b, height=height, align = 'edge', color='0.050', linewidth=0, width=width, alpha=0.7)
-                ax.bar(x=b, height=heightsd, align = 'edge', color='0.350', linewidth=0, width=width, bottom=height, alpha=0.7)
+                height = dfs[1].loc[(dfs[1][module.x_axis] == mimiccost) & (dfs[1][module.y_axis] == choosecost) & (dfs[1].Time == t), name]
+                heightsd = dfs[1].loc[(dfs[1][module.x_axis] == mimiccost) & (dfs[1][module.y_axis] == choosecost) & (dfs[1].Time == t), namesd]
+                ax.bar(x=b, height=height, align = 'edge', color='0.800', linewidth=0, width=width, alpha=1.0)
+                ax.bar(x=b, height=heightsd, align = 'edge', color='0.900', linewidth=0, width=width, bottom=height, alpha=1.0)
             ax.set(ylim=[0, ymax])
             ax.set(xticks=self.xticks, xticklabels=xtick_label_list)
             if (column > 0):
                 ax.set(yticks=[])
             for b, name, namesd in zip(self.bins, c_name, c_name_sd):
-                height = dfs[1].loc[(dfs[1][module.x_axis] == mimiccost) & (dfs[1][module.y_axis] == choosecost) & (dfs[1].Time == t), name]
-                heightsd = dfs[1].loc[(dfs[1][module.x_axis] == mimiccost) & (dfs[1][module.y_axis] == choosecost) & (dfs[1].Time == t), namesd]
-                ax.bar(x=b, height=height, align = 'edge', color='0.600', linewidth=0, width=width, alpha=0.4)
-                ax.bar(x=b, height=heightsd, align = 'edge', color='0.800', linewidth=0, width=width, bottom=height, alpha=0.4)
+                height = dfs[0].loc[(dfs[0][module.x_axis] == mimiccost) & (dfs[0][module.y_axis] == choosecost) & (dfs[0].Time == t), name]
+                heightsd = dfs[0].loc[(dfs[0][module.x_axis] == mimiccost) & (dfs[0][module.y_axis] == choosecost) & (dfs[0].Time == t), namesd]
+                ax.bar(x=b, height=height, align = 'edge', color='0.000', linewidth=0, width=width, alpha=0.7)
+                ax.bar(x=b, height=heightsd, align = 'edge', color='0.500', linewidth=0, width=width, bottom=height, alpha=0.7)
             ax.set(ylim=[0, ymax])
             ax.set(xticks=self.xticks, xticklabels=xtick_label_list)
             if (column > 0):

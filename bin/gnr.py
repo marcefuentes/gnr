@@ -144,9 +144,21 @@ class barpr:
         for color2, df in zip(self.color2s, dfs):
             for column, (ax, c_name, c_name_sd, ymax, xtick_label_list) in enumerate(zip(axs, self.c_names, self.c_names_sd, module.ymax, self.xtick_label_lists)):
                 for b, name, namesd in zip(self.bins, c_name, c_name_sd):
-                    height = df.loc[(df[module.x_axis] == mimiccost) & (df[module.y_axis] == choosecost) & (df.Time == t), name]
-                    yerr = df.loc[(df[module.x_axis] == mimiccost) & (df[module.y_axis] == choosecost) & (df.Time == t), namesd]
-                    ax.bar(x=b, height=height, align = 'edge', color=color2, linewidth=0, width=-1.0/self.bincount, yerr=yerr, ecolor=color2, alpha=0.5)
+                    height = dfs[0].loc[(dfs[0][module.x_axis] == mimiccost) & (dfs[0][module.y_axis] == choosecost) & (dfs[0].Time == t), name]
+                    upper_error = dfs[0].loc[(dfs[0][module.x_axis] == mimiccost) & (dfs[0][module.y_axis] == choosecost) & (dfs[0].Time == t), namesd]
+                    lower_error = 0 * upper_error
+                    yerr = [lower_error, upper_error]
+                    ax.bar(x=b, height=height, align = 'edge', color='0.300', linewidth=0, width=-1.0/self.bincount, yerr=yerr, error_kw=dict(ecolor='0.300'))
+                ax.set(ylim=[0, ymax])
+                ax.set(xticks=self.xticks, xticklabels=xtick_label_list)
+                if (column > 0):
+                    ax.set(yticks=[])
+                for b, name, namesd in zip(self.bins, c_name, c_name_sd):
+                    height = dfs[1].loc[(dfs[1][module.x_axis] == mimiccost) & (dfs[1][module.y_axis] == choosecost) & (dfs[1].Time == t), name]
+                    upper_error = dfs[1].loc[(dfs[1][module.x_axis] == mimiccost) & (dfs[1][module.y_axis] == choosecost) & (dfs[1].Time == t), namesd]
+                    lower_error = 0 * upper_error
+                    yerr = [lower_error, upper_error]
+                    ax.bar(x=b, height=height, align = 'edge', color='0.700', linewidth=0, width=-1.0/self.bincount, yerr=yerr, error_kw=dict(ecolor='0.700', alpha=0.5), alpha=0.5)
                 ax.set(ylim=[0, ymax])
                 ax.set(xticks=self.xticks, xticklabels=xtick_label_list)
                 if (column > 0):

@@ -42,10 +42,6 @@ class barpr:
 
     inner_rows = []
     inner_cols = []
-    color_g = []
-    color_h = []
-    color_f = []
-    color_lists = []
     xtick_label_lists = []
     c_name_suffixes = []
     c_names = []
@@ -73,26 +69,17 @@ class barpr:
         self.bins = [(x+1)/self.bincount for x in range(self.bincount)]
         self.bins_f = [(x+1)*2.0/self.bincount for x in range(self.bincount)]
 
-        for b in self.bins:
-            self.color_g.append('%.3f' % (lc*b))
-            self.color_h.append('%.3f' % (lc*(1.0 - math.pow(1.0/(1.0+math.exp(-60*(b-0.3))), 0.2))))
-            self.color_f.append('%.3f' % (lc*(1.0 - math.pow(1.0/(1.0+math.exp(-60*(b-0.5))), 0.2))))
-
         self.xticks = [0, 1]
         self.xtick_labels = [0, 1]
         self.xtick_labels_f = [0, 1.87]
 
         for color in module.colors:
             if color == 'grain':
-                self.color_lists.append(self.color_g)
                 self.xtick_label_lists.append(self.xtick_labels)
             elif color == 'help':
-                self.color_lists.append(self.color_h)
                 self.xtick_label_lists.append(self.xtick_labels)
             else:
-                self.color_lists.append(self.color_f)
                 self.xtick_label_lists.append(self.xtick_labels_f)
-        self.color2s = ('0.900', '0.400')
 
         return self
 
@@ -100,32 +87,40 @@ class barpr:
  
         fig = create_figure(dfs, t)
 
-        outer_grid = fig.add_gridspec(nrows=len(dfs), ncols=len(module.c_name_roots), wspace=0.1, hspace=0.1)
+        outer_grid = fig.add_gridspec(nrows=1, ncols=len(module.c_name_roots), wspace=0.1)
 
-        for d, df in enumerate(dfs):
-            for n, (c_name, ymax, color_list, title) in enumerate(zip(self.c_names, module.ymax, self.color_lists, module.titles)):
-                inner_grid = outer_grid[d, n].subgridspec(nrows=len(self.inner_rows), ncols=len(self.inner_cols), wspace=0, hspace=0)
-                axs = inner_grid.subplots()
-                if d == 0:
-                    axs[0, int(len(self.inner_cols)/2)].set_title(title, fontsize=fs) # Prints the title of the middle column. Bad if there are even columns
-                for row, (rowax, inner_row) in enumerate(zip(axs, self.inner_rows)): 
-                    for column, (ax, inner_col) in enumerate(zip(rowax, self.inner_cols)):
-                        for b, name0, name1, c in zip(self.bins[::2], c_name[::2], c_name[1::2], color_list[::2]):
-                            height=df.loc[(df[module.x_axis] == inner_col) & (df[module.y_axis] == inner_row) & (df.Time == t), name0] + df.loc[(df[module.x_axis] == inner_col) & (df[module.y_axis] == inner_row) & (df.Time == t), name1]
-                            ax.bar(x=b, height=height, align = 'edge', color=c, linewidth=0, width=2.0/self.bincount)
+        width = 2.0/self.bincount
+
+        for n, (c_name, ymax, title) in enumerate(zip(self.c_names, module.ymax, module.titles)):
+            inner_grid = outer_grid[n].subgridspec(nrows=len(self.inner_rows), ncols=len(self.inner_cols), wspace=0, hspace=0)
+            axs = inner_grid.subplots()
+            #axs[int(len(self.inner_cols)/2)].set_title(title, fontsize=fs) # Prints the title of the middle column. Bad if there are even columns
+            for row, (rowax, inner_row) in enumerate(zip(axs, self.inner_rows)): 
+                for column, (ax, inner_col) in enumerate(zip(rowax, self.inner_cols)):
+                    for b, name0, name1 in zip(self.bins[::2], c_name[::2], c_name[1::2]):
+                        df = dfs[0]
+                        height=df.loc[(df[module.x_axis] == inner_col) & (df[module.y_axis] == inner_row) & (df.Time == t), name0] + df.loc[(df[module.x_axis] == inner_col) & (df[module.y_axis] == inner_row) & (df.Time == t), name1]
+                        ax.bar(x=b, height=height, align = 'edge', color=(red-0.15, green-0.15, blue-0.15), linewidth=0, width=width)
                         ax.set(xticks=[], yticks=[], ylim=[0, ymax])
-                        if (n == 0) & (column == 0):
-                            if module.log == True:
-                                y = '$2^{{{}}}$'.format(round(math.log(inner_row, 2)))
-                            else:
-                                y = inner_row
-                            ax.set_ylabel(y, rotation='horizontal', horizontalalignment='right', verticalalignment='center')
-                        if (d == 1) & (row == len(self.inner_cols) - 1):
-                            if module.log == True:
-                                x = '$2^{{{}}}$'.format(round(math.log(inner_col, 2)))
-                            else:
-                                x = inner_col
-                            ax.set_xlabel(x)
+                    for b, name0, name1 in zip(self.bins[::2], c_name[::2], c_name[1::2]):
+                        df = dfs[1]
+                        height=df.loc[(df[module.x_axis] == inner_col) & (df[module.y_axis] == inner_row) & (df.Time == t), name0] + df.loc[(df[module.x_axis] == inner_col) & (df[module.y_axis] == inner_row) & (df.Time == t), name1]
+                        ax.bar(x=b, height=height, align = 'edge', color=(red-0.2, green-0.4, blue-0.7), linewidth=0, width=width)
+                        ax.set(xticks=[], yticks=[], ylim=[0, ymax])
+                    if (n == 0) & (column == 0):
+                        if module.log == True:
+                            y = '$2^{{{}}}$'.format(round(math.log(inner_row, 2)))
+                        else:
+                            y = inner_row
+                        ax.set_ylabel(y, rotation='horizontal', horizontalalignment='right', verticalalignment='center')
+                    if row == len(self.inner_cols) - 1:
+                        if module.log == True:
+                            x = '$2^{{{}}}$'.format(round(math.log(inner_col, 2)))
+                        else:
+                            x = inner_col
+                        ax.set_xlabel(x)
+                    if (column == len(self.inner_cols)/2):
+                            ax.set_title(title, fontsize=fs)
 
         plt.savefig(outfile, dpi=100)
         plt.close()
@@ -145,19 +140,23 @@ class barpr:
 
         for column, (ax, c_name, c_name_sd, ymax, xtick_label_list) in enumerate(zip(axs, self.c_names, self.c_names_sd, module.ymax, self.xtick_label_lists)):
             for b, name, namesd in zip(self.bins, c_name, c_name_sd):
-                height = dfs[1].loc[(dfs[1][module.x_axis] == mimiccost) & (dfs[1][module.y_axis] == choosecost) & (dfs[1].Time == t), name]
-                heightsd = dfs[1].loc[(dfs[1][module.x_axis] == mimiccost) & (dfs[1][module.y_axis] == choosecost) & (dfs[1].Time == t), namesd]
-                ax.bar(x=b, height=height, align = 'edge', color=(red-0.15, green-0.15, blue-0.15), linewidth=0, width=width, alpha=1.0)
-                ax.bar(x=b, height=heightsd, align = 'edge', color=(red-0.1, green-0.1, blue-0.1), linewidth=0, width=width, bottom=height, alpha=1.0)
+                df = dfs[0]
+                height = df.loc[(df[module.x_axis] == mimiccost) & (df[module.y_axis] == choosecost) & (df.Time == t), name]
+                heightsd = df.loc[(df[module.x_axis] == mimiccost) & (df[module.y_axis] == choosecost) & (df.Time == t), namesd]
+                color = (red-0.2, green-0.4, blue-0.7)
+                ax.bar(x=b, height=height, align='edge', color=color, linewidth=0, width=width, alpha=1.0)
+                color = (red-0.1, green-0.2, blue-0.4)
+                ax.bar(x=b, height=heightsd, align='edge', color=color, linewidth=0, width=width, bottom=height, alpha=1.0)
             ax.set(ylim=[0, ymax])
             ax.set(xticks=self.xticks, xticklabels=xtick_label_list)
             if (column > 0):
                 ax.set(yticks=[])
             for b, name, namesd in zip(self.bins, c_name, c_name_sd):
-                height = dfs[0].loc[(dfs[0][module.x_axis] == mimiccost) & (dfs[0][module.y_axis] == choosecost) & (dfs[0].Time == t), name]
-                heightsd = dfs[0].loc[(dfs[0][module.x_axis] == mimiccost) & (dfs[0][module.y_axis] == choosecost) & (dfs[0].Time == t), namesd]
-                ax.bar(x=b, height=height, align = 'edge', color=(red-0.2, green-0.4, blue-0.7), linewidth=0, width=width, alpha=0.7)
-                ax.bar(x=b, height=heightsd, align = 'edge', color=(red-0.1, green-0.2, blue-0.4), linewidth=0, width=width, bottom=height, alpha=0.7)
+                df = dfs[1]
+                height = df.loc[(df[module.x_axis] == mimiccost) & (df[module.y_axis] == choosecost) & (df.Time == t), name]
+                heightsd = df.loc[(df[module.x_axis] == mimiccost) & (df[module.y_axis] == choosecost) & (df.Time == t), namesd]
+                ax.bar(x=b, height=height, align='edge', color=(red-0.15, green-0.15, blue-0.15), linewidth=0, width=width, alpha=0.8)
+                ax.bar(x=b, height=heightsd, align='edge', color=(red-0.1, green-0.1, blue-0.1), linewidth=0, width=width, bottom=height, alpha=0.8)
             ax.set(ylim=[0, ymax])
             ax.set(xticks=self.xticks, xticklabels=xtick_label_list)
             if (column > 0):

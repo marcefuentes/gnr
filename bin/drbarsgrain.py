@@ -11,6 +11,6 @@ colors = ('grain', 'grain', 'help', 'fitness')
 ymax = (0.50, 0.50, 0.50, 0.50)
 groupsize = 2
 deathrate = 4
-height = 10.0
+height = 5.0
 width = 20.8
 log = True

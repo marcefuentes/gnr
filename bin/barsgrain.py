@@ -11,6 +11,6 @@ colors = ('grain', 'grain', 'help', 'fitness')
 ymax = (0.50, 0.50, 0.50, 0.50)
 choosecost = 14
 mimiccost = 14
-height = 10.0
+height = 6.0
 width = 20.8
 log = True

@@ -115,13 +115,13 @@ class barpr:
                         ax.set(xticks=[], yticks=[], ylim=[0, ymax])
                         if (n == 0) & (column == 0):
                             if module.log == True:
-                                y = f'$2^{round(math.log(inner_row, 2))}$'
+                                y = '$2^{{{}}}$'.format(round(math.log(inner_row, 2)))
                             else:
                                 y = inner_row
                             ax.set_ylabel(y, rotation='horizontal', horizontalalignment='right', verticalalignment='center')
                         if (d == 1) & (row == len(self.inner_cols) - 1):
                             if module.log == True:
-                                x = f'$2^{round(math.log(inner_col, 2))}$'
+                                x = '$2^{{{}}}$'.format(round(math.log(inner_col, 2)))
                             else:
                                 x = inner_col
                             ax.set_xlabel(x)

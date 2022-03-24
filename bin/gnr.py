@@ -134,6 +134,8 @@ class barpr:
 
         fig = create_figure(dfs, t)
 
+        width = -1.0/self.bincount
+
         outer_grid = fig.add_gridspec(nrows=1, ncols=len(module.c_name_roots), wspace=0.1)
 
         axs = outer_grid.subplots()
@@ -144,20 +146,18 @@ class barpr:
         for column, (ax, c_name, c_name_sd, ymax, xtick_label_list) in enumerate(zip(axs, self.c_names, self.c_names_sd, module.ymax, self.xtick_label_lists)):
             for b, name, namesd in zip(self.bins, c_name, c_name_sd):
                 height = dfs[0].loc[(dfs[0][module.x_axis] == mimiccost) & (dfs[0][module.y_axis] == choosecost) & (dfs[0].Time == t), name]
-                upper_error = dfs[0].loc[(dfs[0][module.x_axis] == mimiccost) & (dfs[0][module.y_axis] == choosecost) & (dfs[0].Time == t), namesd]
-                lower_error = 0 * upper_error
-                yerr = [lower_error, upper_error]
-                ax.bar(x=b, height=height, align = 'edge', color='0.100', linewidth=0, width=-1.0/self.bincount, yerr=yerr, error_kw=dict(ecolor='0.100', alpha=0.7), alpha=0.7)
+                heightsd = dfs[0].loc[(dfs[0][module.x_axis] == mimiccost) & (dfs[0][module.y_axis] == choosecost) & (dfs[0].Time == t), namesd]
+                ax.bar(x=b, height=height, align = 'edge', color='0.050', linewidth=0, width=width, alpha=0.7)
+                ax.bar(x=b, height=heightsd, align = 'edge', color='0.350', linewidth=0, width=width, bottom=height, alpha=0.7)
             ax.set(ylim=[0, ymax])
             ax.set(xticks=self.xticks, xticklabels=xtick_label_list)
             if (column > 0):
                 ax.set(yticks=[])
             for b, name, namesd in zip(self.bins, c_name, c_name_sd):
                 height = dfs[1].loc[(dfs[1][module.x_axis] == mimiccost) & (dfs[1][module.y_axis] == choosecost) & (dfs[1].Time == t), name]
-                upper_error = dfs[1].loc[(dfs[1][module.x_axis] == mimiccost) & (dfs[1][module.y_axis] == choosecost) & (dfs[1].Time == t), namesd]
-                lower_error = 0 * upper_error
-                yerr = [lower_error, upper_error]
-                ax.bar(x=b, height=height, align = 'edge', color='0.700', linewidth=0, width=-1.0/self.bincount, yerr=yerr, error_kw=dict(ecolor='0.700', alpha=0.3), alpha=0.3)
+                heightsd = dfs[1].loc[(dfs[1][module.x_axis] == mimiccost) & (dfs[1][module.y_axis] == choosecost) & (dfs[1].Time == t), namesd]
+                ax.bar(x=b, height=height, align = 'edge', color='0.600', linewidth=0, width=width, alpha=0.4)
+                ax.bar(x=b, height=heightsd, align = 'edge', color='0.800', linewidth=0, width=width, bottom=height, alpha=0.4)
             ax.set(ylim=[0, ymax])
             ax.set(xticks=self.xticks, xticklabels=xtick_label_list)
             if (column > 0):

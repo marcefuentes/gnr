@@ -246,9 +246,12 @@ def get_data(dfs):
 
     for d in dirs:
         df = pd.concat(map(pd.read_csv, glob.glob(os.path.join(d, '*.csv'))), ignore_index=True)
-        if module.movie == True:
-            lastt =  df.Time.iat[-1]
+        if (sys.argv[1] == 'gsscattergrain') or (sys.argv[1] == 'gsbars'):
+            df = df[df.ChooseCost == 0.000061]
+        if module.movie == False:
+            lastt = df.Time.iat[-1]
             df = df[df.Time == lastt]                
+        #print(df)
         dfs.append(df)
 
     return dfs

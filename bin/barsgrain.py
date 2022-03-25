@@ -15,3 +15,4 @@ height = 6.0
 width = 20.8
 log = True
 movie = False
+ncharts = 'one'

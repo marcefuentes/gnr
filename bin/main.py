@@ -10,8 +10,8 @@ import numpy as np
 import pandas as pd
 module = __import__(sys.argv[1].replace('.py', ''))
 
-if len(sys.argv) < 3:
-    print('You must enter two arguments: scattergrain/barsgrain/fluct/change/fgrain/ffluct/fchange uni/multi')
+if len(sys.argv) < 2:
+    print('You must an argument with the python module (for example, scattergrain)')
     exit(1)
 
 fs = 16 # Label font size
@@ -20,7 +20,7 @@ red = 1.0
 green = 1.0
 blue = 1.0
 
-if sys.argv[2] == 'uni':
+if (module.ftype == 'bars') and (module.ncharts == 'one'):
     outfile = f'{sys.argv[1]}_{module.choosecost}_{module.mimiccost}.png'
     choosecost = float(str("{:.6f}".format(pow(2, -int(module.choosecost)))))
     mimiccost = float(str("{:.6f}".format(pow(2, -int(module.mimiccost)))))
@@ -29,7 +29,7 @@ else:
 
 def create_figure(dfs, t):
     fig = plt.figure(figsize=(module.width, module.height))
-    if sys.argv[2] == 'multi':
+    if (module.ftype == 'scatter') or (module.ncharts == 'all'):
         fig.supxlabel(module.x_label, fontsize=fs)
         fig.supylabel(t=module.y_label, x=0.003*module.width, fontsize=fs)
     else:
@@ -136,7 +136,7 @@ class barpr:
         plt.savefig(outfile, dpi=100)
         plt.close()
 
-    def uni(self, dfs, t, choosecost, mimiccost):
+    def one(self, dfs, t, choosecost, mimiccost):
 
         fig = create_figure(dfs, t)
 
@@ -268,12 +268,12 @@ if module.movie == True:
     for t in dfs[0].Time.unique():
         print(f'Processing time {t}', end='\r')
         outfile = f'delete{t}.png'
-        if sys.argv[2] == 'uni':
-            pr.uni(dfs, t, choosecost, mimiccost)
+        if module.ncharts == 'one':
+            pr.one(dfs, t, choosecost, mimiccost)
         else:
             pr.chart(dfs, t)
         outfiles.append(outfile)
-    if sys.argv[2] == 'multi':
+    if (module.ftype == 'scatter') or (module.ncharts == 'all'):
         giffile = f'{sys.argv[1]}.gif'
     else:
         giffile = f'{sys.argv[1]}{module.choosecost}{module.mimiccost}.gif'
@@ -285,8 +285,8 @@ if module.movie == True:
     for outfile in set(outfiles):
         os.remove(outfile)
 else:
-    if sys.argv[2] == 'multi':
+    if (module.ftype == 'scatter') or (module.ncharts == 'all'):
         pr.chart(dfs, dfs[0].Time.iat[-1])
     else:
-        pr.uni(dfs, dfs[0].Time.iat[-1], choosecost, mimiccost)
+        pr.one(dfs, dfs[0].Time.iat[-1], choosecost, mimiccost)
 

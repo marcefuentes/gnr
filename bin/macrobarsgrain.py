@@ -14,3 +14,4 @@ mimiccost = 3
 height = 10.0
 width = 20.8
 log = True
+movie = False

@@ -15,3 +15,4 @@ bubble_size = 500.0
 height = 10.0
 width = 20.8
 log = False
+movie = False

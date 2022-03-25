@@ -130,7 +130,7 @@ class barpr:
                         else:
                             x = inner_col
                         ax.set_xlabel(x)
-                    if (column == len(self.inner_cols)/2):
+                    if column == len(self.inner_cols)/2:
                             ax.set_title(title, fontsize=fs)
 
         plt.savefig(outfile, dpi=100)
@@ -149,7 +149,7 @@ class barpr:
         for ax, title in zip(axs, module.titles):
             ax.set_xlabel(title, fontsize=fs)
 
-        for column, (ax, name_root, c_name, c_name_sd, ymax, xtick_label_list) in enumerate(zip(axs, module.c_name_roots, self.c_names, self.c_names_sd, module.ymax, self.xtick_label_lists)):
+        for ax, name_root, c_name, c_name_sd, ymax, xtick_label_list in zip(axs, module.c_name_roots, self.c_names, self.c_names_sd, module.ymax, self.xtick_label_lists):
             df = dfs[0]
             median0 = df.loc[(df[module.x_axis] == mimiccost) & (df[module.y_axis] == choosecost) & (df.Time == t), name_root + 'median'].values[0]
             df = dfs[1]
@@ -171,7 +171,7 @@ class barpr:
                 ax.bar(x=b, height=heightsd, align='edge', color=colorsd, linewidth=0, width=width, bottom=height, alpha=1.0)
             ax.set(ylim=[0, ymax])
             ax.set(xticks=self.xticks, xticklabels=xtick_label_list)
-            if (column > 0):
+            if name_root != module.c_name_roots[0]:
                 ax.set(yticks=[])
             for b, name, namesd in zip(self.bins, c_name, c_name_sd):
                 df = dfs[1]
@@ -181,7 +181,7 @@ class barpr:
                 ax.bar(x=b, height=heightsd, align='edge', color=(red-0.10, green-0.10, blue-0.10), linewidth=0, width=width, bottom=height, alpha=0.9)
             ax.set(ylim=[0, ymax])
             ax.set(xticks=self.xticks, xticklabels=xtick_label_list)
-            if (column > 0):
+            if name_root != module.c_name_roots[0]:
                 ax.set(yticks=[])
 
         plt.savefig(outfile, dpi=100)

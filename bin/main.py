@@ -204,7 +204,7 @@ class scatterpr:
             ax.set_title(title, fontsize=fs)
 
         for row, (rowax, df) in enumerate(zip(axs, dfs)):
-            for column, (ax, name_root) in enumerate(zip(rowax, module.c_name_roots)):
+            for ax, name_root in zip(rowax, module.c_name_roots):
                 if module.log == True:
                     ax.set_xscale('log', base=2)
                     ax.set_yscale('log', base=2)
@@ -224,7 +224,7 @@ class scatterpr:
                 ax.scatter(x, y, c=color, edgecolor='0.200', alpha=1.0, s=s*module.bubble_size)
                 if (row == 0):
                     ax.set(xticks=[])
-                if (column > 0):
+                if name_root != module.c_name_roots[0]:
                     ax.set(yticks=[])
                 ax.set_xlim(module.x_min, module.x_max)
                 ax.set_ylim(module.y_min, module.y_max)
@@ -232,7 +232,7 @@ class scatterpr:
                 ax.scatter(x, y, c=color, edgecolor='0.400', alpha=0.2, s=s*module.bubble_size)
                 if (row == 0):
                     ax.set(xticks=[])
-                if (column > 0):
+                if name_root != module.c_name_roots[0]:
                     ax.set(yticks=[])
                 ax.set_xlim(module.x_min, module.x_max)
                 ax.set_ylim(module.y_min, module.y_max)

@@ -2,7 +2,7 @@
 
 ftype = 'scatter'
 c_name_roots = ('ChooseGrainmedian', 'MimicGrainmedian', 'a2Seenmedian', 'wmedian')
-titles = ('Sensitivity for\ncomparing group mates', 'Sensitivity for\ncomparing partner to self', 'Help', 'Fitness')
+titles = ('Sensitivity\nfor comparing\npotential partners', 'Sensitivity\nfor comparing\npartner to self', 'Help', 'Fitness')
 x_axis = 'DeathRate'
 x_label = 'Death rate'
 y_axis = 'ChooseCost'

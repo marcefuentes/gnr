@@ -21,9 +21,9 @@ green = 1.0
 blue = 1.0
 
 if (module.ftype == 'bars') and (module.ncharts == 'one'):
-    outfile = f'{sys.argv[1]}_{module.choosecost}_{module.mimiccost}.png'
-    choosecost = float(str("{:.6f}".format(pow(2, -int(module.choosecost)))))
-    mimiccost = float(str("{:.6f}".format(pow(2, -int(module.mimiccost)))))
+    outfile = f'{sys.argv[1]}_{module.x_value}_{module.y_value}.png'
+    px_value = float(str("{:.6f}".format(pow(2, -int(module.x_value)))))
+    py_value = float(str("{:.6f}".format(pow(2, -int(module.y_value)))))
 else:
     outfile = f'{sys.argv[1]}.png'
 
@@ -112,12 +112,12 @@ class barpr:
                         df = dfs[0]
                         height=df.loc[(df[module.x_axis] == inner_col) & (df[module.y_axis] == inner_row) & (df.Time == t), name0] + df.loc[(df[module.x_axis] == inner_col) & (df[module.y_axis] == inner_row) & (df.Time == t), name1]
                         ax.bar(x=b, height=height, align='edge', color=color, linewidth=0, width=width)
-                        ax.set(xticks=[], yticks=[], ylim=[0, ymax])
+                        ax.set(xticks=[], yticks=[], ylim=[0, ymax*2])
                     for b, name0, name1 in zip(self.bins[::2], c_name[::2], c_name[1::2]):
                         df = dfs[1]
                         height=df.loc[(df[module.x_axis] == inner_col) & (df[module.y_axis] == inner_row) & (df.Time == t), name0] + df.loc[(df[module.x_axis] == inner_col) & (df[module.y_axis] == inner_row) & (df.Time == t), name1]
                         ax.bar(x=b, height=height, align='edge', color=(red-0.15, green-0.15, blue-0.15), linewidth=0, width=width, alpha=0.9)
-                        ax.set(xticks=[], yticks=[], ylim=[0, ymax])
+                        ax.set(xticks=[], yticks=[], ylim=[0, ymax*2])
                     if (n == 0) & (column == 0):
                         if module.log == True:
                             y = '$2^{{{}}}$'.format(round(math.log(inner_row, 2)))
@@ -136,7 +136,7 @@ class barpr:
         plt.savefig(outfile, dpi=100)
         plt.close()
 
-    def one(self, dfs, t, choosecost, mimiccost):
+    def one(self, dfs, t):
 
         fig = create_figure(dfs, t)
 
@@ -151,9 +151,9 @@ class barpr:
 
         for ax, name_root, c_name, c_name_sd, ymax, xtick_label_list in zip(axs, module.c_name_roots, self.c_names, self.c_names_sd, module.ymax, self.xtick_label_lists):
             df = dfs[0]
-            median0 = df.loc[(df[module.x_axis] == mimiccost) & (df[module.y_axis] == choosecost) & (df.Time == t), name_root + 'median'].values[0]
+            median0 = df.loc[(df[module.x_axis] == px_value) & (df[module.y_axis] == py_value) & (df.Time == t), name_root + 'median'].values[0]
             df = dfs[1]
-            median1 = df.loc[(df[module.x_axis] == mimiccost) & (df[module.y_axis] == choosecost) & (df.Time == t), name_root + 'median'].values[0]
+            median1 = df.loc[(df[module.x_axis] == px_value) & (df[module.y_axis] == py_value) & (df.Time == t), name_root + 'median'].values[0]
             dif = median0 - median1
             if (name_root == 'ChooseGrain') or (name_root == 'MimicGrain') or ('BD' in name_root):
                 dif = -dif
@@ -165,8 +165,8 @@ class barpr:
                 colorsd=(red-0.30, green-0.05, blue-0.30)
             for b, name, namesd in zip(self.bins, c_name, c_name_sd):
                 df = dfs[0]
-                height = df.loc[(df[module.x_axis] == mimiccost) & (df[module.y_axis] == choosecost) & (df.Time == t), name]
-                heightsd = df.loc[(df[module.x_axis] == mimiccost) & (df[module.y_axis] == choosecost) & (df.Time == t), namesd]
+                height = df.loc[(df[module.x_axis] == px_value) & (df[module.y_axis] == py_value) & (df.Time == t), name]
+                heightsd = df.loc[(df[module.x_axis] == px_value) & (df[module.y_axis] == py_value) & (df.Time == t), namesd]
                 ax.bar(x=b, height=height, align='edge', color=color, linewidth=0, width=width, alpha=1.0)
                 ax.bar(x=b, height=heightsd, align='edge', color=colorsd, linewidth=0, width=width, bottom=height, alpha=1.0)
             ax.set(ylim=[0, ymax])
@@ -175,8 +175,8 @@ class barpr:
                 ax.set(yticks=[])
             for b, name, namesd in zip(self.bins, c_name, c_name_sd):
                 df = dfs[1]
-                height = df.loc[(df[module.x_axis] == mimiccost) & (df[module.y_axis] == choosecost) & (df.Time == t), name]
-                heightsd = df.loc[(df[module.x_axis] == mimiccost) & (df[module.y_axis] == choosecost) & (df.Time == t), namesd]
+                height = df.loc[(df[module.x_axis] == px_value) & (df[module.y_axis] == py_value) & (df.Time == t), name]
+                heightsd = df.loc[(df[module.x_axis] == px_value) & (df[module.y_axis] == py_value) & (df.Time == t), namesd]
                 ax.bar(x=b, height=height, align='edge', color=(red-0.15, green-0.15, blue-0.15), linewidth=0, width=width, alpha=0.9)
                 ax.bar(x=b, height=heightsd, align='edge', color=(red-0.10, green-0.10, blue-0.10), linewidth=0, width=width, bottom=height, alpha=0.9)
             ax.set(ylim=[0, ymax])
@@ -269,14 +269,14 @@ if module.movie == True:
         print(f'Processing time {t}', end='\r')
         outfile = f'delete{t}.png'
         if module.ncharts == 'one':
-            pr.one(dfs, t, choosecost, mimiccost)
+            pr.one(dfs, t)
         else:
             pr.chart(dfs, t)
         outfiles.append(outfile)
     if (module.ftype == 'scatter') or (module.ncharts == 'all'):
         giffile = f'{sys.argv[1]}.gif'
     else:
-        giffile = f'{sys.argv[1]}{module.choosecost}{module.mimiccost}.gif'
+        giffile = f'{sys.argv[1]}{module.x_value}{module.y_value}.gif'
     with imageio.get_writer(giffile, mode='I') as writer:
         for outfile in outfiles:
             print(f'Adding {outfile} to movie', end='\r')
@@ -288,5 +288,5 @@ else:
     if (module.ftype == 'scatter') or (module.ncharts == 'all'):
         pr.chart(dfs, dfs[0].Time.iat[-1])
     else:
-        pr.one(dfs, dfs[0].Time.iat[-1], choosecost, mimiccost)
+        pr.one(dfs, dfs[0].Time.iat[-1])
 

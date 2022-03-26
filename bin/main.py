@@ -271,15 +271,21 @@ if module.movie == True:
     for t in dfs[0].Time.unique():
         print(f'Processing time {t}', end='\r')
         outfile = f'delete{t}.png'
-        if module.ncharts == 'one':
-            pr.one(dfs, t)
-        else:
+        if module.ftype == 'scatter':
             pr.chart(dfs, t)
+        else:
+            if module.ncharts == 'one':
+                pr.one(dfs, t)
+            else:
+                pr.chart(dfs, t)
         outfiles.append(outfile)
-    if (module.ftype == 'scatter') or (module.ncharts == 'all'):
+    if module.ftype == 'scatter':
         giffile = f'{sys.argv[1]}.gif'
     else:
-        giffile = f'{sys.argv[1]}{module.x_value}{module.y_value}.gif'
+        if module.ncharts == 'all':
+            giffile = f'{sys.argv[1]}.gif'
+        else:
+            giffile = f'{sys.argv[1]}{module.x_value}{module.y_value}.gif'
     with imageio.get_writer(giffile, mode='I') as writer:
         for outfile in outfiles:
             print(f'Adding {outfile} to movie', end='\r')
@@ -288,8 +294,11 @@ if module.movie == True:
     for outfile in set(outfiles):
         os.remove(outfile)
 else:
-    if (module.ftype == 'scatter') or (module.ncharts == 'all'):
+    if (module.ftype == 'scatter'):
         pr.chart(dfs, dfs[0].Time.iat[-1])
     else:
-        pr.one(dfs, dfs[0].Time.iat[-1])
+        if (module.ncharts == 'all'):
+            pr.chart(dfs, dfs[0].Time.iat[-1])
+        else:
+            pr.one(dfs, dfs[0].Time.iat[-1])
 

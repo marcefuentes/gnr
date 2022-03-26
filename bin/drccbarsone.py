@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-ftype = 'bars'
+ftype = 'barsone'
 c_name_roots = ('ChooseGrain', 'MimicGrain', 'a2Seen', 'w')
 titles = ('Sensitivity for\ncomparing potential partners', 'Sensitivity for\ncomparing partner to self', 'Help', 'Fitness')
 x_axis = 'DeathRate'
@@ -14,5 +14,4 @@ y_value = 12
 height = 7.0
 width = 20.8
 log = True
-movie = False
-ncharts = 'one'
+movie = True

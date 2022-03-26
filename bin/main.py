@@ -20,7 +20,7 @@ red = 1.0
 green = 1.0
 blue = 1.0
 
-if (module.ftype == 'bars') and (module.ncharts == 'one'):
+if module.ftype == 'barsone':
     outfile = f'{sys.argv[1]}_{module.x_value}_{module.y_value}.png'
     px_value = float(str("{:.6f}".format(pow(2, -int(module.x_value)))))
     py_value = float(str("{:.6f}".format(pow(2, -int(module.y_value)))))
@@ -29,23 +29,18 @@ else:
 
 def create_figure(dfs, t):
     fig = plt.figure(figsize=(module.width, module.height))
-    if (module.ftype == 'scatter') or (module.ncharts == 'all'):
+    if module.ftype == 'barsone':
+        fig.supylabel(t='Frequency', x=0.003*module.width, fontsize=fs)
+    else:
         fig.supxlabel(module.x_label, fontsize=fs)
         fig.supylabel(t=module.y_label, x=0.003*module.width, fontsize=fs)
-    else:
-        fig.supylabel(t='Frequency', x=0.003*module.width, fontsize=fs)
     if module.movie == True:
         fig.text(0.89, 0.95, f'Time = {t}', fontsize=fs, ha='right')
     return fig
 
-class barpr:
+class barsallpr:
 
-    inner_rows = []
-    inner_cols = []
-    xtick_label_lists = []
-    c_name_suffixes = []
     c_names = []
-    c_names_sd = []
 
     def prepare(self, dfs):
 
@@ -53,12 +48,9 @@ class barpr:
         self.c_name_suffixes = [x for x in range(self.bincount)]
         for root in module.c_name_roots:
             rootlist = []
-            rootlist_sd = []
             for suffix in self.c_name_suffixes:
                 rootlist.append(root + str(suffix)) 
-                rootlist_sd.append(root + 'SD' + str(suffix)) 
             self.c_names.append(rootlist)
-            self.c_names_sd.append(rootlist_sd)
 
         self.inner_cols = dfs[0][module.x_axis].unique()
         self.inner_rows = dfs[0][module.y_axis].unique()
@@ -68,18 +60,6 @@ class barpr:
 
         self.bins = [(x+1)/self.bincount for x in range(self.bincount)]
         self.bins_f = [(x+1)*2.0/self.bincount for x in range(self.bincount)]
-
-        self.xticks = [0, 1]
-        self.xtick_labels = [0, 1]
-        self.xtick_labels_f = [0, 1.87]
-
-        for color in module.colors:
-            if color == 'grain':
-                self.xtick_label_lists.append(self.xtick_labels)
-            elif color == 'help':
-                self.xtick_label_lists.append(self.xtick_labels)
-            else:
-                self.xtick_label_lists.append(self.xtick_labels_f)
 
         return self
 
@@ -136,7 +116,43 @@ class barpr:
         plt.savefig(outfile, dpi=100)
         plt.close()
 
-    def one(self, dfs, t):
+class barsonepr:
+
+    xtick_label_lists = []
+    c_names = []
+    c_names_sd = []
+
+    def prepare(self, dfs):
+
+        self.bincount = int(sum(map(lambda x: module.c_name_roots[0] in x, [*dfs[0]]))/2) - 2
+        self.c_name_suffixes = [x for x in range(self.bincount)]
+        for root in module.c_name_roots:
+            rootlist = []
+            rootlist_sd = []
+            for suffix in self.c_name_suffixes:
+                rootlist.append(root + str(suffix)) 
+                rootlist_sd.append(root + 'SD' + str(suffix)) 
+            self.c_names.append(rootlist)
+            self.c_names_sd.append(rootlist_sd)
+
+        self.bins = [(x+1)/self.bincount for x in range(self.bincount)]
+        self.bins_f = [(x+1)*2.0/self.bincount for x in range(self.bincount)]
+
+        self.xticks = [0, 1]
+        self.xtick_labels = [0, 1]
+        self.xtick_labels_f = [0, 1.87]
+
+        for color in module.colors:
+            if color == 'grain':
+                self.xtick_label_lists.append(self.xtick_labels)
+            elif color == 'help':
+                self.xtick_label_lists.append(self.xtick_labels)
+            else:
+                self.xtick_label_lists.append(self.xtick_labels_f)
+
+        return self
+
+    def chart(self, dfs, t):
 
         fig = create_figure(dfs, t)
 
@@ -250,7 +266,7 @@ def get_data(dfs):
             df = df[df.ChooseCost == 0.000061]
         if module.movie == False:
             lastt = df.Time.iat[-1]
-            df = df[df.Time == lastt]                
+            df = df[df.Time == lastt]
         #print(df)
         dfs.append(df)
 
@@ -259,8 +275,10 @@ def get_data(dfs):
 dfs = []
 dfs = get_data(dfs)
 
-if module.ftype == 'bars':
-    pr = barpr()
+if module.ftype == 'barsone':
+    pr = barsonepr()
+elif module.ftype == 'barsall':
+    pr = barsallpr()
 else:
     pr = scatterpr()
 
@@ -271,21 +289,12 @@ if module.movie == True:
     for t in dfs[0].Time.unique():
         print(f'Processing time {t}', end='\r')
         outfile = f'delete{t}.png'
-        if module.ftype == 'scatter':
-            pr.chart(dfs, t)
-        else:
-            if module.ncharts == 'one':
-                pr.one(dfs, t)
-            else:
-                pr.chart(dfs, t)
+        pr.chart(dfs, t)
         outfiles.append(outfile)
-    if module.ftype == 'scatter':
-        giffile = f'{sys.argv[1]}.gif'
+    if module.ftype == 'barsone':
+        giffile = f'{sys.argv[1]}_{module.x_value}_{module.y_value}.gif'
     else:
-        if module.ncharts == 'all':
-            giffile = f'{sys.argv[1]}.gif'
-        else:
-            giffile = f'{sys.argv[1]}{module.x_value}{module.y_value}.gif'
+        giffile = f'{sys.argv[1]}.gif'
     with imageio.get_writer(giffile, mode='I') as writer:
         for outfile in outfiles:
             print(f'Adding {outfile} to movie', end='\r')
@@ -294,11 +303,4 @@ if module.movie == True:
     for outfile in set(outfiles):
         os.remove(outfile)
 else:
-    if (module.ftype == 'scatter'):
-        pr.chart(dfs, dfs[0].Time.iat[-1])
-    else:
-        if (module.ncharts == 'all'):
-            pr.chart(dfs, dfs[0].Time.iat[-1])
-        else:
-            pr.one(dfs, dfs[0].Time.iat[-1])
-
+    pr.chart(dfs, dfs[0].Time.iat[-1])

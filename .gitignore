@@ -1,5 +1,11 @@
 depend
+gnr
 *.o
 *.pyc
-gnr
-/results
+results/**/job*
+results/**/*.csv
+results/**/*.gif
+results/**/*.gl2
+results/**/*.glo
+results/**/*.out
+results/**/*.png

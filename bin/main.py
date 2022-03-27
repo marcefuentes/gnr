@@ -11,24 +11,15 @@ import pandas as pd
 module = __import__(sys.argv[1].replace('.py', ''))
 
 if len(sys.argv) < 2:
-    print('You must an argument with the python module (for example, scattergrain)')
+    print('You must add an argument with the python module (for example, scattergrain)')
     exit(1)
-
-fs = 16 # Label font size
-lc = 0.9 # Lightest color
-red = 1.0
-green = 1.0
-blue = 1.0
 
 outfile = f'{sys.argv[1]}.png'
 
-def create_figure(dfs, t):
-    fig = plt.figure(figsize=(module.width, module.height))
-    fig.supxlabel(module.x_label, fontsize=fs)
-    fig.supylabel(t=module.y_label, x=0.003*module.width, fontsize=fs)
-    if module.movie == True:
-        fig.text(0.89, 0.95, f'Time = {t}', fontsize=fs, ha='right')
-    return fig
+fs = 16 # Label font size
+red = 1.0
+green = 1.0
+blue = 1.0
 
 class barsallpr:
 
@@ -58,7 +49,12 @@ class barsallpr:
 
     def chart(self, dfs, t):
  
-        fig = create_figure(dfs, t)
+        fig = plt.figure(figsize=(module.width, module.height))
+        fig.supxlabel(module.x_label, fontsize=fs)
+        fig.supylabel(t=module.y_label, x=0.003*module.width, fontsize=fs)
+
+        if module.movie == True:
+            fig.text(0.89, 0.95, f'Time = {t}', fontsize=fs, ha='right')
 
         outer_grid = fig.add_gridspec(nrows=1, ncols=len(module.c_name_roots), wspace=0.1)
 

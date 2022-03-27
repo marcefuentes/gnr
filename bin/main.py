@@ -104,7 +104,7 @@ class barsallpr:
                         else:
                             y = inner_row
                         ax.set_ylabel(y, rotation='horizontal', horizontalalignment='right', verticalalignment='center')
-                    if row == len(self.inner_cols) - 1:
+                    if row == len(self.inner_rows) - 1:
                         if module.log == True:
                             x = '$2^{{{}}}$'.format(round(math.log(inner_col, 2)))
                         else:

@@ -146,7 +146,7 @@ class barsonepr:
 
     def chart(self, dfs, t):
 
-        fig, axs = plt.subplots(nrows=1, ncols=len(module.c_name_roots), figsize=(18, 5), constrained_layout=True)
+        fig, axs = plt.subplots(nrows=1, ncols=len(module.c_name_roots), figsize=(module.width, module.height), constrained_layout=True)
 
         fig.supylabel('Frequency', fontsize=fs)
 
@@ -207,7 +207,7 @@ class scatterpr:
 
     def chart(self, dfs, t):
 
-        fig, axs = plt.subplots(nrows=2, ncols=len(module.c_name_roots), figsize=(18, 8.5), constrained_layout=True)
+        fig, axs = plt.subplots(nrows=2, ncols=len(module.c_name_roots), figsize=(module.width, module.height), constrained_layout=True)
 
         fig.supxlabel(module.x_label, fontsize=fs)
         fig.supylabel(module.y_label, fontsize=fs)

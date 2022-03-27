@@ -111,7 +111,7 @@ class barsallpr:
                             x = inner_col
                         ax.set_xlabel(x)
                     if column == len(self.inner_cols)/2:
-                            ax.set_title(title, fontsize=fs)
+                        ax.set_title(title, fontsize=fs)
 
         plt.savefig(outfile, dpi=100)
         plt.close()

@@ -20,20 +20,12 @@ red = 1.0
 green = 1.0
 blue = 1.0
 
-if module.ftype == 'barsone':
-    outfile = f'{sys.argv[1]}_{module.x_value}_{module.y_value}.png'
-    px_value = float(str("{:.6f}".format(pow(2, -int(module.x_value)))))
-    py_value = float(str("{:.6f}".format(pow(2, -int(module.y_value)))))
-else:
-    outfile = f'{sys.argv[1]}.png'
+outfile = f'{sys.argv[1]}.png'
 
 def create_figure(dfs, t):
     fig = plt.figure(figsize=(module.width, module.height))
-    if module.ftype == 'barsone':
-        fig.supylabel(t='Frequency', x=0.003*module.width, fontsize=fs)
-    else:
-        fig.supxlabel(module.x_label, fontsize=fs)
-        fig.supylabel(t=module.y_label, x=0.003*module.width, fontsize=fs)
+    fig.supxlabel(module.x_label, fontsize=fs)
+    fig.supylabel(t=module.y_label, x=0.003*module.width, fontsize=fs)
     if module.movie == True:
         fig.text(0.89, 0.95, f'Time = {t}', fontsize=fs, ha='right')
     return fig
@@ -61,7 +53,6 @@ class barsallpr:
             self.inner_rows[::-1].sort()
 
         self.bins = [(x+1)/self.bincount for x in range(self.bincount)]
-        self.bins_f = [(x+1)*2.0/self.bincount for x in range(self.bincount)]
 
         return self
 
@@ -126,6 +117,9 @@ class barsonepr:
 
     def prepare(self, dfs):
 
+        self.x_value = float(str("{:.6f}".format(pow(2, int(module.x_value)))))
+        self.y_value = float(str("{:.6f}".format(pow(2, int(module.y_value)))))
+
         self.bincount = int(sum(map(lambda x: module.c_name_roots[0] in x, [*dfs[0]]))/2) - 2
         self.c_name_suffixes = [x for x in range(self.bincount)]
         for root in module.c_name_roots:
@@ -138,7 +132,6 @@ class barsonepr:
             self.c_names_sd.append(rootlist_sd)
 
         self.bins = [(x+1)/self.bincount for x in range(self.bincount)]
-        self.bins_f = [(x+1)*2.0/self.bincount for x in range(self.bincount)]
 
         self.xticks = [0, 1]
         self.xtick_labels = [0, 1]
@@ -156,22 +149,23 @@ class barsonepr:
 
     def chart(self, dfs, t):
 
-        fig = create_figure(dfs, t)
+        fig, axs = plt.subplots(nrows=1, ncols=len(module.c_name_roots), figsize=(18, 5), constrained_layout=True)
+
+        fig.supylabel('Frequency', fontsize=fs)
+
+        if module.movie == True:
+            fig.text(0.17, 0.80, f'Time = {t}', fontsize=fs, ha='center')
 
         width = -1.0/self.bincount
-
-        outer_grid = fig.add_gridspec(nrows=1, ncols=len(module.c_name_roots), wspace=0.1)
-
-        axs = outer_grid.subplots()
 
         for ax, title in zip(axs, module.titles):
             ax.set_xlabel(title, fontsize=fs)
 
         for ax, name_root, c_name, c_name_sd, ymax, xtick_label_list in zip(axs, module.c_name_roots, self.c_names, self.c_names_sd, module.ymax, self.xtick_label_lists):
             df = dfs[0]
-            median0 = df.loc[(df[module.x_axis] == px_value) & (df[module.y_axis] == py_value) & (df.Time == t), name_root + 'median'].values[0]
+            median0 = df.loc[(df[module.x_axis] == self.x_value) & (df[module.y_axis] == self.y_value) & (df.Time == t), name_root + 'median'].values[0]
             df = dfs[1]
-            median1 = df.loc[(df[module.x_axis] == px_value) & (df[module.y_axis] == py_value) & (df.Time == t), name_root + 'median'].values[0]
+            median1 = df.loc[(df[module.x_axis] == self.x_value) & (df[module.y_axis] == self.y_value) & (df.Time == t), name_root + 'median'].values[0]
             dif = median0 - median1
             if (name_root == 'ChooseGrain') or (name_root == 'MimicGrain') or ('BD' in name_root):
                 dif = -dif
@@ -183,8 +177,8 @@ class barsonepr:
                 colorsd=(red-0.30, green-0.05, blue-0.30)
             for b, name, namesd in zip(self.bins, c_name, c_name_sd):
                 df = dfs[0]
-                height = df.loc[(df[module.x_axis] == px_value) & (df[module.y_axis] == py_value) & (df.Time == t), name]
-                heightsd = df.loc[(df[module.x_axis] == px_value) & (df[module.y_axis] == py_value) & (df.Time == t), namesd]
+                height = df.loc[(df[module.x_axis] == self.x_value) & (df[module.y_axis] == self.y_value) & (df.Time == t), name]
+                heightsd = df.loc[(df[module.x_axis] == self.x_value) & (df[module.y_axis] == self.y_value) & (df.Time == t), namesd]
                 ax.bar(x=b, height=height, align='edge', color=color, linewidth=0, width=width, alpha=1.0)
                 ax.bar(x=b, height=heightsd, align='edge', color=colorsd, linewidth=0, width=width, bottom=height, alpha=1.0)
             ax.set(ylim=[0, ymax])
@@ -193,8 +187,8 @@ class barsonepr:
                 ax.set(yticks=[])
             for b, name, namesd in zip(self.bins, c_name, c_name_sd):
                 df = dfs[1]
-                height = df.loc[(df[module.x_axis] == px_value) & (df[module.y_axis] == py_value) & (df.Time == t), name]
-                heightsd = df.loc[(df[module.x_axis] == px_value) & (df[module.y_axis] == py_value) & (df.Time == t), namesd]
+                height = df.loc[(df[module.x_axis] == self.x_value) & (df[module.y_axis] == self.y_value) & (df.Time == t), name]
+                heightsd = df.loc[(df[module.x_axis] == self.x_value) & (df[module.y_axis] == self.y_value) & (df.Time == t), namesd]
                 ax.bar(x=b, height=height, align='edge', color=(red-0.15, green-0.15, blue-0.15), linewidth=0, width=width, alpha=0.9)
                 ax.bar(x=b, height=heightsd, align='edge', color=(red-0.10, green-0.10, blue-0.10), linewidth=0, width=width, bottom=height, alpha=0.9)
             ax.set(ylim=[0, ymax])
@@ -212,11 +206,15 @@ class scatterpr:
 
     def chart(self, dfs, t):
 
-        fig = create_figure(dfs, t)
+        fig, axs = plt.subplots(nrows=2, ncols=len(module.c_name_roots), figsize=(18, 8.5), constrained_layout=True)
 
-        outer_grid = fig.add_gridspec(nrows=len(dfs), ncols=len(module.c_name_roots), wspace=0.1, hspace=0.1)
+        fig.supxlabel(module.x_label, fontsize=fs)
+        fig.supylabel(module.y_label, fontsize=fs)
 
-        axs = outer_grid.subplots(sharex='row', sharey='col')
+        if module.movie == True:
+            fig.text(0.50, 0.50, f'Time = {t}', fontsize=fs, ha='center')
+
+        #axs = outer_grid.subplots(sharex='row', sharey='col')
 
         for ax, title in zip(axs[0], module.titles):
             ax.set_title(title, fontsize=fs)
@@ -264,7 +262,7 @@ def get_data(dfs):
 
     for d in dirs:
         df = pd.concat(map(pd.read_csv, glob.glob(os.path.join(d, '*.csv'))), ignore_index=True)
-        if (sys.argv[1] == 'gsscattergrain') or (sys.argv[1] == 'gsbars'):
+        if (sys.argv[1] == 'gsscattergrain') or (sys.argv[1] == 'gsbars') or (sys.argv[1] == 'gsbarsone'):
             df = df[df.ChooseCost == 0.000061]
         if module.movie == False:
             lastt = df.Time.iat[-1]
@@ -293,10 +291,7 @@ if module.movie == True:
         outfile = f'delete{t}.png'
         pr.chart(dfs, t)
         outfiles.append(outfile)
-    if module.ftype == 'barsone':
-        giffile = f'{sys.argv[1]}_{module.x_value}_{module.y_value}.gif'
-    else:
-        giffile = f'{sys.argv[1]}.gif'
+    giffile = f'{sys.argv[1]}.gif'
     with imageio.get_writer(giffile, mode='I') as writer:
         for outfile in outfiles:
             print(f'Adding {outfile} to movie', end='\r')

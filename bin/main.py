@@ -54,9 +54,12 @@ class barsallpr:
 
         self.inner_cols = dfs[0][module.x_axis].unique()
         self.inner_rows = dfs[0][module.y_axis].unique()
-        #self.inner_cols[::-1].sort()
         self.inner_cols.sort()
-        self.inner_rows[::-1].sort()
+        #    self.inner_cols[::-1].sort()
+        if module.y_axis == 'GroupSize':
+            self.inner_rows.sort()
+        else:
+            self.inner_rows[::-1].sort()
 
         self.bins = [(x+1)/self.bincount for x in range(self.bincount)]
         self.bins_f = [(x+1)*2.0/self.bincount for x in range(self.bincount)]

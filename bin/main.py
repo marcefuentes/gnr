@@ -173,9 +173,10 @@ class barsonepr:
                 color=(red-0.95, green-0.05, blue-0.95)
                 colorsd=(red-0.30, green-0.05, blue-0.30)
             alpha=1.0
+            df = dfs[0]
             for b, name, namesd in zip(self.bins, c_name, c_name_sd):
-                df = dfs[0]
                 height = df.loc[(df[module.x_axis] == self.x_value) & (df[module.y_axis] == self.y_value) & (df.Time == t), name]
+                print(b, height)
                 heightsd = df.loc[(df[module.x_axis] == self.x_value) & (df[module.y_axis] == self.y_value) & (df.Time == t), namesd]
                 ax.bar(x=b, height=height, align='edge', color=color, linewidth=0, width=width, alpha=alpha)
                 ax.bar(x=b, height=heightsd, align='edge', color=colorsd, linewidth=0, width=width, bottom=height, alpha=alpha)
@@ -186,8 +187,8 @@ class barsonepr:
             color=(red-0.15, green-0.15, blue-0.15)
             colorsd=(red-0.10, green-0.10, blue-0.10)
             alpha=0.9
+            df = dfs[1]
             for b, name, namesd in zip(self.bins, c_name, c_name_sd):
-                df = dfs[1]
                 height = df.loc[(df[module.x_axis] == self.x_value) & (df[module.y_axis] == self.y_value) & (df.Time == t), name]
                 heightsd = df.loc[(df[module.x_axis] == self.x_value) & (df[module.y_axis] == self.y_value) & (df.Time == t), namesd]
                 ax.bar(x=b, height=height, align='edge', color=color, linewidth=0, width=width, alpha=alpha)
@@ -226,7 +227,7 @@ class scatterpr:
                     ax.set_xscale('log', base=2)
                     ax.set_yscale('log', base=2)
                 ax.set_aspect('equal', 'box')
-                dif = (df.loc[df.Time == t, name_root] - dfs[1].loc[df.Time == t, name_root])
+                dif = df.loc[df.Time == t, name_root] - dfs[1].loc[df.Time == t, name_root]
                 if (name_root == 'ChooseGrainmedian') or (name_root == 'MimicGrainmedian') or ('BD' in name_root):
                     dif = -dif
                 color = []
@@ -245,7 +246,14 @@ class scatterpr:
                     ax.set(yticks=[])
                 ax.set_xlim(module.x_min, module.x_max)
                 ax.set_ylim(module.y_min, module.y_max)
-                s = s + df.loc[df.Time == t, name_root + 'SD']
+                if name_root == 'a2Seen31':
+                    s = s + df.loc[df.Time == t, 'a2SeenSD31']
+                elif name_root == 'w33':
+                    s = s + df.loc[df.Time == t, 'wSD33']
+                elif name_root == 'w43':
+                    s = s + df.loc[df.Time == t, 'wSD43']
+                else:
+                    s = s + df.loc[df.Time == t, name_root + 'SD']
                 ax.scatter(x, y, c=color, edgecolor='0.400', alpha=0.2, s=s*module.bubble_size)
                 if (row == 0):
                     ax.set(xticks=[])

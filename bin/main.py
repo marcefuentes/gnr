@@ -23,12 +23,12 @@ blue = 1.0
 
 class barsallpr:
 
-    c_names = []
-
     def prepare(self, dfs):
 
         self.bincount = int(sum(map(lambda x: module.c_name_roots[0] in x, [*dfs[0]]))/2) - 2
+
         self.c_name_suffixes = [x for x in range(self.bincount)]
+        self.c_names = []
         for root in module.c_name_roots:
             rootlist = []
             for suffix in self.c_name_suffixes:
@@ -60,7 +60,7 @@ class barsallpr:
 
         width = 2.0/self.bincount
 
-        for n, (c_name, name_root, ymax, title) in enumerate(zip(self.c_names, module.c_name_roots, module.ymax, module.titles)):
+        for n, (c_name, name_root, title) in enumerate(zip(self.c_names, module.c_name_roots, module.titles)):
             inner_grid = outer_grid[n].subgridspec(nrows=len(self.inner_rows), ncols=len(self.inner_cols), wspace=0, hspace=0)
             axs = inner_grid.subplots()
             axs[0, int(len(self.inner_cols)/2)].set_title(title, fontsize=fs) # Prints the title of the middle column. Bad if there are even columns
@@ -81,12 +81,12 @@ class barsallpr:
                         df = dfs[0]
                         height=df.loc[(df[module.x_axis] == inner_col) & (df[module.y_axis] == inner_row) & (df.Time == t), name0] + df.loc[(df[module.x_axis] == inner_col) & (df[module.y_axis] == inner_row) & (df.Time == t), name1]
                         ax.bar(x=b, height=height, align='edge', color=color, linewidth=0, width=width)
-                        ax.set(xticks=[], yticks=[], ylim=[0, ymax*2])
+                        ax.set(xticks=[], yticks=[], ylim=[0, module.ymax*2])
                     for b, name0, name1 in zip(self.bins[::2], c_name[::2], c_name[1::2]):
                         df = dfs[1]
                         height=df.loc[(df[module.x_axis] == inner_col) & (df[module.y_axis] == inner_row) & (df.Time == t), name0] + df.loc[(df[module.x_axis] == inner_col) & (df[module.y_axis] == inner_row) & (df.Time == t), name1]
                         ax.bar(x=b, height=height, align='edge', color=(red-0.15, green-0.15, blue-0.15), linewidth=0, width=width, alpha=0.9)
-                        ax.set(xticks=[], yticks=[], ylim=[0, ymax*2])
+                        ax.set(xticks=[], yticks=[], ylim=[0, module.ymax*2])
                     if (n == 0) & (column == 0):
                         if module.log == True:
                             y = '$2^{{{}}}$'.format(round(math.log(inner_row, 2)))
@@ -107,17 +107,16 @@ class barsallpr:
 
 class barsonepr:
 
-    xtick_label_lists = []
-    c_names = []
-    c_names_sd = []
-
     def prepare(self, dfs):
 
         self.x_value = float(str("{:.6f}".format(pow(2, int(module.x_value)))))
         self.y_value = float(str("{:.6f}".format(pow(2, int(module.y_value)))))
 
         self.bincount = int(sum(map(lambda x: module.c_name_roots[0] in x, [*dfs[0]]))/2) - 2
+
         self.c_name_suffixes = [x for x in range(self.bincount)]
+        self.c_names = []
+        self.c_names_sd = []
         for root in module.c_name_roots:
             rootlist = []
             rootlist_sd = []
@@ -129,9 +128,11 @@ class barsonepr:
 
         self.bins = [(x+1)/self.bincount for x in range(self.bincount)]
 
-        self.xticks = [0, 1]
-        self.xtick_labels = [0, 1]
-        self.xtick_labels_f = [0, 1.87]
+        self.xticks = (0, 1)
+        self.xtick_labels = (0, 1)
+        self.xtick_labels_f = (0, 1.87)
+
+        self.xtick_label_lists = []
 
         for color in module.colors:
             if color == 'grain':
@@ -157,7 +158,7 @@ class barsonepr:
         for ax, title in zip(axs, module.titles):
             ax.set_xlabel(title, fontsize=fs)
 
-        for ax, name_root, c_name, c_name_sd, ymax, xtick_label_list in zip(axs, module.c_name_roots, self.c_names, self.c_names_sd, module.ymax, self.xtick_label_lists):
+        for ax, name_root, c_name, c_name_sd, xtick_label_list in zip(axs, module.c_name_roots, self.c_names, self.c_names_sd, self.xtick_label_lists):
             df = dfs[0]
             median0 = df.loc[(df[module.x_axis] == self.x_value) & (df[module.y_axis] == self.y_value) & (df.Time == t), name_root + 'median'].values[0]
             df = dfs[1]
@@ -171,23 +172,27 @@ class barsonepr:
             else:
                 color=(red-0.95, green-0.05, blue-0.95)
                 colorsd=(red-0.30, green-0.05, blue-0.30)
+            alpha=1.0
             for b, name, namesd in zip(self.bins, c_name, c_name_sd):
                 df = dfs[0]
                 height = df.loc[(df[module.x_axis] == self.x_value) & (df[module.y_axis] == self.y_value) & (df.Time == t), name]
                 heightsd = df.loc[(df[module.x_axis] == self.x_value) & (df[module.y_axis] == self.y_value) & (df.Time == t), namesd]
-                ax.bar(x=b, height=height, align='edge', color=color, linewidth=0, width=width, alpha=1.0)
-                ax.bar(x=b, height=heightsd, align='edge', color=colorsd, linewidth=0, width=width, bottom=height, alpha=1.0)
-            ax.set(ylim=[0, ymax])
+                ax.bar(x=b, height=height, align='edge', color=color, linewidth=0, width=width, alpha=alpha)
+                ax.bar(x=b, height=heightsd, align='edge', color=colorsd, linewidth=0, width=width, bottom=height, alpha=alpha)
+            ax.set(ylim=(0, module.ymax), yticks=(0, module.ymax), yticklabels=(0, module.ymax))
             ax.set(xticks=self.xticks, xticklabels=xtick_label_list)
             if name_root != module.c_name_roots[0]:
                 ax.set(yticks=[])
+            color=(red-0.15, green-0.15, blue-0.15)
+            colorsd=(red-0.10, green-0.10, blue-0.10)
+            alpha=0.9
             for b, name, namesd in zip(self.bins, c_name, c_name_sd):
                 df = dfs[1]
                 height = df.loc[(df[module.x_axis] == self.x_value) & (df[module.y_axis] == self.y_value) & (df.Time == t), name]
                 heightsd = df.loc[(df[module.x_axis] == self.x_value) & (df[module.y_axis] == self.y_value) & (df.Time == t), namesd]
-                ax.bar(x=b, height=height, align='edge', color=(red-0.15, green-0.15, blue-0.15), linewidth=0, width=width, alpha=0.9)
-                ax.bar(x=b, height=heightsd, align='edge', color=(red-0.10, green-0.10, blue-0.10), linewidth=0, width=width, bottom=height, alpha=0.9)
-            ax.set(ylim=[0, ymax])
+                ax.bar(x=b, height=height, align='edge', color=color, linewidth=0, width=width, alpha=alpha)
+                ax.bar(x=b, height=heightsd, align='edge', color=colorsd, linewidth=0, width=width, bottom=height, alpha=alpha)
+            ax.set(ylim=(0, module.ymax), yticks=(0, module.ymax), yticklabels=(0, module.ymax))
             ax.set(xticks=self.xticks, xticklabels=xtick_label_list)
             if name_root != module.c_name_roots[0]:
                 ax.set(yticks=[])

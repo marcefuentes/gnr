@@ -91,8 +91,8 @@ ax.tick_params(axis='x', labelsize=fs)
 ax.tick_params(axis='y', labelsize=fs)
 #ax.set_xlabel('$\it{q_1}$', fontsize=fs) 
 #ax.set_ylabel('$\it{q_2}$', fontsize=fs)
-ax.set_xlabel('Quantity of resource 1', fontsize=fs) 
-ax.set_ylabel('Quantity of resource 2', fontsize=fs) 
+ax.set_xlabel('Quantity of resource $\it{A}$', fontsize=fs) 
+ax.set_ylabel('Quantity of resource $\it{B}$', fontsize=fs) 
 
 for w in np.linspace(0.4, 1.6, num=n_ic):
     plt.plot(x, ic(w), c='#dbdbdb')

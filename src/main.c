@@ -485,7 +485,7 @@ double ces (double q1, double q2)
 
 	if ( gES >= 0.99 && gES <= 1.01 )
 	{
-		w = pow(q1, galpha)*pow(q2, 1 - galpha); // Cobb-Douglas
+		w = pow(q1, galpha)*pow(q2, 1.0 - galpha); // Cobb-Douglas
 	}
 	else
 	{

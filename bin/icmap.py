@@ -86,6 +86,8 @@ ax.set_xlim(0.0, max_a1*R1*1.5)
 ax.set_ylim(0.0, max_a2*R2*1.5)
 ax.set_xticks(np.linspace(0.0, max_a1*R1*1.5, num=4))
 ax.set_yticks(np.linspace(0.0, max_a2*R2*1.5, num=4))
+ax.tick_params(axis='x', labelsize=fs)
+ax.tick_params(axis='y', labelsize=fs)
 ax.set_xlabel('$\it{q_1}$', fontsize=fs) 
 ax.set_ylabel('$\it{q_2}$', fontsize=fs) 
 

@@ -50,11 +50,10 @@ void choose_partner (struct itype *i, struct itype *i_last, int groupsize)
 
 		while ( head != NULL && head->next != NULL )
 		{
-			j = i + head->ind;
-
 			previous = head;
 			temp = head->next;
-			k = i + temp->ind;
+			j = i + head->ind; // j is a nickname of i + head->ind to make the lines below more readable
+			k = i + temp->ind; // k is a nickname of i + temp->ind to make the lines below more readable
 
 			while ( temp != NULL && (willing (j, k) == false || willing (k, j) == false) )
 			{

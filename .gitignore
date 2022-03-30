@@ -9,3 +9,4 @@ results/**/*.gl2
 results/**/*.glo
 results/**/*.out
 results/**/*.png
+charts/*.png

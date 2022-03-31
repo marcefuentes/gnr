@@ -14,7 +14,10 @@ if len(sys.argv) < 2:
     print('You must add an argument with the python module (for example, scattergrain)')
     exit(1)
 
-outfile = f'{sys.argv[1]}.pdf'
+outfile = f'{sys.argv[1]}.png'
+
+plt.rcParams['pdf.fonttype'] = 42
+plt.rcParams['ps.fonttype'] = 42
 
 fslabel = 18 # Label font size
 fstitle= 18 # Label font size
@@ -263,7 +266,7 @@ class scatterpr:
             ax.tick_params(axis='x', labelsize=fstick)
             ax.tick_params(axis='y', labelsize=fstick)
 
-        plt.savefig(outfile)
+        plt.savefig(outfile, transparent=True)
         plt.close()
 
     def chart2(self, dfs, t):

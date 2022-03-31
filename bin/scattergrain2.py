@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
 ftype = 'scatter'
-c_name_roots = ('ChooseGrainmedian', 'MimicGrainmedian')
-titles = ('Sensitivity for comparing\npotential partners', 'Sensitivity for comparing\npartner to self')
+c_name_roots = ('a2Seenmedian', 'wmedian')
+titles = ('Help', 'Fitness')
 x_axis = 'MimicCost'
 x_label = 'Cost of comparing partner to self'
 y_axis = 'ChooseCost'

@@ -242,7 +242,7 @@ class scatterpr:
             x = df.loc[df.Time == t, module.x_axis]
             y = df.loc[df.Time == t, module.y_axis]
             s = df.loc[df.Time == t, name_root]
-            ax.scatter(x, y, c=color, edgecolor='0.200', alpha=1.0, s=s*module.bubble_size)
+            ax.scatter(x, y, c=color, ec=color, alpha=1.0, s=s*module.bubble_size)
             if name_root != module.c_name_roots[0]:
                 ax.set(yticks=[])
             ax.set_xlim(module.x_min, module.x_max)
@@ -258,7 +258,7 @@ class scatterpr:
             #else:
             #    s = s + df.loc[df.Time == t, name_root + 'SD']
             s = s + df.loc[df.Time == t, name_root + 'SD']
-            ax.scatter(x, y, c=color, edgecolor='0.400', alpha=0.2, s=s*module.bubble_size)
+            ax.scatter(x, y, c=color, ec=color, alpha=0.5, s=s*module.bubble_size)
             if name_root != module.c_name_roots[0]:
                 ax.set(yticks=[])
             ax.set_xlim(module.x_min, module.x_max)
@@ -266,7 +266,7 @@ class scatterpr:
             ax.tick_params(axis='x', labelsize=fstick)
             ax.tick_params(axis='y', labelsize=fstick)
 
-        plt.savefig(outfile, transparent=True)
+        plt.savefig(outfile, transparent=False)
         plt.close()
 
     def chart2(self, dfs, t):

@@ -2,9 +2,9 @@
 
 ftype = 'scatter'
 c_name_roots = ('a2Seenmedian', 'wmedian')
-titles = ('Help', 'Fitness')
+titles = (' \nHelp', ' \nFitness')
 x_axis = 'MimicCost'
-x_label = 'Cost of comparing partner to self'
+x_label = ' \nCost of comparing partner to self'
 y_axis = 'ChooseCost'
 y_label = 'Cost of comparing potential partners'
 x_min = None

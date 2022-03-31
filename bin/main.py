@@ -337,7 +337,7 @@ def get_data(dfs):
 
     for d in dirs:
         df = pd.concat(map(pd.read_csv, glob.glob(os.path.join(d, '*.csv'))), ignore_index=True)
-        if (sys.argv[1] == 'gsscattergrain') or (sys.argv[1] == 'gsbars') or (sys.argv[1] == 'gsbarsone'):
+        if (sys.argv[1] == 'gsscattergrain') or (sys.argv[1] == 'gsscattergraini') or (sys.argv[1] == 'gsbars') or (sys.argv[1] == 'gsbarsone'):
             df = df[df.ChooseCost == 0.000061]
         if module.movie == False:
             lastt = df.Time.iat[-1]

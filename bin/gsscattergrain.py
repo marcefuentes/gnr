@@ -2,11 +2,11 @@
 
 ftype = 'scatter'
 c_name_roots = ('ChooseGrainmedian', 'MimicGrainmedian')
-titles = ('Sensitivity for comparing\ngroup mates', 'Sensitivity for comparing\npartner to self')
+titles = ('Sensitivity for comparing\npotential partners', 'Sensitivity for comparing\npartner to self')
 x_axis = 'MimicCost'
 x_label = 'Cost of comparing partner to self'
 y_axis = 'GroupSize'
-y_label = 'Potential partners'
+y_label = 'Potential partners\n '
 x_min = None
 x_max = None
 y_min = 48.0

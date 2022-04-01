@@ -22,9 +22,9 @@ plt.rcParams['ps.fonttype'] = 42
 fslabel = 18 # Label font size
 fstitle= 18 # Label font size
 fstick = 14 # Label font size
-red = 1.0
-green = 1.0
-blue = 1.0
+red = 0.97
+green = 0.97
+blue = 0.97
 
 class barsallpr:
 
@@ -210,17 +210,8 @@ class scatterpr:
 
     def prepare(self, dfs):
         self.suffixes = ('SD', '')
-        self.alphas = (0.4, 0.4)
-        self.name_colors = []
-        _blue = (red - 1.0, green - 1.0, blue)
-        _green = (red - 0.0, green, blue - 1.0)
-        _white = (red, green, blue)
-        for name_root in module.c_name_roots:
-            if (name_root == 'ChooseGrainmedian') or (name_root == 'MimicGrainmedian') or ('BD' in name_root):
-                colors = (_green, _blue)
-            else:
-                colors = (_white, _green)
-            self.name_colors.append(colors)
+        self.suffixalphas = (0.2, 1.0)
+        self.suffixecs = ('0.300', '0.000')
 
     def chart(self, dfs, t):
 
@@ -232,27 +223,28 @@ class scatterpr:
         if module.movie == True:
             fig.text(0.50, 0.50, f'Time = {t}', fontsize=fstitle, ha='center')
 
-        for ax, title in zip(axs, module.titles):
+        for ax, name_root, title in zip(axs, module.c_name_roots, module.titles):
             ax.set_title(title, fontsize=fstitle)
-
-        for ax, name_root, colors in zip(axs, module.c_name_roots, self.name_colors):
-            for df, color, alpha1 in zip(reversed(dfs), colors, self.alphas):
-                dif = df.loc[df.Time == t, name_root] - dfs[1].loc[df.Time == t, name_root]
-                if (name_root == 'ChooseGrainmedian') or (name_root == 'MimicGrainmedian') or ('BD' in name_root):
-                    dif = -dif
-                for i in dif:
-                    if i < 0.0:
-                        color.append
-                    else:
-                        color.append
-                for suffix, alpha2 in zip(self.suffixes, self.alphas):
+            dif = dfs[0].loc[dfs[0].Time == t, name_root] - dfs[1].loc[dfs[1].Time == t, name_root]
+            if (name_root == 'ChooseGrainmedian') or (name_root == 'MimicGrainmedian') or ('BD' in name_root):
+                dif = -dif
+            color = []
+            for i in dif:
+                if i < 0.0:
+                    color.append((red + i, green + i, blue + i/2.0))
+                else:
+                    color.append((red - i, green - i/2.0, blue - i))
+            for drift, df in enumerate(dfs):
+                for suffix, suffixec, suffixalpha in zip(self.suffixes, self.suffixecs, self.suffixalphas):
                     x = df.loc[df.Time == t, module.x_axis]
                     y = df.loc[df.Time == t, module.y_axis]
                     s = df.loc[df.Time == t, name_root]
                     if suffix == 'SD':
                         s = s + df.loc[df.Time == t, name_root + suffix]
-                        alpha = alpha - 0.2
-                    ax.scatter(x, y, c=color, ec=color, alpha=1.0-alpha1-alpha2, s=s*module.bubble_size)
+                    if drift == 0:
+                        ax.scatter(x, y, c=color, ec=color, alpha=suffixalpha, s=s*module.bubble_size)
+                    else:
+                        ax.scatter(x, y, facecolors='none', edgecolor=suffixec, alpha=0.05, s=s*module.bubble_size)
                     if module.log == True:
                         ax.set_xscale('log', base=2)
                         ax.set_yscale('log', base=2)

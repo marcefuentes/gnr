@@ -22,9 +22,9 @@ plt.rcParams['ps.fonttype'] = 42
 fslabel = 18 # Label font size
 fstitle= 18 # Label font size
 fstick = 14 # Label font size
-red = 1.0
-green = 1.0
-blue = 1.0
+red = 0.97
+green = 0.97
+blue = 0.97
 
 class barsallpr:
 
@@ -209,7 +209,9 @@ class barsonepr:
 class scatterpr:
 
     def prepare(self, dfs):
-        pass
+        self.suffixes = ('SD', '')
+        self.suffixalphas = (0.2, 1.0)
+        self.suffixecs = ('0.300', '0.000')
 
     def chart(self, dfs, t):
 
@@ -221,50 +223,38 @@ class scatterpr:
         if module.movie == True:
             fig.text(0.50, 0.50, f'Time = {t}', fontsize=fstitle, ha='center')
 
-        for ax, title in zip(axs, module.titles):
+        for ax, name_root, title in zip(axs, module.c_name_roots, module.titles):
             ax.set_title(title, fontsize=fstitle)
-
-        df = dfs[0]
-        for ax, name_root in zip(axs, module.c_name_roots):
+            ax.tick_params(axis='x', labelsize=fstick)
+            ax.tick_params(axis='y', labelsize=fstick)
             if module.log == True:
                 ax.set_xscale('log', base=2)
                 ax.set_yscale('log', base=2)
             ax.set_aspect('equal', 'box')
-            dif = df.loc[df.Time == t, name_root] - dfs[1].loc[df.Time == t, name_root]
+            dif = dfs[0].loc[dfs[0].Time == t, name_root] - dfs[1].loc[dfs[1].Time == t, name_root]
             if (name_root == 'ChooseGrainmedian') or (name_root == 'MimicGrainmedian') or ('BD' in name_root):
                 dif = -dif
             color = []
             for i in dif:
                 if i < 0.0:
-                    color.append((red + i, green + i, blue))
+                    color.append((red + i, green + i, blue + i/2.0))
                 else:
-                    color.append((red - i, green, blue - i))
-            x = df.loc[df.Time == t, module.x_axis]
-            y = df.loc[df.Time == t, module.y_axis]
-            s = df.loc[df.Time == t, name_root]
-            ax.scatter(x, y, c=color, ec=color, alpha=1.0, s=s*module.bubble_size)
-            if name_root != module.c_name_roots[0]:
-                ax.set(yticks=[])
-            ax.set_xlim(module.x_min, module.x_max)
-            ax.set_ylim(module.y_min, module.y_max)
-            ax.tick_params(axis='x', labelsize=fstick)
-            ax.tick_params(axis='y', labelsize=fstick)
-            #if name_root == 'a2Seen31':
-            #    s = s + df.loc[df.Time == t, 'a2SeenSD31']
-            #elif name_root == 'w33':
-            #    s = s + df.loc[df.Time == t, 'wSD33']
-            #elif name_root == 'w43':
-            #    s = s + df.loc[df.Time == t, 'wSD43']
-            #else:
-            #    s = s + df.loc[df.Time == t, name_root + 'SD']
-            s = s + df.loc[df.Time == t, name_root + 'SD']
-            ax.scatter(x, y, c=color, ec=color, alpha=0.5, s=s*module.bubble_size)
-            if name_root != module.c_name_roots[0]:
-                ax.set(yticks=[])
-            ax.set_xlim(module.x_min, module.x_max)
-            ax.set_ylim(module.y_min, module.y_max)
-            ax.tick_params(axis='x', labelsize=fstick)
-            ax.tick_params(axis='y', labelsize=fstick)
+                    color.append((red - i, green - i/2.0, blue - i))
+            for drift, df in enumerate(dfs):
+                for suffix, suffixec, suffixalpha in zip(self.suffixes, self.suffixecs, self.suffixalphas):
+                    x = df.loc[df.Time == t, module.x_axis]
+                    y = df.loc[df.Time == t, module.y_axis]
+                    s = df.loc[df.Time == t, name_root]
+                    if suffix == 'SD':
+                        s = s + df.loc[df.Time == t, name_root + suffix]
+                    if drift == 0:
+                        ax.scatter(x, y, c=color, ec=color, alpha=suffixalpha, s=s*module.bubble_size)
+                    else:
+                        ax.scatter(x, y, facecolors='none', edgecolor=suffixec, alpha=0.05, s=s*module.bubble_size)
+                    if name_root != module.c_name_roots[0]:
+                        ax.set(yticks=[])
+                    ax.set_xlim(module.x_min, module.x_max)
+                    ax.set_ylim(module.y_min, module.y_max)
 
         plt.savefig(outfile, transparent=False)
         plt.close()

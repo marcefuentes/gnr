@@ -227,6 +227,9 @@ class scatterpr:
             ax.set_title(title, fontsize=fstitle)
             ax.tick_params(axis='x', labelsize=fstick)
             ax.tick_params(axis='y', labelsize=fstick)
+            if module.log == True:
+                ax.set_xscale('log', base=2)
+                ax.set_yscale('log', base=2)
             dif = dfs[0].loc[dfs[0].Time == t, name_root] - dfs[1].loc[dfs[1].Time == t, name_root]
             if (name_root == 'ChooseGrainmedian') or (name_root == 'MimicGrainmedian') or ('BD' in name_root):
                 dif = -dif
@@ -247,9 +250,6 @@ class scatterpr:
                         ax.scatter(x, y, c=color, ec=color, alpha=suffixalpha, s=s*module.bubble_size)
                     else:
                         ax.scatter(x, y, facecolors='none', edgecolor=suffixec, alpha=0.05, s=s*module.bubble_size)
-                    if module.log == True:
-                        ax.set_xscale('log', base=2)
-                        ax.set_yscale('log', base=2)
                     ax.set_aspect('equal', 'box')
                     if name_root != module.c_name_roots[0]:
                         ax.set(yticks=[])

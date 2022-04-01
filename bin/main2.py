@@ -225,6 +225,8 @@ class scatterpr:
 
         for ax, name_root, title in zip(axs, module.c_name_roots, module.titles):
             ax.set_title(title, fontsize=fstitle)
+            ax.tick_params(axis='x', labelsize=fstick)
+            ax.tick_params(axis='y', labelsize=fstick)
             dif = dfs[0].loc[dfs[0].Time == t, name_root] - dfs[1].loc[dfs[1].Time == t, name_root]
             if (name_root == 'ChooseGrainmedian') or (name_root == 'MimicGrainmedian') or ('BD' in name_root):
                 dif = -dif
@@ -253,8 +255,6 @@ class scatterpr:
                         ax.set(yticks=[])
                     ax.set_xlim(module.x_min, module.x_max)
                     ax.set_ylim(module.y_min, module.y_max)
-                    ax.tick_params(axis='x', labelsize=fstick)
-                    ax.tick_params(axis='y', labelsize=fstick)
 
         plt.savefig(outfile, transparent=False)
         plt.close()

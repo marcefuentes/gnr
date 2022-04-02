@@ -231,15 +231,19 @@ class scatterpr:
                 ax.set_xscale('log', base=2)
                 ax.set_yscale('log', base=2)
             ax.set_aspect('equal', 'box')
-            dif = dfs[0].loc[dfs[0].Time == t, name_root] - dfs[1].loc[dfs[1].Time == t, name_root]
+            dif = 1.0 - dfs[0].loc[dfs[0].Time == t, name_root]/dfs[1].loc[dfs[1].Time == t, name_root]
             if (name_root == 'ChooseGrainmedian') or (name_root == 'MimicGrainmedian') or ('BD' in name_root):
                 dif = -dif
             color = []
             for i in dif:
                 if i < 0.0:
-                    color.append((red + i, green + i, blue + i/2.0))
+                    if i < -red:
+                        i = -red
+                    color.append((red + i, green + i/2.0, blue + i))
                 else:
-                    color.append((red - i, green - i/2.0, blue - i))
+                    if i > red:
+                        i = red
+                    color.append((red - i, green - i, blue - i/2.0))
             for drift, df in enumerate(dfs):
                 for suffix, suffixec, suffixalpha in zip(self.suffixes, self.suffixecs, self.suffixalphas):
                     x = df.loc[df.Time == t, module.x_axis]

@@ -215,7 +215,7 @@ class scatterpr:
 
     def chart(self, dfs, t):
 
-        fig, axs = plt.subplots(nrows=1, ncols=len(module.c_name_roots), figsize=(module.width, module.height), constrained_layout=True)
+        fig, axs = plt.subplots(nrows=1, ncols=len(module.c_name_roots), figsize=(module.width, module.height), constrained_layout=False)
 
         fig.supxlabel(module.x_label, fontsize=fslabel)
         fig.supylabel(module.y_label, fontsize=fslabel)

@@ -33,5 +33,7 @@ void shuffle_partners (struct itype *i, struct itype *i_last, int groupsize)
 			(i + c[a + 1])->newpartner = i + c[a];
 		}
 	}
+
+	free(c);
 }
 

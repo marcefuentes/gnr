@@ -376,6 +376,10 @@ void caso (struct ptype *p_first)
 
 			if ( gDrift == 0 )
 			{
+				if ( gIndirectReciprocity == 1 )
+				{
+					shuffle_partners (i_first, i_last, gGroupSize);
+				}
 				choose_partner (i_first, i_last, gGroupSize);
 			}
 

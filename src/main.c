@@ -105,6 +105,8 @@ int main (int argc, char *argv[])
 		factor1 = &gChooseCost;
 	else if ( strcmp (factorName1, "MimicCost") == 0 )
 		factor1 = &gMimicCost;
+	else if ( strcmp (factorName1, "ChooseGrainInit") == 0 )
+		factor1 = &gChooseGrainInit;
 	else
 	{
 		fprintf (stderr, "I don't know factor %s.\n", factorName1);
@@ -123,6 +125,8 @@ int main (int argc, char *argv[])
 		factor2 = &gChooseCost;
 	else if ( strcmp (factorName2, "MimicCost") == 0 )
 		factor2 = &gMimicCost;
+	else if ( strcmp (factorName2, "MimicGrainInit") == 0 )
+		factor2 = &gMimicGrainInit;
 	else
 	{
 		fprintf (stderr, "I don't know factor %s.\n", factorName2);

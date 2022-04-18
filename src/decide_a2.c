@@ -17,7 +17,7 @@ void decide_a2 (struct itype *i, struct itype *i_last, double amax)
 		}
 		else
 		{
-			block = (i->partner->a2Seen - i->a2Decided) / i->MimicGrain;
+			block = (i->newpartner->a2Seen - i->a2Decided) / i->MimicGrain;
 
 			if ( block < 0)
 			{
@@ -62,7 +62,7 @@ void decide_a2_ir (struct itype *i, struct itype *i_last, double amax)
 		}
 		else
 		{
-			block = (i->partner->a2Seen - i->a2Decided) / i->MimicGrain;
+			block = (i->newpartner->a2Seen - i->a2Decided) / i->MimicGrain;
 
 			if ( block < 0)
 			{

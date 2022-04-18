@@ -89,18 +89,3 @@ void decide_a2_ir (struct itype *i, struct itype *i_last, double amax)
 		}
 	}
 }
-
-void fix_a2_macromutation (struct itype *i, struct itype *i_last)
-{
-	for ( ; i < i_last; i++ )
-	{
-		if ( i->a2Decided < 0.3 )
-		{
-			i->a2Decided = 0.1;
-		}
-		else
-		{
-			i->a2Decided = 0.5;
-		}
-	}
-}

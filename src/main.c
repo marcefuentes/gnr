@@ -59,9 +59,10 @@ double	ces (double q1, double q2);				// gES, galpha
 double	quasilinear (double q1, double q2);			// galpha, gc1, gc2
 double	mutate_a2 (double a2);					// ga2MutationSize, ga2Min, ga2Max
 double	mutate_grain (double grain);				// gGrainMutationSize, ga2Min, ga2Max
-void	update (struct itype *i, struct itype *i_last);
 double	calculate_q1 (double a2);				// ga2Max, ga1Max, gR1
 double	calculate_q2 (double a2, double a2partner);		// gR2, gSelf
+void	update (struct itype *i, struct itype *i_last);
+void	fix_a2_macromutation (struct itype *i, struct itype *i_last);
 
 int main (int argc, char *argv[])
 {
@@ -573,5 +574,20 @@ void update (struct itype *i, struct itype *i_last)
 		i->isRecruit = false;
 		i->chose_partner = false;
 		i->changed_a2 = false;
+	}
+}
+
+void fix_a2_macromutation (struct itype *i, struct itype *i_last)
+{
+	for ( ; i < i_last; i++ )
+	{
+		if ( i->a2Decided < 0.3 )
+		{
+			i->a2Decided = 0.1;
+		}
+		else
+		{
+			i->a2Decided = 0.5;
+		}
 	}
 }

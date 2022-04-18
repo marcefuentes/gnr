@@ -380,12 +380,13 @@ void caso (struct ptype *p_first)
 
 			update (i_first, i_last);
 
+			if ( gIndirectReciprocity == 1 )
+			{
+				shuffle_partners (i_first, i_last, gGroupSize);
+			}
+
 			if ( gDrift == 0 )
 			{
-				if ( gIndirectReciprocity == 1 )
-				{
-					shuffle_partners (i_first, i_last, gGroupSize);
-				}
 				choose_partner (i_first, i_last, gGroupSize);
 			}
 

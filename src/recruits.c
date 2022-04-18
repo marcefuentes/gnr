@@ -68,7 +68,7 @@ void kill (struct rtype *recruit, struct itype *i_first, int n)
 		i->a2Decided = i->a2Default = recruit->a2Default;
 		i->ChooseGrain = recruit->ChooseGrain;
 		i->MimicGrain = recruit->MimicGrain;
-		i->cost = calculate_cost (i->ChooseGrain, i->MimicGrain);
+		i->cost = recruit->cost;
 		i->isRecruit = true;
 	}
 }

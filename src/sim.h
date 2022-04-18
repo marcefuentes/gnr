@@ -45,6 +45,7 @@ struct rtype
 	double		a2Default;
 	double		ChooseGrain;
 	double		MimicGrain;
+	double		cost;
 	struct rtype	*next;
 };
 
@@ -63,7 +64,3 @@ void		stats_runs		(struct ptype *p, struct ptype *p_last, int runs);
 void		write_headers		(char *filename, char *header1, char *header2);
 void		write_stats		(char *filename, float factor1, float factor2, int groupsize, struct ptype *p, struct ptype *p_last);
 void		write_time_elapsed	(char *filename, float time_elapsed);
-
-// Functions in main.c needed by functions in other files
-
-double		calculate_cost		(double choose, double mimic);		// gChooseCost, gMimicCost

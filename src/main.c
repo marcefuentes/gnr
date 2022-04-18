@@ -61,6 +61,7 @@ double	mutate_a2 (double a2);					// ga2MutationSize, ga2Min, ga2Max
 double	mutate_grain (double grain);				// gGrainMutationSize, ga2Min, ga2Max
 double	calculate_q1 (double a2);				// ga2Max, ga1Max, gR1
 double	calculate_q2 (double a2, double a2partner);		// gR2, gSelf
+double	calculate_cost	(double choose, double mimic);		// gChooseCost, gMimicCost
 void	update (struct itype *i, struct itype *i_last);
 void	fix_a2_macromutation (struct itype *i, struct itype *i_last);
 
@@ -405,6 +406,7 @@ void caso (struct ptype *p_first)
 					recruit->a2Default = mutate_a2 (i->a2Default);
 					recruit->ChooseGrain = mutate_grain (i->ChooseGrain);
 					recruit->MimicGrain = mutate_grain (i->MimicGrain);
+					recruit->cost = calculate_cost (recruit->ChooseGrain, recruit->MimicGrain);
 				}
 
 				kill (recruit_first, i_first, gN);

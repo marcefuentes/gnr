@@ -14,7 +14,7 @@ void shuffle_partners (struct itype *i, struct itype *i_last, int groupsize)
 	c = calloc (groupsize, sizeof *c);
 	if ( c == NULL )
 	{
-		printf ("\nFailed calloc (individuals)");
+		printf ("\nFailed calloc (shuffle_partners)");
 		exit (EXIT_FAILURE);
 	}
 

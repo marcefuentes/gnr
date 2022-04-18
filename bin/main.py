@@ -181,7 +181,6 @@ class barsonepr:
             df = dfs[0]
             for b, name, namesd in zip(self.bins, c_name, c_name_sd):
                 height = df.loc[(df[module.x_axis] == self.x_value) & (df[module.y_axis] == self.y_value) & (df.Time == t), name]
-                print(b, height)
                 heightsd = df.loc[(df[module.x_axis] == self.x_value) & (df[module.y_axis] == self.y_value) & (df.Time == t), namesd]
                 ax.bar(x=b, height=height, align='edge', color=color, linewidth=0, width=width, alpha=alpha)
                 ax.bar(x=b, height=heightsd, align='edge', color=colorsd, linewidth=0, width=width, bottom=height, alpha=alpha)

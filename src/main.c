@@ -62,7 +62,7 @@ double	mutate_grain (double grain);				// gGrainMutationSize, ga2Min, ga2Max
 double	calculate_q1 (double a2);				// ga2Max, ga1Max, gR1
 double	calculate_q2 (double a2, double a2partner);		// gR2, gSelf
 double	calculate_cost	(double choose, double mimic);		// gChooseCost, gMimicCost
-void	update (struct itype *i, struct itype *i_last);
+void	update_for_stats (struct itype *i, struct itype *i_last);
 void	fix_a2_macromutation (struct itype *i, struct itype *i_last);
 
 int main (int argc, char *argv[])
@@ -378,7 +378,7 @@ void caso (struct ptype *p_first)
 				prun++;
 			}
 
-			update (i_first, i_last);
+			update_for_stats (i_first, i_last);
 
 			if ( gIndirectReciprocity == 1 )
 			{
@@ -573,7 +573,7 @@ double mutate_grain (double grain)
 	return grain;
 }
 
-void update (struct itype *i, struct itype *i_last)
+void update_for_stats (struct itype *i, struct itype *i_last)
 {
 	for ( ; i < i_last; i++ )
 	{

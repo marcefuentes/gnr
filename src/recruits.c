@@ -62,14 +62,14 @@ void kill (struct rtype *recruit, struct itype *i_first, int n)
 		do
 		{
 			pick = gsl_rng_uniform_int (rng, n);	// Kills an individual...
-		} while ( (i_first + pick)->isRecruit );	// ... that is not already dead
+		} while ( (i_first + pick)->age == 0 );	// ... that is not already dead
 
 		i = i_first + pick;
 		i->a2Decided = i->a2Default = recruit->a2Default;
 		i->ChooseGrain = recruit->ChooseGrain;
 		i->MimicGrain = recruit->MimicGrain;
 		i->cost = recruit->cost;
-		i->isRecruit = true;
+		i->age = 0;
 	}
 }
 

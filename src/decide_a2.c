@@ -6,7 +6,7 @@ void decide_a2 (struct itype *i, struct itype *i_last, double amax)
 
 	for ( ; i < i_last; i++ )
 	{
-		if ( i->isRecruit || i->partner->isRecruit || i->partner != i->oldpartner )
+		if ( i->age == 0 || i->partner->age == 0 || i->partner != i->oldpartner )
 		{
 			if ( i->a2Decided - i->a2Default > i->MimicGrain )
 			{
@@ -51,7 +51,7 @@ void decide_a2_ir (struct itype *i, struct itype *i_last, double amax)
 
 	for ( ; i < i_last; i++ )
 	{
-		if ( i->isRecruit || i->partner->isRecruit )
+		if ( i->age == 0 || i->partner->age == 0 )
 		{
 			if ( i->a2Decided - i->a2Default > i->MimicGrain )
 			{

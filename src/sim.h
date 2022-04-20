@@ -32,7 +32,7 @@ struct itype
 	double		ChooseGrain;
 	double		MimicGrain;
 	double		cost;			// Information costs
-	bool		isRecruit;		// It can't be killed. It isn't known to, and doesn't know, group mates
+	int		age;			// It can't be killed. It isn't known to, and doesn't know, group mates
 	bool		chose_partner;		// It has chosen a new partner
 	bool		changed_a2;		// It has changed a2Decided
 	struct itype	*oldpartner;

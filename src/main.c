@@ -488,7 +488,7 @@ double fitness (struct itype *i, struct itype *i_last)
 		i->wCumulative = wC;
 
 		i->a2Seen = i->a2Decided;
-		i->isRecruit = false;
+		i->age++;
 		i->oldpartner = i->partner;
 	}
 

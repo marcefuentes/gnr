@@ -443,10 +443,12 @@ void start_population (struct itype *i, struct itype *i_last)
 {
 	struct itype *j;
 
-	i->a2Seen = i->a2Decided = i->a2Default = ga2Init;
+	i->a2Decided = i->a2Default = ga2Init;
+	i->a2SeenSum = 0.0;
 	i->ChooseGrain = gChooseGrainInit;
 	i->MimicGrain = gMimicGrainInit;
 	i->cost = calculate_cost (i->ChooseGrain, i->MimicGrain);
+	i->age = 0;
 	i->chose_partner = false;
 	i->changed_a2 = false;
 
@@ -487,8 +489,18 @@ double fitness (struct itype *i, struct itype *i_last)
 
 		i->wCumulative = wC;
 
-		i->a2Seen = i->a2Decided;
 		i->age++;
+
+		if ( gIndirectReciprocity == 1 )
+		{
+			i->a2SeenSum += i->a2Decided;
+			i->a2Seen = i->a2SeenSum/i->age;
+		}
+		else
+		{
+			i->a2Seen = i->a2Decided;
+		}
+
 		i->oldpartner = i->partner;
 	}
 

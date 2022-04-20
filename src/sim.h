@@ -28,6 +28,7 @@ struct itype
 	double		a2Default; 	
 	double		a2Decided;		// a2 for next round
 	double		a2Seen;			// a2 in present round
+	double		a2SeenSum;		// sum of a2Seen since birth
 	double		wCumulative; 	
 	double		ChooseGrain;
 	double		MimicGrain;

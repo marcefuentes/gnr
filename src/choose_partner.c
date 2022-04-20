@@ -67,10 +67,10 @@ void choose_partner (struct itype *i, struct itype *i_last, int groupsize)
 
 			if ( temp != NULL )
 			{
-				k->newpartner->newpartner = j->newpartner;
-				j->newpartner->newpartner = k->newpartner;
-				k->newpartner = j;
-				j->newpartner = k;
+				k->partner->partner = j->partner;
+				j->partner->partner = k->partner;
+				k->partner = j;
+				j->partner = k;
 				k->chose_partner = true;
 				j->chose_partner = true;
 
@@ -95,7 +95,7 @@ void choose_partner (struct itype *i, struct itype *i_last, int groupsize)
 
 bool willing (struct itype *a, struct itype *b)
 {
-	if ( b->a2Seen - a->newpartner->a2Seen > a->ChooseGrain )
+	if ( b->a2Seen - a->partner->a2Seen > a->ChooseGrain )
 	{
 		return true;
 	}

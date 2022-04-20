@@ -29,8 +29,8 @@ void shuffle_partners (struct itype *i, struct itype *i_last, int groupsize)
 
 		for ( int a = 0; a < groupsize; a += 2 )
 		{
-			(i + c[a])->newpartner = i + c[a + 1];
-			(i + c[a + 1])->newpartner = i + c[a];
+			(i + c[a])->partner = i + c[a + 1];
+			(i + c[a + 1])->partner = i + c[a];
 		}
 	}
 

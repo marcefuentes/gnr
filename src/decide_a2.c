@@ -6,7 +6,7 @@ void decide_a2 (struct itype *i, struct itype *i_last, double amax)
 
 	for ( ; i < i_last; i++ )
 	{
-		if ( i->isRecruit || i->newpartner->isRecruit || i->newpartner != i->partner )
+		if ( i->age == 0 || i->partner->age == 0 || i->partner != i->oldpartner )
 		{
 			if ( i->a2Decided - i->a2Default > i->MimicGrain )
 			{
@@ -17,7 +17,7 @@ void decide_a2 (struct itype *i, struct itype *i_last, double amax)
 		}
 		else
 		{
-			block = (i->newpartner->a2Seen - i->a2Decided) / i->MimicGrain;
+			block = (i->partner->a2Seen - i->a2Decided) / i->MimicGrain;
 
 			if ( block < 0)
 			{
@@ -51,7 +51,7 @@ void decide_a2_ir (struct itype *i, struct itype *i_last, double amax)
 
 	for ( ; i < i_last; i++ )
 	{
-		if ( i->isRecruit || i->newpartner->isRecruit )
+		if ( i->age == 0 || i->partner->age == 0 )
 		{
 			if ( i->a2Decided - i->a2Default > i->MimicGrain )
 			{
@@ -62,7 +62,7 @@ void decide_a2_ir (struct itype *i, struct itype *i_last, double amax)
 		}
 		else
 		{
-			block = (i->newpartner->a2Seen - i->a2Decided) / i->MimicGrain;
+			block = (i->partner->a2Seen - i->a2Decided) / i->MimicGrain;
 
 			if ( block < 0)
 			{

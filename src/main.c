@@ -62,7 +62,7 @@ double	mutate_grain (double grain);				// gGrainMutationSize, ga2Min, ga2Max
 double	calculate_q1 (double a2);				// ga2Max, ga1Max, gR1
 double	calculate_q2 (double a2, double a2partner);		// gR2, gSelf
 double	calculate_cost	(double choose, double mimic);		// gChooseCost, gMimicCost
-void	update (struct itype *i, struct itype *i_last);
+void	update_for_stats (struct itype *i, struct itype *i_last);
 void	fix_a2_macromutation (struct itype *i, struct itype *i_last);
 
 int main (int argc, char *argv[])
@@ -378,7 +378,7 @@ void caso (struct ptype *p_first)
 				prun++;
 			}
 
-			update (i_first, i_last);
+			update_for_stats (i_first, i_last);
 
 			if ( gIndirectReciprocity == 1 )
 			{
@@ -443,10 +443,13 @@ void start_population (struct itype *i, struct itype *i_last)
 {
 	struct itype *j;
 
-	i->a2Seen = i->a2Decided = i->a2Default = ga2Init;
+	i->a2Decided = i->a2Default = ga2Init;
+	i->a2SeenSum = 0.0;
 	i->ChooseGrain = gChooseGrainInit;
 	i->MimicGrain = gMimicGrainInit;
 	i->cost = calculate_cost (i->ChooseGrain, i->MimicGrain);
+	i->age = 0;
+	i->chose_partner = false;
 	i->changed_a2 = false;
 
 	for ( j = i + 1; j < i_last; j++ )
@@ -456,8 +459,8 @@ void start_population (struct itype *i, struct itype *i_last)
 
 	for ( j = i + 1; i < i_last; i += 2, j += 2 )
 	{
-		i->newpartner = j;
-		j->newpartner = i;
+		i->partner = j;
+		j->partner = i;
 	}
 }
 
@@ -468,7 +471,6 @@ double fitness (struct itype *i, struct itype *i_last)
 
 	for ( ; i < i_last; i++ )
 	{
-		i->partner = i->newpartner;
 		q1 = calculate_q1 (i->a2Decided);
 		q2 = calculate_q2 (i->a2Decided, i->partner->a2Decided);
 
@@ -486,6 +488,20 @@ double fitness (struct itype *i, struct itype *i_last)
 		}
 
 		i->wCumulative = wC;
+
+		i->age++;
+
+		if ( gIndirectReciprocity == 1 )
+		{
+			i->a2SeenSum += i->a2Decided;
+			i->a2Seen = i->a2SeenSum/i->age;
+		}
+		else
+		{
+			i->a2Seen = i->a2Decided;
+		}
+
+		i->oldpartner = i->partner;
 	}
 
 	return wC;
@@ -569,12 +585,10 @@ double mutate_grain (double grain)
 	return grain;
 }
 
-void update (struct itype *i, struct itype *i_last)
+void update_for_stats (struct itype *i, struct itype *i_last)
 {
 	for ( ; i < i_last; i++ )
 	{
-		i->a2Seen = i->a2Decided;
-		i->isRecruit = false;
 		i->chose_partner = false;
 		i->changed_a2 = false;
 	}

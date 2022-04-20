@@ -28,15 +28,16 @@ struct itype
 	double		a2Default; 	
 	double		a2Decided;		// a2 for next round
 	double		a2Seen;			// a2 in present round
+	double		a2SeenSum;		// sum of a2Seen since birth
 	double		wCumulative; 	
 	double		ChooseGrain;
 	double		MimicGrain;
 	double		cost;			// Information costs
-	bool		isRecruit;		// It can't be killed. It isn't known to, and doesn't know, group mates
+	int		age;			// It can't be killed. It isn't known to, and doesn't know, group mates
 	bool		chose_partner;		// It has chosen a new partner
 	bool		changed_a2;		// It has changed a2Decided
+	struct itype	*oldpartner;
 	struct itype	*partner;
-	struct itype	*newpartner;
 };
 
 struct rtype

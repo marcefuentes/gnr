@@ -59,7 +59,7 @@ class barsallpr:
         fig.supylabel(t=module.y_label, x=0.003*module.width, fontsize=fslabel)
 
         if module.movie == True:
-            fig.text(0.89, 0.95, f'Time = {t}', fontsize=fstitle, ha='right')
+            fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
         outer_grid = fig.add_gridspec(nrows=1, ncols=len(module.c_name_roots), wspace=0.1)
 
@@ -156,7 +156,7 @@ class barsonepr:
         fig.supylabel('Frequency', fontsize=fslabel)
 
         if module.movie == True:
-            fig.text(0.17, 0.80, f'Time = {t}', fontsize=fstitle, ha='center')
+            fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
         width = -1.0/self.bincount
 
@@ -220,7 +220,7 @@ class scatterpr:
         fig.supylabel(module.y_label, fontsize=fslabel)
 
         if module.movie == True:
-            fig.text(0.50, 0.50, f'Time = {t}', fontsize=fstitle, ha='center')
+            fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
         for ax, name_root, title in zip(axs, module.c_name_roots, module.titles):
             ax.set_title(title, fontsize=fstitle)
@@ -335,7 +335,6 @@ def get_data(dfs):
         if module.movie == False:
             lastt = df.Time.iat[-1]
             df = df[df.Time == lastt]
-        #print(df)
         dfs.append(df)
 
     return dfs

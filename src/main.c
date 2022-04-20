@@ -468,9 +468,8 @@ double fitness (struct itype *i, struct itype *i_last)
 
 	for ( ; i < i_last; i++ )
 	{
-		i->partner = i->newpartner;
 		q1 = calculate_q1 (i->a2Decided);
-		q2 = calculate_q2 (i->a2Decided, i->partner->a2Decided);
+		q2 = calculate_q2 (i->a2Decided, i->newpartner->a2Decided);
 
 		switch ( gFFunction )
 		{
@@ -573,6 +572,7 @@ void update (struct itype *i, struct itype *i_last)
 {
 	for ( ; i < i_last; i++ )
 	{
+		i->partner = i->newpartner;
 		i->a2Seen = i->a2Decided;
 		i->isRecruit = false;
 		i->chose_partner = false;

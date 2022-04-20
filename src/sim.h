@@ -35,8 +35,8 @@ struct itype
 	bool		isRecruit;		// It can't be killed. It isn't known to, and doesn't know, group mates
 	bool		chose_partner;		// It has chosen a new partner
 	bool		changed_a2;		// It has changed a2Decided
-	struct itype	*partner;
 	struct itype	*oldpartner;
+	struct itype	*partner;
 };
 
 struct rtype

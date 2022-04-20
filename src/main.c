@@ -447,6 +447,7 @@ void start_population (struct itype *i, struct itype *i_last)
 	i->ChooseGrain = gChooseGrainInit;
 	i->MimicGrain = gMimicGrainInit;
 	i->cost = calculate_cost (i->ChooseGrain, i->MimicGrain);
+	i->chose_partner = false;
 	i->changed_a2 = false;
 
 	for ( j = i + 1; j < i_last; j++ )
@@ -485,6 +486,10 @@ double fitness (struct itype *i, struct itype *i_last)
 		}
 
 		i->wCumulative = wC;
+
+		i->a2Seen = i->a2Decided;
+		i->isRecruit = false;
+		i->oldpartner = i->partner;
 	}
 
 	return wC;
@@ -572,9 +577,6 @@ void update (struct itype *i, struct itype *i_last)
 {
 	for ( ; i < i_last; i++ )
 	{
-		i->oldpartner = i->partner;
-		i->a2Seen = i->a2Decided;
-		i->isRecruit = false;
 		i->chose_partner = false;
 		i->changed_a2 = false;
 	}

@@ -36,7 +36,7 @@ struct itype
 	bool		chose_partner;		// It has chosen a new partner
 	bool		changed_a2;		// It has changed a2Decided
 	struct itype	*partner;
-	struct itype	*newpartner;
+	struct itype	*oldpartner;
 };
 
 struct rtype

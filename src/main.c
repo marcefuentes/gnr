@@ -456,8 +456,8 @@ void start_population (struct itype *i, struct itype *i_last)
 
 	for ( j = i + 1; i < i_last; i += 2, j += 2 )
 	{
-		i->newpartner = j;
-		j->newpartner = i;
+		i->partner = j;
+		j->partner = i;
 	}
 }
 
@@ -469,7 +469,7 @@ double fitness (struct itype *i, struct itype *i_last)
 	for ( ; i < i_last; i++ )
 	{
 		q1 = calculate_q1 (i->a2Decided);
-		q2 = calculate_q2 (i->a2Decided, i->newpartner->a2Decided);
+		q2 = calculate_q2 (i->a2Decided, i->partner->a2Decided);
 
 		switch ( gFFunction )
 		{
@@ -572,7 +572,7 @@ void update (struct itype *i, struct itype *i_last)
 {
 	for ( ; i < i_last; i++ )
 	{
-		i->partner = i->newpartner;
+		i->oldpartner = i->partner;
 		i->a2Seen = i->a2Decided;
 		i->isRecruit = false;
 		i->chose_partner = false;

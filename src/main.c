@@ -280,7 +280,6 @@ void read_globals (char *filename)
 	gGroupSize = pow(2.0, gGroupSize);
 	gChooseCost = pow(2.0, gChooseCost);
 	gMimicCost = pow(2.0, gMimicCost);
-	gSelf = pow(2.0, gSelf);
 }
 
 void write_globals (char *filename)

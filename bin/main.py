@@ -93,13 +93,13 @@ class barsallpr:
                         ax.bar(x=b, height=height, align='edge', color=(red-0.15, green-0.15, blue-0.15), linewidth=0, width=width, alpha=0.9)
                         ax.set(xticks=[], yticks=[], ylim=[0, module.ymax*2])
                     if (n == 0) & (column == 0):
-                        if module.log == True:
+                        if module.logy == True:
                             y = '$2^{{{}}}$'.format(round(math.log(inner_row, 2)))
                         else:
                             y = inner_row
                         ax.set_ylabel(y, rotation='horizontal', horizontalalignment='right', verticalalignment='center')
                     if row == len(self.inner_rows) - 1:
-                        if module.log == True:
+                        if module.logx == True:
                             x = '$2^{{{}}}$'.format(round(math.log(inner_col, 2)))
                         else:
                             x = inner_col
@@ -226,10 +226,11 @@ class scatterpr:
             ax.set_title(title, fontsize=fstitle)
             ax.tick_params(axis='x', labelsize=fstick)
             ax.tick_params(axis='y', labelsize=fstick)
-            if module.log == True:
+            if module.logx == True:
                 ax.set_xscale('log', base=2)
+            if module.logy == True:
                 ax.set_yscale('log', base=2)
-            ax.set_aspect('equal', 'box')
+            #ax.set_aspect('equal', 'box')
             dif = 1.0 - dfs[0].loc[dfs[0].Time == t, name_root]/dfs[1].loc[dfs[1].Time == t, name_root]
             if (name_root == 'ChooseGrainmedian') or (name_root == 'MimicGrainmedian') or ('BD' in name_root):
                 dif = -dif
@@ -277,8 +278,9 @@ class scatterpr:
 
         for row, (rowax, df) in enumerate(zip(axs, dfs)):
             for ax, name_root in zip(rowax, module.c_name_roots):
-                if module.log == True:
+                if module.logx == True:
                     ax.set_xscale('log', base=2)
+                if module.logy == True:
                     ax.set_yscale('log', base=2)
                 ax.set_aspect('equal', 'box')
                 dif = df.loc[df.Time == t, name_root] - dfs[1].loc[df.Time == t, name_root]

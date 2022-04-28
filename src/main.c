@@ -68,7 +68,8 @@ void	fix_a2_macromutation (struct itype *i, struct itype *i_last);
 int main (int argc, char *argv[])
 {
 	struct ptype	*p_first, *p_last;
-	double 		*factor1, *factor2;
+	double 		*factor1, *factor2, inc1, inc2, f1, f2;
+	int		a, b;
 	clock_t		start = clock ();
 
 	if ( argc != 2 )
@@ -149,15 +150,26 @@ int main (int argc, char *argv[])
 	write_globals (gl2); 
 	write_headers (out, factorName1, factorName2);
 
-	double f1 = fFirst1;
-
-	for ( int a = 0; a < fLevels1; a++ )
+	if ( fLevels1 > 1 )
 	{
-		if ( fLevels1 > 1 )
-		{
-			f1 += (double)(fLast1 - fFirst1)/(fLevels1 - 1);
-		}
+		inc1 = (double)(fLast1 - fFirst1)/(fLevels1 - 1);
+	}
+	else
+	{
+		inc1 = 0.0;
+	}
 
+	if ( fLevels2 > 1 )
+	{
+		inc2 = (double)(fLast2 - fFirst2)/(fLevels2 - 1);
+	}
+	else
+	{
+		inc2 = 0.0;
+	}
+
+	for ( a = 0, f1 = fFirst1; a < fLevels1; a++, f1 += inc1 )
+	{
 		if ( strcmp (factorName1, "ChooseGrainInit") == 0 || strcmp (factorName1, "Self") == 0 )
 		{
 			*factor1 = f1;
@@ -167,15 +179,8 @@ int main (int argc, char *argv[])
 			*factor1 = pow(2.0, f1);
 		}
 
-		double f2 = fFirst2;
-
-		for ( int b = 0; b < fLevels2; b++ )
+		for ( b = 0, f2 = fFirst2; b < fLevels2; b++, f2 += inc2 )
 		{
-			if ( fLevels2 > 1 )
-			{
-				f2 += (double)(fLast2 - fFirst2)/(fLevels2 - 1);
-			}
-
 			if ( strcmp (factorName2, "ChooseGrainInit") == 0 || strcmp (factorName2, "Self") == 0 )
 			{
 				*factor2 = f2;

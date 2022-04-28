@@ -69,7 +69,6 @@ int main (int argc, char *argv[])
 {
 	struct ptype	*p_first, *p_last;
 	double 		*factor1, *factor2, inc1, inc2, f1, f2;
-	int		a, b;
 	clock_t		start = clock ();
 
 	if ( argc != 2 )
@@ -156,7 +155,7 @@ int main (int argc, char *argv[])
 	}
 	else
 	{
-		inc1 = 0.0;
+		inc1 = fLast1 + 1.0;
 	}
 
 	if ( fLevels2 > 1 )
@@ -165,10 +164,10 @@ int main (int argc, char *argv[])
 	}
 	else
 	{
-		inc2 = 0.0;
+		inc2 = fLast2 + 1.0;
 	}
 
-	for ( a = 0, f1 = fFirst1; a < fLevels1; a++, f1 += inc1 )
+	for ( f1 = fFirst1; f1 <= fLast1; f1 += inc1 )
 	{
 		if ( strcmp (factorName1, "ChooseGrainInit") == 0 || strcmp (factorName1, "Self") == 0 )
 		{
@@ -179,7 +178,7 @@ int main (int argc, char *argv[])
 			*factor1 = pow(2.0, f1);
 		}
 
-		for ( b = 0, f2 = fFirst2; b < fLevels2; b++, f2 += inc2 )
+		for ( f2 = fFirst2; f2 <= fLast2; f2 += inc2 )
 		{
 			if ( strcmp (factorName2, "ChooseGrainInit") == 0 || strcmp (factorName2, "Self") == 0 )
 			{

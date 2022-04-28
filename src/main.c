@@ -68,8 +68,7 @@ void	fix_a2_macromutation (struct itype *i, struct itype *i_last);
 int main (int argc, char *argv[])
 {
 	struct ptype	*p_first, *p_last;
-	double 		*factor1, *factor2, inc1, inc2;
-	int		l1, l2;
+	double 		*factor1, *factor2;
 	clock_t		start = clock ();
 
 	if ( argc != 2 )
@@ -147,75 +146,61 @@ int main (int argc, char *argv[])
 		gsl_rng_set (rng, (unsigned long) time(NULL));
 	}
 
-	if ( strcmp (factorName1, "ChooseGrainInit") == 0 )
-	{
-		inc1 = 1.0/fLevels1;
-		inc2 = 1.0/fLevels2;
-	}
-	else
-	{
-		inc1 = pow(2.0, (fLast1 - fFirst1)/(fLevels1 - 1));
-		inc2 = pow(2.0, (fLast2 - fFirst2)/(fLevels2 - 1));
-
-		fFirst1 = pow(2.0, fFirst1);
-		fFirst2 = pow(2.0, fFirst2);
-	}
-
 	write_globals (gl2); 
 	write_headers (out, factorName1, factorName2);
 
-	if ( strcmp (factorName1, "ChooseGrainInit") == 0 )
+	double f1 = fFirst1;
+
+	for ( int a = 0; a < fLevels1; a++ )
 	{
-		for ( l1 = 0; l1 < fLevels1; l1++ )
+		if ( fLevels1 > 1 )
 		{
-			*factor1 = pow(2.0, fFirst1)*pow(inc1, l1);
-
-			for ( l2 = 0; l2 < fLevels2; l2++ )
-			{
-				*factor2 = pow(2.0, fFirst2)*pow(inc2, l2);
-
-				p_first = calloc (gPeriods + 1, sizeof *p_first);
-				if ( p_first == NULL )
-				{
-					printf ("\nFailed calloc (periods)");
-					exit (EXIT_FAILURE);
-				}
-
-				caso (p_first); 
-
-				p_last = p_first + gPeriods + 1;
-
-				stats_runs (p_first, p_last, gRuns);
-
-				write_stats (out, *factor1, *factor2, gGroupSize, p_first, p_last); // Writes periodic data
-
-				free (p_first);
-			}
+			f1 += (double)(fLast1 - fFirst1)/(fLevels1 - 1);
 		}
-	}
-	else
-	{
-		for ( *factor1 = fFirst1, l1 = 0; l1 < fLevels1; l1++, *factor1 *= inc1 )
+
+		if ( strcmp (factorName1, "ChooseGrainInit") == 0 || strcmp (factorName1, "Self") == 0 )
 		{
-			for ( *factor2 = fFirst2, l2 = 0; l2 < fLevels2; l2++, *factor2 *= inc2 )
+			*factor1 = f1;
+		}
+		else
+		{
+			*factor1 = pow(2.0, f1);
+		}
+
+		double f2 = fFirst2;
+
+		for ( int b = 0; b < fLevels2; b++ )
+		{
+			if ( fLevels2 > 1 )
 			{
-				p_first = calloc (gPeriods + 1, sizeof *p_first);
-				if ( p_first == NULL )
-				{
-					printf ("\nFailed calloc (periods)");
-					exit (EXIT_FAILURE);
-				}
-
-				caso (p_first); 
-
-				p_last = p_first + gPeriods + 1;
-
-				stats_runs (p_first, p_last, gRuns);
-
-				write_stats (out, *factor1, *factor2, gGroupSize, p_first, p_last); // Writes periodic data
-
-				free (p_first);
+				f2 += (double)(fLast2 - fFirst2)/(fLevels2 - 1);
 			}
+
+			if ( strcmp (factorName1, "ChooseGrainInit") == 0 || strcmp (factorName1, "Self") == 0 )
+			{
+				*factor2 = f2;
+			}
+			else
+			{
+				*factor2 = pow(2.0, f2);
+			}
+
+			p_first = calloc (gPeriods + 1, sizeof *p_first);
+			if ( p_first == NULL )
+			{
+				printf ("\nFailed calloc (periods)");
+				exit (EXIT_FAILURE);
+			}
+
+			caso (p_first); 
+
+			p_last = p_first + gPeriods + 1;
+
+			stats_runs (p_first, p_last, gRuns);
+
+			write_stats (out, *factor1, *factor2, gGroupSize, p_first, p_last); // Writes periodic data
+
+			free (p_first);
 		}
 	}
 
@@ -332,7 +317,7 @@ void write_globals (char *filename)
 	{
 		fprintf (fp, "MimicCost,%f,%f\n", gMimicCost, log(gMimicCost)/log(2));
 	}
-	fprintf (fp, "Self,%f,%f\n", gSelf, log(gSelf)/log(2));
+	fprintf (fp, "Self,%f\n", gSelf);
 	fprintf (fp, "Drift,%i\n", gDrift);
 	fprintf (fp, "a2Macromutation,%i\n", ga2Macromutation);
 	fprintf (fp, "IndirectReciprocity,%i\n", gIndirectReciprocity);

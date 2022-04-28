@@ -176,7 +176,7 @@ int main (int argc, char *argv[])
 				f2 += (double)(fLast2 - fFirst2)/(fLevels2 - 1);
 			}
 
-			if ( strcmp (factorName1, "ChooseGrainInit") == 0 || strcmp (factorName1, "Self") == 0 )
+			if ( strcmp (factorName2, "ChooseGrainInit") == 0 || strcmp (factorName2, "Self") == 0 )
 			{
 				*factor2 = f2;
 			}

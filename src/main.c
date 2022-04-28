@@ -166,10 +166,14 @@ int main (int argc, char *argv[])
 
 	if ( strcmp (factorName1, "ChooseGrainInit") == 0 )
 	{
-		for ( *factor1 = fFirst1, l1 = 0; l1 < fLevels1; l1++, *factor1 += inc1 )
+		for ( l1 = 0; l1 < fLevels1; l1++ )
 		{
-			for ( *factor2 = fFirst2, l2 = 0; l2 < fLevels2; l2++, *factor2 += inc2 )
+			*factor1 = pow(2.0, fFirst1)*pow(inc1, l1);
+
+			for ( l2 = 0; l2 < fLevels2; l2++ )
 			{
+				*factor2 = pow(2.0, fFirst2)*pow(inc2, l2);
+
 				p_first = calloc (gPeriods + 1, sizeof *p_first);
 				if ( p_first == NULL )
 				{

@@ -69,6 +69,7 @@ int main (int argc, char *argv[])
 {
 	struct ptype	*p_first, *p_last;
 	double 		*factor1, *factor2, inc1, inc2, f1, f2;
+	int		a, b;
 	clock_t		start = clock ();
 
 	if ( argc != 2 )
@@ -167,7 +168,7 @@ int main (int argc, char *argv[])
 		inc2 = fLast2 + 1.0;
 	}
 
-	for ( f1 = fFirst1; f1 <= fLast1; f1 += inc1 )
+	for ( f1 = fFirst1, a = 0; a < fLevels1; a++, f1 += inc1 )
 	{
 		if ( strcmp (factorName1, "ChooseGrainInit") == 0 || strcmp (factorName1, "Self") == 0 )
 		{
@@ -178,7 +179,7 @@ int main (int argc, char *argv[])
 			*factor1 = pow(2.0, f1);
 		}
 
-		for ( f2 = fFirst2; f2 <= fLast2; f2 += inc2 )
+		for ( f2 = fFirst2, b = 0; b < fLevels2; b++, f2 += inc2 )
 		{
 			if ( strcmp (factorName2, "ChooseGrainInit") == 0 || strcmp (factorName2, "Self") == 0 )
 			{
@@ -333,7 +334,7 @@ void caso (struct ptype *p_first)
 {
 	struct itype	*i_first, *i_last;
 	struct pruntype	*prun_first, *prun_last, *prun;
-	double		wmax = ces(ga1Max*gR1, ga2Max*gR2*(1.0 - gSelf));
+	double		wmax = ces(ga1Max*gR1, ga2Max*gR2);
 
 	i_first = calloc (gN, sizeof *i_first);
 	if ( i_first == NULL )

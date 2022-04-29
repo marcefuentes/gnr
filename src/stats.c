@@ -4,13 +4,15 @@
 int select_bin (double ceiling, double binsize, double v);
 double stdev (double sum, double sum2, int runs);
 
-void stats_period (struct itype *i, struct itype *i_last, struct pruntype *prun, int n, double amin, double amax, double wmax)
+void stats_period (struct itype *i, struct itype *i_last, struct pruntype *prun, int n, double amin, double amax, double wmax, double r2, double h)
 {
 	int bin[CONTINUOUS_V][BINS] = {{ 0 }};
 	int boolean[BOOLEAN_V] = { 0 };
-	double binsize = (amax - amin)/BINS;
+	double abinsize = (amax - amin)/BINS;
+	double hbinsize = abinsize*r2;
 	double wbinsize = wmax/BINS;
-	double ceiling = amin + binsize;
+	double aceiling = amin + abinsize;
+	double hceiling = aceiling*r2;
 	double e, f;
 	int b;
 
@@ -22,10 +24,11 @@ void stats_period (struct itype *i, struct itype *i_last, struct pruntype *prun,
 		w = i->wCumulative - p;
 		p = i->wCumulative;
 		bin[0][select_bin(wbinsize, wbinsize, w)] ++;
-		bin[1][select_bin(ceiling, binsize, i->a2Default)] ++;
-		bin[2][select_bin(ceiling, binsize, i->a2Seen)] ++;
-		bin[3][select_bin(ceiling, binsize, i->ChooseGrain)] ++;
-		bin[4][select_bin(ceiling, binsize, i->MimicGrain)] ++;
+		bin[1][select_bin(aceiling, abinsize, i->a2Default)] ++;
+		bin[2][select_bin(aceiling, abinsize, i->a2Seen)] ++;
+		bin[3][select_bin(hceiling, hbinsize, i->a2Seen*r2*h)] ++;
+		bin[4][select_bin(aceiling, abinsize, i->ChooseGrain)] ++;
+		bin[5][select_bin(aceiling, abinsize, i->MimicGrain)] ++;
 		boolean[0] += i->chose_partner;
 		boolean[1] += i->changed_a2;
 	}

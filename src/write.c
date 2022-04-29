@@ -10,6 +10,7 @@ void write_headers (char *filename, char *header1, char *header2)
 	char headersc[CONTINUOUS_V][20] = { "w",
 						"a2Default",
 						"a2Seen",
+						"help",
 						"ChooseGrain",
 						"MimicGrain" };
 

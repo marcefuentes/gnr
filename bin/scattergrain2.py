@@ -14,5 +14,6 @@ y_max = None
 width = 12.0
 height = 5.8
 bubble_size = 600.0
-log = True
+logx = True
+logy = True
 movie = False

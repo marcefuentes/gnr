@@ -110,6 +110,8 @@ int main (int argc, char *argv[])
 		factor1 = &gMimicCost;
 	else if ( strcmp (factorName1, "ChooseGrainInit") == 0 )
 		factor1 = &gChooseGrainInit;
+	else if ( strcmp (factorName1, "ES") == 0 )
+		factor2 = &gES;
 	else
 	{
 		fprintf (stderr, "I don't know factor %s.\n", factorName1);
@@ -130,6 +132,8 @@ int main (int argc, char *argv[])
 		factor2 = &gMimicCost;
 	else if ( strcmp (factorName2, "MimicGrainInit") == 0 )
 		factor2 = &gMimicGrainInit;
+	else if ( strcmp (factorName2, "ES") == 0 )
+		factor2 = &gES;
 	else
 	{
 		fprintf (stderr, "I don't know factor %s.\n", factorName2);
@@ -171,7 +175,7 @@ int main (int argc, char *argv[])
 
 	for ( f1 = fFirst1, a = 0; a < fLevels1; a++, f1 += inc1 )
 	{
-		if ( strcmp (factorName1, "ChooseGrainInit") == 0 || strcmp (factorName1, "Self") == 0 )
+		if ( strcmp (factorName1, "ChooseGrainInit") == 0 || strcmp (factorName1, "Self") == 0 || strcmp (factorName1, "ES") == 0 )
 		{
 			*factor1 = f1;
 		}
@@ -182,7 +186,7 @@ int main (int argc, char *argv[])
 
 		for ( f2 = fFirst2, b = 0; b < fLevels2; b++, f2 += inc2 )
 		{
-			if ( strcmp (factorName2, "ChooseGrainInit") == 0 || strcmp (factorName2, "Self") == 0 )
+			if ( strcmp (factorName2, "ChooseGrainInit") == 0 || strcmp (factorName2, "Self") == 0 || strcmp (factorName1, "ES") == 0 )
 			{
 				*factor2 = f2;
 			}

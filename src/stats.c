@@ -11,6 +11,7 @@ void stats_period (struct itype *i, struct itype *i_last, struct pruntype *prun,
 	double binsize = (amax - amin)/BINS;
 	double wbinsize = wmax/BINS;
 	double ceiling = amin + binsize;
+	double e, f;
 	int b;
 
 	double w;
@@ -37,13 +38,22 @@ void stats_period (struct itype *i, struct itype *i_last, struct pruntype *prun,
 		}
 
 		b = 0;
+		e = 0.0;
 
-		for ( double f = 0.0; f < 0.5; f += prun->frc[v][b] )
+		for ( f = prun->frc[v][b]; f < 0.5; f += prun->frc[v][b] )
 		{
+			e = f;
 			b++;
 		}
 
-		prun->median[v] = (b + 0.5)/BINS;
+		prun->median[v] = (double)b/BINS + (0.5 - e)/((f - e)*BINS);
+	}
+
+	prun->median[0] *= wmax;
+
+	for ( int v = 1; v < CONTINUOUS_V; v++ )
+	{
+		prun->median[v] *= (amax - amin);
 	}
 
 	for ( int v = 0; v < BOOLEAN_V; v++ )

@@ -55,6 +55,7 @@ void	write_globals (char *filename);
 void	caso (struct ptype *p_first); 
 void	start_population (struct itype *i, struct itype *i_last);
 double	fitness (struct itype *i, struct itype *i_last);	// gFFunction
+double	calculate_wmax (double q1, double q2);				// gFFunction
 double	ces (double q1, double q2);				// gES, galpha
 double	quasilinear (double q1, double q2);			// galpha, gc1, gc2
 double	mutate_a2 (double a2);					// ga2MutationSize, ga2Min, ga2Max
@@ -334,7 +335,7 @@ void caso (struct ptype *p_first)
 {
 	struct itype	*i_first, *i_last;
 	struct pruntype	*prun_first, *prun_last, *prun;
-	double		wmax = ces(ga1Max*gR1, ga2Max*gR2);
+	double		wmax = calculate_wmax(ga1Max*gR1, ga2Max*gR2);
 
 	i_first = calloc (gN, sizeof *i_first);
 	if ( i_first == NULL )
@@ -498,6 +499,26 @@ double fitness (struct itype *i, struct itype *i_last)
 	}
 
 	return wC;
+}
+
+double calculate_wmax (double q1, double q2)
+{
+	double wmax;
+
+	switch ( gFFunction )
+	{
+	case 'q':
+		wmax = quasilinear(q1, q2);
+		break;
+	case 'c':
+		wmax = ces(q1, q2);
+		break;
+	default:
+		wmax = ces(q1, q2);
+		break;
+	}
+
+	return wmax;
 }
 
 double ces (double q1, double q2)

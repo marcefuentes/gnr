@@ -16,8 +16,8 @@ a2MutationSize,0.007812,-7.000000
 GrainMutationSize,0.015625,-6.000000
 DeathRate,0.062500,-4.000000
 GroupSize,8,3
-Self,0.125000
+Given,0.875000
 Drift,0
 a2Macromutation,0
 IndirectReciprocity,0
-TimeElapsed,0.075413
+TimeElapsed,0.075812

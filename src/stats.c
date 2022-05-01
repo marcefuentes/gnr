@@ -4,7 +4,7 @@
 int select_bin (double ceiling, double binsize, double v);
 double stdev (double sum, double sum2, int runs);
 
-void stats_period (struct itype *i, struct itype *i_last, struct pruntype *prun, int n, double amin, double amax, double wmax, double r2, double h)
+void stats_period (struct itype *i, struct itype *i_last, struct pruntype *prun, int n, double amin, double amax, double wmax, double r2, double given)
 {
 	int bin[CONTINUOUS_V][BINS] = {{ 0 }};
 	int boolean[BOOLEAN_V] = { 0 };
@@ -26,7 +26,7 @@ void stats_period (struct itype *i, struct itype *i_last, struct pruntype *prun,
 		bin[0][select_bin(wbinsize, wbinsize, w)] ++;
 		bin[1][select_bin(aceiling, abinsize, i->a2Default)] ++;
 		bin[2][select_bin(aceiling, abinsize, i->a2Seen)] ++;
-		bin[3][select_bin(hceiling, hbinsize, i->a2Seen*r2*h)] ++;
+		bin[3][select_bin(hceiling, hbinsize, i->a2Seen*r2*given)] ++;
 		bin[4][select_bin(aceiling, abinsize, i->ChooseGrain)] ++;
 		bin[5][select_bin(aceiling, abinsize, i->MimicGrain)] ++;
 		boolean[0] += i->chose_partner;

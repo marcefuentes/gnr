@@ -21,7 +21,7 @@ ES,0
 GroupSize,3
 ChooseCost,-12
 MimicCost,-12
-Self,0.125
+Given,0.875
 Drift,0
 a2Macromutation,0
 IndirectReciprocity,0

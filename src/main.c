@@ -39,7 +39,7 @@ double	gES;					// Elasticity of substitution. ES = 1/(1 - rho)
 int	gGroupSize;				// Number of individuals that an individual can watch (including itself)
 double	gChooseCost;
 double	gMimicCost;
-double	gSelf;					// Effect on self: q2 = a2*R2*Self
+double	gGiven;					// Effect on partner: q2 = a2*R2*Given
 int	gDrift;
 int	ga2Macromutation;
 int	gIndirectReciprocity;
@@ -61,7 +61,7 @@ double	quasilinear (double q1, double q2);			// galpha, gc1, gc2
 double	mutate_a2 (double a2);					// ga2MutationSize, ga2Min, ga2Max
 double	mutate_grain (double grain);				// gGrainMutationSize, ga2Min, ga2Max
 double	calculate_q1 (double a2);				// ga2Max, ga1Max, gR1
-double	calculate_q2 (double a2, double a2partner);		// gR2, gSelf
+double	calculate_q2 (double a2, double a2partner);		// gR2, gGiven
 double	calculate_cost	(double choose, double mimic);		// gChooseCost, gMimicCost
 void	update_for_stats (struct itype *i, struct itype *i_last);
 void	fix_a2_macromutation (struct itype *i, struct itype *i_last);
@@ -96,8 +96,8 @@ int main (int argc, char *argv[])
 
 	read_globals (glo);
 
-	if ( strcmp (factorName1, "Self") == 0 )
-		factor1 = &gSelf;
+	if ( strcmp (factorName1, "Given") == 0 )
+		factor1 = &gGiven;
 	else if ( strcmp (factorName1, "a2MutationSize") == 0 )
 		factor1 = &ga2MutationSize;
 	else if ( strcmp (factorName1, "GrainMutationSize") == 0 )
@@ -118,8 +118,8 @@ int main (int argc, char *argv[])
 		exit (EXIT_FAILURE);
 	}
 
-	if ( strcmp (factorName2, "Self") == 0 )
-		factor2 = &gSelf;
+	if ( strcmp (factorName2, "Given") == 0 )
+		factor2 = &gGiven;
 	else if ( strcmp (factorName2, "a2MutationSize") == 0 )
 		factor2 = &ga2MutationSize;
 	else if ( strcmp (factorName2, "GrainMutationSize") == 0 )
@@ -175,7 +175,7 @@ int main (int argc, char *argv[])
 
 	for ( f1 = fFirst1, a = 0; a < fLevels1; a++, f1 += inc1 )
 	{
-		if ( strcmp (factorName1, "ChooseGrainInit") == 0 || strcmp (factorName1, "Self") == 0 || strcmp (factorName1, "ES") == 0 )
+		if ( strcmp (factorName1, "ChooseGrainInit") == 0 || strcmp (factorName1, "Given") == 0 || strcmp (factorName1, "ES") == 0 )
 		{
 			*factor1 = f1;
 		}
@@ -186,7 +186,7 @@ int main (int argc, char *argv[])
 
 		for ( f2 = fFirst2, b = 0; b < fLevels2; b++, f2 += inc2 )
 		{
-			if ( strcmp (factorName2, "ChooseGrainInit") == 0 || strcmp (factorName2, "Self") == 0 || strcmp (factorName1, "ES") == 0 )
+			if ( strcmp (factorName2, "ChooseGrainInit") == 0 || strcmp (factorName2, "Given") == 0 || strcmp (factorName2, "ES") == 0 )
 			{
 				*factor2 = f2;
 			}
@@ -254,7 +254,7 @@ void read_globals (char *filename)
 	fscanf (fp, "GroupSize,%i\n", &gGroupSize);
 	fscanf (fp, "ChooseCost,%lf\n", &gChooseCost);
 	fscanf (fp, "MimicCost,%lf\n", &gMimicCost);
-	fscanf (fp, "Self,%lf\n", &gSelf);
+	fscanf (fp, "Given,%lf\n", &gGiven);
 	fscanf (fp, "Drift,%i\n", &gDrift);
 	fscanf (fp, "a2Macromutation,%i\n", &ga2Macromutation);
 	fscanf (fp, "IndirectReciprocity,%i\n", &gIndirectReciprocity);
@@ -327,7 +327,7 @@ void write_globals (char *filename)
 	{
 		fprintf (fp, "MimicCost,%f,%f\n", gMimicCost, log(gMimicCost)/log(2));
 	}
-	fprintf (fp, "Self,%f\n", gSelf);
+	fprintf (fp, "Given,%f\n", gGiven);
 	fprintf (fp, "Drift,%i\n", gDrift);
 	fprintf (fp, "a2Macromutation,%i\n", ga2Macromutation);
 	fprintf (fp, "IndirectReciprocity,%i\n", gIndirectReciprocity);
@@ -372,7 +372,7 @@ void caso (struct ptype *p_first)
 				|| (t + 1) % (gTime/gPeriods) == 0 )
 			{
 				prun->time = t + 1;
-				stats_period (i_first, i_last, prun, gN, ga2Min, ga2Max, wmax, gR2, 1.0 - gSelf);
+				stats_period (i_first, i_last, prun, gN, ga2Min, ga2Max, wmax, gR2, gGiven);
 				prun++;
 			}
 
@@ -558,7 +558,7 @@ double calculate_q1 (double a2)
 
 double calculate_q2 (double a2, double a2partner)
 {
-	double q2 = gR2*a2*gSelf + gR2*a2partner*(1.0 - gSelf);
+	double q2 = gR2*a2*(1 - gGiven) + gR2*a2partner*gGiven;
 
 	return q2;
 }

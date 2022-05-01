@@ -217,7 +217,7 @@ class scatterpr:
         fig, axs = plt.subplots(nrows=1, ncols=len(module.c_name_roots), figsize=(module.width, module.height), constrained_layout=False)
 
         fig.supxlabel(module.x_label, fontsize=fslabel)
-        fig.supylabel(module.y_label, fontsize=fslabel)
+        fig.supylabel(module.y_label, fontsize=fslabel, ha='center')
 
         if module.movie == True:
             fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
@@ -230,7 +230,6 @@ class scatterpr:
                 ax.set_xscale('log', base=2)
             if module.logy == True:
                 ax.set_yscale('log', base=2)
-            #ax.set_aspect('equal', 'box')
             dif = 1.0 - dfs[0].loc[dfs[0].Time == t, name_root]/dfs[1].loc[dfs[1].Time == t, name_root]
             if (name_root == 'ChooseGrainmedian') or (name_root == 'MimicGrainmedian') or ('BD' in name_root):
                 dif = -dif
@@ -259,6 +258,7 @@ class scatterpr:
                         ax.set(yticks=[])
                     ax.set_xlim(module.x_min, module.x_max)
                     ax.set_ylim(module.y_min, module.y_max)
+                    ax.set_box_aspect(1)
 
         plt.savefig(outfile, transparent=False)
         plt.close()

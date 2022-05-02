@@ -84,6 +84,8 @@ void write_stats (char *filename, float factor1, float factor2, int groupsize, s
 
 void write_time_elapsed (char *filename, float time_elapsed)
 {
+	int h, m;
+	double s;
 	FILE *fp;
 
 	if ( (fp = fopen (filename, "a+")) == NULL )
@@ -92,7 +94,25 @@ void write_time_elapsed (char *filename, float time_elapsed)
 		exit (EXIT_FAILURE);
 	}
 
-	fprintf (fp, "TimeElapsed,%f\n", time_elapsed);
+	h = time_elapsed/3600;
+	m = (time_elapsed - (3600*h))/60;
+	s = time_elapsed - 3600*h - 60*m;
+
+	fprintf (fp, "TimeElapsed,%d:", h);
+
+	if ( m < 10 )
+	{
+		fprintf (fp, "0");
+	}
+
+	fprintf (fp, "%d:", m);
+
+	if ( s < 10 )
+	{
+		fprintf (fp, "0");
+	}
+
+	fprintf (fp, "%f", s);
 
 	fclose (fp);
 }

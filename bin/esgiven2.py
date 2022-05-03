@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 ftype = 'scatter'
+drift = True
 c_name_roots = ('helpmedian', 'wmedian')
 titles = (' \nHelp', ' \nFitness')
 x_axis = 'ES'

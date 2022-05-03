@@ -243,87 +243,24 @@ class scatterpr:
                     if i > red:
                         i = red
                     color.append((red - i, green - i, blue - i/2.0))
-            for drift, df in enumerate(dfs):
-                for suffix, suffixec, suffixalpha in zip(self.suffixes, self.suffixecs, self.suffixalphas):
-                    x = df.loc[df.Time == t, module.x_axis]
-                    y = df.loc[df.Time == t, module.y_axis]
-                    s = df.loc[df.Time == t, name_root]
-                    if suffix == 'SD':
-                        s = s + df.loc[df.Time == t, name_root + suffix]
-                    if drift == 0:
-                        ax.scatter(x, y, c=color, ec=color, alpha=suffixalpha, s=s*module.bubble_size)
-                    else:
-                        ax.scatter(x, y, facecolors='none', edgecolor=suffixec, alpha=0.05, s=s*module.bubble_size)
-                    if name_root != module.c_name_roots[0]:
-                        ax.set(yticks=[])
-                    ax.set_xlim(module.x_min, module.x_max)
-                    ax.set_ylim(module.y_min, module.y_max)
-                    ax.set_box_aspect(1)
-
-        plt.savefig(outfile, transparent=False)
-        plt.close()
-
-    def chart2(self, dfs, t):
-
-        fig, axs = plt.subplots(nrows=2, ncols=len(module.c_name_roots), figsize=(module.width, module.height), constrained_layout=True)
-
-        fig.supxlabel(module.x_label, fontsize=fslabel)
-        fig.supylabel(module.y_label, fontsize=fslabel)
-
-        if module.movie == True:
-            fig.text(0.50, 0.50, f'Time = {t}', fontsize=fstitle, ha='center')
-
-        for ax, title in zip(axs[0], module.titles):
-            ax.set_title(title, fontsize=fstitle)
-
-        for row, (rowax, df) in enumerate(zip(axs, dfs)):
-            for ax, name_root in zip(rowax, module.c_name_roots):
-                if module.logx == True:
-                    ax.set_xscale('log', base=2)
-                if module.logy == True:
-                    ax.set_yscale('log', base=2)
-                ax.set_aspect('equal', 'box')
-                dif = df.loc[df.Time == t, name_root] - dfs[1].loc[df.Time == t, name_root]
-                if (name_root == 'ChooseGrainmedian') or (name_root == 'MimicGrainmedian') or ('BD' in name_root):
-                    dif = -dif
-                color = []
-                for i in dif:
-                    if i < 0.0:
-                        color.append((red + i, green + i, blue))
-                    else:
-                        color.append((red - i, green, blue - i))
+            for suffix, suffixec, suffixalpha in zip(self.suffixes, self.suffixecs, self.suffixalphas):
+                df = dfs[module.drift]
                 x = df.loc[df.Time == t, module.x_axis]
                 y = df.loc[df.Time == t, module.y_axis]
                 s = df.loc[df.Time == t, name_root]
-                ax.scatter(x, y, c=color, edgecolor='0.200', alpha=1.0, s=s*module.bubble_size)
-                if (row == 0):
-                    ax.set(xticks=[])
+                if suffix == 'SD':
+                    s = s + df.loc[df.Time == t, name_root + suffix]
+                if module.drift == True:
+                    ax.scatter(x, y, color='0.700', edgecolor='0.700', alpha=suffixalpha, s=s*module.bubble_size)
+                else:
+                    ax.scatter(x, y, c=color, ec=color, alpha=suffixalpha, s=s*module.bubble_size)
                 if name_root != module.c_name_roots[0]:
                     ax.set(yticks=[])
                 ax.set_xlim(module.x_min, module.x_max)
                 ax.set_ylim(module.y_min, module.y_max)
-                ax.tick_params(axis='x', labelsize=fstick)
-                ax.tick_params(axis='y', labelsize=fstick)
-                #if name_root == 'a2Seen31':
-                #    s = s + df.loc[df.Time == t, 'a2SeenSD31']
-                #elif name_root == 'w33':
-                #    s = s + df.loc[df.Time == t, 'wSD33']
-                #elif name_root == 'w43':
-                #    s = s + df.loc[df.Time == t, 'wSD43']
-                #else:
-                #    s = s + df.loc[df.Time == t, name_root + 'SD']
-                s = s + df.loc[df.Time == t, name_root + 'SD']
-                ax.scatter(x, y, c=color, edgecolor='0.400', alpha=0.2, s=s*module.bubble_size)
-                if (row == 0):
-                    ax.set(xticks=[])
-                if name_root != module.c_name_roots[0]:
-                    ax.set(yticks=[])
-                ax.set_xlim(module.x_min, module.x_max)
-                ax.set_ylim(module.y_min, module.y_max)
-                ax.tick_params(axis='x', labelsize=fstick)
-                ax.tick_params(axis='y', labelsize=fstick)
+                ax.set_box_aspect(1)
 
-        plt.savefig(outfile)
+        plt.savefig(outfile, transparent=False)
         plt.close()
 
 def get_data(dfs):

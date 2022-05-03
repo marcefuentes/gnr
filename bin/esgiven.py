@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 ftype = 'scatter'
+drift = False
 c_name_roots = ('ChooseGrainmedian', 'MimicGrainmedian')
 titles = ('Sensitivity for comparing\npotential partners', 'Sensitivity for comparing\npartner to self')
 x_axis = 'ES'

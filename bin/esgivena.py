@@ -1,9 +1,8 @@
 #!/usr/bin/python
 
 ftype = 'scatter'
-drift = False
-c_name_roots = ('helpmedian', 'wmedian')
-titles = (' \nHelp', ' \nFitness')
+c_name_roots = ('a2Seenmedian', 'helpmedian')
+titles = ('a', 'Help')
 x_axis = 'ES'
 x_label = 'Substitutability of resources'
 y_axis = 'Given'

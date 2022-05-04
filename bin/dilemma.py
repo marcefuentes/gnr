@@ -11,10 +11,10 @@ import pandas as pd
 module = __import__(sys.argv[1].replace('.py', ''))
 
 if len(sys.argv) < 2:
-    print('You must add an argument with the python module (for example, scatter)')
+    print('You must add an argument with the python module (for example, scattergrain)')
     exit(1)
 
-outfile = module.filename + '.png'
+outfile = f'{sys.argv[1]}.png'
 
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
@@ -269,6 +269,8 @@ def get_data(dfs):
 
     for d in dirs:
         df = pd.concat(map(pd.read_csv, glob.glob(os.path.join(d, '*.csv'))), ignore_index=True)
+        if (sys.argv[1] == 'gsscattergrain') or (sys.argv[1] == 'gsscattergraini') or (sys.argv[1] == 'gsbars') or (sys.argv[1] == 'gsbarsone'):
+            df = df[df.ChooseCost == 0.000061]
         if module.movie == False:
             lastt = df.Time.iat[-1]
             df = df[df.Time == lastt]
@@ -295,7 +297,7 @@ if module.movie == True:
         outfile = f'delete{t}.png'
         pr.chart(dfs, t)
         outfiles.append(outfile)
-    giffile = module.filename + '.gif'
+    giffile = f'{sys.argv[1]}.gif'
     with imageio.get_writer(giffile, mode='I') as writer:
         for outfile in outfiles:
             print(f'Adding {outfile} to movie', end='\r')

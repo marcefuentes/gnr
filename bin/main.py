@@ -86,12 +86,12 @@ class barsallpr:
                         df = dfs[0]
                         height=df.loc[(df[module.x_axis] == inner_col) & (df[module.y_axis] == inner_row) & (df.Time == t), name0] + df.loc[(df[module.x_axis] == inner_col) & (df[module.y_axis] == inner_row) & (df.Time == t), name1]
                         ax.bar(x=b, height=height, align='edge', color=color, linewidth=0, width=width)
-                        ax.set(xticks=[], yticks=[], ylim=[0, module.ymax*2])
+                        ax.set(xticks=[], yticks=[], ylim=[0, module.y_max*2])
                     for b, name0, name1 in zip(self.bins[::2], c_name[::2], c_name[1::2]):
                         df = dfs[1]
                         height=df.loc[(df[module.x_axis] == inner_col) & (df[module.y_axis] == inner_row) & (df.Time == t), name0] + df.loc[(df[module.x_axis] == inner_col) & (df[module.y_axis] == inner_row) & (df.Time == t), name1]
                         ax.bar(x=b, height=height, align='edge', color=(red-0.15, green-0.15, blue-0.15), linewidth=0, width=width, alpha=0.9)
-                        ax.set(xticks=[], yticks=[], ylim=[0, module.ymax*2])
+                        ax.set(xticks=[], yticks=[], ylim=[0, module.y_max*2])
                     if (n == 0) & (column == 0):
                         if module.logy == True:
                             y = '$2^{{{}}}$'.format(round(math.log(inner_row, 2)))
@@ -114,8 +114,16 @@ class barsonepr:
 
     def prepare(self, dfs):
 
-        self.x_value = float(str("{:.6f}".format(pow(2, int(module.x_value)))))
-        self.y_value = float(str("{:.6f}".format(pow(2, int(module.y_value)))))
+        if module.logx == True:
+            self.x_value = float(str("{:.6f}".format(pow(2, int(module.x_value)))))
+        else:
+            self.x_value = module.x_value
+        if module.logy == True:
+            self.y_value = float(str("{:.6f}".format(pow(2, int(module.y_value)))))
+        else:
+            self.y_value = module.y_value
+
+        print(module.x_axis,'=',self.x_value,',',module.y_axis,'=',self.y_value)
 
         self.bincount = int(sum(map(lambda x: module.c_name_roots[0] in x, [*dfs[0]]))/2) - 2
 
@@ -139,10 +147,10 @@ class barsonepr:
 
         self.xtick_label_lists = []
 
-        for color in module.colors:
-            if color == 'grain':
+        for root in module.c_name_roots:
+            if 'Grain' in root:
                 self.xtick_label_lists.append(self.xtick_labels)
-            elif color == 'help':
+            elif 'Help' in root:
                 self.xtick_label_lists.append(self.xtick_labels)
             else:
                 self.xtick_label_lists.append(self.xtick_labels_f)
@@ -168,6 +176,7 @@ class barsonepr:
             median0 = df.loc[(df[module.x_axis] == self.x_value) & (df[module.y_axis] == self.y_value) & (df.Time == t), name_root + 'median'].values[0]
             df = dfs[1]
             median1 = df.loc[(df[module.x_axis] == self.x_value) & (df[module.y_axis] == self.y_value) & (df.Time == t), name_root + 'median'].values[0]
+            print('median0=',median0,',','median1=',median1)
             dif = median0 - median1
             if (name_root == 'ChooseGrain') or (name_root == 'MimicGrain') or ('BD' in name_root):
                 dif = -dif
@@ -184,7 +193,7 @@ class barsonepr:
                 heightsd = df.loc[(df[module.x_axis] == self.x_value) & (df[module.y_axis] == self.y_value) & (df.Time == t), namesd]
                 ax.bar(x=b, height=height, align='edge', color=color, linewidth=0, width=width, alpha=alpha)
                 ax.bar(x=b, height=heightsd, align='edge', color=colorsd, linewidth=0, width=width, bottom=height, alpha=alpha)
-            ax.set(ylim=(0, module.ymax), yticks=(0, module.ymax), yticklabels=(0, module.ymax))
+            ax.set(ylim=(0, module.y_max), yticks=(0, module.y_max), yticklabels=(0, module.y_max))
             ax.set(xticks=self.xticks, xticklabels=xtick_label_list)
             if name_root != module.c_name_roots[0]:
                 ax.set(yticks=[])
@@ -197,7 +206,7 @@ class barsonepr:
                 heightsd = df.loc[(df[module.x_axis] == self.x_value) & (df[module.y_axis] == self.y_value) & (df.Time == t), namesd]
                 ax.bar(x=b, height=height, align='edge', color=color, linewidth=0, width=width, alpha=alpha)
                 ax.bar(x=b, height=heightsd, align='edge', color=colorsd, linewidth=0, width=width, bottom=height, alpha=alpha)
-            ax.set(ylim=(0, module.ymax), yticks=(0, module.ymax), yticklabels=(0, module.ymax))
+            ax.set(ylim=(0, module.y_max), yticks=(0, module.y_max), yticklabels=(0, module.y_max))
             ax.set(xticks=self.xticks, xticklabels=xtick_label_list)
             if name_root != module.c_name_roots[0]:
                 ax.set(yticks=[])

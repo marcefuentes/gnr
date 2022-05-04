@@ -1,12 +1,12 @@
 #!/usr/bin/python
 
-ftype = 'barsone' # barsall, barsone, scatter
+ftype = 'scatter' # barsall, barsone, scatter
 drift = False
 movie = False
 x = 0
 y = 1
-z0 = 9
-z1 = 10
+z0 = 3
+z1 = 4
 x_value = -1.0
 y_value = 1.0
 filename = 'scatter'

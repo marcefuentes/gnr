@@ -22,7 +22,8 @@ GroupSize,3
 ChooseCost,-12
 MimicCost,-12
 Given,0.875
-Drift,0
+PartnerChoice,1
+Reciprocity,1
 a2Macromutation,0
 IndirectReciprocity,0
 factorName1,MimicCost

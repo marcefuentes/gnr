@@ -32,7 +32,7 @@ green = 0.97
 blue = 0.97
 
 lst_xy = [('ES', 'Substitutability of resources', True, None, None), 
-            ('Given', '\nProportion of resource $\it{A}$\ngiven to partner', False, None, None),
+            ('Given', 'Proportion of resource $\it{A}$\ngiven to partner', False, None, None),
             ('ChooseCost', 'Cost of comparing potential partners', True, None, None),
             ('MimicCost', 'Cost of comparing partner to self', True, None, None),
             ('DeathRate', 'Death rate', True, 0.005, 0.2),

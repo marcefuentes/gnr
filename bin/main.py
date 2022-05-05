@@ -2,17 +2,20 @@
 
 import glob
 import imageio
+import importlib.util
 import math
 import os
 import sys
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-module = __import__(sys.argv[1].replace('.py', ''))
 
 if len(sys.argv) < 2:
-    print('You must add an argument with the python module (for example, scatter)')
+    print('You must add an argument with the python module name (for example, scatter)')
     exit(1)
+
+sys.path.append(os.path.dirname(os.path.expanduser(sys.argv[1])))
+module = __import__(sys.argv[1])
 
 outfile = module.filename + '.png'
 

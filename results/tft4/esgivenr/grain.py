@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-filename = 'esgiven'
+filename = 'grain'
 ftype = 'scatter' # barsall, barsone, scatter
 drift = False
 movie = False

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-filename = 'scatter'
+filename = 'helpw'
 ftype = 'scatter' # barsall, barsone, scatter
 drift = False
 movie = False

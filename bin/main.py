@@ -203,6 +203,8 @@ class barsonepr:
 
         self.bins = [(x+1)/self.bincount for x in range(self.bincount)]
 
+        self.alphas = [1.0, 0.9]
+
         return self
 
     def chart(self, dfts):
@@ -221,6 +223,9 @@ class barsonepr:
 
         for ax, name_root, c_name, c_name_sd, bh_max in zip(axs, c_name_roots, self.c_names, self.c_names_sd, self.bh_maxs):
 
+            colors = []
+            colorsds = []
+
             df = dfts[0]
             median0 = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), name_root + 'median'].values[0]
             df = dfts[1]
@@ -229,40 +234,27 @@ class barsonepr:
             if (name_root == 'ChooseGrain') or (name_root == 'MimicGrain') or ('BD' in name_root):
                 dif = -dif
             if dif < 0.0:
-                color=(red-0.95, green-0.95, blue-0.05)
-                colorsd=(red-0.30, green-0.30, blue-0.05)
+                colors.append([red-0.95, green-0.95, blue-0.05])
+                colorsds.append([red-0.30, green-0.30, blue-0.05])
             else:
-                color=(red-0.95, green-0.05, blue-0.95)
-                colorsd=(red-0.30, green-0.05, blue-0.30)
-            alpha=1.0
-            df = dfts[0]
-            for b, name, namesd in zip(self.bins, c_name, c_name_sd):
-                barheight = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), name]
-                barheightsd = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), namesd]
-                ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=barwidth, alpha=alpha)
-                ax.bar(x=b, height=barheightsd, align='edge', color=colorsd, linewidth=0, width=barwidth, bottom=barheight, alpha=alpha)
-            ax.set(ylim=(0, bh_max), yticks=(0, bh_max), yticklabels=(0, bh_max))
-            ax.tick_params(axis='x', labelsize=fstick)
-            ax.tick_params(axis='y', labelsize=fstick)
-            if name_root != c_name_roots[0]:
-                ax.set(yticks=[])
-            ax.set_box_aspect(1)
+                colors.append([red-0.95, green-0.05, blue-0.95])
+                colorsds.append([red-0.30, green-0.05, blue-0.30])
 
-            color=(red-0.15, green-0.15, blue-0.15)
-            colorsd=(red-0.10, green-0.10, blue-0.10)
-            alpha=0.9
-            df = dfts[1]
-            for b, name, namesd in zip(self.bins, c_name, c_name_sd):
-                barheight = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), name]
-                barheightsd = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), namesd]
-                ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=barwidth, alpha=alpha)
-                ax.bar(x=b, height=barheightsd, align='edge', color=colorsd, linewidth=0, width=barwidth, bottom=barheight, alpha=alpha)
-            ax.set(ylim=(0, bh_max), yticks=(0, bh_max), yticklabels=(0, bh_max))
-            ax.tick_params(axis='x', labelsize=fstick)
-            ax.tick_params(axis='y', labelsize=fstick)
-            if name_root != c_name_roots[0]:
-                ax.set(yticks=[])
-            ax.set_box_aspect(1)
+            colors.append([red-0.15, green-0.15, blue-0.15])
+            colorsds.append([red-0.10, green-0.10, blue-0.10])
+            
+            for df, color, colorsd, alpha in zip(dfts, colors, colorsds, self.alphas):
+                for b, name, namesd in zip(self.bins, c_name, c_name_sd):
+                    barheight = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), name]
+                    barheightsd = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), namesd]
+                    ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=barwidth, alpha=alpha)
+                    ax.bar(x=b, height=barheightsd, align='edge', color=colorsd, linewidth=0, width=barwidth, bottom=barheight, alpha=alpha)
+                ax.set(ylim=(0, bh_max), yticks=(0, bh_max), yticklabels=(0, bh_max))
+                ax.tick_params(axis='x', labelsize=fstick)
+                ax.tick_params(axis='y', labelsize=fstick)
+                if name_root != c_name_roots[0]:
+                    ax.set(yticks=[])
+                ax.set_box_aspect(1)
 
         plt.savefig(outfile, dpi=100)
         plt.close()
@@ -367,7 +359,7 @@ if module.movie == True:
     for outfile in set(outfiles):
         os.remove(outfile)
 else:
-    t = df.Time.iat[-1]
+    t = dfs[0].Time.iat[-1]
     dfts = []
     for df in dfs:
         dfts.append(df[df.Time == t])

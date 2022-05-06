@@ -353,8 +353,7 @@ if module.movie == True:
         outfile = f'delete{t}.png'
         dfts = []
         for df in dfs:
-            dft = df[df.Time == t]
-            dfts.append(dft)
+            dfts.append(df[df.Time == t])
         pr.chart(dfts)
         outfiles.append(outfile)
     giffile = module.filename + '.gif'
@@ -369,8 +368,7 @@ else:
     t = df.Time.iat[-1]
     dfts = []
     for df in dfs:
-        dft = df[df.Time == t]
-        dfts.append(dft)
+        dfts.append(df[df.Time == t])
     pr.chart(dfts)
 
 end_time = time.perf_counter ()

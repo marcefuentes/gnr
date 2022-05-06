@@ -368,4 +368,4 @@ else:
     pr.chart(dfs, dfs[0].Time.iat[-1])
 
 end_time = time.perf_counter ()
-print(end_time - start_time, "seconds")
+print("Time elapsed: %.2f seconds" % (end_time - start_time))

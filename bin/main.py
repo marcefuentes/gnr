@@ -112,6 +112,14 @@ class barsallpr:
 
         self.bins = [(x+1)/self.bincount for x in range(self.bincount)]
 
+        self.color_blue = [red-0.95, green-0.95, blue-0.05]
+        self.color_green = [red-0.95, green-0.05, blue-0.95]
+        color_gray = [red-0.15, green-0.15, blue-0.15]
+        colorsd_gray = [red-0.10, green-0.10, blue-0.10]
+
+        self.colors = [self.color_blue, color_gray]
+        self.alphas = [1.0, 0.9]
+
         return self
 
     def chart(self, dfts):
@@ -133,27 +141,22 @@ class barsallpr:
             axs[0, int(len(self.inner_cols)/2)].set_title(title, fontsize=fslabel) # Prints the title of the middle column. Bad if there are even columns
             for row, (rowax, inner_row) in enumerate(zip(axs, self.inner_rows)): 
                 for column, (ax, inner_col) in enumerate(zip(rowax, self.inner_cols)):
-                    df = dfts[0]
-                    median0 = df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row), name_root + 'median'].values[0]
-                    df = dfts[1]
-                    median1 = df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row), name_root + 'median'].values[0]
-                    dif = median0 - median1
-                    if (name_root == 'ChooseGrain') or (name_root == 'MimicGrain') or ('BD' in name_root):
+                    medians = []
+                    for df in dfts:
+                        medians.append(df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row), name_root + 'median'].values[0])
+                    dif = medians[0] - medians[1]
+                    if ('Grain' in name_root) or ('BD' in name_root):
                         dif = -dif
-                    if dif < 0.0:
-                        color=(red-0.95, green-0.95, blue-0.05)
+                    if dif > 0.0:
+                        self.colors[0] = self.color_green
                     else:
-                        color=(red-0.95, green-0.05, blue-0.95)
-                    df = dfts[0]
-                    for b, name0, name1 in zip(self.bins[::2], c_name[::2], c_name[1::2]):
-                        barheight=df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row), name0] + df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row), name1]
-                        ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=barwidth)
-                        ax.set(xticks=[], yticks=[], ylim=[0, bh_max*2])
-                    df = dfts[1]
-                    for b, name0, name1 in zip(self.bins[::2], c_name[::2], c_name[1::2]):
-                        barheight=df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row), name0] + df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row), name1]
-                        ax.bar(x=b, height=barheight, align='edge', color=(red-0.15, green-0.15, blue-0.15), linewidth=0, width=barwidth, alpha=0.9)
-                        ax.set(xticks=[], yticks=[], ylim=[0, bh_max*2])
+                        self.colors[0] = self.color_blue
+
+                    for df, color, alpha in zip(dfts, self.colors, self.alphas):
+                        for b, name0, name1 in zip(self.bins[::2], c_name[::2], c_name[1::2]):
+                            barheight=df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row), name0] + df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row), name1]
+                            ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=barwidth, alpha=alpha)
+                            ax.set(xticks=[], yticks=[], ylim=[0, bh_max*2])
                     if (n == 0) & (column == 0):
                         if y_log == True:
                             y = '$2^{{{}}}$'.format(round(math.log(inner_row, 2)))

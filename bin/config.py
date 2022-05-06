@@ -2,6 +2,8 @@
 
 filename = 'barsall'
 ftype = 'barsall' # barsall, barsone, scatter
+treatment = 'pr'
+control = 'none'
 drift = False
 movie = False
 x = 'ES'

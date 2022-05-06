@@ -6,6 +6,7 @@ import importlib.util
 import math
 import os
 import sys
+import time
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -13,6 +14,8 @@ import pandas as pd
 if len(sys.argv) < 2:
     print('You must add an argument with the python module name (for example, scatter)')
     exit(1)
+
+start_time = time.perf_counter ()
 
 sys.path.append(os.path.dirname(os.path.expanduser(sys.argv[1])))
 module = __import__(sys.argv[1])
@@ -323,7 +326,7 @@ class scatterpr:
 
 def get_data(dfs):
 
-    dirs = ['', 'drift/']
+    dirs = [module.treatment, module.control]
 
     for d in dirs:
         df = pd.concat(map(pd.read_csv, glob.glob(os.path.join(d, '*.csv'))), ignore_index=True)
@@ -363,3 +366,6 @@ if module.movie == True:
         os.remove(outfile)
 else:
     pr.chart(dfs, dfs[0].Time.iat[-1])
+
+end_time = time.perf_counter ()
+print(end_time - start_time, "seconds")

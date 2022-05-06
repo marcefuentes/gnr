@@ -2,6 +2,8 @@
 
 filename = 'helpw'
 ftype = 'scatter' # barsall, barsone, scatter
+treatment = 'pr'
+control = 'none'
 drift = False
 movie = False
 x = 'ES'

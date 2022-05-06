@@ -40,7 +40,8 @@ int	gGroupSize;				// Number of individuals that an individual can watch (includ
 double	gChooseCost;
 double	gMimicCost;
 double	gGiven;					// Effect on partner: q2 = a2*R2*Given
-int	gDrift;
+int	gPartnerChoice;
+int	gReciprocity;
 int	ga2Macromutation;
 int	gIndirectReciprocity;
 
@@ -255,7 +256,8 @@ void read_globals (char *filename)
 	fscanf (fp, "ChooseCost,%lf\n", &gChooseCost);
 	fscanf (fp, "MimicCost,%lf\n", &gMimicCost);
 	fscanf (fp, "Given,%lf\n", &gGiven);
-	fscanf (fp, "Drift,%i\n", &gDrift);
+	fscanf (fp, "PartnerChoice,%i\n", &gPartnerChoice);
+	fscanf (fp, "Reciprocity,%i\n", &gReciprocity);
 	fscanf (fp, "a2Macromutation,%i\n", &ga2Macromutation);
 	fscanf (fp, "IndirectReciprocity,%i\n", &gIndirectReciprocity);
 	fscanf (fp, "factorName1,%s\n", factorName1);
@@ -328,7 +330,8 @@ void write_globals (char *filename)
 		fprintf (fp, "MimicCost,%f,%f\n", gMimicCost, log(gMimicCost)/log(2));
 	}
 	fprintf (fp, "Given,%f\n", gGiven);
-	fprintf (fp, "Drift,%i\n", gDrift);
+	fprintf (fp, "PartnerChoice,%i\n", gPartnerChoice);
+	fprintf (fp, "Reciprocity,%i\n", gReciprocity);
 	fprintf (fp, "a2Macromutation,%i\n", ga2Macromutation);
 	fprintf (fp, "IndirectReciprocity,%i\n", gIndirectReciprocity);
 
@@ -383,7 +386,7 @@ void caso (struct ptype *p_first)
 				shuffle_partners (i_first, i_last, gGroupSize);
 			}
 
-			if ( gDrift == 0 )
+			if ( gPartnerChoice == 1 )
 			{
 				choose_partner (i_first, i_last, gGroupSize);
 			}
@@ -412,15 +415,15 @@ void caso (struct ptype *p_first)
 				free_recruits (recruit_first);
 			}
 			
-			if ( gDrift == 0 )
+			if ( gReciprocity == 1 )
 			{
-				if ( gIndirectReciprocity == 0 )
+				if ( gIndirectReciprocity == 1 )
 				{
-					decide_a2 (i_first, i_last, ga2Max);
+					decide_a2_ir (i_first, i_last, ga2Max);
 				}
 				else
 				{
-					decide_a2_ir (i_first, i_last, ga2Max);
+					decide_a2 (i_first, i_last, ga2Max);
 				}
 
 				if ( ga2Macromutation == 1 )

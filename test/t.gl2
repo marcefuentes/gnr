@@ -17,7 +17,8 @@ GrainMutationSize,0.015625,-6.000000
 DeathRate,0.062500,-4.000000
 GroupSize,8,3
 Given,0.875000
-Drift,0
+PartnerChoice,1
+Reciprocity,1
 a2Macromutation,0
 IndirectReciprocity,0
-TimeElapsed,0:00:00.155450
+TimeElapsed,0:00:00.075817

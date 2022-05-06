@@ -202,7 +202,17 @@ class barsonepr:
             self.c_names_sd.append(rootlist_sd)
 
         self.bins = [(x+1)/self.bincount for x in range(self.bincount)]
+        self.barwidth = -1.0/self.bincount
 
+        self.color_blue = [red-0.95, green-0.95, blue-0.05]
+        self.colorsd_blue = [red-0.30, green-0.30, blue-0.05]
+        self.color_green = [red-0.95, green-0.05, blue-0.95]
+        self.colorsd_green = [red-0.30, green-0.05, blue-0.30]
+        color_gray = [red-0.15, green-0.15, blue-0.15]
+        colorsd_gray = [red-0.10, green-0.10, blue-0.10]
+
+        self.colors = [self.color_blue, color_gray]
+        self.colorsds= [self.colorsd_blue, colorsd_gray]
         self.alphas = [1.0, 0.9]
 
         return self
@@ -216,39 +226,28 @@ class barsonepr:
         if module.movie == True:
             fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
-        barwidth = -1.0/self.bincount
-
         for ax, title in zip(axs, titles):
             ax.set_xlabel(title, fontsize=fslabel)
 
         for ax, name_root, c_name, c_name_sd, bh_max in zip(axs, c_name_roots, self.c_names, self.c_names_sd, self.bh_maxs):
-
-            colors = []
-            colorsds = []
-
-            df = dfts[0]
-            median0 = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), name_root + 'median'].values[0]
-            df = dfts[1]
-            median1 = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), name_root + 'median'].values[0]
-            dif = median0 - median1
-            if (name_root == 'ChooseGrain') or (name_root == 'MimicGrain') or ('BD' in name_root):
+            medians = []
+            for df in dfts:
+                medians.append(df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), name_root + 'median'].values[0])
+            dif = medians[0] - medians[1]
+            if ('Grain' in name_root) or ('BD' in name_root):
                 dif = -dif
-            if dif < 0.0:
-                colors.append([red-0.95, green-0.95, blue-0.05])
-                colorsds.append([red-0.30, green-0.30, blue-0.05])
+            if dif > 0.0:
+                self.colors[0] = self.color_green
+                self.colorsds[0] = self.colorsd_green
             else:
-                colors.append([red-0.95, green-0.05, blue-0.95])
-                colorsds.append([red-0.30, green-0.05, blue-0.30])
-
-            colors.append([red-0.15, green-0.15, blue-0.15])
-            colorsds.append([red-0.10, green-0.10, blue-0.10])
-            
-            for df, color, colorsd, alpha in zip(dfts, colors, colorsds, self.alphas):
+                self.colors[0] = self.color_blue
+                self.colorsds[0] = self.colorsd_blue
+            for df, color, colorsd, alpha in zip(dfts, self.colors, self.colorsds, self.alphas):
                 for b, name, namesd in zip(self.bins, c_name, c_name_sd):
                     barheight = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), name]
                     barheightsd = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), namesd]
-                    ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=barwidth, alpha=alpha)
-                    ax.bar(x=b, height=barheightsd, align='edge', color=colorsd, linewidth=0, width=barwidth, bottom=barheight, alpha=alpha)
+                    ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=self.barwidth, alpha=alpha)
+                    ax.bar(x=b, height=barheightsd, align='edge', color=colorsd, linewidth=0, width=self.barwidth, bottom=barheight, alpha=alpha)
                 ax.set(ylim=(0, bh_max), yticks=(0, bh_max), yticklabels=(0, bh_max))
                 ax.tick_params(axis='x', labelsize=fstick)
                 ax.tick_params(axis='y', labelsize=fstick)

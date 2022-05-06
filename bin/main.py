@@ -114,7 +114,7 @@ class barsallpr:
 
         return self
 
-    def chart(self, dfs, t):
+    def chart(self, dfts):
  
         fig = plt.figure(figsize=(width, height-0.5))
         fig.supxlabel(x_label, fontsize=fslabel)
@@ -133,10 +133,10 @@ class barsallpr:
             axs[0, int(len(self.inner_cols)/2)].set_title(title, fontsize=fslabel) # Prints the title of the middle column. Bad if there are even columns
             for row, (rowax, inner_row) in enumerate(zip(axs, self.inner_rows)): 
                 for column, (ax, inner_col) in enumerate(zip(rowax, self.inner_cols)):
-                    df = dfs[0]
-                    median0 = df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row) & (df.Time == t), name_root + 'median'].values[0]
-                    df = dfs[1]
-                    median1 = df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row) & (df.Time == t), name_root + 'median'].values[0]
+                    df = dfts[0]
+                    median0 = df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row), name_root + 'median'].values[0]
+                    df = dfts[1]
+                    median1 = df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row), name_root + 'median'].values[0]
                     dif = median0 - median1
                     if (name_root == 'ChooseGrain') or (name_root == 'MimicGrain') or ('BD' in name_root):
                         dif = -dif
@@ -144,14 +144,14 @@ class barsallpr:
                         color=(red-0.95, green-0.95, blue-0.05)
                     else:
                         color=(red-0.95, green-0.05, blue-0.95)
-                    df = dfs[0]
+                    df = dfts[0]
                     for b, name0, name1 in zip(self.bins[::2], c_name[::2], c_name[1::2]):
-                        barheight=df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row) & (df.Time == t), name0] + df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row) & (df.Time == t), name1]
+                        barheight=df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row), name0] + df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row), name1]
                         ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=barwidth)
                         ax.set(xticks=[], yticks=[], ylim=[0, bh_max*2])
-                    df = dfs[1]
+                    df = dfts[1]
                     for b, name0, name1 in zip(self.bins[::2], c_name[::2], c_name[1::2]):
-                        barheight=df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row) & (df.Time == t), name0] + df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row) & (df.Time == t), name1]
+                        barheight=df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row), name0] + df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row), name1]
                         ax.bar(x=b, height=barheight, align='edge', color=(red-0.15, green-0.15, blue-0.15), linewidth=0, width=barwidth, alpha=0.9)
                         ax.set(xticks=[], yticks=[], ylim=[0, bh_max*2])
                     if (n == 0) & (column == 0):
@@ -205,7 +205,7 @@ class barsonepr:
 
         return self
 
-    def chart(self, dfs, t):
+    def chart(self, dfts):
 
         fig, axs = plt.subplots(nrows=1, ncols=len(c_name_roots), figsize=(width, height), constrained_layout=False)
 
@@ -220,10 +220,10 @@ class barsonepr:
             ax.set_xlabel(title, fontsize=fslabel)
 
         for ax, name_root, c_name, c_name_sd, bh_max in zip(axs, c_name_roots, self.c_names, self.c_names_sd, self.bh_maxs):
-            df = dfs[0]
-            median0 = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value) & (df.Time == t), name_root + 'median'].values[0]
-            df = dfs[1]
-            median1 = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value) & (df.Time == t), name_root + 'median'].values[0]
+            df = dfts[0]
+            median0 = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), name_root + 'median'].values[0]
+            df = dfts[1]
+            median1 = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), name_root + 'median'].values[0]
             dif = median0 - median1
             if (name_root == 'ChooseGrain') or (name_root == 'MimicGrain') or ('BD' in name_root):
                 dif = -dif
@@ -234,10 +234,10 @@ class barsonepr:
                 color=(red-0.95, green-0.05, blue-0.95)
                 colorsd=(red-0.30, green-0.05, blue-0.30)
             alpha=1.0
-            df = dfs[0]
+            df = dfts[0]
             for b, name, namesd in zip(self.bins, c_name, c_name_sd):
-                barheight = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value) & (df.Time == t), name]
-                barheightsd = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value) & (df.Time == t), namesd]
+                barheight = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), name]
+                barheightsd = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), namesd]
                 ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=barwidth, alpha=alpha)
                 ax.bar(x=b, height=barheightsd, align='edge', color=colorsd, linewidth=0, width=barwidth, bottom=barheight, alpha=alpha)
             ax.set(ylim=(0, bh_max), yticks=(0, bh_max), yticklabels=(0, bh_max))
@@ -249,10 +249,10 @@ class barsonepr:
             color=(red-0.15, green-0.15, blue-0.15)
             colorsd=(red-0.10, green-0.10, blue-0.10)
             alpha=0.9
-            df = dfs[1]
+            df = dfts[1]
             for b, name, namesd in zip(self.bins, c_name, c_name_sd):
-                barheight = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value) & (df.Time == t), name]
-                barheightsd = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value) & (df.Time == t), namesd]
+                barheight = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), name]
+                barheightsd = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), namesd]
                 ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=barwidth, alpha=alpha)
                 ax.bar(x=b, height=barheightsd, align='edge', color=colorsd, linewidth=0, width=barwidth, bottom=barheight, alpha=alpha)
             ax.set(ylim=(0, bh_max), yticks=(0, bh_max), yticklabels=(0, bh_max))
@@ -273,7 +273,7 @@ class scatterpr:
         self.suffixecs = ('0.300', '0.000')
         self.bubble_sizes = [df_z.loc[df_z.z == module.z0, 'bubble_size'].values[0], df_z.loc[df_z.z == module.z1, 'bubble_size'].values[0]]
 
-    def chart(self, dfs, t):
+    def chart(self, dfts):
 
         fig, axs = plt.subplots(nrows=1, ncols=len(c_name_roots), figsize=(width, height), constrained_layout=False)
 
@@ -291,7 +291,7 @@ class scatterpr:
                 ax.set_xscale('log', base=2)
             if y_log == True:
                 ax.set_yscale('log', base=2)
-            dif = 1.0 - dfs[0].loc[dfs[0].Time == t, name_root]/dfs[1].loc[dfs[1].Time == t, name_root]
+            dif = 1.0 - dfts[0][name_root]/dfts[1][name_root]
             if (name_root == 'ChooseGrainmedian') or (name_root == 'MimicGrainmedian') or ('BD' in name_root):
                 dif = -dif
             color = []
@@ -305,12 +305,12 @@ class scatterpr:
                         i = red
                     color.append((red - i, green - i, blue - i/2.0))
             for suffix, suffixec, suffixalpha in zip(self.suffixes, self.suffixecs, self.suffixalphas):
-                df = dfs[module.drift]
-                x = df.loc[df.Time == t, x_name]
-                y = df.loc[df.Time == t, y_name]
-                s = df.loc[df.Time == t, name_root]
+                df = dfts[module.drift]
+                x = df[x_name]
+                y = df[y_name]
+                s = df[name_root]
                 if suffix == 'SD':
-                    s = s + df.loc[df.Time == t, name_root + suffix]
+                    s = s + df[name_root + suffix]
                 if module.drift == True:
                     ax.scatter(x, y, color='0.700', edgecolor='0.700', alpha=suffixalpha, s=s*bubble_size)
                 else:
@@ -330,9 +330,6 @@ def get_data(dfs):
 
     for d in dirs:
         df = pd.concat(map(pd.read_csv, glob.glob(os.path.join(d, '*.csv'))), ignore_index=True)
-        if module.movie == False:
-            lastt = df.Time.iat[-1]
-            df = df[df.Time == lastt]
         dfs.append(df)
 
     return dfs
@@ -354,7 +351,11 @@ if module.movie == True:
     for t in dfs[0].Time.unique():
         print(f'Processing time {t}', end='\r')
         outfile = f'delete{t}.png'
-        pr.chart(dfs, t)
+        dfts = []
+        for df in dfs:
+            dft = df[df.Time == t]
+            dfts.append(dft)
+        pr.chart(dfts)
         outfiles.append(outfile)
     giffile = module.filename + '.gif'
     with imageio.get_writer(giffile, mode='I') as writer:
@@ -365,7 +366,12 @@ if module.movie == True:
     for outfile in set(outfiles):
         os.remove(outfile)
 else:
-    pr.chart(dfs, dfs[0].Time.iat[-1])
+    t = df.Time.iat[-1]
+    dfts = []
+    for df in dfs:
+        dft = df[df.Time == t]
+        dfts.append(dft)
+    pr.chart(dfts)
 
 end_time = time.perf_counter ()
 print("Time elapsed: %.2f seconds" % (end_time - start_time))

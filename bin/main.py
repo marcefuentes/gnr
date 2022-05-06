@@ -220,6 +220,7 @@ class barsonepr:
             ax.set_xlabel(title, fontsize=fslabel)
 
         for ax, name_root, c_name, c_name_sd, bh_max in zip(axs, c_name_roots, self.c_names, self.c_names_sd, self.bh_maxs):
+
             df = dfts[0]
             median0 = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), name_root + 'median'].values[0]
             df = dfts[1]
@@ -246,6 +247,7 @@ class barsonepr:
             if name_root != c_name_roots[0]:
                 ax.set(yticks=[])
             ax.set_box_aspect(1)
+
             color=(red-0.15, green-0.15, blue-0.15)
             colorsd=(red-0.10, green-0.10, blue-0.10)
             alpha=0.9
@@ -349,7 +351,7 @@ pr.prepare(dfs)
 if module.movie == True:
     outfiles = []
     for t in dfs[0].Time.unique():
-        print(f'Processing time {t}', end='\r')
+        print(f'Processing step {t}', end='\r')
         outfile = f'delete{t}.png'
         dfts = []
         for df in dfs:
@@ -372,4 +374,4 @@ else:
     pr.chart(dfts)
 
 end_time = time.perf_counter ()
-print("Time elapsed: %.2f seconds" % (end_time - start_time))
+print("\nTime elapsed: %.2f seconds" % (end_time - start_time))

@@ -49,6 +49,8 @@ lst_z = [('ChooseGrainmedian', 'Sensitivity for comparing\npotential partners', 
             ('MimicGrain', 'Sensitivity for comparing\npartner to self', 600.0, 0.20),
             ('helpmedian', 'Help', 600.0, None),
             ('help', 'Help', 600.0, 0.20),
+            ('a2Seenmedian', 'a2', 600.0, None),
+            ('a2Seen', 'a2', 600.0, 0.20),
             ('wmedian', 'Fitness', 600.0, None),
             ('w', 'Fitness', 600.0, 0.20),
             ('chose_partner', 'Frequency of\nswitching to a new partner', 2000.0, None),
@@ -327,6 +329,9 @@ def get_data(dfs):
     for d in dirs:
         df = pd.concat(map(pd.read_csv, glob.glob(os.path.join(d, '*.csv'))), ignore_index=True)
         dfs.append(df)
+
+    if module.treatment == 'optimal':
+        dfs[0]['helpmedian'] = dfs[0]['a2Seenmedian']*2.0*dfs[0]['Given']
 
     return dfs
 

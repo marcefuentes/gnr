@@ -1,15 +1,15 @@
 #!/usr/bin/python
 
-filename = 'barsall'
-ftype = 'barsall' # barsall, barsone, scatter
+filename = 'grain'
+ftype = 'scatter' # barsall, barsone, scatter
 treatment = 'pr'
 control = 'none'
 drift = False
 movie = False
 x = 'ES'
 y = 'Given'
-z0 = 'ChooseGrain'
-z1 = 'MimicGrain'
+z0 = 'ChooseGrainmedian'
+z1 = 'MimicGrainmedian'
 
 if ftype == 'barsone':
     x_value = -1.0

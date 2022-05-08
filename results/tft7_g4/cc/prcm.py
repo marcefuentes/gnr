@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-filename = 'helpw'
+filename = 'prcm'
 ftype = 'scatter' # barsall, barsone, scatter
 treatment = 'pr'
 control = 'none'
@@ -8,8 +8,8 @@ drift = False
 movie = False
 x = 'MimicCost'
 y = 'ChooseCost'
-z0 = 'helpmedian'
-z1 = 'wmedian'
+z0 = 'ChooseGrainmedian'
+z1 = 'MimicGrainmedian'
 
 if ftype == 'barsone':
     x_value = -1.0

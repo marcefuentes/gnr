@@ -275,21 +275,22 @@ class scatterpr:
 
         fig, axs = plt.subplots(nrows=1, ncols=len(c_name_roots), figsize=(width, height), constrained_layout=False)
 
-        fig.supxlabel(x_label, fontsize=fslabel)
-        fig.supylabel(y_label, fontsize=fslabel, ha='center')
+        fig.supxlabel(t=x_label, y=0.02, fontsize=fslabel)
+        fig.supylabel(t=y_label, x=0.04, fontsize=fslabel, ha='center')
 
         if module.movie == True:
             fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
         for ax, name_root, title, bubble_size in zip(axs, c_name_roots, titles, self.bubble_sizes):
-            ax.set_title(title, fontsize=fstitle)
+            ax.set_title(title, pad=10.0, fontsize=fstitle)
             ax.tick_params(axis='x', labelsize=fstick)
             ax.tick_params(axis='y', labelsize=fstick)
             if x_log == True:
                 ax.set_xscale('log', base=2)
             if y_log == True:
                 ax.set_yscale('log', base=2)
-            dif = 1.0 - dfts[0][name_root]/dfts[1][name_root]
+            #dif = 1.0 - dfts[0][name_root]/dfts[1][name_root]
+            dif = dfts[1][name_root] - dfts[0][name_root]
             if (name_root == 'ChooseGrainmedian') or (name_root == 'MimicGrainmedian') or ('BD' in name_root):
                 dif = -dif
             color = []

@@ -289,7 +289,6 @@ class scatterpr:
                 ax.set_xscale('log', base=2)
             if y_log == True:
                 ax.set_yscale('log', base=2)
-            #dif = 1.0 - dfts[0][name_root]/dfts[1][name_root]
             dif = dfts[1][name_root] - dfts[0][name_root]
             if (name_root == 'ChooseGrainmedian') or (name_root == 'MimicGrainmedian') or ('BD' in name_root):
                 dif = -dif

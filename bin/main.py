@@ -187,22 +187,19 @@ class barsonepr:
 
         bincount = int(sum(map(lambda x: z_names[0] in x, [*dfs[0]]))/2) - 2
 
-        hmax = 1.0
-        wmax = 2.0 # For a1Max = a2Max = 1.0 and R1 = R2 = 2.0.
-
         self.z_namebins_lists = []
         self.z_namesdbins_lists = []
         self.bh_maxs = []
-        self.barwidths = []
         self.binslists = []
+        self.barwidths = []
         for z_name in z_names:
             self.z_namebins_lists.append([z_name + str(x) for x in range(bincount)])
             self.z_namesdbins_lists.append([z_name + 'SD' + str(x) for x in range(bincount)])
             self.bh_maxs.append(df_z.loc[df_z.z == z_name, 'ymax'].values[0])
             if z_name == 'w':
-                mmax = wmax
+                mmax = 2.0 # For a1Max = a2Max = 1.0 and R1 = R2 = 2.0.
             else:
-                mmax = hmax
+                mmax = 1.0
             self.binslists.append([(x+1)*mmax/bincount for x in range(bincount)])
             self.barwidths.append(-mmax/bincount)
 

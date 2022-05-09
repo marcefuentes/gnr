@@ -84,24 +84,27 @@ else:
 y_log = df_xy.loc[df_xy.xy == y_name, 'log'].values[0]
 z0_name = module.z0
 z1_name = module.z1
-c_name_roots = [z0_name, z1_name]
-titles = [df_z.loc[df_z.z == z0_name, 'title'].values[0], df_z.loc[df_z.z == z1_name, 'title'].values[0]]
+z_names = [z0_name, z1_name]
+
+titles = []
+for z_name in z_names: 
+    titles.append(df_z.loc[df_z.z == z_name, 'title'].values[0])
 
 class barsallpr:
 
     def prepare(self, dfs):
 
-        self.bincount = int(sum(map(lambda x: c_name_roots[0] in x, [*dfs[0]]))/2) - 2
+        bincount = int(sum(map(lambda x: z_names[0] in x, [*dfs[0]]))/2) - 2
 
-        self.bh_maxs = [df_z.loc[df_z.z == z0_name, 'ymax'].values[0], df_z.loc[df_z.z == z1_name, 'ymax'].values[0]]
-
-        self.c_name_suffixes = [x for x in range(self.bincount)]
-        self.c_names = []
-        for root in c_name_roots:
-            rootlist = []
-            for suffix in self.c_name_suffixes:
-                rootlist.append(root + str(suffix)) 
-            self.c_names.append(rootlist)
+        binsuffixes = [x for x in range(bincount)]
+        self.z_namebins_lists = []
+        self.bh_maxs = []
+        for z_name in z_names:
+            z_namebins = []
+            for binsuffix in binsuffixes:
+                z_namebins.append(z_name + str(binsuffix)) #list comprehension?
+            self.z_namebins_lists.append(z_namebins)
+            self.bh_maxs.append(df_z.loc[df_z.z == z_name, 'ymax'].values[0])
 
         self.inner_cols = dfs[0][x_name].unique()
         self.inner_rows = dfs[0][y_name].unique()
@@ -111,7 +114,8 @@ class barsallpr:
         else:
             self.inner_rows[::-1].sort()
 
-        self.bins = [(x+1)/self.bincount for x in range(self.bincount)]
+        self.bins = [(x+1)/bincount for x in range(bincount)]
+        self.barwidth = 2.0/bincount
 
         self.color_blue = [red-0.95, green-0.95, blue-0.05]
         self.color_green = [red-0.95, green-0.05, blue-0.95]
@@ -132,11 +136,9 @@ class barsallpr:
         if module.movie == True:
             fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
-        outer_grid = fig.add_gridspec(nrows=1, ncols=len(c_name_roots), wspace=0.1)
+        outer_grid = fig.add_gridspec(nrows=1, ncols=len(z_names), wspace=0.1)
 
-        barwidth = 2.0/self.bincount
-
-        for n, (c_name, name_root, title, bh_max) in enumerate(zip(self.c_names, c_name_roots, titles, self.bh_maxs)):
+        for n, (z_namebins, z_name, title, bh_max) in enumerate(zip(self.z_namebins_lists, z_names, titles, self.bh_maxs)):
             inner_grid = outer_grid[n].subgridspec(nrows=len(self.inner_rows), ncols=len(self.inner_cols), wspace=0.0, hspace=0.0)
             axs = inner_grid.subplots()
             axs[0, int(len(self.inner_cols)/2)].set_title(title, fontsize=fslabel) # Prints the title of the middle column. Bad if there are even columns
@@ -144,9 +146,9 @@ class barsallpr:
                 for column, (ax, inner_col) in enumerate(zip(rowax, self.inner_cols)):
                     medians = []
                     for df in dfts:
-                        medians.append(df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row), name_root + 'median'].values[0])
+                        medians.append(df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row), z_name + 'median'].values[0])
                     dif = medians[0] - medians[1]
-                    if ('Grain' in name_root) or ('BD' in name_root):
+                    if ('Grain' in z_name) or ('BD' in z_name):
                         dif = -dif
                     if dif > 0.0:
                         self.colors[0] = self.color_green
@@ -154,9 +156,9 @@ class barsallpr:
                         self.colors[0] = self.color_blue
 
                     for df, color, alpha in zip(dfts, self.colors, self.alphas):
-                        for b, name0, name1 in zip(self.bins[::2], c_name[::2], c_name[1::2]):
+                        for b, name0, name1 in zip(self.bins[::2], z_namebins[::2], z_namebins[1::2]):
                             barheight=df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row), name0] + df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row), name1]
-                            ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=barwidth, alpha=alpha)
+                            ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=self.barwidth, alpha=alpha)
                             ax.set(xticks=[], yticks=[], ylim=[0, bh_max*2])
                     if (n == 0) & (column == 0):
                         if y_log == True:
@@ -189,31 +191,33 @@ class barsonepr:
         else:
             self.y_value = module.y_value
 
-        self.bh_maxs = [df_z.loc[df_z.z == z0_name, 'ymax'].values[0], df_z.loc[df_z.z == z1_name, 'ymax'].values[0]]
+        bincount = int(sum(map(lambda x: z_names[0] in x, [*dfs[0]]))/2) - 2
 
-        self.bincount = int(sum(map(lambda x: c_name_roots[0] in x, [*dfs[0]]))/2) - 2
-
-        self.c_name_suffixes = [x for x in range(self.bincount)]
-        self.c_names = []
-        self.c_names_sd = []
-        for root in c_name_roots:
-            rootlist = []
-            rootlist_sd = []
-            for suffix in self.c_name_suffixes:
-                rootlist.append(root + str(suffix)) 
-                rootlist_sd.append(root + 'SD' + str(suffix)) 
-            self.c_names.append(rootlist)
-            self.c_names_sd.append(rootlist_sd)
-
-        self.barwidths = [-1.0/self.bincount, -1.0/self.bincount]
-
-        bins = [(x+1)/self.bincount for x in range(self.bincount)]
-        self.binslists = [bins, bins]
-
+        bins = [(x+1)/bincount for x in range(bincount)]
         wmax = 2.0 # For a1Max = a2Max = 1.0 and R1 = R2 = 2.0.
-        if c_name_roots[1] == 'w':
-            self.barwidths[1] *= wmax
-            self.binslists[1] = [x*wmax for x in self.binslists[1]]
+        binsw = [x*wmax for x in bins]
+
+        bin_suffixes = [x for x in range(bincount)]
+        self.z_namebins_lists = []
+        self.z_namesdbins_lists = []
+        self.bh_maxs = []
+        self.barwidths = []
+        self.binslists = []
+        for z_name in z_names:
+            z_namebins = []
+            z_namesdbins = []
+            for bin_suffix in bin_suffixes:
+                z_namebins.append(z_name + str(bin_suffix)) 
+                z_namesdbins.append(z_name + 'SD' + str(bin_suffix)) 
+            self.z_namebins_lists.append(z_namebins)
+            self.z_namesdbins_lists.append(z_namesdbins)
+            self.bh_maxs.append(df_z.loc[df_z.z == z_name, 'ymax'].values[0])
+            if z_name == 'w':
+                self.binslists.append(binsw)
+                self.barwidths.append(-wmax/bincount)
+            else:
+                self.binslists.append(bins)
+                self.barwidths.append(-1.0/bincount)
 
         self.color_blue = [red-0.95, green-0.95, blue-0.05]
         self.colorsd_blue = [red-0.30, green-0.30, blue-0.05]
@@ -230,7 +234,7 @@ class barsonepr:
 
     def chart(self, dfts):
 
-        fig, axs = plt.subplots(nrows=1, ncols=len(c_name_roots), figsize=(width, height), constrained_layout=False)
+        fig, axs = plt.subplots(nrows=1, ncols=len(z_names), figsize=(width, height), constrained_layout=False)
 
         fig.supylabel('\nFrequency', fontsize=fslabel, ha='center')
 
@@ -240,12 +244,12 @@ class barsonepr:
         for ax, title in zip(axs, titles):
             ax.set_xlabel(title, fontsize=fslabel)
 
-        for ax, name_root, c_name, c_name_sd, bins, barwidth, bh_max in zip(axs, c_name_roots, self.c_names, self.c_names_sd, self.binslists, self.barwidths, self.bh_maxs):
+        for ax, z_name, z_namebins, z_namesdbins, bins, barwidth, bh_max in zip(axs, z_names, self.z_namebins_lists, self.z_namesdbins_lists, self.binslists, self.barwidths, self.bh_maxs):
             medians = []
             for df in dfts:
-                medians.append(df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), name_root + 'median'].values[0])
+                medians.append(df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), z_name + 'median'].values[0])
             dif = medians[0] - medians[1]
-            if ('Grain' in name_root) or ('BD' in name_root):
+            if ('Grain' in z_name) or ('BD' in z_name):
                 dif = -dif
             if dif > 0.0:
                 self.colors[0] = self.color_green
@@ -254,15 +258,15 @@ class barsonepr:
                 self.colors[0] = self.color_blue
                 self.colorsds[0] = self.colorsd_blue
             for df, color, colorsd, alpha in zip(dfts, self.colors, self.colorsds, self.alphas):
-                for b, name, namesd in zip(bins, c_name, c_name_sd):
-                    barheight = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), name]
-                    barheightsd = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), namesd]
+                for b, z_namebin, z_namesdbin in zip(bins, z_namebins, z_namesdbins):
+                    barheight = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), z_namebin]
+                    barheightsd = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), z_namesdbin]
                     ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=barwidth, alpha=alpha)
                     ax.bar(x=b, height=barheightsd, align='edge', color=colorsd, linewidth=0, width=barwidth, bottom=barheight, alpha=alpha)
                 ax.set(ylim=(0, bh_max), yticks=(0, bh_max), yticklabels=(0, bh_max))
                 ax.tick_params(axis='x', labelsize=fstick)
                 ax.tick_params(axis='y', labelsize=fstick)
-                if name_root != c_name_roots[0]:
+                if z_name != z_names[0]:
                     ax.set(yticks=[])
                 ax.set_box_aspect(1)
 
@@ -275,11 +279,13 @@ class scatterpr:
         self.suffixes = ('SD', '')
         self.suffixalphas = (0.2, 1.0)
         self.suffixecs = ('0.300', '0.000')
-        self.bubble_sizes = [df_z.loc[df_z.z == module.z0, 'bubble_size'].values[0], df_z.loc[df_z.z == module.z1, 'bubble_size'].values[0]]
+        self.bubble_sizes = []
+        for z_name in z_names:
+            self.bubble_sizes.append(df_z.loc[df_z.z == z_name, 'bubble_size'].values[0])
 
     def chart(self, dfts):
 
-        fig, axs = plt.subplots(nrows=1, ncols=len(c_name_roots), figsize=(width, height), constrained_layout=False)
+        fig, axs = plt.subplots(nrows=1, ncols=len(z_names), figsize=(width, height), constrained_layout=False)
 
         fig.supxlabel(t=x_label, y=0.02, fontsize=fslabel)
         fig.supylabel(t=y_label, x=0.04, fontsize=fslabel, ha='center')
@@ -287,7 +293,7 @@ class scatterpr:
         if module.movie == True:
             fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
-        for ax, name_root, title, bubble_size in zip(axs, c_name_roots, titles, self.bubble_sizes):
+        for ax, z_name, title, bubble_size in zip(axs, z_names, titles, self.bubble_sizes):
             ax.set_title(title, pad=10.0, fontsize=fstitle)
             ax.tick_params(axis='x', labelsize=fstick)
             ax.tick_params(axis='y', labelsize=fstick)
@@ -295,8 +301,8 @@ class scatterpr:
                 ax.set_xscale('log', base=2)
             if y_log == True:
                 ax.set_yscale('log', base=2)
-            dif = dfts[1][name_root] - dfts[0][name_root]
-            if (name_root == 'ChooseGrainmedian') or (name_root == 'MimicGrainmedian') or ('BD' in name_root):
+            dif = dfts[1][z_name] - dfts[0][z_name]
+            if (z_name == 'ChooseGrainmedian') or (z_name == 'MimicGrainmedian') or ('BD' in z_name):
                 dif = -dif
             color = []
             for i in dif:
@@ -312,14 +318,14 @@ class scatterpr:
                 df = dfts[module.drift]
                 x = df[x_name]
                 y = df[y_name]
-                s = df[name_root]
+                s = df[z_name]
                 if suffix == 'SD':
-                    s = s + df[name_root + suffix]
+                    s = s + df[z_name + suffix]
                 if module.drift == True:
                     ax.scatter(x, y, color='0.700', edgecolor='0.700', alpha=suffixalpha, s=s*bubble_size)
                 else:
                     ax.scatter(x, y, c=color, ec=color, alpha=suffixalpha, s=s*bubble_size)
-                if name_root != c_name_roots[0]:
+                if z_name != z_names[0]:
                     ax.set(yticks=[])
                 ax.set_xlim(x_min, x_max)
                 ax.set_ylim(y_min, y_max)

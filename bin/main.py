@@ -98,10 +98,7 @@ class barsallpr:
         self.z_namebins_lists = []
         self.bh_maxs = []
         for z_name in z_names:
-            z_namebins = []
-            for binsuffix in binsuffixes:
-                z_namebins.append(z_name + str(binsuffix)) #list comprehension?
-            self.z_namebins_lists.append(z_namebins)
+            self.z_namebins_lists.append([z_name + str(binsuffix) for binsuffix in binsuffixes])
             self.bh_maxs.append(df_z.loc[df_z.z == z_name, 'ymax'].values[0])
 
         self.inner_cols = dfs[0][x_name].unique()

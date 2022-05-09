@@ -8,7 +8,6 @@ import os
 import sys
 import time
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 
 if len(sys.argv) < 2:
@@ -206,8 +205,15 @@ class barsonepr:
             self.c_names.append(rootlist)
             self.c_names_sd.append(rootlist_sd)
 
-        self.bins = [(x+1)/self.bincount for x in range(self.bincount)]
-        self.barwidth = -1.0/self.bincount
+        self.barwidths = [-1.0/self.bincount, -1.0/self.bincount]
+
+        bins = [(x+1)/self.bincount for x in range(self.bincount)]
+        self.binslists = [bins, bins]
+
+        wmax = 2.0 # For a1Max = a2Max = 1.0 and R1 = R2 = 2.0.
+        if c_name_roots[1] == 'w':
+            self.barwidths[1] *= wmax
+            self.binslists[1] = [x*wmax for x in self.binslists[1]]
 
         self.color_blue = [red-0.95, green-0.95, blue-0.05]
         self.colorsd_blue = [red-0.30, green-0.30, blue-0.05]
@@ -234,7 +240,7 @@ class barsonepr:
         for ax, title in zip(axs, titles):
             ax.set_xlabel(title, fontsize=fslabel)
 
-        for ax, name_root, c_name, c_name_sd, bh_max in zip(axs, c_name_roots, self.c_names, self.c_names_sd, self.bh_maxs):
+        for ax, name_root, c_name, c_name_sd, bins, barwidth, bh_max in zip(axs, c_name_roots, self.c_names, self.c_names_sd, self.binslists, self.barwidths, self.bh_maxs):
             medians = []
             for df in dfts:
                 medians.append(df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), name_root + 'median'].values[0])
@@ -248,11 +254,11 @@ class barsonepr:
                 self.colors[0] = self.color_blue
                 self.colorsds[0] = self.colorsd_blue
             for df, color, colorsd, alpha in zip(dfts, self.colors, self.colorsds, self.alphas):
-                for b, name, namesd in zip(self.bins, c_name, c_name_sd):
+                for b, name, namesd in zip(bins, c_name, c_name_sd):
                     barheight = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), name]
                     barheightsd = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), namesd]
-                    ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=self.barwidth, alpha=alpha)
-                    ax.bar(x=b, height=barheightsd, align='edge', color=colorsd, linewidth=0, width=self.barwidth, bottom=barheight, alpha=alpha)
+                    ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=barwidth, alpha=alpha)
+                    ax.bar(x=b, height=barheightsd, align='edge', color=colorsd, linewidth=0, width=barwidth, bottom=barheight, alpha=alpha)
                 ax.set(ylim=(0, bh_max), yticks=(0, bh_max), yticklabels=(0, bh_max))
                 ax.tick_params(axis='x', labelsize=fstick)
                 ax.tick_params(axis='y', labelsize=fstick)

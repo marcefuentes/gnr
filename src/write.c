@@ -23,7 +23,7 @@ void write_headers (char *filename, char *header1, char *header2)
 		exit (EXIT_FAILURE);
 	}
 
-	fprintf (fp, "%s,%s,GroupSize,Time", header1, header2);
+	fprintf (fp, "%s,%s,GroupSize,wmax,Time", header1, header2);
 
 	for ( int v = 0; v < CONTINUOUS_V; v++ )
 	{
@@ -58,7 +58,7 @@ void write_stats (char *filename, float factor1, float factor2, int groupsize, s
 
 	for ( ; p < p_last; p++ )
 	{
-		fprintf (fp, "%f,%f,%i,%i", factor1, factor2, groupsize, p->time);
+		fprintf (fp, "%f,%f,%i,%f,%i", factor1, factor2, groupsize, p->wmax, p->time);
 
 		for ( int v = 0; v < CONTINUOUS_V; v++ )
 		{

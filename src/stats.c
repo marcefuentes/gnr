@@ -4,14 +4,14 @@
 int select_bin (double ceiling, double binsize, double v);
 double stdev (double sum, double sum2, int runs);
 
-void stats_period (struct itype *i, struct itype *i_last, struct pruntype *prun, int n, double amin, double amax, double wmax, double r2, double given)
+void stats_period (struct itype *i, struct itype *i_last, struct pruntype *prun, int n, double amin, double amax, double r2, double given)
 {
 	int bin[CONTINUOUS_V][BINS] = {{ 0 }};
 	int boolean[BOOLEAN_V] = { 0 };
+	double wbinsize = prun->wmax/BINS;
 	double abinsize = (amax - amin)/BINS;
-	double hbinsize = abinsize*r2;
-	double wbinsize = wmax/BINS;
 	double aceiling = amin + abinsize;
+	double hbinsize = abinsize*r2;
 	double hceiling = aceiling*r2;
 	double e, f;
 	int b;
@@ -52,7 +52,7 @@ void stats_period (struct itype *i, struct itype *i_last, struct pruntype *prun,
 		prun->median[v] = (double)b/BINS + (0.5 - e)/((f - e)*BINS);
 	}
 
-	prun->median[0] *= wmax;
+	prun->median[0] *= prun->wmax;
 
 	for ( int v = 1; v < CONTINUOUS_V; v++ )
 	{
@@ -85,6 +85,7 @@ void stats_end (struct pruntype *prun, struct pruntype *prun_last, struct ptype 
 
 	for ( prun_previous = prun; prun < prun_last; prun_previous = prun, prun++, p++ )
 	{
+		p->wmax = prun->wmax;
 		p->time = prun->time;
 
 		for ( int v = 0; v < CONTINUOUS_V; v++ )

@@ -375,7 +375,8 @@ void caso (struct ptype *p_first)
 				|| (t + 1) % (gTime/gPeriods) == 0 )
 			{
 				prun->time = t + 1;
-				stats_period (i_first, i_last, prun, gN, ga2Min, ga2Max, wmax, gR2, gGiven);
+				prun->wmax = wmax;
+				stats_period (i_first, i_last, prun, gN, ga2Min, ga2Max, gR2, gGiven);
 				prun++;
 			}
 

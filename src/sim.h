@@ -9,6 +9,7 @@
 struct ptype
 {
 	int		time;
+	double		wmax;
 	double		sumc[CONTINUOUS_V][BINS], sumc2[CONTINUOUS_V][BINS];
 	double		sumBD[CONTINUOUS_V], sumBD2[CONTINUOUS_V];
 	double		summedian[CONTINUOUS_V], summedian2[CONTINUOUS_V];
@@ -18,6 +19,7 @@ struct ptype
 struct pruntype
 {
 	int		time;
+	double		wmax;
 	double		frc[CONTINUOUS_V][BINS];
 	double		median[CONTINUOUS_V];
 	double		frb[BOOLEAN_V];
@@ -59,7 +61,7 @@ void		choose_partner		(struct itype *i, struct itype *i_last, int groupsize);
 struct rtype	*create_recruits	(int deaths, double wc);
 void		free_recruits		(struct rtype *recruit);
 void		kill			(struct rtype *recruit, struct itype *i_first, int n);
-void		stats_period		(struct itype *i_first, struct itype *i_last, struct pruntype *prun, int n, double amin, double amax, double wmax, double r2, double given);
+void		stats_period		(struct itype *i_first, struct itype *i_last, struct pruntype *prun, int n, double amin, double amax, double r2, double given);
 void		stats_end		(struct pruntype *prun_first, struct pruntype *prun_last, struct ptype *p_first);
 void		stats_runs		(struct ptype *p, struct ptype *p_last, int runs);
 void		write_headers		(char *filename, char *header1, char *header2);

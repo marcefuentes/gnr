@@ -82,9 +82,7 @@ if pd.isnull(df_xy.loc[df_xy.xy == y_name, 'xymax'].values[0]):
 else:
     y_max = df_xy.loc[df_xy.xy == y_name, 'xymax'].values[0]
 y_log = df_xy.loc[df_xy.xy == y_name, 'log'].values[0]
-z0_name = module.z0
-z1_name = module.z1
-z_names = [z0_name, z1_name]
+z_names = [module.z0, module.z1]
 
 titles = []
 for z_name in z_names: 

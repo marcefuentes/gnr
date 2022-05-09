@@ -94,11 +94,10 @@ class barsallpr:
 
         bincount = int(sum(map(lambda x: z_names[0] in x, [*dfs[0]]))/2) - 2
 
-        binsuffixes = [x for x in range(bincount)]
         self.z_namebins_lists = []
         self.bh_maxs = []
         for z_name in z_names:
-            self.z_namebins_lists.append([z_name + str(binsuffix) for binsuffix in binsuffixes])
+            self.z_namebins_lists.append([z_name + str(x) for x in range(bincount)])
             self.bh_maxs.append(df_z.loc[df_z.z == z_name, 'ymax'].values[0])
 
         self.inner_cols = dfs[0][x_name].unique()
@@ -188,31 +187,24 @@ class barsonepr:
 
         bincount = int(sum(map(lambda x: z_names[0] in x, [*dfs[0]]))/2) - 2
 
-        bins = [(x+1)/bincount for x in range(bincount)]
+        hmax = 1.0
         wmax = 2.0 # For a1Max = a2Max = 1.0 and R1 = R2 = 2.0.
-        binsw = [x*wmax for x in bins]
 
-        bin_suffixes = [x for x in range(bincount)]
         self.z_namebins_lists = []
         self.z_namesdbins_lists = []
         self.bh_maxs = []
         self.barwidths = []
         self.binslists = []
         for z_name in z_names:
-            z_namebins = []
-            z_namesdbins = []
-            for bin_suffix in bin_suffixes:
-                z_namebins.append(z_name + str(bin_suffix)) 
-                z_namesdbins.append(z_name + 'SD' + str(bin_suffix)) 
-            self.z_namebins_lists.append(z_namebins)
-            self.z_namesdbins_lists.append(z_namesdbins)
+            self.z_namebins_lists.append([z_name + str(x) for x in range(bincount)])
+            self.z_namesdbins_lists.append([z_name + 'SD' + str(x) for x in range(bincount)])
             self.bh_maxs.append(df_z.loc[df_z.z == z_name, 'ymax'].values[0])
             if z_name == 'w':
-                self.binslists.append(binsw)
-                self.barwidths.append(-wmax/bincount)
+                mmax = wmax
             else:
-                self.binslists.append(bins)
-                self.barwidths.append(-1.0/bincount)
+                mmax = hmax
+            self.binslists.append([(x+1)*mmax/bincount for x in range(bincount)])
+            self.barwidths.append(-mmax/bincount)
 
         self.color_blue = [red-0.95, green-0.95, blue-0.05]
         self.colorsd_blue = [red-0.30, green-0.30, blue-0.05]

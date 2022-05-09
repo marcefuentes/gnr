@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-filename = 'barsh'
+filename = 'barsone'
 ftype = 'barsone' # barsall, barsone, scatter
 treatment = 'pr'
 control = 'none'

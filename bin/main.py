@@ -277,6 +277,9 @@ class scatterpr:
         if module.movie == True:
             fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
+        for dft in dfts:
+            dft.sort_values(by=[x_name, y_name], inplace=True)
+
         for ax, z_name, title, bubble_size in zip(axs, z_names, titles, self.bubble_sizes):
             ax.set_title(title, pad=10.0, fontsize=fstitle)
             ax.tick_params(axis='x', labelsize=fstick)
@@ -350,7 +353,7 @@ if module.movie == True:
         outfile = f'delete{t}.png'
         dfts = []
         for df in dfs:
-            dfts.append(df[df.Time == t])
+            dfts.append(df[df.Time == t].copy())
         pr.chart(dfts)
         outfiles.append(outfile)
     giffile = module.filename + '.gif'
@@ -365,7 +368,7 @@ else:
     t = dfs[0].Time.iat[-1]
     dfts = []
     for df in dfs:
-        dfts.append(df[df.Time == t])
+        dfts.append(df[df.Time == t].copy())
     pr.chart(dfts)
 
 end_time = time.perf_counter ()

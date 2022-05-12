@@ -212,7 +212,7 @@ class barsonepr:
 
         self.colors = [self.color_blue, color_gray]
         self.colorsds= [self.colorsd_blue, colorsd_gray]
-        self.alphas = [1.0, 0.9]
+        self.alphas = [1.0, 0.8]
 
         return self
 

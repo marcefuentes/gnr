@@ -34,3 +34,7 @@ factorName2,ChooseCost
 fFirst2,-6
 fLast2,-6
 fLevels2,1
+factorName3,GroupSize
+fFirst3,3
+fLast3,3
+fLevels3,1

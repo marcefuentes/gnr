@@ -64,6 +64,6 @@ void		kill			(struct rtype *recruit, struct itype *i_first, int n);
 void		stats_period		(struct itype *i_first, struct itype *i_last, struct pruntype *prun, int n, double amin, double amax, double r2, double given);
 void		stats_end		(struct pruntype *prun_first, struct pruntype *prun_last, struct ptype *p_first);
 void		stats_runs		(struct ptype *p, struct ptype *p_last, int runs);
-void		write_headers		(char *filename, char *header1, char *header2);
-void		write_stats		(char *filename, float factor1, float factor2, int groupsize, struct ptype *p, struct ptype *p_last);
+void		write_headers		(char *filename, char *header1, char *header2, char *header3);
+void		write_stats		(char *filename, float factor1, float factor2, int factor3, struct ptype *p, struct ptype *p_last);
 void		write_time_elapsed	(char *filename, float time_elapsed);

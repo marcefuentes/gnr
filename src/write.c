@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "sim.h"
 
-void write_headers (char *filename, char *header1, char *header2)
+void write_headers (char *filename, char *header1, char *header2, char *header3)
 {
 	FILE *fp;
 
@@ -23,7 +23,7 @@ void write_headers (char *filename, char *header1, char *header2)
 		exit (EXIT_FAILURE);
 	}
 
-	fprintf (fp, "%s,%s,GroupSize,wmax,Time", header1, header2);
+	fprintf (fp, "%s,%s,%s,wmax,Time", header1, header2, header3);
 
 	for ( int v = 0; v < CONTINUOUS_V; v++ )
 	{
@@ -46,7 +46,7 @@ void write_headers (char *filename, char *header1, char *header2)
 	fclose (fp);
 }
 
-void write_stats (char *filename, float factor1, float factor2, int groupsize, struct ptype *p, struct ptype *p_last)
+void write_stats (char *filename, float factor1, float factor2, int factor3, struct ptype *p, struct ptype *p_last)
 {
 	FILE *fp;
 
@@ -58,7 +58,7 @@ void write_stats (char *filename, float factor1, float factor2, int groupsize, s
 
 	for ( ; p < p_last; p++ )
 	{
-		fprintf (fp, "%f,%f,%i,%f,%i", factor1, factor2, groupsize, p->wmax, p->time);
+		fprintf (fp, "%f,%f,%i,%f,%i", factor1, factor2, factor3, p->wmax, p->time);
 
 		for ( int v = 0; v < CONTINUOUS_V; v++ )
 		{

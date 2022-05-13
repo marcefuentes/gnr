@@ -45,9 +45,11 @@ int	gReciprocity;
 int	ga2Macromutation;
 int	gIndirectReciprocity;
 
-char	factorName1[20], factorName2[20];
-double	fFirst1, fFirst2, fLast1, fLast2;
-int	fLevels1, fLevels2;
+char	factorName1[20], factorName2[20], factorName3[20];
+double	fFirst1, fLast1;
+double	fFirst2, fLast2;
+int	fFirst3, fLast3;
+int	fLevels1, fLevels2, fLevels3;
 
 // Functions
 
@@ -70,8 +72,9 @@ void	fix_a2_macromutation (struct itype *i, struct itype *i_last);
 int main (int argc, char *argv[])
 {
 	struct ptype	*p_first, *p_last;
-	double 		*factor1, *factor2, inc1, inc2, f1, f2;
-	int		a, b;
+	double 		*factor1, inc1, f1;
+	double		*factor2, inc2, f2;
+	int		*factor3, inc3, f3;
 	clock_t		start = clock ();
 
 	if ( argc != 2 )
@@ -141,6 +144,16 @@ int main (int argc, char *argv[])
 		exit (EXIT_FAILURE);
 	}
 
+	if ( strcmp (factorName3, "GroupSize") == 0 )
+		factor3 = &gGroupSize;
+	else if ( strcmp (factorName3, "N") == 0 )
+		factor3 = &gN;
+	else
+	{
+		fprintf (stderr, "I don't know factor %s.\n", factorName3);
+		exit (EXIT_FAILURE);
+	}
+
 	if ( gFFunction == 'q' )
 	{
 		gc1 = gc2 = 4.0/9.0; // Comment out to set these values in x.glo
@@ -154,7 +167,7 @@ int main (int argc, char *argv[])
 	}
 
 	write_globals (gl2); 
-	write_headers (out, factorName1, factorName2);
+	write_headers (out, factorName1, factorName2, factorName3);
 
 	if ( fLevels1 > 1 )
 	{
@@ -162,7 +175,15 @@ int main (int argc, char *argv[])
 	}
 	else
 	{
-		inc1 = fLast1 + 1.0;
+		if ( fLast1 != fFirst1 )
+		{
+			printf ("\nfLevels1 == 1 but fLast1 != fFirst1");
+			exit (EXIT_FAILURE);
+		}
+		else
+		{
+			inc1 = 1.0;
+		}
 	}
 
 	if ( fLevels2 > 1 )
@@ -171,10 +192,35 @@ int main (int argc, char *argv[])
 	}
 	else
 	{
-		inc2 = fLast2 + 1.0;
+		if ( fLast2 != fFirst2 )
+		{
+			printf ("\nfLevels2 == 1 but fLast2 != fFirst2");
+			exit (EXIT_FAILURE);
+		}
+		else
+		{
+			inc2 = 1.0;
+		}
 	}
 
-	for ( f1 = fFirst1, a = 0; a < fLevels1; a++, f1 += inc1 )
+	if ( fLevels3 > 1 )
+	{
+		inc3 = (fLast3 - fFirst3)/(fLevels3 - 1);
+	}
+	else
+	{
+		if ( fLast3 != fFirst3 )
+		{
+			printf ("\nfLevels3 == 1 but fLast3 != fFirst3");
+			exit (EXIT_FAILURE);
+		}
+		else
+		{
+			inc3 = 1;
+		}
+	}
+
+	for ( f1 = fFirst1; f1 <= fLast1; f1 += inc1 )
 	{
 		if ( strcmp (factorName1, "ChooseGrainInit") == 0 || strcmp (factorName1, "Given") == 0 )
 		{
@@ -185,7 +231,7 @@ int main (int argc, char *argv[])
 			*factor1 = pow(2.0, f1);
 		}
 
-		for ( f2 = fFirst2, b = 0; b < fLevels2; b++, f2 += inc2 )
+		for ( f2 = fFirst2; f2 <= fLast2; f2 += inc2 )
 		{
 			if ( strcmp (factorName2, "ChooseGrainInit") == 0 || strcmp (factorName2, "Given") == 0 )
 			{
@@ -196,22 +242,27 @@ int main (int argc, char *argv[])
 				*factor2 = pow(2.0, f2);
 			}
 
-			p_first = calloc (gPeriods + 1, sizeof *p_first);
-			if ( p_first == NULL )
+			for ( f3 = fFirst3; f3 <= fLast3; f3 += inc3 )
 			{
-				printf ("\nFailed calloc (periods)");
-				exit (EXIT_FAILURE);
+				*factor3 = pow(2, f3);
+
+				p_first = calloc (gPeriods + 1, sizeof *p_first);
+				if ( p_first == NULL )
+				{
+					printf ("\nFailed calloc (periods)");
+					exit (EXIT_FAILURE);
+				}
+
+				caso (p_first); 
+
+				p_last = p_first + gPeriods + 1;
+
+				stats_runs (p_first, p_last, gRuns);
+
+				write_stats (out, *factor1, *factor2, *factor3, p_first, p_last); // Writes periodic data
+
+				free (p_first);
 			}
-
-			caso (p_first); 
-
-			p_last = p_first + gPeriods + 1;
-
-			stats_runs (p_first, p_last, gRuns);
-
-			write_stats (out, *factor1, *factor2, gGroupSize, p_first, p_last); // Writes periodic data
-
-			free (p_first);
 		}
 	}
 
@@ -268,6 +319,10 @@ void read_globals (char *filename)
 	fscanf (fp, "fFirst2,%lf\n", &fFirst2);
 	fscanf (fp, "fLast2,%lf\n", &fLast2);
 	fscanf (fp, "fLevels2,%i\n", &fLevels2);
+	fscanf (fp, "factorName3,%s\n", factorName3);
+	fscanf (fp, "fFirst3,%i\n", &fFirst3);
+	fscanf (fp, "fLast3,%i\n", &fLast3);
+	fscanf (fp, "fLevels3,%i\n", &fLevels3);
 	
 	fclose (fp);
 

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-filename = 'rcm'
+filename = 'rhw'
 ftype = 'scatter' # barsall, barsone, scatter
 treatment = 'r'
 control = 'none'
@@ -8,8 +8,8 @@ drift = False
 movie = False
 x = 'N'
 y = 'ChooseCost'
-z0 = 'ChooseGrainmedian'
-z1 = 'MimicGrainmedian'
+z0 = 'helpmedian'
+z1 = 'wmedian'
 
 if ftype == 'barsone':
     x_value = -1.0

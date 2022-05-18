@@ -40,7 +40,8 @@ lst_xy = [('ES', 'Substitutability of resources', True, None, None),
             ('DeathRate', 'Death rate', True, 0.005, 0.2),
             ('GroupSize', 'Number of potential partners', True, 48.0, 2.6),
             ('MimicGrainInit', 'Sensitivity for comparing partner to self', False, None, None),
-            ('ChooseGrainInit', 'Sensitivity for comparing potential partners', False, None, None)]
+            ('ChooseGrainInit', 'Sensitivity for comparing potential partners', False, None, None),
+            ('N', 'Population size', True, None, None)]
 
 lst_z = [('ChooseGrainmedian', 'Sensitivity for comparing\npotential partners', 600.0, None),
             ('ChooseGrain', 'Sensitivity for comparing\npotential partners', 600.0, 0.20),

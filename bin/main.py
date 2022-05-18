@@ -314,7 +314,7 @@ class scatterpr:
                 else:
                     ax.scatter(x, y, c=color, ec=color, alpha=suffixalpha, s=s*bubble_size)
                 if z_name != z_names[0]:
-                    ax.set(yticks=[])
+                    ax.axes.yaxis.set_ticklabels([])
                 ax.set_xlim(x_min, x_max)
                 ax.set_ylim(y_min, y_max)
                 ax.set_box_aspect(1)

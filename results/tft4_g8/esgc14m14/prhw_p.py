@@ -1,15 +1,15 @@
 #!/usr/bin/python
 
-filename = 'grain'
+filename = 'prhw_p'
 ftype = 'scatter' # barsall, barsone, scatter
 treatment = 'pr'
-control = 'none'
+control = 'r'
 drift = False
 movie = False
 x = 'ES'
 y = 'Given'
-z0 = 'ChooseGrainmedian'
-z1 = 'MimicGrainmedian'
+z0 = 'helpmedian'
+z1 = 'wmedian'
 
 if ftype == 'barsone':
     x_value = -1.0

@@ -1,12 +1,12 @@
 #!/usr/bin/python
 
 import glob
-import imageio
 import importlib.util
 import math
 import os
 import sys
 import time
+import imageio.v3 as iio
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -33,7 +33,7 @@ red = 0.97
 green = 0.97
 blue = 0.97
 
-lst_xy = [('ES', 'Substitutability of resources', True, -5.0, None), 
+lst_xy = [('ES', 'Substitutability of resources', True, pow(2, -5.5), None), 
             ('Given', 'Proportion of resource $\it{A}$\ngiven to partner', False, None, None),
             ('ChooseCost', 'Cost of comparing potential partners', True, None, None),
             ('MimicCost', 'Cost of comparing partner to self', True, None, None),
@@ -359,14 +359,12 @@ if module.movie == True:
             dfts.append(df[df.Time == t].copy())
         pr.chart(dfts)
         outfiles.append(outfile)
+    frames = []
+    for outfile in outfiles:
+        frames.append(iio.imread(outfile))
     giffile = module.filename + '.gif'
-    with imageio.get_writer(giffile, mode='I') as writer:
-        for outfile in outfiles:
-            print(f'Adding {outfile} to movie', end='\r')
-            image = imageio.imread(outfile)
-            writer.append_data(image)
-    for outfile in set(outfiles):
-        os.remove(outfile)
+    iio.imwrite(giffile, frames)
+    [os.remove(outfile) for outfile in set(outfiles)]
 else:
     t = dfs[0].Time.iat[-1]
     dfts = []

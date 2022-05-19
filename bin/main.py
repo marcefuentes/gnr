@@ -331,9 +331,9 @@ def get_data(dfs):
         dfs.append(df)
 
     if module.control == 'optimal':
-        dfs[1]['helpmedian'] = dfs[1]['a2Seenmedian']*2.0*dfs[0]['Given']
+        dfs[1]['helpmedian'] = dfs[1]['a2Seenmedian']*2.0*dfs[1]['Given']
     if module.treatment == 'optimal':
-        dfs[0]['helpmedian'] = dfs[0]['a2Seenmedian']*2.0*dfs[1]['Given']
+        dfs[0]['helpmedian'] = dfs[0]['a2Seenmedian']*2.0*dfs[0]['Given']
 
     return dfs
 

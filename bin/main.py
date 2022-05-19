@@ -330,8 +330,10 @@ def get_data(dfs):
         df = pd.concat(map(pd.read_csv, glob.glob(os.path.join(d, '*.csv'))), ignore_index=True)
         dfs.append(df)
 
+    if module.control == 'optimal':
+        dfs[1]['helpmedian'] = dfs[1]['a2Seenmedian']*2.0*dfs[0]['Given']
     if module.treatment == 'optimal':
-        dfs[0]['helpmedian'] = dfs[0]['a2Seenmedian']*2.0*dfs[0]['Given']
+        dfs[0]['helpmedian'] = dfs[0]['a2Seenmedian']*2.0*dfs[1]['Given']
 
     return dfs
 

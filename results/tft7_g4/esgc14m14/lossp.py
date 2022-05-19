@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
-filename = 'hwoptimal'
+filename = 'lossp'
 ftype = 'scatter' # barsall, barsone, scatter
-treatment = 'optimal'
-control = 'none'
+treatment = 'p'
+control = 'optimal'
 drift = False
 movie = False
 x = 'ES'

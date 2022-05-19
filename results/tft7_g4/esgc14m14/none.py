@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
-filename = 'hwDrift'
+filename = 'nonehw'
 ftype = 'scatter' # barsall, barsone, scatter
-treatment = 'pr'
+treatment = 'none'
 control = 'none'
-drift = True
+drift = False
 movie = False
 x = 'ES'
 y = 'Given'

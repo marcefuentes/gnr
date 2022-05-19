@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
-filename = 'hwdrift'
+filename = 'losspr'
 ftype = 'scatter' # barsall, barsone, scatter
-treatment = 'none'
-control = 'none'
+treatment = 'pr'
+control = 'optimal'
 drift = False
 movie = False
 x = 'ES'

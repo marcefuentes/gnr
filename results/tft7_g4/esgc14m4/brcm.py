@@ -1,17 +1,17 @@
 #!/usr/bin/python
 
-filename = 'rcm'
-ftype = 'scatter' # barsall, barsone, scatter
+filename = 'brcm'
+ftype = 'barsone' # barsall, barsone, scatter
 treatment = 'r'
 control = 'none'
 drift = False
 movie = False
 x = 'ES'
 y = 'Given'
-z0 = 'ChooseGrainmedian'
-z1 = 'MimicGrainmedian'
+z0 = 'ChooseGrain'
+z1 = 'MimicGrain'
 
 if ftype == 'barsone':
-    x_value = -1.0
+    x_value = -2.0
     y_value = 1.0
 

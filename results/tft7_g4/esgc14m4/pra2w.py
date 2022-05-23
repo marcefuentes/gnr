@@ -1,14 +1,14 @@
 #!/usr/bin/python
 
-filename = 'rhw'
+filename = 'a2w'
 ftype = 'scatter' # barsall, barsone, scatter
-treatment = 'r'
+treatment = 'pr'
 control = 'none'
 drift = False
 movie = False
 x = 'ES'
 y = 'Given'
-z0 = 'helpmedian'
+z0 = 'a2Seenmedian'
 z1 = 'wmedian'
 
 if ftype == 'barsone':

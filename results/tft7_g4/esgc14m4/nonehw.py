@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
-filename = 'rhw'
+filename = 'nonehw'
 ftype = 'scatter' # barsall, barsone, scatter
-treatment = 'r'
+treatment = 'none'
 control = 'none'
 drift = False
 movie = False

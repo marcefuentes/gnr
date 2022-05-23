@@ -1,16 +1,16 @@
 #!/usr/bin/python
 
-filename = 'brhw'
+filename = 'barsone'
 ftype = 'barsone' # barsall, barsone, scatter
-treatment = 'r'
+treatment = 'pr'
 control = 'none'
 drift = False
-movie = True
-x = 'N'
-y = 'ChooseCost'
+movie = False
+x = 'ES'
+y = 'Given'
 z0 = 'help'
 z1 = 'w'
 
 if ftype == 'barsone':
-    x_value = 16.0
-    y_value = -14.0
+    x_value = -1.0
+    y_value = 1.0

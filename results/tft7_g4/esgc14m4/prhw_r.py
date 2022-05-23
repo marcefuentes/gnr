@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
-filename = 'rhw'
+filename = 'prhw_r'
 ftype = 'scatter' # barsall, barsone, scatter
-treatment = 'r'
-control = 'none'
+treatment = 'pr'
+control = 'p'
 drift = False
 movie = False
 x = 'ES'

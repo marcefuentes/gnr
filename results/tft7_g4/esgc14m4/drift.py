@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
-filename = 'rhw'
+filename = 'drift'
 ftype = 'scatter' # barsall, barsone, scatter
-treatment = 'r'
+treatment = 'pr'
 control = 'none'
-drift = False
+drift = True
 movie = False
 x = 'ES'
 y = 'Given'

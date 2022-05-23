@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
-filename = 'rhw'
+filename = 'losspr'
 ftype = 'scatter' # barsall, barsone, scatter
-treatment = 'r'
-control = 'none'
+treatment = 'pr'
+control = 'optimal'
 drift = False
 movie = False
 x = 'ES'

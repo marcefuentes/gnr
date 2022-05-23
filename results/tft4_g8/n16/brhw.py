@@ -5,14 +5,12 @@ ftype = 'barsone' # barsall, barsone, scatter
 treatment = 'r'
 control = 'none'
 drift = False
-movie = False
-z0 = 'helpGrain'
-z1 = 'wGrain'
+movie = True
+x = 'N'
+y = 'ChooseCost'
+z0 = 'help'
+z1 = 'w'
 
 if ftype == 'barsone':
-    x_value = -15.0
-    y_value = -5.0
-else:
-    x = 'N'
-    y = 'ChooseCost'
-
+    x_value = 16.0
+    y_value = -14.0

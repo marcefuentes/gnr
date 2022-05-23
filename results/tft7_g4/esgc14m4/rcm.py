@@ -14,4 +14,3 @@ z1 = 'MimicGrainmedian'
 if ftype == 'barsone':
     x_value = -1.0
     y_value = 1.0
-

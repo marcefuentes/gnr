@@ -1,18 +1,16 @@
 #!/usr/bin/python
 
-filename = 'brcm'
+filename = 'brhw'
 ftype = 'barsone' # barsall, barsone, scatter
 treatment = 'r'
 control = 'none'
 drift = False
-movie = False
-z0 = 'ChooseGrain'
-z1 = 'MimicGrain'
+movie = True
+x = 'Given'
+y = 'ES'
+z0 = 'help'
+z1 = 'w'
 
 if ftype == 'barsone':
-    x_value = -15.0
+    x_value = 1.0
     y_value = -5.0
-else:
-    x = 'N'
-    y = 'ChooseCost'
-

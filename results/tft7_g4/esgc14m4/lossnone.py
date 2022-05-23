@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
-filename = 'rhw'
+filename = 'lossnone'
 ftype = 'scatter' # barsall, barsone, scatter
-treatment = 'r'
-control = 'none'
+treatment = 'none'
+control = 'optimal'
 drift = False
 movie = False
 x = 'ES'

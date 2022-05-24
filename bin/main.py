@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 if len(sys.argv) < 2:
-    print('You must add an argument with the python module name (for example, scatter)')
+    print('You must add an argument with the python module name (for example, config)')
     exit(1)
 
 start_time = time.perf_counter ()

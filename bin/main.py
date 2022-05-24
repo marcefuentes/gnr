@@ -332,6 +332,11 @@ def get_data(dfs):
 
     return dfs
 
+def create_figure(dfs, t):
+    dfts = []
+    [dfts.append(df[df.Time == t].copy()) for df in dfs]
+    pr.chart(dfts)
+
 dfs = []
 dfs = get_data(dfs)
 
@@ -349,9 +354,7 @@ if module.movie == True:
     for t in dfs[0].Time.unique():
         print(f'Processing step {t}', end='\r')
         outfile = f'delete{t}.png'
-        dfts = []
-        [dfts.append(df[df.Time == t].copy()) for df in dfs]
-        pr.chart(dfts)
+        create_figure(dfs, t)
         outfiles.append(outfile)
     frames = []
     [frames.append(iio.imread(outfile)) for outfile in outfiles]
@@ -360,9 +363,7 @@ if module.movie == True:
     [os.remove(outfile) for outfile in set(outfiles)]
 else:
     t = dfs[0].Time.iat[-1]
-    dfts = []
-    [dfts.append(df[df.Time == t].copy()) for df in dfs]
-    pr.chart(dfts)
+    create_figure(dfs, t)
 
 end_time = time.perf_counter ()
 print("\nTime elapsed: %.2f seconds" % (end_time - start_time))

@@ -87,7 +87,7 @@ z_names = [module.z0, module.z1]
 titles = []
 [titles.append(df_z.loc[df_z.z == z_name, 'title'].values[0]) for z_name in z_names]
 
-class barsallpr:
+class BarsAll:
 
     def prepare(self, dfs):
 
@@ -126,7 +126,7 @@ class barsallpr:
         fig.supxlabel(x_label, fontsize=fslabel)
         fig.supylabel(t=y_label, x=0.003*width, fontsize=fslabel, ha='center')
 
-        if module.movie == True:
+        if module.movie:
             fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
         outer_grid = fig.add_gridspec(nrows=1, ncols=len(z_names), wspace=0.1)
@@ -154,13 +154,13 @@ class barsallpr:
                             ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=self.barwidth, alpha=alpha)
                             ax.set(xticks=[], yticks=[], ylim=[0, bh_max*2])
                     if (n == 0) & (column == 0):
-                        if y_log == True:
+                        if y_log:
                             y = '$2^{{{}}}$'.format(round(math.log(inner_row, 2)))
                         else:
                             y = inner_row
                         ax.set_ylabel(y, rotation='horizontal', horizontalalignment='right', verticalalignment='center')
                     if row == len(self.inner_rows) - 1:
-                        if x_log == True:
+                        if x_log:
                             x = '$2^{{{}}}$'.format(round(math.log(inner_col, 2)))
                         else:
                             x = inner_col
@@ -171,15 +171,15 @@ class barsallpr:
         plt.savefig(outfile, dpi=100)
         plt.close()
 
-class barsonepr:
+class BarsOne:
 
     def prepare(self, dfs):
 
-        if x_log == True:
+        if x_log:
             self.x_value = float(str("{:.6f}".format(pow(2, int(module.x_value)))))
         else:
             self.x_value = module.x_value
-        if y_log == True:
+        if y_log:
             self.y_value = float(str("{:.6f}".format(pow(2, int(module.y_value)))))
         else:
             self.y_value = module.y_value
@@ -221,7 +221,7 @@ class barsonepr:
 
         fig.supylabel('\nFrequency', fontsize=fslabel, ha='center')
 
-        if module.movie == True:
+        if module.movie:
             fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
         [ax.set_xlabel(title, fontsize=fslabel) for ax, title in zip(axs, titles)]
@@ -254,7 +254,7 @@ class barsonepr:
         plt.savefig(outfile, dpi=100)
         plt.close()
 
-class scatterpr:
+class Scatter:
 
     def prepare(self, dfs):
         self.suffixes = ('SD', '')
@@ -270,7 +270,7 @@ class scatterpr:
         fig.supxlabel(t=x_label, y=0.02, fontsize=fslabel)
         fig.supylabel(t=y_label, x=0.04, fontsize=fslabel, ha='center')
 
-        if module.movie == True:
+        if module.movie:
             fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
         [dft.sort_values(by=[x_name, y_name], inplace=True) for dft in dfts]
@@ -279,9 +279,9 @@ class scatterpr:
             ax.set_title(title, pad=10.0, fontsize=fstitle)
             ax.tick_params(axis='x', labelsize=fstick)
             ax.tick_params(axis='y', labelsize=fstick)
-            if x_log == True:
+            if x_log:
                 ax.set_xscale('log', base=2)
-            if y_log == True:
+            if y_log:
                 ax.set_yscale('log', base=2)
             dif = dfts[1][z_name] - dfts[0][z_name]
             if (z_name == 'ChooseGrainmedian') or (z_name == 'MimicGrainmedian') or ('BD' in z_name):
@@ -303,7 +303,7 @@ class scatterpr:
                 s = df[z_name]
                 if suffix == 'SD':
                     s = s + df[z_name + suffix]
-                if module.drift == True:
+                if module.drift:
                     ax.scatter(x, y, color='0.700', edgecolor='0.700', alpha=suffixalpha, s=s*bubble_size)
                 else:
                     ax.scatter(x, y, c=color, ec=color, alpha=suffixalpha, s=s*bubble_size)
@@ -340,15 +340,15 @@ dfs = []
 dfs = get_data(dfs)
 
 if module.ftype == 'barsone':
-    pr = barsonepr()
+    pr = BarsOne()
 elif module.ftype == 'barsall':
-    pr = barsallpr()
+    pr = BarsAll()
 else:
-    pr = scatterpr()
+    pr = Scatter()
 
 pr.prepare(dfs)
 
-if module.movie == True:
+if module.movie:
     frames = []
     for t in dfs[0].Time.unique():
         print(f'Processing step {t}', end='\r')

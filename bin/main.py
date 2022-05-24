@@ -262,22 +262,10 @@ class Scatter:
         plt.savefig(outfile, transparent=False)
         plt.close()
 
-def get_data(dfs):
-    dirs = [module.treatment, module.control]
-    for d in dirs:
-        df = pd.concat(map(pd.read_csv, glob.glob(os.path.join(d, '*.csv'))), ignore_index=True)
-        dfs.append(df)
-    if module.control == 'optimal': dfs[1]['helpmedian'] = dfs[1]['a2Seenmedian']*2.0*dfs[1]['Given']
-    if module.treatment == 'optimal': dfs[0]['helpmedian'] = dfs[0]['a2Seenmedian']*2.0*dfs[0]['Given']
-    return dfs
-
 def create_figure(t):
     dfts = []
     [dfts.append(df[df.Time == t].copy()) for df in dfs]
     pr.chart(dfts)
-
-dfs = []
-dfs = get_data(dfs)
 
 if module.ftype == 'barsone':
     pr = BarsOne()
@@ -288,6 +276,14 @@ elif module.ftype == 'scatter':
 else:
     print('No such ftype')
     exit(1)
+
+dfs = []
+dirs = [module.treatment, module.control]
+for d in dirs:
+    df = pd.concat(map(pd.read_csv, glob.glob(os.path.join(d, '*.csv'))), ignore_index=True)
+    dfs.append(df)
+if module.control == 'optimal': dfs[1]['helpmedian'] = dfs[1]['a2Seenmedian']*2.0*dfs[1]['Given']
+if module.treatment == 'optimal': dfs[0]['helpmedian'] = dfs[0]['a2Seenmedian']*2.0*dfs[0]['Given']
 
 pr.prepare(dfs)
 

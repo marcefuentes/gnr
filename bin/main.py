@@ -86,8 +86,7 @@ y_log = df_xy.loc[df_xy.xy == y_name, 'log'].values[0]
 z_names = [module.z0, module.z1]
 
 titles = []
-for z_name in z_names: 
-    titles.append(df_z.loc[df_z.z == z_name, 'title'].values[0])
+[titles.append(df_z.loc[df_z.z == z_name, 'title'].values[0]) for z_name in z_names]
 
 class barsallpr:
 
@@ -226,13 +225,11 @@ class barsonepr:
         if module.movie == True:
             fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
-        for ax, title in zip(axs, titles):
-            ax.set_xlabel(title, fontsize=fslabel)
+        [ax.set_xlabel(title, fontsize=fslabel) for ax, title in zip(axs, titles)]
 
         for ax, z_name, z_namebins, z_namesdbins, bins, barwidth, bh_max in zip(axs, z_names, self.z_namebins_lists, self.z_namesdbins_lists, self.binslists, self.barwidths, self.bh_maxs):
             medians = []
-            for df in dfts:
-                medians.append(df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), z_name + 'median'].values[0])
+            [medians.append(df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), z_name + 'median'].values[0]) for df in dfts]
             dif = medians[0] - medians[1]
             if ('Grain' in z_name) or ('BD' in z_name):
                 dif = -dif
@@ -265,8 +262,7 @@ class scatterpr:
         self.suffixalphas = (0.2, 1.0)
         self.suffixecs = ('0.300', '0.000')
         self.bubble_sizes = []
-        for z_name in z_names:
-            self.bubble_sizes.append(df_z.loc[df_z.z == z_name, 'bubble_size'].values[0])
+        [self.bubble_sizes.append(df_z.loc[df_z.z == z_name, 'bubble_size'].values[0]) for z_name in z_names]
 
     def chart(self, dfts):
 
@@ -278,8 +274,7 @@ class scatterpr:
         if module.movie == True:
             fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
-        for dft in dfts:
-            dft.sort_values(by=[x_name, y_name], inplace=True)
+        [dft.sort_values(by=[x_name, y_name], inplace=True) for dft in dfts]
 
         for ax, z_name, title, bubble_size in zip(axs, z_names, titles, self.bubble_sizes):
             ax.set_title(title, pad=10.0, fontsize=fstitle)
@@ -355,21 +350,18 @@ if module.movie == True:
         print(f'Processing step {t}', end='\r')
         outfile = f'delete{t}.png'
         dfts = []
-        for df in dfs:
-            dfts.append(df[df.Time == t].copy())
+        [dfts.append(df[df.Time == t].copy()) for df in dfs]
         pr.chart(dfts)
         outfiles.append(outfile)
     frames = []
-    for outfile in outfiles:
-        frames.append(iio.imread(outfile))
+    [frames.append(iio.imread(outfile)) for outfile in outfiles]
     giffile = module.filename + '.gif'
     iio.imwrite(giffile, frames)
     [os.remove(outfile) for outfile in set(outfiles)]
 else:
     t = dfs[0].Time.iat[-1]
     dfts = []
-    for df in dfs:
-        dfts.append(df[df.Time == t].copy())
+    [dfts.append(df[df.Time == t].copy()) for df in dfs]
     pr.chart(dfts)
 
 end_time = time.perf_counter ()

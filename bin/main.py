@@ -18,8 +18,6 @@ start_time = time.perf_counter ()
 sys.path.append(os.path.dirname(os.path.expanduser(sys.argv[1])))
 module = __import__(sys.argv[1])
 
-outfile = module.filename + '.png'
-
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -285,8 +283,11 @@ if module.ftype == 'barsone':
     pr = BarsOne()
 elif module.ftype == 'barsall':
     pr = BarsAll()
-else:
+elif module.ftype == 'scatter':
     pr = Scatter()
+else:
+    print('No such ftype')
+    exit(1)
 
 pr.prepare(dfs)
 
@@ -302,6 +303,7 @@ if module.movie:
     iio.imwrite(giffile, frames)
 else:
     t = dfs[0].Time.iat[-1]
+    outfile = module.filename + '.png'
     create_figure(t)
 
 end_time = time.perf_counter ()

@@ -350,17 +350,15 @@ else:
 pr.prepare(dfs)
 
 if module.movie == True:
-    outfiles = []
+    frames = []
     for t in dfs[0].Time.unique():
         print(f'Processing step {t}', end='\r')
         outfile = f'delete{t}.png'
         create_figure(dfs, t)
-        outfiles.append(outfile)
-    frames = []
-    [frames.append(iio.imread(outfile)) for outfile in outfiles]
+        frames.append(iio.imread(outfile))
+        os.remove(outfile)
     giffile = module.filename + '.gif'
     iio.imwrite(giffile, frames)
-    [os.remove(outfile) for outfile in set(outfiles)]
 else:
     t = dfs[0].Time.iat[-1]
     create_figure(dfs, t)

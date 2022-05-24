@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import glob
-import importlib.util
 import math
 import os
 import sys
@@ -332,7 +331,7 @@ def get_data(dfs):
 
     return dfs
 
-def create_figure(dfs, t):
+def create_figure(t):
     dfts = []
     [dfts.append(df[df.Time == t].copy()) for df in dfs]
     pr.chart(dfts)
@@ -354,14 +353,14 @@ if module.movie == True:
     for t in dfs[0].Time.unique():
         print(f'Processing step {t}', end='\r')
         outfile = f'delete{t}.png'
-        create_figure(dfs, t)
+        create_figure(t)
         frames.append(iio.imread(outfile))
         os.remove(outfile)
     giffile = module.filename + '.gif'
     iio.imwrite(giffile, frames)
 else:
     t = dfs[0].Time.iat[-1]
-    create_figure(dfs, t)
+    create_figure(t)
 
 end_time = time.perf_counter ()
 print("\nTime elapsed: %.2f seconds" % (end_time - start_time))

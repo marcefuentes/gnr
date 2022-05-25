@@ -144,18 +144,18 @@ class BarsOne:
         self.x_value = float(str("{:.6f}".format(pow(2, int(module.x_value))))) if x_log else module.x_value
         self.y_value = float(str("{:.6f}".format(pow(2, int(module.y_value))))) if y_log else module.y_value
 
-        bincount = int(sum(map(lambda x: z_names[0] in x, [*dfs[0]]))/2) - 2
+        bincount = int(sum(map(lambda x: module.dirs[0] in x, [*dfs[module.dirs[0]]]))/2) - 2
 
         self.z_namebins_lists = []
         self.z_namesdbins_lists = []
         self.bh_maxs = []
         self.binslists = []
         self.barwidths = []
-        for z_name in z_names:
-            self.z_namebins_lists.append([z_name + str(x) for x in range(bincount)])
-            self.z_namesdbins_lists.append([z_name + 'SD' + str(x) for x in range(bincount)])
-            self.bh_maxs.append(df_z.loc[df_z.z == z_name, 'ymax'].values[0])
-            mmax = 2.0 if z_name == 'w' else 1.0 # For a1Max = a2Max = 1.0 and R1 = R2 = 2.0.
+        for z_dict in z_dicts:
+            self.z_namebins_lists.append([z_dict['name'] + str(x) for x in range(bincount)])
+            self.z_namesdbins_lists.append([z_dict['name'] + 'SD' + str(x) for x in range(bincount)])
+            self.bh_maxs.append(df_z.loc[df_z.z == z_dict['name'], 'ymax'].values[0])
+            mmax = 2.0 if z_dict['name'] == 'w' else 1.0 # For a1Max = a2Max = 1.0 and R1 = R2 = 2.0.
             self.binslists.append([(x+1)*mmax/bincount for x in range(bincount)])
             self.barwidths.append(-mmax/bincount)
 
@@ -174,31 +174,31 @@ class BarsOne:
 
     def chart(self, dfts):
 
-        fig, axs = plt.subplots(nrows=1, ncols=len(z_names), figsize=(width, height), constrained_layout=False)
+        fig, axs = plt.subplots(nrows=1, ncols=len(z_dicts), figsize=(width, height), sharey=True, constrained_layout=False, squeeze=False)
 
         fig.supylabel('\nFrequency', fontsize=fslabel, ha='center')
 
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
-        [ax.set_xlabel(title, fontsize=fslabel) for ax, title in zip(axs, titles)]
+        [ax.set_xlabel(title, fontsize=fslabel) for ax, title in zip(axs.reshape(-1), titles)]
 
-        for ax, z_name, z_namebins, z_namesdbins, bins, barwidth, bh_max in zip(axs, z_names, self.z_namebins_lists, self.z_namesdbins_lists, self.binslists, self.barwidths, self.bh_maxs):
+        for ax, z_dict, z_namebins, z_namesdbins, bins, barwidth, bh_max in zip(axs.reshape(-1), z_dicts, self.z_namebins_lists, self.z_namesdbins_lists, self.binslists, self.barwidths, self.bh_maxs):
+            ds = [dfts[z_dict['control']], dfts[z_dict['treatment']]]
             medians = []
-            [medians.append(df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), z_name + 'median'].values[0]) for df in dfts]
-            dif = medians[0] - medians[1]
-            if ('Grain' in z_name) or ('BD' in z_name): dif = -dif
+            [medians.append(d.loc[(d[x_name] == self.x_value) & (d[y_name] == self.y_value), z_dict['name'] + 'median'].values[0]) for d in ds]
+            dif = medians[1] - medians[0]
+            if ('Grain' in z_dict['name']) or ('BD' in z_dict['name']): dif = -dif
             self.colors[0] = self.color_green if dif > 0.0 else self.color_blue
             self.colorsds[0] = self.color_green if dif > 0.0 else self.colorsd_blue
-            for df, color, colorsd, alpha in zip(dfts, self.colors, self.colorsds, self.alphas):
+            for d, color, colorsd, alpha in zip(ds, self.colors, self.colorsds, self.alphas):
                 for b, z_namebin, z_namesdbin in zip(bins, z_namebins, z_namesdbins):
-                    barheight = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), z_namebin]
-                    barheightsd = df.loc[(df[x_name] == self.x_value) & (df[y_name] == self.y_value), z_namesdbin]
+                    barheight = d.loc[(d[x_name] == self.x_value) & (d[y_name] == self.y_value), z_namebin]
+                    barheightsd = d.loc[(d[x_name] == self.x_value) & (d[y_name] == self.y_value), z_namesdbin]
                     ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=barwidth, alpha=alpha)
                     ax.bar(x=b, height=barheightsd, align='edge', color=colorsd, linewidth=0, width=barwidth, bottom=barheight, alpha=alpha)
                 ax.set(ylim=(0, bh_max), yticks=(0, bh_max), yticklabels=(0, bh_max))
                 ax.tick_params(axis='x', labelsize=fstick)
                 ax.tick_params(axis='y', labelsize=fstick)
-                if z_name != z_names[0]: ax.set(yticks=[])
                 ax.set_box_aspect(1)
 
         plt.savefig(outfile, dpi=100)

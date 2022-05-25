@@ -109,10 +109,10 @@ class BarsAll:
 
         outer_grid = fig.add_gridspec(nrows=1, ncols=len(z_dicts), wspace=0.1)
 
-        for n, (z_namebins, z_dict, title, bh_max) in enumerate(zip(self.z_namebins_lists, z_dicts, titles, self.bh_maxs)):
+        for n, (z_namebins, z_dict, bh_max) in enumerate(zip(self.z_namebins_lists, z_dicts, self.bh_maxs)):
             inner_grid = outer_grid[n].subgridspec(nrows=len(self.inner_rows), ncols=len(self.inner_cols), wspace=0.0, hspace=0.0)
             axs = inner_grid.subplots()
-            axs[0, int(len(self.inner_cols)/2)].set_title(title, fontsize=fslabel) # Prints the title of the middle column. Bad if there are even columns
+            axs[0, int(len(self.inner_cols)/2)].set_title(z_dict['title'], fontsize=fslabel) # Prints the title of the middle column. Bad if there are even columns
             for row, (rowax, inner_row) in enumerate(zip(axs, self.inner_rows)): 
                 for column, (ax, inner_col) in enumerate(zip(rowax, self.inner_cols)):
                     ds = [dfts[z_dict['control']], dfts[z_dict['treatment']]]
@@ -121,7 +121,6 @@ class BarsAll:
                     dif = medians[1] - medians[0]
                     if ('Grain' in z_dict['name']) or ('BD' in z_dict['name']): dif = -dif
                     self.colors[0] = self.color_green if dif > 0.0 else self.color_blue
-
                     for d, color, alpha in zip(ds, self.colors, self.alphas):
                         for b, name0, name1 in zip(self.bins[::2], z_namebins[::2], z_namebins[1::2]):
                             barheight=d.loc[(d[x_name] == inner_col) & (d[y_name] == inner_row), name0] + d.loc[(d[x_name] == inner_col) & (d[y_name] == inner_row), name1]
@@ -180,9 +179,8 @@ class BarsOne:
 
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
-        [ax.set_xlabel(title, fontsize=fslabel) for ax, title in zip(axs.reshape(-1), titles)]
-
         for ax, z_dict, z_namebins, z_namesdbins, bins, barwidth, bh_max in zip(axs.reshape(-1), z_dicts, self.z_namebins_lists, self.z_namesdbins_lists, self.binslists, self.barwidths, self.bh_maxs):
+            ax.set_xlabel(z_dict['title'], fontsize=fslabel)
             ds = [dfts[z_dict['control']], dfts[z_dict['treatment']]]
             medians = []
             [medians.append(d.loc[(d[x_name] == self.x_value) & (d[y_name] == self.y_value), z_dict['name'] + 'median'].values[0]) for d in ds]
@@ -216,7 +214,6 @@ class Scatter:
     def chart(self, dfts):
 
         fig, axs = plt.subplots(nrows=1, ncols=len(z_dicts), figsize=(width, height), sharey=True, constrained_layout=False, squeeze=False)
-        print(len(z_dicts))
         fig.supxlabel(t=x_label, y=0.02, fontsize=fslabel)
         fig.supylabel(t=y_label, x=0.04, fontsize=fslabel, ha='center')
 
@@ -225,8 +222,8 @@ class Scatter:
         #for d in module.dirs:
         #    dfts[d].sort_values(by=[x_name, y_name], inplace=True)
 
-        for ax, z_dict, title, bubble_size in zip(axs.reshape(-1), z_dicts, titles, self.bubble_sizes):
-            ax.set_title(title, pad=10.0, fontsize=fstitle)
+        for ax, z_dict, bubble_size in zip(axs.reshape(-1), z_dicts, self.bubble_sizes):
+            ax.set_title(z_dict['title'], pad=10.0, fontsize=fstitle)
             ax.tick_params(axis='x', labelsize=fstick)
             ax.tick_params(axis='y', labelsize=fstick)
             if x_log: ax.set_xscale('log', base=2)
@@ -266,8 +263,8 @@ def create_figure(t):
 
 z_dicts = module.z
 
-titles = []
-[titles.append(df_z.loc[df_z.z == z_dict['name'], 'title'].values[0]) for z_dict in z_dicts]
+for z_dict in z_dicts:
+    z_dict['title'] = df_z.loc[df_z.z == z_dict['name'], 'title'].values[0]
 
 dfs = {}
 for d in module.dirs:

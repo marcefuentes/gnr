@@ -75,11 +75,9 @@ class BarsAll:
 
         bincount = int(sum(map(lambda x: module.z0['name'] in x, [*dfs[module.dirs[0]]]))/2) - 2
 
-        self.z_namebins_lists = []
-        self.bh_maxs = []
         for z_dict in z_dicts:
-            self.z_namebins_lists.append([z_dict['name'] + str(x) for x in range(bincount)])
-            self.bh_maxs.append(df_z.loc[df_z.z == z_dict['name'], 'ymax'].values[0])
+            z_dict['namebins_list'] = [z_dict['name'] + str(x) for x in range(bincount)]
+            z_dict['bh_max'] = df_z.loc[df_z.z == z_dict['name'], 'ymax'].values[0]
 
         self.inner_cols = dfs[module.dirs[0]][x_name].unique()
         self.inner_rows = dfs[module.dirs[0]][y_name].unique()
@@ -109,7 +107,7 @@ class BarsAll:
 
         outer_grid = fig.add_gridspec(nrows=1, ncols=len(z_dicts), wspace=0.1)
 
-        for n, (z_namebins, z_dict, bh_max) in enumerate(zip(self.z_namebins_lists, z_dicts, self.bh_maxs)):
+        for n, z_dict in enumerate(z_dicts):
             inner_grid = outer_grid[n].subgridspec(nrows=len(self.inner_rows), ncols=len(self.inner_cols), wspace=0.0, hspace=0.0)
             axs = inner_grid.subplots()
             axs[0, int(len(self.inner_cols)/2)].set_title(z_dict['title'], fontsize=fslabel) # Prints the title of the middle column. Bad if there are even columns
@@ -122,10 +120,10 @@ class BarsAll:
                     if ('Grain' in z_dict['name']) or ('BD' in z_dict['name']): dif = -dif
                     self.colors[0] = self.color_green if dif > 0.0 else self.color_blue
                     for d, color, alpha in zip(ds, self.colors, self.alphas):
-                        for b, name0, name1 in zip(self.bins[::2], z_namebins[::2], z_namebins[1::2]):
+                        for b, name0, name1 in zip(self.bins[::2], z_dict['namebins_list'][::2], z_dict['namebins_list'][1::2]):
                             barheight=d.loc[(d[x_name] == inner_col) & (d[y_name] == inner_row), name0] + d.loc[(d[x_name] == inner_col) & (d[y_name] == inner_row), name1]
                             ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=self.barwidth, alpha=alpha)
-                            ax.set(xticks=[], yticks=[], ylim=[0, bh_max*2])
+                            ax.set(xticks=[], yticks=[], ylim=[0, z_dict['bh_max']*2])
                     if (n == 0) & (column == 0):
                         y = '$2^{{{}}}$'.format(round(math.log(inner_row, 2))) if y_log else inner_row
                         ax.set_ylabel(y, rotation='horizontal', horizontalalignment='right', verticalalignment='center')

@@ -144,7 +144,7 @@ class BarsOne:
         self.x_value = float(str("{:.6f}".format(pow(2, int(module.x_value))))) if x_log else module.x_value
         self.y_value = float(str("{:.6f}".format(pow(2, int(module.y_value))))) if y_log else module.y_value
 
-        bincount = int(sum(map(lambda x: module.dirs[0] in x, [*dfs[module.dirs[0]]]))/2) - 2
+        bincount = int(sum(map(lambda x: module.z0['name'] in x, [*dfs[module.dirs[0]]]))/2) - 2
 
         self.z_namebins_lists = []
         self.z_namesdbins_lists = []

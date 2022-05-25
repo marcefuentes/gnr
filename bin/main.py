@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#! /usr/bin/env python
 
 import glob
 import math
@@ -68,10 +68,6 @@ x_min = None if pd.isnull(df_xy.loc[df_xy.xy == x_name, 'xymin'].values[0]) else
 y_min = None if pd.isnull(df_xy.loc[df_xy.xy == y_name, 'xymin'].values[0]) else df_xy.loc[df_xy.xy == y_name, 'xymin'].values[0]
 x_max = None if pd.isnull(df_xy.loc[df_xy.xy == x_name, 'xymax'].values[0]) else df_xy.loc[df_xy.xy == x_name, 'xymax'].values[0]
 y_max = None if pd.isnull(df_xy.loc[df_xy.xy == y_name, 'xymax'].values[0]) else df_xy.loc[df_xy.xy == y_name, 'xymax'].values[0]
-z_names = [module.z0, module.z1]
-
-titles = []
-[titles.append(df_z.loc[df_z.z == z_name, 'title'].values[0]) for z_name in z_names]
 
 class BarsAll:
 
@@ -215,27 +211,28 @@ class Scatter:
         self.suffixalphas = (0.2, 1.0)
         self.suffixecs = ('0.300', '0.000')
         self.bubble_sizes = []
-        [self.bubble_sizes.append(df_z.loc[df_z.z == z_name, 'bubble_size'].values[0]) for z_name in z_names]
+        [self.bubble_sizes.append(df_z.loc[df_z.z == z_dict['name'], 'bubble_size'].values[0]) for z_dict in z_dicts]
 
     def chart(self, dfts):
 
-        fig, axs = plt.subplots(nrows=1, ncols=len(z_names), figsize=(width, height), constrained_layout=False)
-
+        fig, axs = plt.subplots(nrows=1, ncols=len(z_dicts), figsize=(width, height), sharey=True, constrained_layout=False, squeeze=False)
+        print(len(z_dicts))
         fig.supxlabel(t=x_label, y=0.02, fontsize=fslabel)
         fig.supylabel(t=y_label, x=0.04, fontsize=fslabel, ha='center')
 
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
-        [dft.sort_values(by=[x_name, y_name], inplace=True) for dft in dfts]
+        for d in module.dirs:
+            dfts[d].sort_values(by=[x_name, y_name], inplace=True)
 
-        for ax, z_name, title, bubble_size in zip(axs, z_names, titles, self.bubble_sizes):
+        for ax, z_dict, title, bubble_size in zip(axs.reshape(-1), z_dicts, titles, self.bubble_sizes):
             ax.set_title(title, pad=10.0, fontsize=fstitle)
             ax.tick_params(axis='x', labelsize=fstick)
             ax.tick_params(axis='y', labelsize=fstick)
             if x_log: ax.set_xscale('log', base=2)
             if y_log: ax.set_yscale('log', base=2)
-            dif = dfts[1][z_name] - dfts[0][z_name]
-            if (z_name == 'ChooseGrainmedian') or (z_name == 'MimicGrainmedian') or ('BD' in z_name): dif = -dif
+            dif = dfts[z_dict['control']][z_dict['name']] - dfts[z_dict['treatment']][z_dict['name']]
+            if (z_dict['name'] == 'ChooseGrainmedian') or (z_dict['name'] == 'MimicGrainmedian') or ('BD' in z_dict['name']): dif = -dif
             color = []
             for i in dif:
                 if i < 0.0:
@@ -245,16 +242,15 @@ class Scatter:
                     if i > red: i = red
                     color.append((red - i, green - i, blue - i/2.0))
             for suffix, suffixec, suffixalpha in zip(self.suffixes, self.suffixecs, self.suffixalphas):
-                df = dfts[module.drift]
+                df = dfts[z_dict['treatment']]
                 x = df[x_name]
                 y = df[y_name]
-                s = df[z_name]
-                if suffix == 'SD': s = s + df[z_name + suffix]
-                if module.drift:
+                s = df[z_dict['name']]
+                if suffix == 'SD': s = s + df[z_dict['name'] + suffix]
+                if [z_dict['treatment']] == 'none':
                     ax.scatter(x, y, color='0.700', edgecolor='0.700', alpha=suffixalpha, s=s*bubble_size)
                 else:
                     ax.scatter(x, y, c=color, ec=color, alpha=suffixalpha, s=s*bubble_size)
-                if z_name != z_names[0]: ax.axes.yaxis.set_ticklabels([])
                 ax.set_xlim(x_min, x_max)
                 ax.set_ylim(y_min, y_max)
                 ax.set_box_aspect(1)
@@ -263,9 +259,20 @@ class Scatter:
         plt.close()
 
 def create_figure(t):
-    dfts = []
-    [dfts.append(df[df.Time == t].copy()) for df in dfs]
+    dfts = {}
+    for d in module.dirs:
+        dfts[d] = dfs[d].loc[dfs[d]['Time'] == t]
     pr.chart(dfts)
+
+z_dicts = module.z
+
+titles = []
+[titles.append(df_z.loc[df_z.z == z_dict['name'], 'title'].values[0]) for z_dict in z_dicts]
+
+dfs = {}
+for d in module.dirs:
+    dfs[d] = pd.concat(map(pd.read_csv, glob.glob(os.path.join(d, '*.csv'))), ignore_index=True)
+    if d == 'optimal': dfs[d]['helpmedian'] = dfs[d]['a2Seenmedian']*2.0*dfs[d]['Given']
 
 if module.ftype == 'barsone':
     pr = BarsOne()
@@ -277,19 +284,11 @@ else:
     print('No such ftype')
     exit(1)
 
-dfs = []
-dirs = [module.treatment, module.control]
-for d in dirs:
-    df = pd.concat(map(pd.read_csv, glob.glob(os.path.join(d, '*.csv'))), ignore_index=True)
-    dfs.append(df)
-if module.control == 'optimal': dfs[1]['helpmedian'] = dfs[1]['a2Seenmedian']*2.0*dfs[1]['Given']
-if module.treatment == 'optimal': dfs[0]['helpmedian'] = dfs[0]['a2Seenmedian']*2.0*dfs[0]['Given']
-
 pr.prepare(dfs)
 
 if module.movie:
     frames = []
-    for t in dfs[0].Time.unique():
+    for t in dfs[module.dirs[0]].Time.unique():
         print(f'Processing step {t}', end='\r')
         outfile = f'delete{t}.png'
         create_figure(t)
@@ -298,7 +297,7 @@ if module.movie:
     giffile = module.filename + '.gif'
     iio.imwrite(giffile, frames)
 else:
-    t = dfs[0].Time.iat[-1]
+    t = dfs[module.dirs[0]].Time.iat[-1]
     outfile = module.filename + '.png'
     create_figure(t)
 

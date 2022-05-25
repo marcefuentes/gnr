@@ -208,8 +208,8 @@ class Scatter:
         self.suffixes = ('SD', '')
         self.suffixalphas = (0.2, 1.0)
         self.suffixecs = ('0.300', '0.000')
-        self.bubble_sizes = []
-        [self.bubble_sizes.append(df_z.loc[df_z.z == z_dict['name'], 'bubble_size'].values[0]) for z_dict in z_dicts]
+        for z_dict in z_dicts:
+            z_dict['bubble_size'] = df_z.loc[df_z.z == z_dict['name'], 'bubble_size'].values[0]
 
     def chart(self, dfts):
 
@@ -222,7 +222,7 @@ class Scatter:
         #for d in module.dirs:
         #    dfts[d].sort_values(by=[x_name, y_name], inplace=True)
 
-        for ax, z_dict, bubble_size in zip(axs.reshape(-1), z_dicts, self.bubble_sizes):
+        for ax, z_dict in zip(axs.reshape(-1), z_dicts):
             ax.set_title(z_dict['title'], pad=10.0, fontsize=fstitle)
             ax.tick_params(axis='x', labelsize=fstick)
             ax.tick_params(axis='y', labelsize=fstick)
@@ -244,10 +244,10 @@ class Scatter:
                     color.append((red - i, green - i, blue - i/2.0))
             for suffix, suffixec, suffixalpha in zip(self.suffixes, self.suffixecs, self.suffixalphas):
                 if suffix == 'SD': s = s + df[z_dict['name'] + suffix]
-                if [z_dict['treatment']] == 'none':
-                    ax.scatter(x, y, color='0.700', edgecolor='0.700', alpha=suffixalpha, s=s*bubble_size)
+                if z_dict['treatment'] == 'none':
+                    ax.scatter(x, y, color='0.700', edgecolor='0.700', alpha=suffixalpha, s=s*z_dict['bubble_size'])
                 else:
-                    ax.scatter(x, y, c=color, ec=color, alpha=suffixalpha, s=s*bubble_size)
+                    ax.scatter(x, y, c=color, ec=color, alpha=suffixalpha, s=s*z_dict['bubble_size'])
                 ax.set_xlim(x_min, x_max)
                 ax.set_ylim(y_min, y_max)
                 ax.set_box_aspect(1)

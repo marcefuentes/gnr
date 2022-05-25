@@ -73,16 +73,16 @@ class BarsAll:
 
     def prepare(self, dfs):
 
-        bincount = int(sum(map(lambda x: z_names[0] in x, [*dfs[0]]))/2) - 2
+        bincount = int(sum(map(lambda x: module.z0['name'] in x, [*dfs[module.dirs[0]]]))/2) - 2
 
         self.z_namebins_lists = []
         self.bh_maxs = []
-        for z_name in z_names:
-            self.z_namebins_lists.append([z_name + str(x) for x in range(bincount)])
-            self.bh_maxs.append(df_z.loc[df_z.z == z_name, 'ymax'].values[0])
+        for z_dict in z_dicts:
+            self.z_namebins_lists.append([z_dict['name'] + str(x) for x in range(bincount)])
+            self.bh_maxs.append(df_z.loc[df_z.z == z_dict['name'], 'ymax'].values[0])
 
-        self.inner_cols = dfs[0][x_name].unique()
-        self.inner_rows = dfs[0][y_name].unique()
+        self.inner_cols = dfs[module.dirs[0]][x_name].unique()
+        self.inner_rows = dfs[module.dirs[0]][y_name].unique()
         self.inner_cols.sort()
         self.inner_rows.sort() if y_name == 'GroupSize' else self.inner_rows[::-1].sort()
 
@@ -107,23 +107,24 @@ class BarsAll:
 
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
-        outer_grid = fig.add_gridspec(nrows=1, ncols=len(z_names), wspace=0.1)
+        outer_grid = fig.add_gridspec(nrows=1, ncols=len(z_dicts), wspace=0.1)
 
-        for n, (z_namebins, z_name, title, bh_max) in enumerate(zip(self.z_namebins_lists, z_names, titles, self.bh_maxs)):
+        for n, (z_namebins, z_dict, title, bh_max) in enumerate(zip(self.z_namebins_lists, z_dicts, titles, self.bh_maxs)):
             inner_grid = outer_grid[n].subgridspec(nrows=len(self.inner_rows), ncols=len(self.inner_cols), wspace=0.0, hspace=0.0)
             axs = inner_grid.subplots()
             axs[0, int(len(self.inner_cols)/2)].set_title(title, fontsize=fslabel) # Prints the title of the middle column. Bad if there are even columns
             for row, (rowax, inner_row) in enumerate(zip(axs, self.inner_rows)): 
                 for column, (ax, inner_col) in enumerate(zip(rowax, self.inner_cols)):
+                    ds = [dfts[z_dict['control']], dfts[z_dict['treatment']]]
                     medians = []
-                    [medians.append(df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row), z_name + 'median'].values[0]) for df in dfts]
-                    dif = medians[0] - medians[1]
-                    if ('Grain' in z_name) or ('BD' in z_name): dif = -dif
+                    [medians.append(d.loc[(d[x_name] == inner_col) & (d[y_name] == inner_row), z_dict['name'] + 'median'].values[0]) for d in ds]
+                    dif = medians[1] - medians[0]
+                    if ('Grain' in z_dict['name']) or ('BD' in z_dict['name']): dif = -dif
                     self.colors[0] = self.color_green if dif > 0.0 else self.color_blue
 
-                    for df, color, alpha in zip(dfts, self.colors, self.alphas):
+                    for d, color, alpha in zip(ds, self.colors, self.alphas):
                         for b, name0, name1 in zip(self.bins[::2], z_namebins[::2], z_namebins[1::2]):
-                            barheight=df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row), name0] + df.loc[(df[x_name] == inner_col) & (df[y_name] == inner_row), name1]
+                            barheight=d.loc[(d[x_name] == inner_col) & (d[y_name] == inner_row), name0] + d.loc[(d[x_name] == inner_col) & (d[y_name] == inner_row), name1]
                             ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=self.barwidth, alpha=alpha)
                             ax.set(xticks=[], yticks=[], ylim=[0, bh_max*2])
                     if (n == 0) & (column == 0):
@@ -132,7 +133,6 @@ class BarsAll:
                     if row == len(self.inner_rows) - 1:
                         x = '$2^{{{}}}$'.format(round(math.log(inner_col, 2))) if x_log else inner_col
                         ax.set_xlabel(x)
-                    if column == len(self.inner_cols)/2: ax.set_title(title, fontsize=fstitle)
 
         plt.savefig(outfile, dpi=100)
         plt.close()

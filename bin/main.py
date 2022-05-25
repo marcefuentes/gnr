@@ -222,8 +222,8 @@ class Scatter:
 
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
-        for d in module.dirs:
-            dfts[d].sort_values(by=[x_name, y_name], inplace=True)
+        #for d in module.dirs:
+        #    dfts[d].sort_values(by=[x_name, y_name], inplace=True)
 
         for ax, z_dict, title, bubble_size in zip(axs.reshape(-1), z_dicts, titles, self.bubble_sizes):
             ax.set_title(title, pad=10.0, fontsize=fstitle)
@@ -231,7 +231,11 @@ class Scatter:
             ax.tick_params(axis='y', labelsize=fstick)
             if x_log: ax.set_xscale('log', base=2)
             if y_log: ax.set_yscale('log', base=2)
-            dif = dfts[z_dict['control']][z_dict['name']] - dfts[z_dict['treatment']][z_dict['name']]
+            df = dfts[z_dict['treatment']]
+            x = df[x_name]
+            y = df[y_name]
+            s = df[z_dict['name']]
+            dif = dfts[z_dict['control']][z_dict['name']] - s
             if (z_dict['name'] == 'ChooseGrainmedian') or (z_dict['name'] == 'MimicGrainmedian') or ('BD' in z_dict['name']): dif = -dif
             color = []
             for i in dif:
@@ -242,10 +246,6 @@ class Scatter:
                     if i > red: i = red
                     color.append((red - i, green - i, blue - i/2.0))
             for suffix, suffixec, suffixalpha in zip(self.suffixes, self.suffixecs, self.suffixalphas):
-                df = dfts[z_dict['treatment']]
-                x = df[x_name]
-                y = df[y_name]
-                s = df[z_dict['name']]
                 if suffix == 'SD': s = s + df[z_dict['name'] + suffix]
                 if [z_dict['treatment']] == 'none':
                     ax.scatter(x, y, color='0.700', edgecolor='0.700', alpha=suffixalpha, s=s*bubble_size)

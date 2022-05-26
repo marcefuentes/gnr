@@ -21,7 +21,7 @@ module = __import__(sys.argv[1])
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-width = 12.0
+width = 6.0*len(module.z)
 height = 6.2
 fslabel = 18 # Label font size
 fstitle= 18 # Title font size
@@ -55,19 +55,19 @@ lst_z = [('ChooseGrainmedian', 'Sensitivity for comparing\npotential partners', 
             ('helpBD', 'Fluctuation of help', 2000.0, None),
             ('wBD', 'Fluctuation of fitness', 2000.0, None)]
 
-df_xy = pd.DataFrame(lst_xy, columns = ['xy', 'label', 'log', 'xymin', 'xymax'])
-df_z = pd.DataFrame(lst_z, columns = ['z', 'title', 'bubble_size', 'ymax'])
+dfxy = pd.DataFrame(lst_xy, columns = ['xy', 'label', 'log', 'xymin', 'xymax'])
+dfz = pd.DataFrame(lst_z, columns = ['z', 'title', 'bubble_size', 'ymax'])
 
-x_name = module.x
-y_name = module.y
-x_label = df_xy.loc[df_xy.xy == x_name, 'label'].values[0]
-y_label = df_xy.loc[df_xy.xy == y_name, 'label'].values[0]
-x_log = df_xy.loc[df_xy.xy == x_name, 'log'].values[0]
-y_log = df_xy.loc[df_xy.xy == y_name, 'log'].values[0]
-x_min = None if pd.isnull(df_xy.loc[df_xy.xy == x_name, 'xymin'].values[0]) else df_xy.loc[df_xy.xy == x_name, 'xymin'].values[0]
-y_min = None if pd.isnull(df_xy.loc[df_xy.xy == y_name, 'xymin'].values[0]) else df_xy.loc[df_xy.xy == y_name, 'xymin'].values[0]
-x_max = None if pd.isnull(df_xy.loc[df_xy.xy == x_name, 'xymax'].values[0]) else df_xy.loc[df_xy.xy == x_name, 'xymax'].values[0]
-y_max = None if pd.isnull(df_xy.loc[df_xy.xy == y_name, 'xymax'].values[0]) else df_xy.loc[df_xy.xy == y_name, 'xymax'].values[0]
+xname = module.x
+yname = module.y
+x_label = dfxy.loc[dfxy.xy == xname, 'label'].values[0]
+y_label = dfxy.loc[dfxy.xy == yname, 'label'].values[0]
+x_log = dfxy.loc[dfxy.xy == xname, 'log'].values[0]
+y_log = dfxy.loc[dfxy.xy == yname, 'log'].values[0]
+x_min = None if pd.isnull(dfxy.loc[dfxy.xy == xname, 'xymin'].values[0]) else dfxy.loc[dfxy.xy == xname, 'xymin'].values[0]
+y_min = None if pd.isnull(dfxy.loc[dfxy.xy == yname, 'xymin'].values[0]) else dfxy.loc[dfxy.xy == yname, 'xymin'].values[0]
+x_max = None if pd.isnull(dfxy.loc[dfxy.xy == xname, 'xymax'].values[0]) else dfxy.loc[dfxy.xy == xname, 'xymax'].values[0]
+y_max = None if pd.isnull(dfxy.loc[dfxy.xy == yname, 'xymax'].values[0]) else dfxy.loc[dfxy.xy == yname, 'xymax'].values[0]
 
 class BarsAll:
 
@@ -75,14 +75,14 @@ class BarsAll:
 
         bincount = int(sum(map(lambda x: module.z0['name'] in x, [*dfs[module.dirs[0]]]))/2) - 2
 
-        for z_dict in z_dicts:
-            z_dict['namebins_list'] = [z_dict['name'] + str(x) for x in range(bincount)]
-            z_dict['bh_max'] = df_z.loc[df_z.z == z_dict['name'], 'ymax'].values[0]
+        for zdict in zdicts:
+            zdict['namebins_list'] = [zdict['name'] + str(x) for x in range(bincount)]
+            zdict['bh_max'] = dfz.loc[dfz.z == zdict['name'], 'ymax'].values[0]
 
-        self.inner_cols = dfs[module.dirs[0]][x_name].unique()
-        self.inner_rows = dfs[module.dirs[0]][y_name].unique()
-        self.inner_cols.sort()
-        self.inner_rows.sort() if y_name == 'GroupSize' else self.inner_rows[::-1].sort()
+        self.innercols = dfs[module.dirs[0]][xname].unique()
+        self.innerrows = dfs[module.dirs[0]][yname].unique()
+        self.innercols.sort()
+        self.innerrows.sort() if yname == 'GroupSize' else self.innerrows[::-1].sort()
 
         self.bins = [(x+1)/bincount for x in range(bincount)]
         self.barwidth = 2.0/bincount
@@ -105,30 +105,30 @@ class BarsAll:
 
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
-        outer_grid = fig.add_gridspec(nrows=1, ncols=len(z_dicts), wspace=0.1)
+        outer_grid = fig.add_gridspec(nrows=1, ncols=len(zdicts), wspace=0.1)
 
-        for n, z_dict in enumerate(z_dicts):
-            inner_grid = outer_grid[n].subgridspec(nrows=len(self.inner_rows), ncols=len(self.inner_cols), wspace=0.0, hspace=0.0)
-            axs = inner_grid.subplots()
-            axs[0, int(len(self.inner_cols)/2)].set_title(z_dict['title'], fontsize=fslabel) # Prints the title of the middle column. Bad if there are even columns
-            for row, (rowax, inner_row) in enumerate(zip(axs, self.inner_rows)): 
-                for column, (ax, inner_col) in enumerate(zip(rowax, self.inner_cols)):
-                    ds = [dfts[z_dict['control']], dfts[z_dict['treatment']]]
+        for n, zdict in enumerate(zdicts):
+            innergrid = outer_grid[n].subgridspec(nrows=len(self.innerrows), ncols=len(self.innercols), wspace=0.0, hspace=0.0)
+            axs = innergrid.subplots()
+            axs[0, int(len(self.innercols)/2)].set_title(zdict['title'], fontsize=fslabel) # Prints the title of the middle column. Bad if there are even columns
+            for row, (rowax, innerrow) in enumerate(zip(axs, self.innerrows)): 
+                for column, (ax, innercol) in enumerate(zip(rowax, self.innercols)):
+                    ds = [dfts[zdict['control']], dfts[zdict['treatment']]]
                     medians = []
-                    [medians.append(d.loc[(d[x_name] == inner_col) & (d[y_name] == inner_row), z_dict['name'] + 'median'].values[0]) for d in ds]
+                    [medians.append(d.loc[(d[xname] == innercol) & (d[yname] == innerrow), zdict['name'] + 'median'].values[0]) for d in ds]
                     dif = medians[1] - medians[0]
-                    if ('Grain' in z_dict['name']) or ('BD' in z_dict['name']): dif = -dif
+                    if ('Grain' in zdict['name']) or ('BD' in zdict['name']): dif = -dif
                     self.colors[0] = self.color_green if dif > 0.0 else self.color_blue
                     for d, color, alpha in zip(ds, self.colors, self.alphas):
-                        for b, name0, name1 in zip(self.bins[::2], z_dict['namebins_list'][::2], z_dict['namebins_list'][1::2]):
-                            barheight=d.loc[(d[x_name] == inner_col) & (d[y_name] == inner_row), name0] + d.loc[(d[x_name] == inner_col) & (d[y_name] == inner_row), name1]
+                        for b, name0, name1 in zip(self.bins[::2], zdict['namebins_list'][::2], zdict['namebins_list'][1::2]):
+                            barheight=d.loc[(d[xname] == innercol) & (d[yname] == innerrow), name0] + d.loc[(d[xname] == innercol) & (d[yname] == innerrow), name1]
                             ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=self.barwidth, alpha=alpha)
-                            ax.set(xticks=[], yticks=[], ylim=[0, z_dict['bh_max']*2])
+                            ax.set(xticks=[], yticks=[], ylim=[0, zdict['bh_max']*2])
                     if (n == 0) & (column == 0):
-                        y = '$2^{{{}}}$'.format(round(math.log(inner_row, 2))) if y_log else inner_row
+                        y = '$2^{{{}}}$'.format(round(math.log(innerrow, 2))) if y_log else innerrow
                         ax.set_ylabel(y, rotation='horizontal', horizontalalignment='right', verticalalignment='center')
-                    if row == len(self.inner_rows) - 1:
-                        x = '$2^{{{}}}$'.format(round(math.log(inner_col, 2))) if x_log else inner_col
+                    if row == len(self.innerrows) - 1:
+                        x = '$2^{{{}}}$'.format(round(math.log(innercol, 2))) if x_log else innercol
                         ax.set_xlabel(x)
 
         plt.savefig(outfile, dpi=100)
@@ -143,13 +143,13 @@ class BarsOne:
 
         bincount = int(sum(map(lambda x: module.z0['name'] in x, [*dfs[module.dirs[0]]]))/2) - 2
 
-        for z_dict in z_dicts:
-            z_dict['namebins_list'] = [z_dict['name'] + str(x) for x in range(bincount)]
-            z_dict['namesdbins_list'] = [z_dict['name'] + 'SD' + str(x) for x in range(bincount)]
-            z_dict['bh_max'] = df_z.loc[df_z.z == z_dict['name'], 'ymax'].values[0]
-            mmax = 2.0 if z_dict['name'] == 'w' else 1.0 # For a1Max = a2Max = 1.0 and R1 = R2 = 2.0.
-            z_dict['binslist'] = [(x+1)*mmax/bincount for x in range(bincount)]
-            z_dict['barwidth'] = -mmax/bincount
+        for zdict in zdicts:
+            zdict['namebins_list'] = [zdict['name'] + str(x) for x in range(bincount)]
+            zdict['namesdbins_list'] = [zdict['name'] + 'SD' + str(x) for x in range(bincount)]
+            zdict['bh_max'] = dfz.loc[dfz.z == zdict['name'], 'ymax'].values[0]
+            mmax = 2.0 if zdict['name'] == 'w' else 1.0 # For a1Max = a2Max = 1.0 and R1 = R2 = 2.0.
+            zdict['binslist'] = [(x+1)*mmax/bincount for x in range(bincount)]
+            zdict['barwidth'] = -mmax/bincount
 
         self.color_blue = [red-0.95, green-0.95, blue-0.05]
         self.colorsd_blue = [red-0.30, green-0.30, blue-0.05]
@@ -166,28 +166,28 @@ class BarsOne:
 
     def chart(self, dfts):
 
-        fig, axs = plt.subplots(nrows=1, ncols=len(z_dicts), figsize=(width, height), sharey=True, constrained_layout=False, squeeze=False)
+        fig, axs = plt.subplots(nrows=1, ncols=len(zdicts), figsize=(width, height), sharey=True, constrained_layout=False, squeeze=False)
 
         fig.supylabel('\nFrequency', fontsize=fslabel, ha='center')
 
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
-        for ax, z_dict in zip(axs.reshape(-1), z_dicts):
-            ax.set_xlabel(z_dict['title'], fontsize=fslabel)
-            ds = [dfts[z_dict['control']], dfts[z_dict['treatment']]]
+        for ax, zdict in zip(axs.reshape(-1), zdicts):
+            ax.set_xlabel(zdict['title'], fontsize=fslabel)
+            ds = [dfts[zdict['control']], dfts[zdict['treatment']]]
             medians = []
-            [medians.append(d.loc[(d[x_name] == self.x_value) & (d[y_name] == self.y_value), z_dict['name'] + 'median'].values[0]) for d in ds]
+            [medians.append(d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), zdict['name'] + 'median'].values[0]) for d in ds]
             dif = medians[1] - medians[0]
-            if ('Grain' in z_dict['name']) or ('BD' in z_dict['name']): dif = -dif
+            if ('Grain' in zdict['name']) or ('BD' in zdict['name']): dif = -dif
             self.colors[0] = self.color_green if dif > 0.0 else self.color_blue
             self.colorsds[0] = self.color_green if dif > 0.0 else self.colorsd_blue
             for d, color, colorsd, alpha in zip(ds, self.colors, self.colorsds, self.alphas):
-                for b, namebin, namesdbin in zip(z_dict['binslist'], z_dict['namebins_list'], z_dict['namesdbins_list']):
-                    barheight = d.loc[(d[x_name] == self.x_value) & (d[y_name] == self.y_value), namebin]
-                    barheightsd = d.loc[(d[x_name] == self.x_value) & (d[y_name] == self.y_value), namesdbin]
-                    ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=z_dict['barwidth'], alpha=alpha)
-                    ax.bar(x=b, height=barheightsd, align='edge', color=colorsd, linewidth=0, width=z_dict['barwidth'], bottom=barheight, alpha=alpha)
-                ax.set(ylim=(0, z_dict['bh_max']), yticks=(0, z_dict['bh_max']), yticklabels=(0, z_dict['bh_max']))
+                for b, namebin, namesdbin in zip(zdict['binslist'], zdict['namebins_list'], zdict['namesdbins_list']):
+                    barheight = d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), namebin]
+                    barheightsd = d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), namesdbin]
+                    ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=zdict['barwidth'], alpha=alpha)
+                    ax.bar(x=b, height=barheightsd, align='edge', color=colorsd, linewidth=0, width=zdict['barwidth'], bottom=barheight, alpha=alpha)
+                ax.set(ylim=(0, zdict['bh_max']), yticks=(0, zdict['bh_max']), yticklabels=(0, zdict['bh_max']))
                 ax.tick_params(axis='x', labelsize=fstick)
                 ax.tick_params(axis='y', labelsize=fstick)
                 ax.set_box_aspect(1)
@@ -201,32 +201,32 @@ class Scatter:
         self.suffixes = ('SD', '')
         self.suffixalphas = (0.2, 1.0)
         self.suffixecs = ('0.300', '0.000')
-        for z_dict in z_dicts:
-            z_dict['bubble_size'] = df_z.loc[df_z.z == z_dict['name'], 'bubble_size'].values[0]
+        for zdict in zdicts:
+            zdict['bubble_size'] = dfz.loc[dfz.z == zdict['name'], 'bubble_size'].values[0]
 
     def chart(self, dfts):
 
-        fig, axs = plt.subplots(nrows=1, ncols=len(z_dicts), figsize=(width, height), sharey=True, constrained_layout=False, squeeze=False)
+        fig, axs = plt.subplots(nrows=1, ncols=len(zdicts), figsize=(width, height), sharey=True, constrained_layout=False, squeeze=False)
         fig.supxlabel(t=x_label, y=0.02, fontsize=fslabel)
         fig.supylabel(t=y_label, x=0.04, fontsize=fslabel, ha='center')
 
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
         #for d in module.dirs:
-        #    dfts[d].sort_values(by=[x_name, y_name], inplace=True)
+        #    dfts[d].sort_values(by=[xname, yname], inplace=True)
 
-        for ax, z_dict in zip(axs.reshape(-1), z_dicts):
-            ax.set_title(z_dict['title'], pad=10.0, fontsize=fstitle)
+        for ax, zdict in zip(axs.reshape(-1), zdicts):
+            ax.set_title(zdict['title'], pad=10.0, fontsize=fstitle)
             ax.tick_params(axis='x', labelsize=fstick)
             ax.tick_params(axis='y', labelsize=fstick)
             if x_log: ax.set_xscale('log', base=2)
             if y_log: ax.set_yscale('log', base=2)
-            df = dfts[z_dict['treatment']]
-            x = df[x_name]
-            y = df[y_name]
-            s = df[z_dict['name']]
-            dif = dfts[z_dict['control']][z_dict['name']] - s
-            if (z_dict['name'] == 'ChooseGrainmedian') or (z_dict['name'] == 'MimicGrainmedian') or ('BD' in z_dict['name']): dif = -dif
+            df = dfts[zdict['treatment']]
+            x = df[xname]
+            y = df[yname]
+            s = df[zdict['name']]
+            dif = dfts[zdict['control']][zdict['name']] - s
+            if (zdict['name'] == 'ChooseGrainmedian') or (zdict['name'] == 'MimicGrainmedian') or ('BD' in zdict['name']): dif = -dif
             color = []
             for i in dif:
                 if i < 0.0:
@@ -236,11 +236,11 @@ class Scatter:
                     if i > red: i = red
                     color.append((red - i, green - i, blue - i/2.0))
             for suffix, suffixec, suffixalpha in zip(self.suffixes, self.suffixecs, self.suffixalphas):
-                if suffix == 'SD': s = s + df[z_dict['name'] + suffix]
-                if z_dict['treatment'] == 'none':
-                    ax.scatter(x, y, color='0.700', edgecolor='0.700', alpha=suffixalpha, s=s*z_dict['bubble_size'])
+                if suffix == 'SD': s = s + df[zdict['name'] + suffix]
+                if zdict['treatment'] == 'none':
+                    ax.scatter(x, y, color='0.700', edgecolor='0.700', alpha=suffixalpha, s=s*zdict['bubble_size'])
                 else:
-                    ax.scatter(x, y, c=color, ec=color, alpha=suffixalpha, s=s*z_dict['bubble_size'])
+                    ax.scatter(x, y, c=color, ec=color, alpha=suffixalpha, s=s*zdict['bubble_size'])
                 ax.set_xlim(x_min, x_max)
                 ax.set_ylim(y_min, y_max)
                 ax.set_box_aspect(1)
@@ -254,10 +254,10 @@ def create_figure(t):
         dfts[d] = dfs[d].loc[dfs[d]['Time'] == t]
     pr.chart(dfts)
 
-z_dicts = module.z
+zdicts = module.z
 
-for z_dict in z_dicts:
-    z_dict['title'] = df_z.loc[df_z.z == z_dict['name'], 'title'].values[0]
+for zdict in zdicts:
+    zdict['title'] = dfz.loc[dfz.z == zdict['name'], 'title'].values[0]
 
 dfs = {}
 for d in module.dirs:

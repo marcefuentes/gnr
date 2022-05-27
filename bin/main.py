@@ -141,7 +141,7 @@ class BarsOne:
         self.x_value = float(str("{:.6f}".format(pow(2, int(module.x_value))))) if x_log else module.x_value
         self.y_value = float(str("{:.6f}".format(pow(2, int(module.y_value))))) if y_log else module.y_value
 
-        bincount = int(sum(map(lambda x: module.z0['name'] in x, [*dfs[module.dirs[0]]]))/2) - 2
+        bincount = int(sum(map(lambda x: zdicts[0]['name'] in x, [*dfs[module.dirs[0]]]))/2) - 2
 
         for zdict in zdicts:
             zdict['namebins_list'] = [zdict['name'] + str(x) for x in range(bincount)]
@@ -150,17 +150,6 @@ class BarsOne:
             mmax = 2.0 if zdict['name'] == 'w' else 1.0 # For a1Max = a2Max = 1.0 and R1 = R2 = 2.0.
             zdict['binslist'] = [(x+1)*mmax/bincount for x in range(bincount)]
             zdict['barwidth'] = -mmax/bincount
-
-        self.color_blue = [red-0.95, green-0.95, blue-0.05]
-        self.colorsd_blue = [red-0.30, green-0.30, blue-0.05]
-        self.color_green = [red-0.95, green-0.05, blue-0.95]
-        self.colorsd_green = [red-0.30, green-0.05, blue-0.30]
-        color_gray = [red-0.15, green-0.15, blue-0.15]
-        colorsd_gray = [red-0.10, green-0.10, blue-0.10]
-
-        self.colors = [self.color_blue, color_gray]
-        self.colorsds= [self.colorsd_blue, colorsd_gray]
-        self.alphas = [1.0, 0.8]
 
         return self
 
@@ -177,20 +166,24 @@ class BarsOne:
             ds = [dfts[zdict['control']], dfts[zdict['treatment']]]
             medians = []
             [medians.append(d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), zdict['name'] + 'median'].values[0]) for d in ds]
-            dif = medians[1] - medians[0]
+            dif = medians[0] - medians[1]
             if ('Grain' in zdict['name']) or ('BD' in zdict['name']): dif = -dif
-            self.colors[0] = self.color_green if dif > 0.0 else self.color_blue
-            self.colorsds[0] = self.color_green if dif > 0.0 else self.colorsd_blue
-            for d, color, colorsd, alpha in zip(ds, self.colors, self.colorsds, self.alphas):
-                for b, namebin, namesdbin in zip(zdict['binslist'], zdict['namebins_list'], zdict['namesdbins_list']):
-                    barheight = d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), namebin]
-                    barheightsd = d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), namesdbin]
-                    ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=zdict['barwidth'], alpha=alpha)
-                    ax.bar(x=b, height=barheightsd, align='edge', color=colorsd, linewidth=0, width=zdict['barwidth'], bottom=barheight, alpha=alpha)
-                ax.set(ylim=(0, zdict['bh_max']), yticks=(0, zdict['bh_max']), yticklabels=(0, zdict['bh_max']))
-                ax.tick_params(axis='x', labelsize=fstick)
-                ax.tick_params(axis='y', labelsize=fstick)
-                ax.set_box_aspect(1)
+            if dif < 0.0:
+                if dif < -red: dif = -red
+                color = (red + dif, green + dif/2.0, blue + dif)
+            else:
+                if dif > red: dif = red
+                color = (red - dif, green - dif, blue - dif/2.0)
+            d = ds[1]
+            for b, namebin, namesdbin in zip(zdict['binslist'], zdict['namebins_list'], zdict['namesdbins_list']):
+                barheight = d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), namebin]
+                barheightsd = d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), namesdbin]
+                ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=zdict['barwidth'])
+                ax.bar(x=b, height=barheightsd, align='edge', color=color, linewidth=0, width=zdict['barwidth'], bottom=barheight, alpha=0.2)
+            ax.set(ylim=(0, zdict['bh_max']), yticks=(0, zdict['bh_max']), yticklabels=(0, zdict['bh_max']))
+            ax.tick_params(axis='x', labelsize=fstick)
+            ax.tick_params(axis='y', labelsize=fstick)
+            ax.set_box_aspect(1)
 
         plt.savefig(outfile, dpi=100)
         plt.close()
@@ -225,16 +218,16 @@ class Scatter:
             x = df[xname]
             y = df[yname]
             s = df[zdict['name']]
-            dif = dfts[zdict['control']][zdict['name']] - s
+            difs = dfts[zdict['control']][zdict['name']] - s
             if (zdict['name'] == 'ChooseGrainmedian') or (zdict['name'] == 'MimicGrainmedian') or ('BD' in zdict['name']): dif = -dif
             color = []
-            for i in dif:
-                if i < 0.0:
-                    if i < -red: i = -red
-                    color.append((red + i, green + i/2.0, blue + i))
+            for dif in dif:
+                if dif < 0.0:
+                    if dif < -red: dif = -red
+                    color.append((red + dif, green + dif/2.0, blue + dif))
                 else:
-                    if i > red: i = red
-                    color.append((red - i, green - i, blue - i/2.0))
+                    if dif > red: dif = red
+                    color.append((red - dif, green - dif, blue - dif/2.0))
             for suffix, suffixec, suffixalpha in zip(self.suffixes, self.suffixecs, self.suffixalphas):
                 if suffix == 'SD': s = s + df[zdict['name'] + suffix]
                 if zdict['treatment'] == 'none':

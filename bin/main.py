@@ -251,7 +251,7 @@ class Scatter:
 def create_figure(t):
     dfts = {}
     for d in module.dirs:
-        dfts[d] = dfs[d].loc[dfs[d]['Time'] == t]
+        dfts[d] = dfs[d].loc[dfs[d]['Time'] == t].copy()
     pr.chart(dfts)
 
 zdicts = module.z

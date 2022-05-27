@@ -212,8 +212,8 @@ class Scatter:
 
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
-        #for d in module.dirs:
-        #    dfts[d].sort_values(by=[xname, yname], inplace=True)
+        for d in module.dirs:
+            dfts[d].sort_values(by=[xname, yname], inplace=True)
 
         for ax, zdict in zip(axs.reshape(-1), zdicts):
             ax.set_title(zdict['title'], pad=10.0, fontsize=fstitle)

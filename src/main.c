@@ -42,6 +42,7 @@ double	gMimicCost;
 double	gGiven;					// Effect on partner: q2 = a2*R2*Given
 int	gPartnerChoice;
 int	gReciprocity;
+int	gOptimal;
 int	ga2Macromutation;
 int	gIndirectReciprocity;
 
@@ -309,6 +310,7 @@ void read_globals (char *filename)
 	fscanf (fp, "Given,%lf\n", &gGiven);
 	fscanf (fp, "PartnerChoice,%i\n", &gPartnerChoice);
 	fscanf (fp, "Reciprocity,%i\n", &gReciprocity);
+	fscanf (fp, "Optimal,%i\n", &gOptimal);
 	fscanf (fp, "a2Macromutation,%i\n", &ga2Macromutation);
 	fscanf (fp, "IndirectReciprocity,%i\n", &gIndirectReciprocity);
 	fscanf (fp, "factorName1,%s\n", factorName1);
@@ -387,6 +389,7 @@ void write_globals (char *filename)
 	fprintf (fp, "Given,%f\n", gGiven);
 	fprintf (fp, "PartnerChoice,%i\n", gPartnerChoice);
 	fprintf (fp, "Reciprocity,%i\n", gReciprocity);
+	fprintf (fp, "Optimal,%i\n", gOptimal);
 	fprintf (fp, "a2Macromutation,%i\n", ga2Macromutation);
 	fprintf (fp, "IndirectReciprocity,%i\n", gIndirectReciprocity);
 
@@ -617,7 +620,7 @@ double calculate_q1 (double a2)
 
 double calculate_q2 (double a2, double a2partner)
 {
-	double q2 = gR2*a2*(1 - gGiven) + gR2*a2partner*gGiven;
+	double q2 = gR2*a2*(1 - gGiven*(1 - gOptimal)) + gR2*a2partner*gGiven*(1 - gOptimal);
 
 	return q2;
 }

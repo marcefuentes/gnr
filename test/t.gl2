@@ -19,6 +19,7 @@ GroupSize,8,3
 Given,0.875000
 PartnerChoice,1
 Reciprocity,1
+Optimal,0
 a2Macromutation,0
 IndirectReciprocity,0
-TimeElapsed,0:00:00.116668
+TimeElapsed,0:00:00.115834

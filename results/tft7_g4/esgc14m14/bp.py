@@ -28,5 +28,5 @@ z = [zc, zm, zwn, zwo]
 dirs = ['none', 'optimal', 'p']
 
 if ftype == 'barsone':
-    x_value = 2.0
+    x_value = 0.0
     y_value = 1.0

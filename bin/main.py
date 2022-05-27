@@ -5,7 +5,7 @@ import math
 import os
 import sys
 import time
-import imageio.v3 as iio
+import imageio.v2 as iio
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -278,7 +278,7 @@ if module.movie:
         frames.append(iio.imread(outfile))
         os.remove(outfile)
     giffile = module.filename + '.gif'
-    iio.imwrite(giffile, frames)
+    iio.mimsave(giffile, frames)
 else:
     t = dfs[module.dirs[0]].Time.iat[-1]
     outfile = module.filename + '.png'

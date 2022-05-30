@@ -1,23 +1,23 @@
 #!/usr/bin/python
 
-filename = 'phwo'
+filename = 'p'
 ftype = 'scatter' # barsall, barsone, scatter
 movie = False
 x = 'ES'
 y = 'Given'
 
-zh = {}
-zh['name'] = 'helpmedian'
-zh['treatment'] = 'p'
-zh['control'] = 'optimal'
+zg = {}
+zg['name'] = 'ChooseGrainmedian'
+zg['treatment'] = 'p'
+zg['control'] = 'none'
 zw = {}
 zw['name'] = 'wmedian'
 zw['treatment'] = 'p'
 zw['control'] = 'optimal'
 
-z = [zh, zw]
+z = [zg, zw]
 
-dirs = ['optimal', 'p']
+dirs = ['none', 'optimal', 'p']
 
 if ftype == 'barsone':
     x_value = -1.0

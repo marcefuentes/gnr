@@ -219,9 +219,9 @@ class Scatter:
             y = df[yname]
             s = df[zdict['name']]
             difs = dfts[zdict['control']][zdict['name']] - s
-            if (zdict['name'] == 'ChooseGrainmedian') or (zdict['name'] == 'MimicGrainmedian') or ('BD' in zdict['name']): dif = -dif
+            if (zdict['name'] == 'ChooseGrainmedian') or (zdict['name'] == 'MimicGrainmedian') or ('BD' in zdict['name']): difs = -difs
             color = []
-            for dif in dif:
+            for dif in difs:
                 if dif < 0.0:
                     if dif < -red: dif = -red
                     color.append((red + dif, green + dif/2.0, blue + dif))

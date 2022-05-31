@@ -193,7 +193,6 @@ class Scatter:
     def prepare(self, dfs):
         self.suffixes = ('SD', '')
         self.suffixalphas = (0.2, 1.0)
-        self.suffixecs = ('0.300', '0.000')
         for zdict in zdicts:
             zdict['bubble_size'] = dfz.loc[dfz.z == zdict['name'], 'bubble_size'].values[0]
 
@@ -228,12 +227,12 @@ class Scatter:
                 else:
                     if dif > red: dif = red
                     color.append((red - dif, green - dif, blue - dif/2.0))
-            for suffix, suffixec, suffixalpha in zip(self.suffixes, self.suffixecs, self.suffixalphas):
-                if suffix == 'SD': s = s + df[zdict['name'] + suffix]
+            for suffix, suffixalpha in zip(self.suffixes, self.suffixalphas):
+                size = s + df[zdict['name'] + suffix] if suffix == 'SD' else s
                 if zdict['treatment'] == 'none':
-                    ax.scatter(x, y, color='0.700', edgecolor='0.700', alpha=suffixalpha, s=s*zdict['bubble_size'])
+                    ax.scatter(x, y, color='0.700', edgecolor='0.700', alpha=suffixalpha, s=size*zdict['bubble_size'])
                 else:
-                    ax.scatter(x, y, c=color, ec=color, alpha=suffixalpha, s=s*zdict['bubble_size'])
+                    ax.scatter(x, y, c=color, ec=color, alpha=suffixalpha, s=size*zdict['bubble_size'])
                 ax.set_xlim(x_min, x_max)
                 ax.set_ylim(y_min, y_max)
                 ax.set_box_aspect(1)

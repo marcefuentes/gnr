@@ -169,6 +169,7 @@ class BarsOne:
                 medians = []
                 [medians.append(d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), zdict['name'] + 'median'].values[0]) for d in ds]
                 dif = medians[0]/medians[1]
+                if ('Grain' in zdict['name']) or ('BD' in zdict['name']): dif = 1.0/dif
                 color = color_dif(dif)
                 d = ds[1]
                 for b, namebin, namesdbin in zip(zdict['binslist'], zdict['namebins_list'], zdict['namesdbins_list']):
@@ -213,6 +214,7 @@ class Scatter:
                 y = df[yname]
                 s = df[zdict['name']]
                 difs = dfts[zdict['control']][zdict['name']]/s
+                if ('Grain' in zdict['name']) or ('BD' in zdict['name']): difs = 1.0/difs
                 color = []
                 [color.append(dif_color(dif)) for dif in difs]
                 for suffix, suffixalpha in zip(['SD', ''], [0.2, 1.0]):
@@ -226,7 +228,6 @@ class Scatter:
         plt.close()
 
 def dif_color(dif):
-    if ('Grain' in zdict['name']) or ('BD' in zdict['name']): dif = 1.0/dif
     color = (red*pow(dif,1.7), green*pow(dif,0.7), blue*pow(dif,1.7)) if dif <= 1.0 else (red*pow(dif,-1.7), green*pow(dif,-1.7), blue*pow(dif,-0.7))
     return color
 

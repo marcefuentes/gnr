@@ -221,8 +221,6 @@ class Scatter:
                 x = df[xname]
                 y = df[yname]
                 s = df[zdict['name']]
-                for ey, es in zip(y, s):
-                    if ey == 0.0: print(es)
                 difs = dfts[zdict['control']][zdict['name']] - s
                 if (zdict['name'] == 'ChooseGrainmedian') or (zdict['name'] == 'MimicGrainmedian') or ('BD' in zdict['name']): difs = -difs
                 color = []
@@ -258,7 +256,6 @@ for zdicts in zdictss:
 dfs = {}
 for d in module.dirs:
     dfs[d] = pd.concat(map(pd.read_csv, glob.glob(os.path.join(d, '*.csv'))), ignore_index=True)
-    if d == 'optimal': dfs[d]['helpmedian'] = dfs[d]['a2Seenmedian']*2.0*dfs[d]['Given']
 
 if module.ftype == 'barsone':
     pr = BarsOne()

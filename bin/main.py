@@ -187,8 +187,6 @@ class BarsOne:
 class Scatter:
 
     def prepare(self, dfs):
-        self.suffixes = ('SD', '')
-        self.suffixalphas = (0.2, 1.0)
         for zdicts in zdictss:
             for zdict in zdicts:
                 zdict['bubble_size'] = dfz.loc[dfz.z == zdict['name'], 'bubble_size'].values[0]
@@ -217,7 +215,7 @@ class Scatter:
                 difs = dfts[zdict['control']][zdict['name']]/s
                 color = []
                 [color.append(dif_color(dif)) for dif in difs]
-                for suffix, suffixalpha in zip(self.suffixes, self.suffixalphas):
+                for suffix, suffixalpha in zip(['SD', ''], [0.2, 1.0]):
                     size = s + df[zdict['name'] + suffix] if suffix == 'SD' else s
                     ax.scatter(x, y, c=color, ec=color, alpha=suffixalpha, s=size*zdict['bubble_size'])
                     ax.set_xlim(x_min, x_max)

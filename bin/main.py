@@ -21,10 +21,10 @@ module = __import__(sys.argv[1])
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-width = 6.0*len(module.z)
-height = 6.2
-fslabel = 18 # Label font size
-fstitle= 18 # Title font size
+height = 6.0*len(module.z)
+width = 6.0*len(module.z[0])
+fslabel = 20 # Label font size
+fstitle= 20 # Title font size
 fstick = 14 # Tick font size
 red = 0.97
 green = 0.97
@@ -73,7 +73,7 @@ class BarsAll:
 
     def prepare(self, dfs):
 
-        bincount = int(sum(map(lambda x: module.z0['name'] in x, [*dfs[module.dirs[0]]]))/2) - 2
+        bincount = int(sum(map(lambda x: module.z[0][0]['name'] in x, [*dfs[module.dirs[0]]]))/2) - 2
 
         for zdict in zdicts:
             zdict['namebins_list'] = [zdict['name'] + str(x) for x in range(bincount)]
@@ -193,12 +193,13 @@ class Scatter:
     def prepare(self, dfs):
         self.suffixes = ('SD', '')
         self.suffixalphas = (0.2, 1.0)
-        for zdict in zdicts:
-            zdict['bubble_size'] = dfz.loc[dfz.z == zdict['name'], 'bubble_size'].values[0]
+        for zdicts in zdictss:
+            for zdict in zdicts:
+                zdict['bubble_size'] = dfz.loc[dfz.z == zdict['name'], 'bubble_size'].values[0]
 
     def chart(self, dfts):
 
-        fig, axs = plt.subplots(nrows=1, ncols=len(zdicts), figsize=(width, height), sharey=True, constrained_layout=False, squeeze=False)
+        fig, axs = plt.subplots(nrows=len(zdictss), ncols=len(zdictss[0]), figsize=(width, height), sharex=True, sharey=True, constrained_layout=False, squeeze=False)
         fig.supxlabel(t=x_label, y=0.02, fontsize=fslabel)
         fig.supylabel(t=y_label, x=0.04, fontsize=fslabel, ha='center')
 
@@ -207,35 +208,33 @@ class Scatter:
         for d in module.dirs:
             dfts[d].sort_values(by=[xname, yname], inplace=True)
 
-        for ax, zdict in zip(axs.reshape(-1), zdicts):
-            ax.set_title(zdict['title'], pad=10.0, fontsize=fstitle)
-            ax.tick_params(axis='x', labelsize=fstick)
-            ax.tick_params(axis='y', labelsize=fstick)
-            if x_log: ax.set_xscale('log', base=2)
-            if y_log: ax.set_yscale('log', base=2)
-            df = dfts[zdict['treatment']]
-            x = df[xname]
-            y = df[yname]
-            s = df[zdict['name']]
-            difs = dfts[zdict['control']][zdict['name']] - s
-            if (zdict['name'] == 'ChooseGrainmedian') or (zdict['name'] == 'MimicGrainmedian') or ('BD' in zdict['name']): difs = -difs
-            color = []
-            for dif in difs:
-                if dif < 0.0:
-                    if dif < -red: dif = -red
-                    color.append((red + dif, green + dif/2.0, blue + dif))
-                else:
-                    if dif > red: dif = red
-                    color.append((red - dif, green - dif, blue - dif/2.0))
-            for suffix, suffixalpha in zip(self.suffixes, self.suffixalphas):
-                size = s + df[zdict['name'] + suffix] if suffix == 'SD' else s
-                if zdict['treatment'] == 'none':
-                    ax.scatter(x, y, color='0.700', edgecolor='0.700', alpha=suffixalpha, s=size*zdict['bubble_size'])
-                else:
+        for row, (rowax, zdicts) in enumerate(zip(axs, zdictss)):
+            for ax, zdict in zip(rowax, zdicts):
+                if row == 0: ax.set_title(zdict['title'], pad=10.0, fontsize=fstitle)
+                ax.tick_params(axis='x', labelsize=fstick)
+                ax.tick_params(axis='y', labelsize=fstick)
+                if x_log: ax.set_xscale('log', base=2)
+                if y_log: ax.set_yscale('log', base=2)
+                df = dfts[zdict['treatment']]
+                x = df[xname]
+                y = df[yname]
+                s = df[zdict['name']]
+                difs = dfts[zdict['control']][zdict['name']] - s
+                if (zdict['name'] == 'ChooseGrainmedian') or (zdict['name'] == 'MimicGrainmedian') or ('BD' in zdict['name']): difs = -difs
+                color = []
+                for dif in difs:
+                    if dif < 0.0:
+                        if dif < -red: dif = -red
+                        color.append((red + dif, green + dif/2.0, blue + dif))
+                    else:
+                        if dif > red: dif = red
+                        color.append((red - dif, green - dif, blue - dif/2.0))
+                for suffix, suffixalpha in zip(self.suffixes, self.suffixalphas):
+                    size = s + df[zdict['name'] + suffix] if suffix == 'SD' else s
                     ax.scatter(x, y, c=color, ec=color, alpha=suffixalpha, s=size*zdict['bubble_size'])
-                ax.set_xlim(x_min, x_max)
-                ax.set_ylim(y_min, y_max)
-                ax.set_box_aspect(1)
+                    ax.set_xlim(x_min, x_max)
+                    ax.set_ylim(y_min, y_max)
+                    ax.set_box_aspect(1)
 
         plt.savefig(outfile, transparent=False)
         plt.close()
@@ -246,10 +245,11 @@ def create_figure(t):
         dfts[d] = dfs[d].loc[dfs[d]['Time'] == t].copy()
     pr.chart(dfts)
 
-zdicts = module.z
+zdictss = module.z
 
-for zdict in zdicts:
-    zdict['title'] = dfz.loc[dfz.z == zdict['name'], 'title'].values[0]
+for zdicts in zdictss:
+    for zdict in zdicts:
+        zdict['title'] = dfz.loc[dfz.z == zdict['name'], 'title'].values[0]
 
 dfs = {}
 for d in module.dirs:

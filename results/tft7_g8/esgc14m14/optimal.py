@@ -34,4 +34,3 @@ if ftype == 'barsone':
     x_value = -1.0
     y_value = 1.0
 
-print(len(z))

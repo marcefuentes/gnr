@@ -46,7 +46,7 @@ lst_z = [('ChooseGrainmedian', 'Sensitivity for comparing\npotential partners', 
             ('MimicGrain', 'Sensitivity for comparing\npartner to self', 600.0, 0.20),
             ('helpmedian', 'Help', 600.0, None),
             ('help', 'Help', 600.0, 0.20),
-            ('a2Seenmedian', 'a2', 600.0, None),
+            ('a2Seenmedian', '$\it{a}$', 600.0, None),
             ('a2Seen', 'a2', 600.0, 0.20),
             ('wmedian', 'Fitness', 600.0, None),
             ('w', 'Fitness', 600.0, 0.20),
@@ -75,7 +75,7 @@ class BarsAll:
 
         bincount = int(sum(map(lambda x: module.z[0][0]['name'] in x, [*dfs[module.dirs[0]]]))/2) - 2
 
-        for zdict in zdicts:
+        for zdict in zdictss[0]:
             zdict['namebins_list'] = [zdict['name'] + str(x) for x in range(bincount)]
             zdict['bh_max'] = dfz.loc[dfz.z == zdict['name'], 'ymax'].values[0]
 
@@ -99,15 +99,15 @@ class BarsAll:
 
     def chart(self, dfts):
  
-        fig = plt.figure(figsize=(width, height-0.5))
+        fig = plt.figure(figsize=(width, height/2.0))
         fig.supxlabel(x_label, fontsize=fslabel)
         fig.supylabel(t=y_label, x=0.003*width, fontsize=fslabel, ha='center')
 
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
-        outer_grid = fig.add_gridspec(nrows=1, ncols=len(zdicts), wspace=0.1)
+        outer_grid = fig.add_gridspec(nrows=1, ncols=len(zdictss[0]), wspace=0.1)
 
-        for n, zdict in enumerate(zdicts):
+        for n, zdict in enumerate(zdictss[0]):
             innergrid = outer_grid[n].subgridspec(nrows=len(self.innerrows), ncols=len(self.innercols), wspace=0.0, hspace=0.0)
             axs = innergrid.subplots()
             axs[0, int(len(self.innercols)/2)].set_title(zdict['title'], fontsize=fslabel) # Prints the title of the middle column. Bad if there are even columns
@@ -141,49 +141,51 @@ class BarsOne:
         self.x_value = float(str("{:.6f}".format(pow(2, int(module.x_value))))) if x_log else module.x_value
         self.y_value = float(str("{:.6f}".format(pow(2, int(module.y_value))))) if y_log else module.y_value
 
-        bincount = int(sum(map(lambda x: zdicts[0]['name'] in x, [*dfs[module.dirs[0]]]))/2) - 2
+        bincount = int(sum(map(lambda x: zdictss[0][0]['name'] in x, [*dfs[module.dirs[0]]]))/2) - 2
 
-        for zdict in zdicts:
-            zdict['namebins_list'] = [zdict['name'] + str(x) for x in range(bincount)]
-            zdict['namesdbins_list'] = [zdict['name'] + 'SD' + str(x) for x in range(bincount)]
-            zdict['bh_max'] = dfz.loc[dfz.z == zdict['name'], 'ymax'].values[0]
-            mmax = 2.0 if zdict['name'] == 'w' else 1.0 # For a1Max = a2Max = 1.0 and R1 = R2 = 2.0.
-            zdict['binslist'] = [(x+1)*mmax/bincount for x in range(bincount)]
-            zdict['barwidth'] = -mmax/bincount
+        for zdicts in zdictss:
+            for zdict in zdicts:
+                zdict['namebins_list'] = [zdict['name'] + str(x) for x in range(bincount)]
+                zdict['namesdbins_list'] = [zdict['name'] + 'SD' + str(x) for x in range(bincount)]
+                zdict['bh_max'] = dfz.loc[dfz.z == zdict['name'], 'ymax'].values[0]
+                mmax = 2.0 if zdict['name'] == 'w' else 1.0 # For a1Max = a2Max = 1.0 and R1 = R2 = 2.0.
+                zdict['binslist'] = [(x+1)*mmax/bincount for x in range(bincount)]
+                zdict['barwidth'] = -mmax/bincount
 
         return self
 
     def chart(self, dfts):
 
-        fig, axs = plt.subplots(nrows=1, ncols=len(zdicts), figsize=(width, height), sharey=True, constrained_layout=False, squeeze=False)
+        fig, axs = plt.subplots(nrows=len(zdictss), ncols=len(zdictss[0]), figsize=(width, height), sharex=True, sharey=True, constrained_layout=False, squeeze=False)
 
         fig.supylabel('\nFrequency', fontsize=fslabel, ha='center')
 
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
-        for ax, zdict in zip(axs.reshape(-1), zdicts):
-            ax.set_xlabel(zdict['title'], fontsize=fslabel)
-            ds = [dfts[zdict['control']], dfts[zdict['treatment']]]
-            medians = []
-            [medians.append(d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), zdict['name'] + 'median'].values[0]) for d in ds]
-            dif = medians[0] - medians[1]
-            if ('Grain' in zdict['name']) or ('BD' in zdict['name']): dif = -dif
-            if dif < 0.0:
-                if dif < -red: dif = -red
-                color = (red + dif, green + dif/2.0, blue + dif)
-            else:
-                if dif > red: dif = red
-                color = (red - dif, green - dif, blue - dif/2.0)
-            d = ds[1]
-            for b, namebin, namesdbin in zip(zdict['binslist'], zdict['namebins_list'], zdict['namesdbins_list']):
-                barheight = d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), namebin]
-                barheightsd = d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), namesdbin]
-                ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=zdict['barwidth'])
-                ax.bar(x=b, height=barheightsd, align='edge', color=color, linewidth=0, width=zdict['barwidth'], bottom=barheight, alpha=0.2)
-            ax.set(ylim=(0, zdict['bh_max']), yticks=(0, zdict['bh_max']), yticklabels=(0, zdict['bh_max']))
-            ax.tick_params(axis='x', labelsize=fstick)
-            ax.tick_params(axis='y', labelsize=fstick)
-            ax.set_box_aspect(1)
+        for row, (rowax, zdicts) in enumerate(zip(axs, zdictss)):
+            for ax, zdict in zip(rowax, zdicts):
+                if row == 1: ax.set_xlabel(zdict['title'], fontsize=fslabel)
+                ds = [dfts[zdict['control']], dfts[zdict['treatment']]]
+                medians = []
+                [medians.append(d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), zdict['name'] + 'median'].values[0]) for d in ds]
+                dif = medians[0] - medians[1]
+                if ('Grain' in zdict['name']) or ('BD' in zdict['name']): dif = -dif
+                if dif < 0.0:
+                    if dif < -red: dif = -red
+                    color = (red + dif, green + dif/2.0, blue + dif)
+                else:
+                    if dif > red: dif = red
+                    color = (red - dif, green - dif, blue - dif/2.0)
+                d = ds[1]
+                for b, namebin, namesdbin in zip(zdict['binslist'], zdict['namebins_list'], zdict['namesdbins_list']):
+                    barheight = d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), namebin]
+                    barheightsd = d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), namesdbin]
+                    ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=zdict['barwidth'])
+                    ax.bar(x=b, height=barheightsd, align='edge', color=color, linewidth=0, width=zdict['barwidth'], bottom=barheight, alpha=0.2)
+                ax.set(ylim=(0, zdict['bh_max']), yticks=(0, zdict['bh_max']), yticklabels=(0, zdict['bh_max']))
+                ax.tick_params(axis='x', labelsize=fstick)
+                ax.tick_params(axis='y', labelsize=fstick)
+                ax.set_box_aspect(1)
 
         plt.savefig(outfile, dpi=100)
         plt.close()
@@ -219,6 +221,8 @@ class Scatter:
                 x = df[xname]
                 y = df[yname]
                 s = df[zdict['name']]
+                for ey, es in zip(y, s):
+                    if ey == 0.0: print(es)
                 difs = dfts[zdict['control']][zdict['name']] - s
                 if (zdict['name'] == 'ChooseGrainmedian') or (zdict['name'] == 'MimicGrainmedian') or ('BD' in zdict['name']): difs = -difs
                 color = []

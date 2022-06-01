@@ -6,27 +6,37 @@ movie = False
 x = 'ES'
 y = 'Given'
 
-zg = {}
-zg['name'] = 'helpmedian'
-zg['treatment'] = 'optimal'
-zg['control'] = 'none'
+z0 = {}
+z0['name'] = 'a2Seenmedian'
+z0['treatment'] = 'optimal'
+z0['control'] = 'none'
 
-zw = {}
-zw['name'] = 'wmedian'
-zw['treatment'] = 'optimal'
-zw['control'] = 'none'
+z1 = {}
+z1['name'] = 'helpmedian'
+z1['treatment'] = 'optimal'
+z1['control'] = 'none'
 
-zg2 = {}
-zg2['name'] = zg['name']
-zg2['treatment'] = 'none'
-zg2['control'] = 'optimal'
+z2 = {}
+z2['name'] = 'wmedian'
+z2['treatment'] = 'optimal'
+z2['control'] = 'none'
 
-zw2 = {}
-zw2['name'] = zw['name']
-zw2['treatment'] = 'none'
-zw2['control'] = 'optimal'
+z02 = {}
+z02['name'] = z0['name']
+z02['treatment'] = 'none'
+z02['control'] = 'optimal'
 
-z = [[zg, zw], [zg2, zw2]]
+z12 = {}
+z12['name'] = z1['name']
+z12['treatment'] = 'none'
+z12['control'] = 'optimal'
+
+z22 = {}
+z22['name'] = z2['name']
+z22['treatment'] = 'none'
+z22['control'] = 'optimal'
+
+z = [[z0, z1, z2], [z02, z12, z22]]
 
 dirs = ['none', 'optimal']
 

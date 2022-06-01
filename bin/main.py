@@ -168,14 +168,13 @@ class BarsOne:
                 ds = [dfts[zdict['control']], dfts[zdict['treatment']]]
                 medians = []
                 [medians.append(d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), zdict['name'] + 'median'].values[0]) for d in ds]
-                dif = medians[0] - medians[1]
-                if ('Grain' in zdict['name']) or ('BD' in zdict['name']): dif = -dif
-                if dif < 0.0:
-                    if dif < -red: dif = -red
-                    color = (red + dif, green + dif/2.0, blue + dif)
+                dif = medians[0]/medians[1]
+                if ('Grain' in zdict['name']) or ('BD' in zdict['name']): dif = 1/dif
+                if dif <= 1.0:
+                    color = (red*dif, green, blue*dif)
                 else:
-                    if dif > red: dif = red
-                    color = (red - dif, green - dif, blue - dif/2.0)
+                    dif = 1/dif
+                    color = (red*dif, green*dif, blue)
                 d = ds[1]
                 for b, namebin, namesdbin in zip(zdict['binslist'], zdict['namebins_list'], zdict['namesdbins_list']):
                     barheight = d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), namebin]
@@ -221,16 +220,12 @@ class Scatter:
                 x = df[xname]
                 y = df[yname]
                 s = df[zdict['name']]
-                difs = dfts[zdict['control']][zdict['name']] - s
-                if (zdict['name'] == 'ChooseGrainmedian') or (zdict['name'] == 'MimicGrainmedian') or ('BD' in zdict['name']): difs = -difs
+                difs = dfts[zdict['control']][zdict['name']]/s
+                if (zdict['name'] == 'ChooseGrainmedian') or (zdict['name'] == 'MimicGrainmedian') or ('BD' in zdict['name']): difs = 1.0/difs
                 color = []
                 for dif in difs:
-                    if dif < 0.0:
-                        if dif < -red: dif = -red
-                        color.append((red + dif, green + dif/2.0, blue + dif))
-                    else:
-                        if dif > red: dif = red
-                        color.append((red - dif, green - dif, blue - dif/2.0))
+                    if dif <= 1.0: color.append((red*pow(dif,1.7), green*pow(dif,0.7), blue*pow(dif,1.7)))
+                    else: color.append((red*pow(dif,-1.7), green*pow(dif,-1.7), blue*pow(dif,-0.7)))
                 for suffix, suffixalpha in zip(self.suffixes, self.suffixalphas):
                     size = s + df[zdict['name'] + suffix] if suffix == 'SD' else s
                     ax.scatter(x, y, c=color, ec=color, alpha=suffixalpha, s=size*zdict['bubble_size'])

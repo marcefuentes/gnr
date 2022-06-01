@@ -228,9 +228,9 @@ class Scatter:
         plt.close()
 
 def dif_color(dif):
-        if ('Grain' in zdict['name']) or ('BD' in zdict['name']): dif = 1.0/dif
-        color = (red*pow(dif,1.7), green*pow(dif,0.7), blue*pow(dif,1.7)) if dif <= 1.0 else (red*pow(dif,-1.7), green*pow(dif,-1.7), blue*pow(dif,-0.7))
-        return color
+    if ('Grain' in zdict['name']) or ('BD' in zdict['name']): dif = 1.0/dif
+    color = (red*pow(dif,1.7), green*pow(dif,0.7), blue*pow(dif,1.7)) if dif <= 1.0 else (red*pow(dif,-1.7), green*pow(dif,-1.7), blue*pow(dif,-0.7))
+    return color
 
 def create_figure(t):
     dfts = {}

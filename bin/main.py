@@ -229,8 +229,7 @@ class Scatter:
 
 def dif_color(dif):
         if ('Grain' in zdict['name']) or ('BD' in zdict['name']): dif = 1.0/dif
-        if dif <= 1.0: color = (red*pow(dif,1.7), green*pow(dif,0.7), blue*pow(dif,1.7))
-        else: color = (red*pow(dif,-1.7), green*pow(dif,-1.7), blue*pow(dif,-0.7))
+        color = (red*pow(dif,1.7), green*pow(dif,0.7), blue*pow(dif,1.7)) if dif <= 1.0 else (red*pow(dif,-1.7), green*pow(dif,-1.7), blue*pow(dif,-0.7))
         return color
 
 def create_figure(t):
@@ -249,12 +248,9 @@ dfs = {}
 for d in module.dirs:
     dfs[d] = pd.concat(map(pd.read_csv, glob.glob(os.path.join(d, '*.csv'))), ignore_index=True)
 
-if module.ftype == 'barsone':
-    pr = BarsOne()
-elif module.ftype == 'barsall':
-    pr = BarsAll()
-elif module.ftype == 'scatter':
-    pr = Scatter()
+if module.ftype == 'barsone': pr = BarsOne()
+elif module.ftype == 'barsall': pr = BarsAll()
+elif module.ftype == 'scatter': pr = Scatter()
 else:
     print('No such ftype')
     exit(1)

@@ -23,9 +23,9 @@ plt.rcParams['ps.fonttype'] = 42
 
 height = 6.0*len(module.z)
 width = 6.0*len(module.z[0])
-fslabel = 20 # Label font size
-fstitle= 20 # Title font size
-fstick = 14 # Tick font size
+fslabel = 24 # Label font size
+fstitle= 24 # Title font size
+fstick = 16 # Tick font size
 red = 0.97
 green = 0.97
 blue = 0.97
@@ -44,8 +44,8 @@ lst_z = [('ChooseGrainmedian', 'Sensitivity for comparing\npotential partners', 
             ('ChooseGrain', 'Sensitivity for comparing\npotential partners', 600.0, 0.20),
             ('MimicGrainmedian', 'Sensitivity for comparing\npartner to self', 600.0, None),
             ('MimicGrain', 'Sensitivity for comparing\npartner to self', 600.0, 0.20),
-            ('helpmedian', 'Help', 600.0, None),
-            ('help', 'Help', 600.0, 0.20),
+            ('helpmedian', 'Help', 600.0*1.87, None),
+            ('help', 'Help', 600.0*1.87, 0.20),
             ('a2Seenmedian', '$\it{a}$', 600.0, None),
             ('a2Seen', 'a2', 600.0, 0.20),
             ('wmedian', 'Fitness', 600.0, None),

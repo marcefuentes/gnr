@@ -169,12 +169,7 @@ class BarsOne:
                 medians = []
                 [medians.append(d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), zdict['name'] + 'median'].values[0]) for d in ds]
                 dif = medians[0]/medians[1]
-                if ('Grain' in zdict['name']) or ('BD' in zdict['name']): dif = 1/dif
-                if dif <= 1.0:
-                    color = (red*dif, green, blue*dif)
-                else:
-                    dif = 1/dif
-                    color = (red*dif, green*dif, blue)
+                color = color_dif(dif)
                 d = ds[1]
                 for b, namebin, namesdbin in zip(zdict['binslist'], zdict['namebins_list'], zdict['namesdbins_list']):
                     barheight = d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), namebin]
@@ -221,11 +216,8 @@ class Scatter:
                 y = df[yname]
                 s = df[zdict['name']]
                 difs = dfts[zdict['control']][zdict['name']]/s
-                if (zdict['name'] == 'ChooseGrainmedian') or (zdict['name'] == 'MimicGrainmedian') or ('BD' in zdict['name']): difs = 1.0/difs
                 color = []
-                for dif in difs:
-                    if dif <= 1.0: color.append((red*pow(dif,1.7), green*pow(dif,0.7), blue*pow(dif,1.7)))
-                    else: color.append((red*pow(dif,-1.7), green*pow(dif,-1.7), blue*pow(dif,-0.7)))
+                [color.append(dif_color(dif)) for dif in difs]
                 for suffix, suffixalpha in zip(self.suffixes, self.suffixalphas):
                     size = s + df[zdict['name'] + suffix] if suffix == 'SD' else s
                     ax.scatter(x, y, c=color, ec=color, alpha=suffixalpha, s=size*zdict['bubble_size'])
@@ -235,6 +227,12 @@ class Scatter:
 
         plt.savefig(outfile, transparent=False)
         plt.close()
+
+def dif_color(dif):
+        if ('Grain' in zdict['name']) or ('BD' in zdict['name']): dif = 1.0/dif
+        if dif <= 1.0: color = (red*pow(dif,1.7), green*pow(dif,0.7), blue*pow(dif,1.7))
+        else: color = (red*pow(dif,-1.7), green*pow(dif,-1.7), blue*pow(dif,-0.7))
+        return color
 
 def create_figure(t):
     dfts = {}

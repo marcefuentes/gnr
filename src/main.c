@@ -59,7 +59,7 @@ void	write_globals (char *filename);
 void	caso (struct ptype *p_first); 
 void	start_population (struct itype *i, struct itype *i_last);
 double	fitness (struct itype *i, struct itype *i_last);	// gFFunction
-double	calculate_wmax (double q1, double q2);				// gFFunction
+double	calculate_wmax (double q1, double q2);
 double	ces (double q1, double q2);				// gES, galpha
 double	quasilinear (double q1, double q2);			// galpha, gc1, gc2
 double	mutate_a2 (double a2);					// ga2MutationSize, ga2Min, ga2Max

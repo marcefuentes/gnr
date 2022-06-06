@@ -92,7 +92,7 @@ class BarsAll:
         color_gray = [red-0.15, green-0.15, blue-0.15]
         colorsd_gray = [red-0.10, green-0.10, blue-0.10]
 
-        self.colors = [self.color_blue, color_gray]
+        self.colors = [color_gray, self.color_blue]
         self.alphas = [1.0, 0.9]
 
         return self
@@ -116,9 +116,9 @@ class BarsAll:
                     ds = [dfts[zdict['control']], dfts[zdict['treatment']]]
                     medians = []
                     [medians.append(d.loc[(d[xname] == innercol) & (d[yname] == innerrow), zdict['name'] + 'median'].values[0]) for d in ds]
-                    dif = medians[1] - medians[0]
-                    if ('Grain' in zdict['name']) or ('BD' in zdict['name']): dif = -dif
-                    self.colors[0] = self.color_green if dif > 0.0 else self.color_blue
+                    dif = medians[0]/medians[1]
+                    if ('Grain' in zdict['name']) or ('BD' in zdict['name']): dif = 1.0/dif
+                    self.colors[1] = self.color_green if dif < 1.0 else self.color_blue
                     for d, color, alpha in zip(ds, self.colors, self.alphas):
                         for b, name0, name1 in zip(self.bins[::2], zdict['namebins_list'][::2], zdict['namebins_list'][1::2]):
                             barheight=d.loc[(d[xname] == innercol) & (d[yname] == innerrow), name0] + d.loc[(d[xname] == innercol) & (d[yname] == innerrow), name1]

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-filename = 'pyr3'
+filename = 'pyr'
 ftype = 'scatter' # barsall, barsone, scatter
 movie = False
 x = 'MimicCost'

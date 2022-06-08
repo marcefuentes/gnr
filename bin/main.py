@@ -170,7 +170,7 @@ class BarsOne:
                 [medians.append(d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), zdict['name'] + 'median'].values[0]) for d in ds]
                 dif = medians[0]/medians[1]
                 if ('Grain' in zdict['name']) or ('BD' in zdict['name']): dif = 1.0/dif
-                color = color_dif(dif)
+                color = dif_color(dif)
                 d = ds[1]
                 for b, namebin, namesdbin in zip(zdict['binslist'], zdict['namebins_list'], zdict['namesdbins_list']):
                     barheight = d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), namebin]
@@ -178,6 +178,7 @@ class BarsOne:
                     ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=zdict['barwidth'])
                     ax.bar(x=b, height=barheightsd, align='edge', color=color, linewidth=0, width=zdict['barwidth'], bottom=barheight, alpha=0.2)
                 ax.set(ylim=(0, zdict['bh_max']), yticks=(0, zdict['bh_max']), yticklabels=(0, zdict['bh_max']))
+                ax.set(xlim=(0, 1.0))
                 ax.tick_params(axis='x', labelsize=fstick)
                 ax.tick_params(axis='y', labelsize=fstick)
                 ax.set_box_aspect(1)

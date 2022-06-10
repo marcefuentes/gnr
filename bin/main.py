@@ -47,11 +47,11 @@ lst_z = [('ChooseGrainmedian', 'Sensitivity for comparing\npotential partners', 
             ('helpmedian', 'Help', 600.0*1.87),
             ('help', 'Help', 600.0*1.87),
             ('a2Seenmedian', '$\it{a}$', 600.0),
-            ('a2Seen', 'a2', 600.0),
+            ('a2Seen', '$\it{a}$', 600.0),
             ('wmedian', 'Fitness', 600.0),
             ('w', 'Fitness', 600.0),
             ('chose_partner', 'Frequency of\nswitching to a new partner', 2000.0),
-            ('changed_a2', 'Frequency of\nchanging help', 2000.0),
+            ('changed_a2', 'Frequency of\nchanging $\it{a}$', 2000.0),
             ('helpBD', 'Fluctuation of help', 2000.0),
             ('wBD', 'Fluctuation of fitness', 2000.0)]
 
@@ -146,7 +146,6 @@ class BarsOne:
             for zdict in zdicts:
                 zdict['namebins_list'] = [zdict['name'] + str(x) for x in range(bincount)]
                 zdict['namesdbins_list'] = [zdict['name'] + 'SD' + str(x) for x in range(bincount)]
-                zdict['bh_max'] = dfz.loc[dfz.z == zdict['name'], 'ymax'].values[0]
                 mmax = 2.0 if zdict['name'] == 'w' else 1.0 # For a1Max = a2Max = 1.0 and R1 = R2 = 2.0.
                 zdict['binslist'] = [(x+1)*mmax/bincount for x in range(bincount)]
                 zdict['barwidth'] = -mmax/bincount
@@ -177,7 +176,7 @@ class BarsOne:
                     barheightsd = d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), namesdbin]
                     ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=zdict['barwidth'])
                     ax.bar(x=b, height=barheightsd, align='edge', color=color, linewidth=0, width=zdict['barwidth'], bottom=barheight, alpha=0.2)
-                ax.set(ylim=(0, zdict['bh_max']), yticks=(0, zdict['bh_max']), yticklabels=(0, zdict['bh_max']))
+                ax.set(ylim=(0, zdict['max']), yticks=(0, zdict['max']), yticklabels=(0, zdict['max']))
                 ax.set(xlim=(0, mx))
                 ax.tick_params(axis='x', labelsize=fstick)
                 ax.tick_params(axis='y', labelsize=fstick)

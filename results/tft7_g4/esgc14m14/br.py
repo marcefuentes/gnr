@@ -22,7 +22,7 @@ z2 = {}
 z2['name'] = 'w'
 z2['treatment'] = 'r'
 z2['control'] = 'none'
-z2['max'] = 0.2
+z2['max'] = 0.1
 
 z02 = {}
 z02['name'] = z0['name']

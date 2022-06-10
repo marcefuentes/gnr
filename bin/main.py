@@ -40,23 +40,23 @@ lst_xy = [('ES', 'Substitutability of resource $\it{A}$', True, pow(2, -5.5), No
             ('ChooseGrainInit', 'Sensitivity for comparing potential partners', False, None, None),
             ('N', 'Population size', True, None, None)]
 
-lst_z = [('ChooseGrainmedian', 'Sensitivity for comparing\npotential partners', 600.0, None),
-            ('ChooseGrain', 'Sensitivity for comparing\npotential partners', 600.0, 0.20),
-            ('MimicGrainmedian', 'Sensitivity for comparing\npartner to self', 600.0, None),
-            ('MimicGrain', 'Sensitivity for comparing\npartner to self', 600.0, 0.20),
-            ('helpmedian', 'Help', 600.0*1.87, None),
-            ('help', 'Help', 600.0*1.87, 0.20),
-            ('a2Seenmedian', '$\it{a}$', 600.0, None),
-            ('a2Seen', 'a2', 600.0, 0.20),
-            ('wmedian', 'Fitness', 600.0, None),
-            ('w', 'Fitness', 600.0, 0.20),
-            ('chose_partner', 'Frequency of\nswitching to a new partner', 2000.0, None),
-            ('changed_a2', 'Frequency of\nchanging help', 2000.0, None),
-            ('helpBD', 'Fluctuation of help', 2000.0, None),
-            ('wBD', 'Fluctuation of fitness', 2000.0, None)]
+lst_z = [('ChooseGrainmedian', 'Sensitivity for comparing\npotential partners', 600.0),
+            ('ChooseGrain', 'Sensitivity for comparing\npotential partners', 600.0),
+            ('MimicGrainmedian', 'Sensitivity for comparing\npartner to self', 600.0),
+            ('MimicGrain', 'Sensitivity for comparing\npartner to self', 600.0),
+            ('helpmedian', 'Help', 600.0*1.87),
+            ('help', 'Help', 600.0*1.87),
+            ('a2Seenmedian', '$\it{a}$', 600.0),
+            ('a2Seen', 'a2', 600.0),
+            ('wmedian', 'Fitness', 600.0),
+            ('w', 'Fitness', 600.0),
+            ('chose_partner', 'Frequency of\nswitching to a new partner', 2000.0),
+            ('changed_a2', 'Frequency of\nchanging help', 2000.0),
+            ('helpBD', 'Fluctuation of help', 2000.0),
+            ('wBD', 'Fluctuation of fitness', 2000.0)]
 
 dfxy = pd.DataFrame(lst_xy, columns = ['xy', 'label', 'log', 'xymin', 'xymax'])
-dfz = pd.DataFrame(lst_z, columns = ['z', 'title', 'bubble_size', 'ymax'])
+dfz = pd.DataFrame(lst_z, columns = ['z', 'title', 'bubble_size'])
 
 xname = module.x
 yname = module.y
@@ -77,7 +77,6 @@ class BarsAll:
 
         for zdict in zdictss[0]:
             zdict['namebins_list'] = [zdict['name'] + str(x) for x in range(bincount)]
-            zdict['bh_max'] = dfz.loc[dfz.z == zdict['name'], 'ymax'].values[0]
 
         self.innercols = dfs[module.dirs[0]][xname].unique()
         self.innerrows = dfs[module.dirs[0]][yname].unique()
@@ -118,12 +117,12 @@ class BarsAll:
                     [medians.append(d.loc[(d[xname] == innercol) & (d[yname] == innerrow), zdict['name'] + 'median'].values[0]) for d in ds]
                     dif = medians[0]/medians[1]
                     if ('Grain' in zdict['name']) or ('BD' in zdict['name']): dif = 1.0/dif
-                    self.colors[1] = self.color_green if dif < 1.0 else self.color_blue
+                    self.colors[1] = dif_color(dif)
                     for d, color, alpha in zip(ds, self.colors, self.alphas):
                         for b, name0, name1 in zip(self.bins[::2], zdict['namebins_list'][::2], zdict['namebins_list'][1::2]):
                             barheight=d.loc[(d[xname] == innercol) & (d[yname] == innerrow), name0] + d.loc[(d[xname] == innercol) & (d[yname] == innerrow), name1]
                             ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=self.barwidth, alpha=alpha)
-                            ax.set(xticks=[], yticks=[], ylim=[0, zdict['bh_max']*2])
+                            ax.set(xticks=[], yticks=[], ylim=[0, zdict['max']*2])
                     if (n == 0) & (column == 0):
                         y = '$2^{{{}}}$'.format(round(math.log(innerrow, 2))) if y_log else innerrow
                         ax.set_ylabel(y, rotation='horizontal', horizontalalignment='right', verticalalignment='center')

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
-filename = 'br-5'
-ftype = 'barsone' # barsall, barsone, scatter
+filename = 'bar'
+ftype = 'barsall' # barsall, barsone, scatter
 movie = False
 x = 'ES'
 y = 'Given'

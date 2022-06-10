@@ -156,7 +156,7 @@ class BarsOne:
 
     def chart(self, dfts):
 
-        fig, axs = plt.subplots(nrows=len(zdictss), ncols=len(zdictss[0]), figsize=(width, height), sharex=True, sharey=True, constrained_layout=False, squeeze=False)
+        fig, axs = plt.subplots(nrows=len(zdictss), ncols=len(zdictss[0]), figsize=(width, height), sharey=True, constrained_layout=False, squeeze=False)
 
         fig.supylabel('\nFrequency', fontsize=fslabel, ha='center')
 
@@ -171,6 +171,7 @@ class BarsOne:
                 dif = medians[0]/medians[1]
                 if ('Grain' in zdict['name']) or ('BD' in zdict['name']): dif = 1.0/dif
                 color = dif_color(dif)
+                mx = 2.0 if zdict['name'] == 'w' else 1.0
                 d = ds[1]
                 for b, namebin, namesdbin in zip(zdict['binslist'], zdict['namebins_list'], zdict['namesdbins_list']):
                     barheight = d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), namebin]
@@ -178,7 +179,7 @@ class BarsOne:
                     ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=zdict['barwidth'])
                     ax.bar(x=b, height=barheightsd, align='edge', color=color, linewidth=0, width=zdict['barwidth'], bottom=barheight, alpha=0.2)
                 ax.set(ylim=(0, zdict['bh_max']), yticks=(0, zdict['bh_max']), yticklabels=(0, zdict['bh_max']))
-                ax.set(xlim=(0, 1.0))
+                ax.set(xlim=(0, mx))
                 ax.tick_params(axis='x', labelsize=fstick)
                 ax.tick_params(axis='y', labelsize=fstick)
                 ax.set_box_aspect(1)

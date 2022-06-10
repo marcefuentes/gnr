@@ -10,13 +10,13 @@ z0 = {}
 z0['name'] = 'MimicGrain'
 z0['treatment'] = 'r'
 z0['control'] = 'none'
-z0['max'] = 0.1
+z0['max'] = 0.2
 
 z1 = {}
 z1['name'] = 'a2Seen'
 z1['treatment'] = 'r'
 z1['control'] = 'none'
-z1['max'] = 0.1
+z1['max'] = 0.2
 
 z2 = {}
 z2['name'] = 'w'

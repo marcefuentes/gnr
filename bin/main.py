@@ -122,7 +122,7 @@ class BarsAll:
                         for b, name0, name1 in zip(self.bins[::2], zdict['namebins_list'][::2], zdict['namebins_list'][1::2]):
                             barheight=d.loc[(d[xname] == innercol) & (d[yname] == innerrow), name0] + d.loc[(d[xname] == innercol) & (d[yname] == innerrow), name1]
                             ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=self.barwidth, alpha=alpha)
-                            ax.set(xticks=[], yticks=[], ylim=[0, zdict['max']*2])
+                            ax.set(xticks=[], yticks=[], ylim=[0, module.ymax*2])
                     if (n == 0) & (column == 0):
                         y = '$2^{{{}}}$'.format(round(math.log(innerrow, 2))) if y_log else innerrow
                         ax.set_ylabel(y, rotation='horizontal', horizontalalignment='right', verticalalignment='center')
@@ -146,9 +146,9 @@ class BarsOne:
             for zdict in zdicts:
                 zdict['namebins_list'] = [zdict['name'] + str(x) for x in range(bincount)]
                 zdict['namesdbins_list'] = [zdict['name'] + 'SD' + str(x) for x in range(bincount)]
-                mmax = 2.0 if zdict['name'] == 'w' else 1.0 # For a1Max = a2Max = 1.0 and R1 = R2 = 2.0.
-                zdict['binslist'] = [(x+1)*mmax/bincount for x in range(bincount)]
-                zdict['barwidth'] = -mmax/bincount
+                zdict['max'] = 2.0 if zdict['name'] == 'w' else 1.0 # For a1Max = a2Max = 1.0 and R1 = R2 = 2.0.
+                zdict['binslist'] = [(x+1)*zdict['max']/bincount for x in range(bincount)]
+                zdict['barwidth'] = -zdict['max']/bincount
 
         return self
 
@@ -169,15 +169,14 @@ class BarsOne:
                 dif = medians[0]/medians[1]
                 if ('Grain' in zdict['name']) or ('BD' in zdict['name']): dif = 1.0/dif
                 color = dif_color(dif)
-                mx = 2.0 if zdict['name'] == 'w' else 1.0
                 d = ds[1]
                 for b, namebin, namesdbin in zip(zdict['binslist'], zdict['namebins_list'], zdict['namesdbins_list']):
                     barheight = d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), namebin]
                     barheightsd = d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), namesdbin]
                     ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=zdict['barwidth'])
                     ax.bar(x=b, height=barheightsd, align='edge', color=color, linewidth=0, width=zdict['barwidth'], bottom=barheight, alpha=0.2)
-                ax.set(ylim=(0, zdict['max']), yticks=(0, zdict['max']), yticklabels=(0, zdict['max']))
-                ax.set(xlim=(0, mx))
+                ax.set(ylim=(0, module.ymax), yticks=(0, module.ymax), yticklabels=(0, module.ymax))
+                ax.set(xlim=(0, zdict['max']))
                 ax.tick_params(axis='x', labelsize=fstick)
                 ax.tick_params(axis='y', labelsize=fstick)
                 ax.set_box_aspect(1)

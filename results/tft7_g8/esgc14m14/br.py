@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
-filename = 'bard'
-ftype = 'barsall' # barsall, barsone, scatter
+filename = 'br-5'
+ftype = 'barsone' # barsall, barsone, scatter
 movie = False
 x = 'ES'
 y = 'Given'
@@ -12,7 +12,7 @@ z0['treatment'] = 'r'
 z0['control'] = 'none'
 
 z1 = {}
-z1['name'] = 'a2Default'
+z1['name'] = 'a2Seen'
 z1['treatment'] = 'r'
 z1['control'] = 'none'
 

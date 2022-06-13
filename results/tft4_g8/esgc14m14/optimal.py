@@ -8,33 +8,33 @@ y = 'Given'
 
 z0 = {}
 z0['name'] = 'a2Seenmedian'
-z0['treatment'] = 'optimal'
-z0['control'] = 'none'
+z0['treatment'] = 'none'
+z0['control'] = 'optimal'
 
 z1 = {}
 z1['name'] = 'helpmedian'
-z1['treatment'] = 'optimal'
-z1['control'] = 'none'
+z1['treatment'] = 'none'
+z1['control'] = 'optimal'
 
 z2 = {}
 z2['name'] = 'wmedian'
-z2['treatment'] = 'optimal'
-z2['control'] = 'none'
+z2['treatment'] = 'none'
+z2['control'] = 'optimal'
 
 z02 = {}
 z02['name'] = z0['name']
-z02['treatment'] = 'none'
-z02['control'] = 'optimal'
+z02['treatment'] = 'optimal'
+z02['control'] = 'none'
 
 z12 = {}
 z12['name'] = z1['name']
-z12['treatment'] = 'none'
-z12['control'] = 'optimal'
+z12['treatment'] = 'optimal'
+z12['control'] = 'none'
 
 z22 = {}
 z22['name'] = z2['name']
-z22['treatment'] = 'none'
-z22['control'] = 'optimal'
+z22['treatment'] = 'optimal'
+z22['control'] = 'none'
 
 z = [[z0, z1, z2], [z02, z12, z22]]
 

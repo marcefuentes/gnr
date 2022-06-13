@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-filename = 'pyr'
+filename = 'p'
 ftype = 'scatter' # barsall, barsone, scatter
 movie = False
 x = 'ES'
@@ -36,9 +36,9 @@ z22['name'] = z2['name']
 z22['treatment'] = 'r'
 z22['control'] = 'optimal'
 
-z = [[z0, z1, z2], [z02, z12, z22]]
+z = [[z0, z1, z2]]
 
-dirs = ['none', 'optimal', 'p', 'r']
+dirs = ['none', 'optimal', 'p']
 
 if ftype == 'barsone':
     x_value = -1.0

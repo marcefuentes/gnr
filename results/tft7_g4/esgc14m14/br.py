@@ -2,7 +2,7 @@
 
 filename = 'br-5'
 ftype = 'barsone' # barsall, barsone, scatter
-movie = False
+movie = True
 x = 'ES'
 y = 'Given'
 

@@ -257,20 +257,22 @@ else:
 
 pr.prepare(dfs)
 
+laststep = dfs[module.dirs[0]].Time.iat[-1]
+
 if module.movie:
     frames = []
     for t in dfs[module.dirs[0]].Time.unique():
-        print(f'Processing step {t}', end='\r')
         outfile = f'delete{t}.png'
         create_figure(t)
         frames.append(iio.imread(outfile))
         os.remove(outfile)
-    giffile = module.filename + '.gif'
-    iio.mimsave(giffile, frames)
+        percent = t*100/laststep
+        print(f'Created {percent:.1f}% of frames', end='\r')
+    print('\nAdding frames to movie...')
+    iio.mimsave(module.filename + '.gif', frames)
 else:
-    t = dfs[module.dirs[0]].Time.iat[-1]
     outfile = module.filename + '.png'
-    create_figure(t)
+    create_figure(laststep)
 
 end_time = time.perf_counter ()
-print("\nTime elapsed: %.2f seconds" % (end_time - start_time))
+print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')

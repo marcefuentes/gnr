@@ -82,6 +82,29 @@ void write_stats (char *filename, float factor1, float factor2, int factor3, str
 	fclose (fp);
 }
 
+void write_i (char *filename, struct itype *i, struct itype *i_last)
+{
+	double wc = 0.0;
+	FILE *fp;
+
+	if ( (fp = fopen (filename, "a+")) == NULL )
+	{
+		fprintf (stderr, "Can't open file %s to write.\n", filename);
+		exit (EXIT_FAILURE);
+	}
+
+	fprintf (fp, "a2Default,a2Decided,a2Seen,a2SeenSum,w,ChooseGrain,MimicGrain,cost,age,chose_partner,changed_a2"); 
+
+	for ( ; i < i_last; i++ )
+	{
+		fprintf (fp, "\n%f,%f,%f,%f,%f,%f,%f,%f,%d,%d,%d", i->a2Default, i->a2Decided, i->a2Seen, i->a2SeenSum, i->wCumulative - wc, i->ChooseGrain, i->MimicGrain, i->cost, i->age, i->chose_partner, i->changed_a2); 
+		wc = i->wCumulative;
+	}
+
+	fclose (fp);
+}
+		
+
 void write_time_elapsed (char *filename, float time_elapsed)
 {
 	int h, m;

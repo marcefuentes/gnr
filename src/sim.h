@@ -66,4 +66,5 @@ void		stats_end		(struct pruntype *prun_first, struct pruntype *prun_last, struc
 void		stats_runs		(struct ptype *p, struct ptype *p_last, int runs);
 void		write_headers		(char *filename, char *header1, char *header2, char *header3);
 void		write_stats		(char *filename, float factor1, float factor2, int factor3, struct ptype *p, struct ptype *p_last);
+void		write_i			(char *filename, struct itype *i, struct itype *i_last);
 void		write_time_elapsed	(char *filename, float time_elapsed);

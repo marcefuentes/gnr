@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
-filename = 'bapd'
-ftype = 'barsall' # barsall, barsone, scatter
+filename = 'ir11'
+ftype = 'barsone' # barsall, barsone, scatter
 movie = False
 x = 'ES'
 y = 'Given'
@@ -9,17 +9,17 @@ y = 'Given'
 z00 = {}
 z00['x'] = 'a2Seen'
 z00['y'] = 'w'
-z00['treatment'] = 'p'
+z00['treatment'] = 'r'
 
 z01 = {}
-z01['x'] = 'ChooseGrain'
+z01['x'] = 'MimicGrain'
 z01['y'] = 'w'
-z01['treatment'] = 'p'
+z01['treatment'] = 'r'
 
 z02 = {}
 z02['x'] = 'a2Seen'
 z02['y'] = 'MimicGrain'
-z02['treatment'] = 'p'
+z02['treatment'] = 'r'
 
 z10 = {}
 z10['x'] = z00['x']
@@ -38,12 +38,12 @@ z12['treatment'] = 'none'
 
 z = [[z00, z01, z02], [z10, z11, z12]]
 
-dirs = ['none', 'p']
+dirs = ['none', 'r']
 
 if (ftype == 'barsone') or (ftype == 'barsall'):
     ymax = 0.1
 
 if ftype == 'barsone':
-    x_value = -5.0
+    x_value = 1.0
     y_value = 1.0
 

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-filename = 'bard'
+filename = 'ipr'
 ftype = 'barsall' # barsall, barsone, scatter
 movie = False
 x = 'ES'
@@ -9,17 +9,17 @@ y = 'Given'
 z00 = {}
 z00['x'] = 'a2Seen'
 z00['y'] = 'w'
-z00['treatment'] = 'r'
+z00['treatment'] = 'pr'
 
 z01 = {}
-z01['x'] = 'MimicGrain'
+z01['x'] = 'ChooseGrain'
 z01['y'] = 'w'
-z01['treatment'] = 'r'
+z01['treatment'] = 'pr'
 
 z02 = {}
 z02['x'] = 'a2Seen'
 z02['y'] = 'MimicGrain'
-z02['treatment'] = 'r'
+z02['treatment'] = 'pr'
 
 z10 = {}
 z10['x'] = z00['x']
@@ -38,7 +38,7 @@ z12['treatment'] = 'none'
 
 z = [[z00, z01, z02], [z10, z11, z12]]
 
-dirs = ['none', 'r']
+dirs = ['none', 'pr']
 
 if (ftype == 'barsone') or (ftype == 'barsall'):
     ymax = 0.1

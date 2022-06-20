@@ -75,6 +75,11 @@ class BarsAll:
 
     def prepare(self, dfs):
 
+        for zdicts in zdictss:
+            for zdict in zdicts:
+                zdict['xmax'] = 2.0 if zdict['x'] == 'w' else 1.0 # For a1Max = a2Max = 1.0 and R1 = R2 = 2.0.
+                zdict['ymax'] = 2.0 if zdict['y'] == 'w' else 1.0 # For a1Max = a2Max = 1.0 and R1 = R2 = 2.0.
+                zdict['title'] = 'x = ' + dfz.loc[dfz.z == zdict['x'], 'title'].values[0] + '\ny = ' + dfz.loc[dfz.z == zdict['y'], 'title'].values[0]
         self.innercols = dfs[module.dirs[0]][xname].unique()
         self.innerrows = dfs[module.dirs[0]][yname].unique()
         self.innercols.sort()
@@ -96,18 +101,18 @@ class BarsAll:
 
         for nr, zdicts in enumerate(zdictss):
             for nc, zdict in enumerate(zdicts):
-                df = dfts[zdict['treatment']]
+                dft = dfts[zdict['treatment']]
                 innergrid = outer_grid[nr, nc].subgridspec(nrows=len(self.innerrows), ncols=len(self.innercols), wspace=0.0, hspace=0.0)
                 axs = innergrid.subplots()
                 if nr == 0:    
                     axs[0, int(len(self.innercols)/2)].set_title(zdict['title'], fontsize=fslabel) # Prints the title of the middle column. Bad if there are even columns
                 for row, (rowax, innerrow) in enumerate(zip(axs, self.innerrows)): 
                     for column, (ax, innercol) in enumerate(zip(rowax, self.innercols)):
-                        x = df.loc[(df[xname] == innercol) & (df[yname] == innerrow), zdict['x']]
-                        y = df.loc[(df[xname] == innercol) & (df[yname] == innerrow), zdict['y']]
+                        x = dft.loc[(dft[xname] == innercol) & (dft[yname] == innerrow), zdict['x']]
+                        y = dft.loc[(dft[xname] == innercol) & (dft[yname] == innerrow), zdict['y']]
                         ax.scatter(x, y, alpha=0.1, s=0.001)
-                        ax.set_xlim(zdict['xmin'], zdict['xmax'])
-                        ax.set_ylim(zdict['ymin'], zdict['ymax'])
+                        ax.set_xlim(0.0, zdict['xmax'])
+                        ax.set_ylim(0.0, zdict['ymax'])
                         ax.set(xticks=[], yticks=[])
                         if (nc == 0) & (column == 0):
                             y = '$2^{{{}}}$'.format(round(math.log(innerrow, 2))) if y_log else innerrow
@@ -126,43 +131,31 @@ class BarsOne:
         self.x_value = float(str("{:.6f}".format(pow(2, int(module.x_value))))) if x_log else module.x_value
         self.y_value = float(str("{:.6f}".format(pow(2, int(module.y_value))))) if y_log else module.y_value
 
-        bincount = int(sum(map(lambda x: zdictss[0][0]['name'] in x, [*dfs[module.dirs[0]]]))/2) - 2
-
         for zdicts in zdictss:
             for zdict in zdicts:
-                zdict['namebins_list'] = [zdict['name'] + str(x) for x in range(bincount)]
-                zdict['namesdbins_list'] = [zdict['name'] + 'SD' + str(x) for x in range(bincount)]
-                zdict['max'] = 2.0 if zdict['name'] == 'w' else 1.0 # For a1Max = a2Max = 1.0 and R1 = R2 = 2.0.
-                zdict['binslist'] = [(x+1)*zdict['max']/bincount for x in range(bincount)]
-                zdict['barwidth'] = -zdict['max']/bincount
+                zdict['xmax'] = 2.0 if zdict['x'] == 'w' else 1.0 # For a1Max = a2Max = 1.0 and R1 = R2 = 2.0.
+                zdict['ymax'] = 2.0 if zdict['y'] == 'w' else 1.0 # For a1Max = a2Max = 1.0 and R1 = R2 = 2.0.
+                zdict['xlabel'] = dfz.loc[dfz.z == zdict['x'], 'title'].values[0]
+                zdict['ylabel'] = dfz.loc[dfz.z == zdict['y'], 'title'].values[0]
 
         return self
 
     def chart(self, dfts):
 
-        fig, axs = plt.subplots(nrows=len(zdictss), ncols=len(zdictss[0]), figsize=(width, height), sharey=True, constrained_layout=False, squeeze=False)
-
-        fig.supylabel('\nFrequency', fontsize=fslabel, ha='center')
+        fig, axs = plt.subplots(nrows=len(zdictss), ncols=len(zdictss[0]), figsize=(width, height), sharex=True, constrained_layout=False, squeeze=False)
 
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
         for row, (rowax, zdicts) in enumerate(zip(axs, zdictss)):
             for ax, zdict in zip(rowax, zdicts):
-                if row == 1: ax.set_xlabel(zdict['title'], fontsize=fslabel)
-                ds = [dfts[zdict['control']], dfts[zdict['treatment']]]
-                medians = []
-                [medians.append(d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), zdict['name'] + 'median'].values[0]) for d in ds]
-                dif = medians[0]/medians[1]
-                if ('Grain' in zdict['name']) or ('BD' in zdict['name']): dif = 1.0/dif
-                color = dif_color(dif)
-                d = ds[1]
-                for b, namebin, namesdbin in zip(zdict['binslist'], zdict['namebins_list'], zdict['namesdbins_list']):
-                    barheight = d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), namebin]
-                    barheightsd = d.loc[(d[xname] == self.x_value) & (d[yname] == self.y_value), namesdbin]
-                    ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=zdict['barwidth'])
-                    ax.bar(x=b, height=barheightsd, align='edge', color=color, linewidth=0, width=zdict['barwidth'], bottom=barheight, alpha=0.2)
-                ax.set(ylim=(0, module.ymax), yticks=(0, module.ymax), yticklabels=(0, module.ymax))
-                ax.set(xlim=(0, zdict['max']))
+                df = dfts[zdict['treatment']]
+                x = df.loc[df[xname] == self.x_value, zdict['x']]
+                y = df.loc[df[yname] == self.y_value, zdict['y']]
+                ax.scatter(x, y, alpha=0.1, s=5.0)
+                ax.set_xlim(0.0, zdict['xmax'])
+                ax.set_ylim(0.0, zdict['ymax'])
+                ax.set_xlabel(zdict['xlabel'])
+                ax.set_ylabel(zdict['ylabel'])
                 ax.tick_params(axis='x', labelsize=fstick)
                 ax.tick_params(axis='y', labelsize=fstick)
                 ax.set_box_aspect(1)
@@ -223,14 +216,6 @@ def create_figure(t):
     pr.chart(dfts)
 
 zdictss = module.z
-
-for zdicts in zdictss:
-    for zdict in zdicts:
-        zdict['xmin'] = None if pd.isnull(dfz.loc[dfz.z == zdict['x'], 'zmin'].values[0]) else dfz.loc[dfz.z == zdict['x'], 'zmin'].values[0]
-        zdict['ymin'] = None if pd.isnull(dfz.loc[dfz.z == zdict['y'], 'zmin'].values[0]) else dfz.loc[dfz.z == zdict['y'], 'zmin'].values[0]
-        zdict['xmax'] = None if pd.isnull(dfz.loc[dfz.z == zdict['x'], 'zmax'].values[0]) else dfz.loc[dfz.z == zdict['x'], 'zmax'].values[0]
-        zdict['ymax'] = None if pd.isnull(dfz.loc[dfz.z == zdict['y'], 'zmax'].values[0]) else dfz.loc[dfz.z == zdict['y'], 'zmax'].values[0]
-        zdict['title'] = 'x = ' + dfz.loc[dfz.z == zdict['x'], 'title'].values[0] + '\ny = ' + dfz.loc[dfz.z == zdict['y'], 'title'].values[0]
 
 dfs = {}
 for d in module.dirs:

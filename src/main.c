@@ -270,7 +270,7 @@ int main (int argc, char *argv[])
 
 				caso (i_first, i_last, p_first); 
 
-				if ( gRuns == 1 || fLevels1 == 1 || fLevels2 == 1 || fLevels3 == 1 )
+				if ( gRuns == 1 )
 				{
 					write_i (ics, *factor1, *factor2, *factor3, i_first, i_last);
 				}

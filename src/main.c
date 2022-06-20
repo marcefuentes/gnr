@@ -56,7 +56,7 @@ int	fLevels1, fLevels2, fLevels3;
 
 void	read_globals (char *filename);
 void	write_globals (char *filename);
-void	caso (struct ptype *p_first); 
+void	caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first); 
 void	start_population (struct itype *i, struct itype *i_last);
 double	fitness (struct itype *i, struct itype *i_last);	// gFFunction
 double	calculate_wmax (double q1, double q2);
@@ -72,6 +72,7 @@ void	fix_a2_macromutation (struct itype *i, struct itype *i_last);
 
 int main (int argc, char *argv[])
 {
+	struct itype	*i_first, *i_last;
 	struct ptype	*p_first, *p_last;
 	double 		*factor1, inc1, f1;
 	double		*factor2, inc2, f2;
@@ -92,12 +93,15 @@ int main (int argc, char *argv[])
 	char glo[13];
 	char gl2[13];
 	char out[13];
+	char ics[13];
 	strcpy (glo, argv[1]);
 	strcpy (gl2, argv[1]);
 	strcpy (out, argv[1]);
+	strcpy (ics, argv[1]);
 	strcat (glo, ".glo");
 	strcat (gl2, ".gl2");
 	strcat (out, ".csv");
+	strcat (ics, ".ics");
 
 	read_globals (glo);
 
@@ -169,6 +173,7 @@ int main (int argc, char *argv[])
 
 	write_globals (gl2); 
 	write_headers (out, factorName1, factorName2, factorName3);
+	write_headers_i (ics, factorName1, factorName2, factorName3);
 
 	if ( fLevels1 > 1 )
 	{
@@ -254,12 +259,26 @@ int main (int argc, char *argv[])
 					exit (EXIT_FAILURE);
 				}
 
-				caso (p_first); 
+				i_first = calloc (gN, sizeof *i_first);
+				if ( i_first == NULL )
+				{
+					printf ("\nFailed calloc (individuals)");
+					exit (EXIT_FAILURE);
+				}
+
+				i_last = i_first + gN;
+
+				caso (i_first, i_last, p_first); 
+
+				if ( gRuns == 1 || fLevels1 == 1 || fLevels2 == 1 || fLevels3 == 1 )
+				{
+					write_i (ics, *factor1, *factor2, *factor3, i_first, i_last);
+				}
+
+				free (i_first);
 
 				p_last = p_first + gPeriods + 1;
-
 				stats_runs (p_first, p_last, gRuns);
-
 				write_stats (out, *factor1, *factor2, *factor3, p_first, p_last); // Writes periodic data
 
 				free (p_first);
@@ -345,9 +364,8 @@ void write_globals (char *filename)
 	FILE *fp;
 
 	if ( (fp = fopen (filename, "a+")) == NULL )
-	{
-		fprintf (stderr, "Can't open file %s to write.\n", filename);
-		exit (EXIT_FAILURE);
+	{ 
+		file_write_error (filename);
 	}
 
 	fprintf (fp, "Seed,%i\n", gSeed);
@@ -396,20 +414,10 @@ void write_globals (char *filename)
 	fclose (fp);
 }
 
-void caso (struct ptype *p_first) 
+void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 {
-	struct itype	*i_first, *i_last;
 	struct pruntype	*prun_first, *prun_last, *prun;
 	double		wmax = calculate_wmax(ga1Max*gR1, ga2Max*gR2);
-
-	i_first = calloc (gN, sizeof *i_first);
-	if ( i_first == NULL )
-	{
-		printf ("\nFailed calloc (individuals)");
-		exit (EXIT_FAILURE);
-	}
-
-	i_last = i_first + gN;
 
 	for ( int r = 0; r < gRuns; r++ ) 
 	{
@@ -495,14 +503,6 @@ void caso (struct ptype *p_first)
 		stats_end (prun_first, prun_last, p_first);
 		free (prun_first);
 	} 
-
-	if ( gRuns == 1 || fLevels1 == 1 || fLevels2 == 1 || fLevels3 == 1 )
-	{
-		char ics[6] = "i.txt";
-		write_i (ics, i_first, i_last);
-	}
-
-	free (i_first);
 }
 
 void start_population (struct itype *i, struct itype *i_last)

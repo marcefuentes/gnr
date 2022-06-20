@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "sim.h"
-
+ 
 void write_headers (char *filename, char *header1, char *header2, char *header3)
 {
 	FILE *fp;
@@ -19,8 +19,7 @@ void write_headers (char *filename, char *header1, char *header2, char *header3)
 
 	if ( (fp = fopen (filename, "a+")) == NULL )
 	{
-		fprintf (stderr, "Can't open file %s to write.\n", filename);
-		exit (EXIT_FAILURE);
+		file_write_error (filename);
 	}
 
 	fprintf (fp, "%s,%s,%s,wmax,Time", header1, header2, header3);
@@ -52,8 +51,7 @@ void write_stats (char *filename, float factor1, float factor2, int factor3, str
 
 	if ( (fp = fopen (filename, "a+")) == NULL )
 	{
-		fprintf (stderr, "Can't open file %s to write.\n", filename);
-		exit (EXIT_FAILURE);
+		file_write_error (filename);
 	}
 
 	for ( ; p < p_last; p++ )
@@ -82,22 +80,33 @@ void write_stats (char *filename, float factor1, float factor2, int factor3, str
 	fclose (fp);
 }
 
-void write_i (char *filename, struct itype *i, struct itype *i_last)
+void write_headers_i (char *filename, char *header1, char *header2, char *header3)
+{
+	FILE *fp;
+
+	if ( (fp = fopen (filename, "a+")) == NULL )
+	{
+		file_write_error (filename);
+	}
+
+	fprintf (fp, "%s,%s,%s,a2Default,a2Decided,a2Seen,a2SeenSum,w,ChooseGrain,MimicGrain,cost,age,chose_partner,changed_a2", header1, header2, header3);
+
+	fclose (fp);
+}
+
+void write_i (char *filename, float factor1, float factor2, int factor3, struct itype *i, struct itype *i_last)
 {
 	double wc = 0.0;
 	FILE *fp;
 
 	if ( (fp = fopen (filename, "a+")) == NULL )
 	{
-		fprintf (stderr, "Can't open file %s to write.\n", filename);
-		exit (EXIT_FAILURE);
+		file_write_error (filename);
 	}
-
-	fprintf (fp, "a2Default,a2Decided,a2Seen,a2SeenSum,w,ChooseGrain,MimicGrain,cost,age,chose_partner,changed_a2"); 
 
 	for ( ; i < i_last; i++ )
 	{
-		fprintf (fp, "\n%f,%f,%f,%f,%f,%f,%f,%f,%d,%d,%d", i->a2Default, i->a2Decided, i->a2Seen, i->a2SeenSum, i->wCumulative - wc, i->ChooseGrain, i->MimicGrain, i->cost, i->age, i->chose_partner, i->changed_a2); 
+		fprintf (fp, "\n%f,%f,%i,%f,%f,%f,%f,%f,%f,%f,%f,%d,%d,%d", factor1, factor2, factor3, i->a2Default, i->a2Decided, i->a2Seen, i->a2SeenSum, i->wCumulative - wc, i->ChooseGrain, i->MimicGrain, i->cost, i->age, i->chose_partner, i->changed_a2); 
 		wc = i->wCumulative;
 	}
 
@@ -113,8 +122,7 @@ void write_time_elapsed (char *filename, float time_elapsed)
 
 	if ( (fp = fopen (filename, "a+")) == NULL )
 	{
-		fprintf (stderr, "Can't open file %s to write.\n", filename);
-		exit (EXIT_FAILURE);
+		file_write_error (filename);
 	}
 
 	h = time_elapsed/3600;
@@ -140,3 +148,8 @@ void write_time_elapsed (char *filename, float time_elapsed)
 	fclose (fp);
 }
 
+void file_write_error (char *filename)
+{
+	fprintf (stderr, "Can't open file %s to write.\n", filename);
+	exit (EXIT_FAILURE);
+}

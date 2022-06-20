@@ -4,7 +4,7 @@ gnr
 *.pyc
 results/**/job*
 results/**/*.csv
-results/**/*.txt
+results/**/*.ics
 results/**/*.csvv
 results/**/*.gif
 results/**/*.gl2

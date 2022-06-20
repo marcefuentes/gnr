@@ -498,7 +498,7 @@ void caso (struct ptype *p_first)
 
 	if ( gRuns == 1 || fLevels1 == 1 || fLevels2 == 1 || fLevels3 == 1 )
 	{
-		char ics[6] = "i.ics";
+		char ics[6] = "i.txt";
 		write_i (ics, i_first, i_last);
 	}
 

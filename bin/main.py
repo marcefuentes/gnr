@@ -203,7 +203,7 @@ class BarsOne:
 
     def chart(self, dfts):
 
-        fig, axs = plt.subplots(nrows=len(dfts), ncols=len(module.traits), figsize=(width, height), sharey=True, constrained_layout=False, squeeze=False)
+        fig, axs = plt.subplots(nrows=len(module.folderss), ncols=len(module.traits), figsize=(width, height), sharey=True, constrained_layout=False, squeeze=False)
 
         fig.supylabel('Frequency', fontsize=fslabel, ha='center')
 
@@ -211,6 +211,7 @@ class BarsOne:
 
         for row, (rowax, folders) in enumerate(zip(axs, module.folderss)):
             ds = [dfts[folders['control']], dfts[folders['treatment']]]
+            d = ds[1]
             for ax, traitd in zip(rowax, self.traitds):
                 if row == 1: ax.set_xlabel(dftraits.loc[traitd['name'], 'label'], fontsize=fslabel)
                 medians = []
@@ -218,7 +219,6 @@ class BarsOne:
                 dif = medians[0]/medians[1]
                 if ('Grain' in traitd['name']) or ('BD' in traitd['name']): dif = 1.0/dif
                 color = dif_color(dif)
-                d = ds[1]
                 for b, namebin, namesdbin in zip(traitd['binslist'], traitd['namebins_list'], traitd['namesdbins_list']):
                     barheight = d.loc[(d[module.glos['x']] == self.glovalue_x) & (d[module.glos['y']] == self.glovalue_y), namebin]
                     barheightsd = d.loc[(d[module.glos['x']] == self.glovalue_x) & (d[module.glos['y']] == self.glovalue_y), namesdbin]
@@ -295,22 +295,22 @@ class ScatterOne:
 
     def chart(self, dfts):
 
-        fig, axs = plt.subplots(nrows=len(module.folders), ncols=len(module.traits), figsize=(width, height), sharex=True, constrained_layout=False, squeeze=False)
+        fig, axs = plt.subplots(nrows=len(module.folders), ncols=len(module.traits), figsize=(width, height), constrained_layout=False, squeeze=False)
 
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
         for row, (rowax, folder) in enumerate(zip(axs, module.folders)):
             dft = dfts[folder]
             for ax, trait in zip(rowax, module.traits):
-                x = dft.loc[dft[module.glos['x']] == self.glovalue_x]
-                y = dft.loc[dft[module.glos['y']] == self.glovalue_y]
-                ax.scatter(x, y, alpha=0.1, s=5.0)
+                x = dft.loc[(dft[module.glos['x']] == self.glovalue_x) & (dft[module.glos['y']] == self.glovalue_y), trait['x']]
+                y = dft.loc[(dft[module.glos['x']] == self.glovalue_x) & (dft[module.glos['y']] == self.glovalue_y), trait['y']]
+                ax.scatter(x, y, alpha=0.1, s=5)
                 limit = 2.0 if trait['x'] == 'w' else 1.0
                 ax.set_xlim(0.0, limit)
                 limit = 2.0 if trait['y'] == 'w' else 1.0
                 ax.set_ylim(0.0, limit)
-                ax.set_xlabel(dftraits.loc[trait['x'], 'label'], fontsize=fslabel)
-                ax.set_ylabel(dftraits.loc[trait['y'], 'label'], fontsize=fslabel)
+                if row == 0:    
+                    ax.set_title(dftraits.loc[trait['y'], 'label'] + ' vs\n' + dftraits.loc[trait['x'], 'label'], fontsize=fslabel)
                 ax.tick_params(axis='x', labelsize=fstick)
                 ax.tick_params(axis='y', labelsize=fstick)
                 ax.set_box_aspect(1)

@@ -89,7 +89,7 @@ void write_headers_i (char *filename, char *header1, char *header2, char *header
 		file_write_error (filename);
 	}
 
-	fprintf (fp, "%s,%s,%s,a2Default,a2Decided,a2Seen,a2SeenSum,w,ChooseGrain,MimicGrain,cost,age,chose_partner,changed_a2", header1, header2, header3);
+	fprintf (fp, "%s,%s,%s,Time,a2Default,a2Decided,a2Seen,a2SeenSum,w,ChooseGrain,MimicGrain,cost,age,chose_partner,changed_a2", header1, header2, header3);
 
 	fclose (fp);
 }
@@ -106,7 +106,7 @@ void write_i (char *filename, float factor1, float factor2, int factor3, struct 
 
 	for ( ; i < i_last; i++ )
 	{
-		fprintf (fp, "\n%f,%f,%i,%f,%f,%f,%f,%f,%f,%f,%f,%d,%d,%d", factor1, factor2, factor3, i->a2Default, i->a2Decided, i->a2Seen, i->a2SeenSum, i->wCumulative - wc, i->ChooseGrain, i->MimicGrain, i->cost, i->age, i->chose_partner, i->changed_a2); 
+		fprintf (fp, "\n%f,%f,%i,%i,%f,%f,%f,%f,%f,%f,%f,%f,%d,%d,%d", factor1, factor2, factor3, 1, i->a2Default, i->a2Decided, i->a2Seen, i->a2SeenSum, i->wCumulative - wc, i->ChooseGrain, i->MimicGrain, i->cost, i->age, i->chose_partner, i->changed_a2); 
 		wc = i->wCumulative;
 	}
 

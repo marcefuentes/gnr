@@ -276,6 +276,8 @@ class ScatterAll:
                         ax.set_xlim(0.0, limit)
                         limit = 2.0 if trait['y'] == 'w' else 1.0
                         ax.set_ylim(0.0, limit)
+                        ax.tick_params(axis='x', labelsize=fstick)
+                        ax.tick_params(axis='y', labelsize=fstick)
                         ax.set(xticks=[], yticks=[])
                         if (nc == 0) & (column == 0):
                             y = '$2^{{{}}}$'.format(round(math.log(innerrow, 2))) if dfglos.loc[module.glos['y'], 'log'] else innerrow
@@ -307,14 +309,16 @@ class ScatterOne:
             dft = dfts[folder]
             d = dft.loc[(dft[module.glos['x']] == self.glovalue_x) & (dft[module.glos['y']] == self.glovalue_y)]
             for ax, trait in zip(rowax, module.traits):
-                ax.scatter(d[trait['x']], d[trait['y']] , alpha=0.3, s=1)
+                ax.scatter(d[trait['x']], d[trait['y']] , alpha=0.2, s=1)
                 limit = 2.0 if trait['x'] == 'w' else 1.0
                 ax.set(xlim=(0.0, limit), xticks=(0.0, limit), xticklabels=(0.0, limit))
                 limit = 2.0 if trait['y'] == 'w' else 1.0
                 ax.set(ylim=(0.0, limit), yticks=(0.0, limit), yticklabels=(0.0, limit))
+                ax.tick_params(axis='x', labelsize=fstick)
                 ax.tick_params(axis='y', labelsize=fstick)
                 if row == 0:    
                     ax.set_title(dftraits.loc[trait['y'], 'label'] + ' vs\n' + dftraits.loc[trait['x'], 'label'], fontsize=fslabel)
+                    ax.set(xticks=[])
                 ax.set_box_aspect(1)
 
         plt.savefig(outfile, dpi=100)

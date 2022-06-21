@@ -229,6 +229,88 @@ class BarsOne:
         plt.savefig(outfile, dpi=100)
         plt.close()
 
+class ScatterAll:
+
+    def prepare(self, dfs):
+
+        self.innercols = dfs[folderlist[0]][module.glos['x']].unique()
+        self.innerrows = dfs[folderlist[0]][module.glos['y']].unique()
+        self.innercols.sort()
+        self.innerrows.sort() if module.glos['y'] == 'GroupSize' else self.innerrows[::-1].sort()
+
+        #self.color = [red-0.15, green-0.15, blue-0.15]
+
+        return self
+
+    def chart(self, dfts):
+ 
+        fig = plt.figure(figsize=(width + 3.9, height/2.0 + 1.0))
+        fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], y=0.00, fontsize=fslabel)
+        fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.003*width, fontsize=fslabel, ha='center')
+
+        if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
+
+        outer_grid = fig.add_gridspec(nrows=len(module.folderss), ncols=len(module.traits), wspace=0.1)
+
+        for nr, dft in enumerate(dtfs):
+            for nc, trait in enumerate(module.traits):
+                innergrid = outer_grid[nr, nc].subgridspec(nrows=len(self.innerrows), ncols=len(self.innercols), wspace=0.0, hspace=0.0)
+                axs = innergrid.subplots()
+                if nr == 0:    
+                    axs[0, int(len(self.innercols)/2)].set_title(dftraits.loc[trait['y'], 'label'] + 'vs'\n+ dftraits.loc[trait['x'], 'label'], fontsize=fslabel) # Prints the title of the middle column. Bad if there are even columns
+                for row, (rowax, innerrow) in enumerate(zip(axs, self.innerrows)): 
+                    for column, (ax, innercol) in enumerate(zip(rowax, self.innercols)):
+                        x = dft.loc[(dft[module.glos['x']] == innercol) & (dft[module.glos['y']] == innerrow), trait['x']]
+                        y = dft.loc[(dft[module.glos['x']] == innercol) & (dft[module.glos['y']] == innerrow), trait['y']]
+                        ax.scatter(x, y, alpha=0.1, s=0.001)
+                        limit = 2.0 if trait['x'] == w else 1.0
+                        ax.set_xlim(0.0, limit)
+                        limit = 2.0 if trait['y'] == w else 1.0
+                        ax.set_ylim(0.0, limit)
+                        ax.set(xticks=[], yticks=[])
+                        if (nc == 0) & (column == 0):
+                            y = '$2^{{{}}}$'.format(round(math.log(innerrow, 2))) if dfglos.loc[module.glos['y'], 'log'] else innerrow
+                            ax.set_ylabel(y, rotation='horizontal', horizontalalignment='right', verticalalignment='center')
+                        if row == len(self.innerrows) - 1:
+                            x = '$2^{{{}}}$'.format(round(math.log(innercol, 2))) if dfglos.loc[module.glos['x'], 'log'] else innercol
+                            ax.set_xlabel(x)
+
+        plt.savefig(outfile, dpi=100)
+        plt.close()
+
+class ScatterOne:
+
+    def prepare(self, dfs):
+
+        self.glovalue_x = float(str("{:.6f}".format(pow(2, int(module.glovalue['x']))))) if dfglos.loc[module.glos['x'], 'log'] else module.glovalue['x'] 
+        self.glovalue_y = float(str("{:.6f}".format(pow(2, int(module.glovalue['y']))))) if dfglos.loc[module.glos['y'], 'log'] else module.glovalue['y']
+
+        return self
+
+    def chart(self, dfts):
+
+        fig, axs = plt.subplots(nrows=len(module.folders), ncols=len(module.traits), figsize=(width, height), sharex=True, constrained_layout=False, squeeze=False)
+
+        if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
+
+        for row, (rowax, dft) in enumerate(zip(axs, dfts)):
+            for ax, trait in zip(rowax, traits):
+                x = dft.loc[dft[module.glos['x']] == self.glovalue_x]
+                y = dft.loc[dft[module.glos['y']] == self.glovalue_y]
+                ax.scatter(x, y, alpha=0.1, s=5.0)
+                limit = 2.0 if trait['x'] == w else 1.0
+                ax.set_xlim(0.0, limit)
+                limit = 2.0 if trait['y'] == w else 1.0
+                ax.set_ylim(0.0, limit)
+                ax.set_xlabel(dftraits.loc[trait['x'], 'label'], fontsize=fslabel)
+                ax.set_ylabel(dftraits.loc[trait['y'], 'label'], fontsize=fslabel)
+                ax.tick_params(axis='x', labelsize=fstick)
+                ax.tick_params(axis='y', labelsize=fstick)
+                ax.set_box_aspect(1)
+
+        plt.savefig(outfile, dpi=100)
+        plt.close()
+
 def dif_color(dif):
     color = (red*pow(dif,1.7), green*pow(dif,0.7), blue*pow(dif,1.7)) if dif <= 1.0 else (red*pow(dif,-1.7), green*pow(dif,-1.7), blue*pow(dif,-0.7))
     return color
@@ -239,27 +321,35 @@ def create_figure(t):
         dfts[folder] = dfs[folder].loc[dfs[folder]['Time'] == t].copy()
     pr.chart(dfts)
 
+def folderlist_csv(folderlist)
+    for folders in module.folderss:
+        folderlist.append(folders['treatment'])
+        folderlist.append(folders['control'])
+    folderlist = list(set(folderlist))
+    return folderlist
+
 folderlist = []
-for folders in module.folderss:
-    folderlist.append(folders['treatment'])
-    folderlist.append(folders['control'])
-folderlist = list(set(folderlist))
 
 if module.ftype == 'barsone':
+    folderlist = folderlist_csv(folderlist)
+    extension = '*.csv'
     pr = BarsOne()
-    extension = '*.csv'
 elif module.ftype == 'barsall':
+    folderlist = folderlist_csv(folderlist)
+    extension = '*.csv'
     pr = BarsAll()
-    extension = '*.csv'
 elif module.ftype == 'bubbles':
-    pr = Bubbles()
+    folderlist = folderlist_csv(folderlist)
     extension = '*.csv'
+    pr = Bubbles()
 elif module.ftype == 'scatterall':
+    folderlist = module.folders
+    extension = '*.ics'
     pr = ScatterAll()
-    extension = '*.ics'
 elif module.ftype = 'scatterone':
-    pr = ScatterOne()
+    folderlist = module.folders
     extension = '*.ics'
+    pr = ScatterOne()
 else:
     print('No such ftype')
     exit(1)

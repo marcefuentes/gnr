@@ -210,24 +210,28 @@ class BarsOne:
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
         for row, (rowax, folders) in enumerate(zip(axs, module.folderss)):
-            ds = [dfts[folders['control']], dfts[folders['treatment']]]
-            d = ds[1]
+            do = [dfts[folders['control']], dfts[folders['treatment']]]
+            dc = do[0].loc[(do[0][module.glos['x']] == self.glovalue_x) & (do[0][module.glos['y']] == self.glovalue_y)]
+            dt = do[1].loc[(do[1][module.glos['x']] == self.glovalue_x) & (do[1][module.glos['y']] == self.glovalue_y)]
+            ds = [dc, dt]
             for ax, traitd in zip(rowax, self.traitds):
                 if row == 1: ax.set_xlabel(dftraits.loc[traitd['name'], 'label'], fontsize=fslabel)
                 medians = []
-                [medians.append(d.loc[(d[module.glos['x']] == self.glovalue_x) & (d[module.glos['y']] == self.glovalue_y), traitd['name'] + 'median'].values[0]) for d in ds]
+                [medians.append(d[traitd['name'] + 'median'].values[0]) for d in ds]
                 dif = medians[0]/medians[1]
                 if ('Grain' in traitd['name']) or ('BD' in traitd['name']): dif = 1.0/dif
                 color = dif_color(dif)
                 for b, namebin, namesdbin in zip(traitd['binslist'], traitd['namebins_list'], traitd['namesdbins_list']):
-                    barheight = d.loc[(d[module.glos['x']] == self.glovalue_x) & (d[module.glos['y']] == self.glovalue_y), namebin]
-                    barheightsd = d.loc[(d[module.glos['x']] == self.glovalue_x) & (d[module.glos['y']] == self.glovalue_y), namesdbin]
-                    ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=traitd['barwidth'])
-                    ax.bar(x=b, height=barheightsd, align='edge', color=color, linewidth=0, width=traitd['barwidth'], bottom=barheight, alpha=0.2)
-                ax.set(ylim=(0, barsonelimit), yticks=(0, barsonelimit), yticklabels=(0, barsonelimit))
-                ax.set(xlim=(0, traitd['max']))
+                    barheight = ds[1][namebin]
+                    barheightsd = ds[1][namesdbin]
+                    ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0.0, width=traitd['barwidth'])
+                    ax.bar(x=b, height=barheightsd, align='edge', color=color, linewidth=0.0, width=traitd['barwidth'], bottom=barheight, alpha=0.2)
+                ax.set(ylim=(0.0, barsonelimit), yticks=(0.0, barsonelimit), yticklabels=(0.0, barsonelimit))
+                ax.set(xlim=(0.0, traitd['max']), xticks=(0.0, traitd['max']), xticklabels=(0.0, traitd['max']))
                 ax.tick_params(axis='x', labelsize=fstick)
                 ax.tick_params(axis='y', labelsize=fstick)
+                if row == 0:
+                    ax.set(xticks=[])
                 ax.set_box_aspect(1)
 
         plt.savefig(outfile, dpi=100)

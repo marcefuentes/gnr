@@ -137,14 +137,14 @@ class BarsOne:
 
         bincount = int(sum(map(lambda x: module.traits[0] in x, [*dfs[folderlist[0]]]))/2) - 2
 
-        self.traitds = {}
-        for traitd, trait in zip(self.traitds, module.traits):
-            traitd['namebins_list'] = [trait + str(x) for x in range(bincount)]
-            traitd['namesdbins_list'] = [trait + 'SD' + str(x) for x in range(bincount)]
-            traitd['max'] = 2.0 if trait == 'w' else 1.0 # For a1Max = a2Max = 1.0 and R1 = R2 = 2.0.
+        self.traitds = [{'name': trait} for trait in module.traits]
+        for traitd in self.traitds:
+            traitd['namebins_list'] = [traitd['name'] + str(x) for x in range(bincount)]
+            traitd['namesdbins_list'] = [traitd['name'] + 'SD' + str(x) for x in range(bincount)]
+            traitd['max'] = 2.0 if traitd['name'] == 'w' else 1.0 # For a1Max = a2Max = 1.0 and R1 = R2 = 2.0.
             traitd['binslist'] = [(x+1)*traitd['max']/bincount for x in range(bincount)]
             traitd['barwidth'] = -traitd['max']/bincount
-        print(self.traitds)
+
         return self
 
     def chart(self, dfts):
@@ -156,18 +156,18 @@ class BarsOne:
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
         for row, (rowax, folders) in enumerate(zip(axs, module.folderss)):
-            for ax, trait, traitd in zip(rowax, module.traits, self.traitds):
-                if row == 1: ax.set_xlabel(dftraits.loc[trait, 'label'], fontsize=fslabel)
+            for ax, traitd in zip(rowax, self.traitds):
+                if row == 1: ax.set_xlabel(dftraits.loc[traitd['name'], 'label'], fontsize=fslabel)
                 ds = [dfts[folders['control']], dfts[folders['treatment']]]
                 medians = []
-                [medians.append(d.loc[(d[module.glos['x']] == self.glovalue_x) & (d[module.glos['y']] == self.glovalue_y), trait + 'median'].values[0]) for d in ds]
+                [medians.append(d.loc[(d[module.glos['x']] == self.glovalue_x) & (d[module.glos['y']] == self.glovalue_y), traitd['name'] + 'median'].values[0]) for d in ds]
                 dif = medians[0]/medians[1]
                 if ('Grain' in traitd['name']) or ('BD' in traitd['name']): dif = 1.0/dif
                 color = dif_color(dif)
                 d = ds[1]
                 for b, namebin, namesdbin in zip(traitd['binslist'], traitd['namebins_list'], traitd['namesdbins_list']):
-                    barheight = d.loc[d.loc[(d[module.glos['x']] == self.glovalue_x) & (d[module.glos['y']] == self.glovalue_y), namebin]]
-                    barheightsd = d.loc[d.loc[(d[module.glos['x']] == self.glovalue_x) & (d[module.glos['y']] == self.glovalue_y), namesdbin]]
+                    barheight = d.loc[(d[module.glos['x']] == self.glovalue_x) & (d[module.glos['y']] == self.glovalue_y), namebin]
+                    barheightsd = d.loc[(d[module.glos['x']] == self.glovalue_x) & (d[module.glos['y']] == self.glovalue_y), namesdbin]
                     ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=traitd['barwidth'])
                     ax.bar(x=b, height=barheightsd, align='edge', color=color, linewidth=0, width=traitd['barwidth'], bottom=barheight, alpha=0.2)
                 ax.set(ylim=(0, 0.2), yticks=(0, 0.2), yticklabels=(0, 0.2))

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 filename = 'optimal'
-ftype = 'scatter' # barsall, barsone, scatter
+ftype = 'bubbles' # barsall, barsone, bubbles, scatterall, scatterone
 movie = False
 
 glos = {'x': 'ES', 'y': 'Given'}

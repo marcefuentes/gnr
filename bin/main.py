@@ -301,18 +301,16 @@ class ScatterOne:
 
         for row, (rowax, folder) in enumerate(zip(axs, module.folders)):
             dft = dfts[folder]
+            d = dft.loc[(dft[module.glos['x']] == self.glovalue_x) & (dft[module.glos['y']] == self.glovalue_y)]
             for ax, trait in zip(rowax, module.traits):
-                x = dft.loc[(dft[module.glos['x']] == self.glovalue_x) & (dft[module.glos['y']] == self.glovalue_y), trait['x']]
-                y = dft.loc[(dft[module.glos['x']] == self.glovalue_x) & (dft[module.glos['y']] == self.glovalue_y), trait['y']]
-                ax.scatter(x, y, alpha=0.1, s=5)
+                ax.scatter(d[trait['x']], d[trait['y']] , alpha=0.3, s=1)
                 limit = 2.0 if trait['x'] == 'w' else 1.0
-                ax.set_xlim(0.0, limit)
+                ax.set(xlim=(0.0, limit), xticks=(0.0, limit), xticklabels=(0.0, limit))
                 limit = 2.0 if trait['y'] == 'w' else 1.0
-                ax.set_ylim(0.0, limit)
+                ax.set(ylim=(0.0, limit), yticks=(0.0, limit), yticklabels=(0.0, limit))
+                ax.tick_params(axis='y', labelsize=fstick)
                 if row == 0:    
                     ax.set_title(dftraits.loc[trait['y'], 'label'] + ' vs\n' + dftraits.loc[trait['x'], 'label'], fontsize=fslabel)
-                ax.tick_params(axis='x', labelsize=fstick)
-                ax.tick_params(axis='y', labelsize=fstick)
                 ax.set_box_aspect(1)
 
         plt.savefig(outfile, dpi=100)

@@ -140,16 +140,16 @@ class BarsAll:
 
     def chart(self, dfts):
  
-        fig = plt.figure(figsize=(width, height/2.0))
+        fig = plt.figure(figsize=(width + 3.9, height/2.0 + 1.0))
         fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], y=0.00, fontsize=fslabel)
         fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.003*width, fontsize=fslabel, ha='center')
 
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
-        outer_grid = fig.add_gridspec(nrows=1, ncols=len(module.traits), wspace=0.1)
+        outergrids = fig.add_gridspec(nrows=1, ncols=len(module.traits), wspace=0.1)
 
-        for n, traitd in enumerate(self.traitds):
-            innergrid = outer_grid[n].subgridspec(nrows=len(self.innerrows), ncols=len(self.innercols), wspace=0.0, hspace=0.0)
+        for traitd, outergrid in zip(self.traitds, outergrids):
+            innergrid = outergrid.subgridspec(nrows=len(self.innerrows), ncols=len(self.innercols), wspace=0.0, hspace=0.0)
             axs = innergrid.subplots()
             axs[0, int(len(self.innercols)/2)].set_title(dftraits.loc[traitd['name'], 'label'], pad=1.0, fontsize=fslabel) # Prints the title of the middle column. Bad if there are even columns
             ds = [dfts[module.folderss[0]['control']], dfts[module.folderss[0]['treatment']]]
@@ -165,7 +165,8 @@ class BarsAll:
                             barheight=d.loc[(d[module.glos['x']] == innercol) & (d[module.glos['y']] == innerrow), name0] + d.loc[(d[module.glos['x']] == innercol) & (d[module.glos['y']] == innerrow), name1]
                             ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=self.barwidth, alpha=alpha)
                             ax.set(xticks=[], yticks=[], ylim=[0, 0.3])
-                    if (n == 0) & (column == 0):
+                            ax.set_box_aspect(1)
+                    if (traitd['name'] == module.traits[0]) & (column == 0):
                         y = '$2^{{{}}}$'.format(round(math.log(innerrow, 2))) if dfglos.loc[module.glos['y'], 'log'] else innerrow
                         ax.set_ylabel(y, rotation='horizontal', horizontalalignment='right', verticalalignment='center')
                     if row == len(self.innerrows) - 1:

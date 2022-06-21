@@ -71,7 +71,7 @@ y_min = None if pd.isnull(dfxy.loc[dfxy.xy == yname, 'xymin'].values[0]) else df
 x_max = None if pd.isnull(dfxy.loc[dfxy.xy == xname, 'xymax'].values[0]) else dfxy.loc[dfxy.xy == xname, 'xymax'].values[0]
 y_max = None if pd.isnull(dfxy.loc[dfxy.xy == yname, 'xymax'].values[0]) else dfxy.loc[dfxy.xy == yname, 'xymax'].values[0]
 
-class BarsAll:
+class ScatterAll:
 
     def prepare(self, dfs):
 
@@ -124,7 +124,7 @@ class BarsAll:
         plt.savefig(outfile, dpi=100)
         plt.close()
 
-class BarsOne:
+class ScatterOne:
 
     def prepare(self, dfs):
 

@@ -245,16 +245,28 @@ for folders in module.folderss:
     folderlist.append(folders['control'])
 folderlist = list(set(folderlist))
 
-dfs = {}
-for folder in folderlist:
-    dfs[folder] = pd.concat(map(pd.read_csv, glob.glob(os.path.join(folder, '*.csv'))), ignore_index=True)
-
-if module.ftype == 'barsone': pr = BarsOne()
-elif module.ftype == 'barsall': pr = BarsAll()
-elif module.ftype == 'bubbles': pr = Bubbles()
+if module.ftype == 'barsone':
+    pr = BarsOne()
+    extension = '*.csv'
+elif module.ftype == 'barsall':
+    pr = BarsAll()
+    extension = '*.csv'
+elif module.ftype == 'bubbles':
+    pr = Bubbles()
+    extension = '*.csv'
+elif module.ftype == 'scatterall':
+    pr = ScatterAll()
+    extension = '*.ics'
+elif module.ftype = 'scatterone':
+    pr = ScatterOne()
+    extension = '*.ics'
 else:
     print('No such ftype')
     exit(1)
+
+dfs = {}
+for folder in folderlist:
+    dfs[folder] = pd.concat(map(pd.read_csv, glob.glob(os.path.join(folder, extension))), ignore_index=True)
 
 pr.prepare(dfs)
 

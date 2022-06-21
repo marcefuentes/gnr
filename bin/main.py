@@ -182,7 +182,13 @@ class BarsOne:
 class Scatter:
 
     def prepare(self, dfs):
-        pass
+
+        self.glosx_min = None if pd.isnull(dfglos.loc[module.glos['x'], 'min']) else dfglos.loc[module.glos['x'], 'min']
+        self.glosx_max = None if pd.isnull(dfglos.loc[module.glos['x'], 'max']) else dfglos.loc[module.glos['x'], 'max']
+        self.glosy_min = None if pd.isnull(dfglos.loc[module.glos['y'], 'min']) else dfglos.loc[module.glos['y'], 'min']
+        self.glosy_max = None if pd.isnull(dfglos.loc[module.glos['y'], 'max']) else dfglos.loc[module.glos['y'], 'max']
+
+        return self
 
     def chart(self, dfts):
 
@@ -212,8 +218,8 @@ class Scatter:
                 for suffix, suffixalpha in zip(['SD', ''], [0.2, 1.0]):
                     size = s + df[trait + suffix] if suffix == 'SD' else s
                     ax.scatter(x, y, c=color, ec=color, alpha=suffixalpha, s=size*dftraits.loc[trait, 'bubble_size'])
-                    ax.set_xlim(glosx_min, glosx_max)
-                    ax.set_ylim(glosy_min, glosy_max)
+                    ax.set_xlim(self.glosx_min, self.glosx_max)
+                    ax.set_ylim(self.glosy_min, self.glosy_max)
                     ax.set_box_aspect(1)
 
         plt.savefig(outfile, transparent=False)
@@ -228,11 +234,6 @@ def create_figure(t):
     for folder in folderlist:
         dfts[folder] = dfs[folder].loc[dfs[folder]['Time'] == t].copy()
     pr.chart(dfts)
-
-glosx_min = None if pd.isnull(dfglos.loc[module.glos['x'], 'min']) else dfglos.loc[module.glos['x'], 'min']
-glosx_max = None if pd.isnull(dfglos.loc[module.glos['x'], 'max']) else dfglos.loc[module.glos['x'], 'max']
-glosy_min = None if pd.isnull(dfglos.loc[module.glos['y'], 'min']) else dfglos.loc[module.glos['y'], 'min']
-glosy_max = None if pd.isnull(dfglos.loc[module.glos['y'], 'max']) else dfglos.loc[module.glos['y'], 'max']
 
 folderlist = []
 for folders in module.folderss:

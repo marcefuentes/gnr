@@ -29,6 +29,8 @@ fstick = 16 # Tick font size
 red = 0.97
 green = 0.97
 blue = 0.97
+barsalllimit = 0.3
+barsonelimit = 0.2
 
 dfglos = pd.DataFrame(
     [('ES', 'Substitutability of resource $\it{A}$', True, pow(2, -5.5), None), 
@@ -64,7 +66,7 @@ dftraits = pd.DataFrame(
 dfglos = dfglos.set_index('name')
 dftraits = dftraits.set_index('name')
 
-class Scatter:
+class Bubbles:
 
     def prepare(self, dfs):
 
@@ -164,7 +166,7 @@ class BarsAll:
                         for b, name0, name1 in zip(self.bins[::2], traitd['namebins_list'][::2], traitd['namebins_list'][1::2]):
                             barheight=d.loc[(d[module.glos['x']] == innercol) & (d[module.glos['y']] == innerrow), name0] + d.loc[(d[module.glos['x']] == innercol) & (d[module.glos['y']] == innerrow), name1]
                             ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=self.barwidth, alpha=alpha)
-                            ax.set(xticks=[], yticks=[], ylim=[0, 0.3])
+                            ax.set(xticks=[], yticks=[], ylim=[0, barsalllimit])
                             ax.set_box_aspect(1)
                     if (traitd['name'] == module.traits[0]) & (column == 0):
                         y = '$2^{{{}}}$'.format(round(math.log(innerrow, 2))) if dfglos.loc[module.glos['y'], 'log'] else innerrow
@@ -218,7 +220,7 @@ class BarsOne:
                     barheightsd = d.loc[(d[module.glos['x']] == self.glovalue_x) & (d[module.glos['y']] == self.glovalue_y), namesdbin]
                     ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=traitd['barwidth'])
                     ax.bar(x=b, height=barheightsd, align='edge', color=color, linewidth=0, width=traitd['barwidth'], bottom=barheight, alpha=0.2)
-                ax.set(ylim=(0, 0.2), yticks=(0, 0.2), yticklabels=(0, 0.2))
+                ax.set(ylim=(0, barsonelimit), yticks=(0, barsonelimit), yticklabels=(0, barsonelimit))
                 ax.set(xlim=(0, traitd['max']))
                 ax.tick_params(axis='x', labelsize=fstick)
                 ax.tick_params(axis='y', labelsize=fstick)
@@ -249,7 +251,7 @@ for folder in folderlist:
 
 if module.ftype == 'barsone': pr = BarsOne()
 elif module.ftype == 'barsall': pr = BarsAll()
-elif module.ftype == 'scatter': pr = Scatter()
+elif module.ftype == 'bubbles': pr = Bubbles()
 else:
     print('No such ftype')
     exit(1)

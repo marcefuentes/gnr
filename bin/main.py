@@ -186,9 +186,6 @@ class BarsOne:
 
     def prepare(self, dfs):
 
-        self.glovalue_x = float(str("{:.6f}".format(pow(2, int(module.glovalue['x']))))) if dfglos.loc[module.glos['x'], 'log'] else module.glovalue['x'] 
-        self.glovalue_y = float(str("{:.6f}".format(pow(2, int(module.glovalue['y']))))) if dfglos.loc[module.glos['y'], 'log'] else module.glovalue['y']
-
         bincount = int(sum(map(lambda x: module.traits[0] in x, [*dfs[folderlist[0]]]))/2) - 2
 
         self.traitds = [{'name': trait} for trait in module.traits]
@@ -272,10 +269,8 @@ class ScatterAll:
                         x = dft.loc[(dft[module.glos['x']] == innercol) & (dft[module.glos['y']] == innerrow), trait['x']]
                         y = dft.loc[(dft[module.glos['x']] == innercol) & (dft[module.glos['y']] == innerrow), trait['y']]
                         ax.scatter(x, y, alpha=0.1, s=0.001)
-                        limit = 2.0 if trait['x'] == 'w' else 1.0
-                        ax.set_xlim(0.0, limit)
-                        limit = 2.0 if trait['y'] == 'w' else 1.0
-                        ax.set_ylim(0.0, limit)
+                        ax.set_xlim(0.0, trait['xlimit'])
+                        ax.set_xlim(0.0, trait['ylimit'])
                         ax.tick_params(axis='x', labelsize=fstick)
                         ax.tick_params(axis='y', labelsize=fstick)
                         ax.set(xticks=[], yticks=[])

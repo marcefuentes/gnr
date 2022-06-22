@@ -293,11 +293,7 @@ class ScatterAll:
 class ScatterOne:
 
     def prepare(self, dfs):
-
-        self.glovalue_x = float(str("{:.6f}".format(pow(2, int(module.glovalue['x']))))) if dfglos.loc[module.glos['x'], 'log'] else module.glovalue['x'] 
-        self.glovalue_y = float(str("{:.6f}".format(pow(2, int(module.glovalue['y']))))) if dfglos.loc[module.glos['y'], 'log'] else module.glovalue['y']
-
-        return self
+        pass
 
     def chart(self, dfts):
 
@@ -307,9 +303,8 @@ class ScatterOne:
 
         for row, (rowax, folder) in enumerate(zip(axs, module.folders)):
             dft = dfts[folder]
-            d = dft.loc[(dft[module.glos['x']] == self.glovalue_x) & (dft[module.glos['y']] == self.glovalue_y)]
             for ax, trait in zip(rowax, module.traits):
-                ax.scatter(d[trait['x']], d[trait['y']] , alpha=0.2, s=1)
+                ax.scatter(dft[trait['x']], dft[trait['y']] , alpha=0.2, s=1)
                 limit = 2.0 if trait['x'] == 'w' else 1.0
                 ax.set(xlim=(0.0, limit), xticks=(0.0, limit), xticklabels=(0.0, limit))
                 limit = 2.0 if trait['y'] == 'w' else 1.0
@@ -370,6 +365,12 @@ else:
 dfs = {}
 for folder in folderlist:
     dfs[folder] = pd.concat(map(pd.read_csv, glob.glob(os.path.join(folder, extension))), ignore_index=True)
+
+if 'one' in module.ftype:
+    glovalue_x = float(str("{:.6f}".format(pow(2, int(module.glovalue['x']))))) if dfglos.loc[module.glos['x'], 'log'] else module.glovalue['x'] 
+    glovalue_y = float(str("{:.6f}".format(pow(2, int(module.glovalue['y']))))) if dfglos.loc[module.glos['y'], 'log'] else module.glovalue['y']
+    for folder in folderlist:
+        dfs[folder] = dfs[folder].loc[(dfs[folder][module.glos['x']] == glovalue_x) & (dfs[folder][module.glos['y']] == glovalue_y)]
 
 pr.prepare(dfs)
 

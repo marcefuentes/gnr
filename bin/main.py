@@ -121,9 +121,10 @@ class BarsAll:
 
         bincount = int(sum(map(lambda x: module.traits[0] in x, [*dfs[folderlist[0]]]))/2) - 2
 
-        self.traitds = [{'name': trait} for trait in module.traits]
-        for traitd in self.traitds:
-            traitd['namebins_list'] = [traitd['name'] + str(x) for x in range(bincount)]
+        self.traits = [{'name': trait} for trait in module.traits]
+        for trait in self.traits:
+            trait['namebins_list'] = [trait['name'] + str(x) for x in range(bincount)]
+            trait['title'] = dftraits.loc[trait['name'], 'label']
 
         self.innercols = dfs[folderlist[0]][module.glos['x']].unique()
         self.innerrows = dfs[folderlist[0]][module.glos['y']].unique()
@@ -155,24 +156,24 @@ class BarsAll:
 
         ds = [dfts[module.folderss[0]['control']], dfts[module.folderss[0]['treatment']]]
 
-        for traitd, outergrid in zip(self.traitds, outergrids):
+        for trait, outergrid in zip(self.traits, outergrids):
             innergrid = outergrid.subgridspec(nrows=len(self.innerrows), ncols=len(self.innercols), wspace=0.0, hspace=0.0)
             axs = innergrid.subplots()
-            axs[0, int(len(self.innercols)/2)].set_title(dftraits.loc[traitd['name'], 'label'], pad=1.0, fontsize=fslabel) # Prints the title of the middle column. Bad if there are even columns
+            axs[0, int(len(self.innercols)/2)].set_title(trait['title'], pad=1.0, fontsize=fslabel) # Prints the title of the middle column. Bad if there are even columns
             for row, (rowax, innerrow) in enumerate(zip(axs, self.innerrows)): 
                 for column, (ax, innercol) in enumerate(zip(rowax, self.innercols)):
                     medians = []
-                    [medians.append(d.loc[(d[module.glos['x']] == innercol) & (d[module.glos['y']] == innerrow), traitd['name'] + 'median'].values[0]) for d in ds]
+                    [medians.append(d.loc[(d[module.glos['x']] == innercol) & (d[module.glos['y']] == innerrow), trait['name'] + 'median'].values[0]) for d in ds]
                     dif = medians[0]/medians[1]
-                    if ('Grain' in traitd['name']) or ('BD' in traitd['name']): dif = 1.0/dif
+                    if ('Grain' in trait['name']) or ('BD' in trait['name']): dif = 1.0/dif
                     self.colors[1] = dif_color(dif)
                     for d, color, alpha in zip(ds, self.colors, self.alphas):
-                        for b, name0, name1 in zip(self.bins[::2], traitd['namebins_list'][::2], traitd['namebins_list'][1::2]):
+                        for b, name0, name1 in zip(self.bins[::2], trait['namebins_list'][::2], trait['namebins_list'][1::2]):
                             barheight=d.loc[(d[module.glos['x']] == innercol) & (d[module.glos['y']] == innerrow), name0] + d.loc[(d[module.glos['x']] == innercol) & (d[module.glos['y']] == innerrow), name1]
                             ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=self.barwidth, alpha=alpha)
                             ax.set(xticks=[], yticks=[], ylim=[0, barsalllimit])
                             ax.set_box_aspect(1)
-                    if (traitd['name'] == module.traits[0]) & (column == 0):
+                    if (trait['name'] == module.traits[0]) & (column == 0):
                         y = '$2^{{{}}}$'.format(round(math.log(innerrow, 2))) if dfglos.loc[module.glos['y'], 'log'] else innerrow
                         ax.set_ylabel(y, rotation='horizontal', horizontalalignment='right', verticalalignment='center')
                     if row == len(self.innerrows) - 1:
@@ -188,13 +189,14 @@ class BarsOne:
 
         bincount = int(sum(map(lambda x: module.traits[0] in x, [*dfs[folderlist[0]]]))/2) - 2
 
-        self.traitds = [{'name': trait} for trait in module.traits]
-        for traitd in self.traitds:
-            traitd['namebins_list'] = [traitd['name'] + str(x) for x in range(bincount)]
-            traitd['namesdbins_list'] = [traitd['name'] + 'SD' + str(x) for x in range(bincount)]
-            traitd['max'] = 2.0 if traitd['name'] == 'w' else 1.0 # For a1Max = a2Max = 1.0 and R1 = R2 = 2.0.
-            traitd['binslist'] = [(x+1)*traitd['max']/bincount for x in range(bincount)]
-            traitd['barwidth'] = -traitd['max']/bincount
+        self.traits = [{'name': trait} for trait in module.traits]
+        for trait in self.traits:
+            trait['namebins_list'] = [trait['name'] + str(x) for x in range(bincount)]
+            trait['namesdbins_list'] = [trait['name'] + 'SD' + str(x) for x in range(bincount)]
+            trait['max'] = 2.0 if trait['name'] == 'w' else 1.0 # For a1Max = a2Max = 1.0 and R1 = R2 = 2.0.
+            trait['binslist'] = [(x+1)*trait['max']/bincount for x in range(bincount)]
+            trait['barwidth'] = -trait['max']/bincount
+            trait['label'] = dftraits.loc[trait['name'], 'label'] 
 
         return self
 
@@ -207,24 +209,21 @@ class BarsOne:
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
         for row, (rowax, folders) in enumerate(zip(axs, module.folderss)):
-            do = [dfts[folders['control']], dfts[folders['treatment']]]
-            dc = do[0].loc[(do[0][module.glos['x']] == self.glovalue_x) & (do[0][module.glos['y']] == self.glovalue_y)]
-            dt = do[1].loc[(do[1][module.glos['x']] == self.glovalue_x) & (do[1][module.glos['y']] == self.glovalue_y)]
-            ds = [dc, dt]
-            for ax, traitd in zip(rowax, self.traitds):
-                if row == 1: ax.set_xlabel(dftraits.loc[traitd['name'], 'label'], fontsize=fslabel)
+            ds = [dfts[folders['control']], dfts[folders['treatment']]]
+            for ax, trait in zip(rowax, self.traits):
+                if row == 1: ax.set_xlabel(trait['label'], fontsize=fslabel)
                 medians = []
-                [medians.append(d[traitd['name'] + 'median'].values[0]) for d in ds]
+                [medians.append(d[trait['name'] + 'median'].values[0]) for d in ds]
                 dif = medians[0]/medians[1]
-                if ('Grain' in traitd['name']) or ('BD' in traitd['name']): dif = 1.0/dif
+                if ('Grain' in trait['name']) or ('BD' in trait['name']): dif = 1.0/dif
                 color = dif_color(dif)
-                for b, namebin, namesdbin in zip(traitd['binslist'], traitd['namebins_list'], traitd['namesdbins_list']):
+                for b, namebin, namesdbin in zip(trait['binslist'], trait['namebins_list'], trait['namesdbins_list']):
                     barheight = ds[1][namebin]
                     barheightsd = ds[1][namesdbin]
-                    ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0.0, width=traitd['barwidth'])
-                    ax.bar(x=b, height=barheightsd, align='edge', color=color, linewidth=0.0, width=traitd['barwidth'], bottom=barheight, alpha=0.2)
+                    ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0.0, width=trait['barwidth'])
+                    ax.bar(x=b, height=barheightsd, align='edge', color=color, linewidth=0.0, width=trait['barwidth'], bottom=barheight, alpha=0.2)
                 ax.set(ylim=(0.0, barsonelimit), yticks=(0.0, barsonelimit), yticklabels=(0.0, barsonelimit))
-                ax.set(xlim=(0.0, traitd['max']), xticks=(0.0, traitd['max']), xticklabels=(0.0, traitd['max']))
+                ax.set(xlim=(0.0, trait['max']), xticks=(0.0, trait['max']), xticklabels=(0.0, trait['max']))
                 ax.tick_params(axis='x', labelsize=fstick)
                 ax.tick_params(axis='y', labelsize=fstick)
                 if row == 0:
@@ -237,6 +236,12 @@ class BarsOne:
 class ScatterAll:
 
     def prepare(self, dfs):
+
+        self.traits = module.traits
+        for trait in self.traits:
+            trait['xlimit'] = 2.0 if trait['x'] == 'w' else 1.0
+            trait['ylimit'] = 2.0 if trait['y'] == 'w' else 1.0
+            trait['title'] = dftraits.loc[trait['y'], 'label'] + ' vs\n' + dftraits.loc[trait['x'], 'label'] 
 
         self.innercols = dfs[folderlist[0]][module.glos['x']].unique()
         self.innerrows = dfs[folderlist[0]][module.glos['y']].unique()
@@ -259,11 +264,11 @@ class ScatterAll:
 
         for nr, folder in enumerate(module.folders):
             dft = dfts[folder]
-            for nc, trait in enumerate(module.traits):
+            for nc, trait in enumerate(self.traits):
                 innergrid = outer_grid[nr, nc].subgridspec(nrows=len(self.innerrows), ncols=len(self.innercols), wspace=0.0, hspace=0.0)
                 axs = innergrid.subplots()
                 if nr == 0:    
-                    axs[0, int(len(self.innercols)/2)].set_title(dftraits.loc[trait['y'], 'label'] + ' vs\n' + dftraits.loc[trait['x'], 'label'], fontsize=fslabel) # Prints the title of the middle column. Bad if there are even columns
+                    axs[0, int(len(self.innercols)/2)].set_title(trait['title'], fontsize=fslabel) # Prints the title of the middle column. Bad if there are even columns
                 for row, (rowax, innerrow) in enumerate(zip(axs, self.innerrows)): 
                     for column, (ax, innercol) in enumerate(zip(rowax, self.innercols)):
                         x = dft.loc[(dft[module.glos['x']] == innercol) & (dft[module.glos['y']] == innerrow), trait['x']]
@@ -288,7 +293,14 @@ class ScatterAll:
 class ScatterOne:
 
     def prepare(self, dfs):
-        pass
+
+        self.traits = module.traits
+        for trait in self.traits:
+            trait['xlimit'] = 2.0 if trait['x'] == 'w' else 1.0
+            trait['ylimit'] = 2.0 if trait['y'] == 'w' else 1.0
+            trait['title'] = dftraits.loc[trait['y'], 'label'] + ' vs\n' + dftraits.loc[trait['x'], 'label'] 
+
+        return self
 
     def chart(self, dfts):
 
@@ -298,14 +310,14 @@ class ScatterOne:
 
         for row, (rowax, folder) in enumerate(zip(axs, module.folders)):
             dft = dfts[folder]
-            for ax, trait in zip(rowax, module.traits):
+            for ax, trait in zip(rowax, self.traits):
                 ax.scatter(dft[trait['x']], dft[trait['y']] , alpha=0.2, s=1)
                 ax.set(xlim=(0.0, trait['xlimit']), xticks=(0.0, trait['xlimit']), xticklabels=(0.0, trait['xlimit']))
                 ax.set(ylim=(0.0, trait['ylimit']), yticks=(0.0, trait['ylimit']), yticklabels=(0.0, trait['ylimit']))
                 ax.tick_params(axis='x', labelsize=fstick)
                 ax.tick_params(axis='y', labelsize=fstick)
                 if row == 0:    
-                    ax.set_title(dftraits.loc[trait['y'], 'label'] + ' vs\n' + dftraits.loc[trait['x'], 'label'], fontsize=fslabel)
+                    ax.set_title(trait['title'], fontsize=fslabel)
                     ax.set(xticks=[])
                 ax.set_box_aspect(1)
 
@@ -364,10 +376,6 @@ if 'one' in module.ftype:
     glovalue_y = float(str("{:.6f}".format(pow(2, int(module.glovalue['y']))))) if dfglos.loc[module.glos['y'], 'log'] else module.glovalue['y']
     for folder in folderlist:
         dfs[folder] = dfs[folder].loc[(dfs[folder][module.glos['x']] == glovalue_x) & (dfs[folder][module.glos['y']] == glovalue_y)]
-
-for trait in module.traits:
-    trait['xlimit'] = 2.0 if trait['x'] == 'w' else 1.0
-    trait['ylimit'] = 2.0 if trait['y'] == 'w' else 1.0
 
 pr.prepare(dfs)
 

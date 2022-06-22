@@ -203,31 +203,25 @@ class BarsOne:
     def chart(self, dfts):
 
         fig, axs = plt.subplots(nrows=len(module.folderss), ncols=len(module.traits), figsize=(width, height), sharey=True, constrained_layout=False, squeeze=False)
-
         fig.supylabel('Frequency', fontsize=fslabel, ha='center')
-
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
         for row, (rowax, folders) in enumerate(zip(axs, module.folderss)):
-            ds = [dfts[folders['control']], dfts[folders['treatment']]]
             for ax, trait in zip(rowax, self.traits):
                 if row == 1: ax.set_xlabel(trait['label'], fontsize=fslabel)
-                medians = []
-                [medians.append(d[trait['name'] + 'median'].values[0]) for d in ds]
-                dif = medians[0]/medians[1]
+                dif = dfts[folders['control']][trait['name'] + 'median'].values[0]/dfts[folders['treatment']][trait['name'] + 'median'].values[0]
                 if ('Grain' in trait['name']) or ('BD' in trait['name']): dif = 1.0/dif
                 color = dif_color(dif)
                 for b, namebin, namesdbin in zip(trait['binslist'], trait['namebins_list'], trait['namesdbins_list']):
-                    barheight = ds[1][namebin]
-                    barheightsd = ds[1][namesdbin]
+                    barheight = dfts[folders['treatment']][namebin]
+                    barheightsd = dfts[folders['treatment']][namesdbin]
                     ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0.0, width=trait['barwidth'])
                     ax.bar(x=b, height=barheightsd, align='edge', color=color, linewidth=0.0, width=trait['barwidth'], bottom=barheight, alpha=0.2)
                 ax.set(ylim=(0.0, barsonelimit), yticks=(0.0, barsonelimit), yticklabels=(0.0, barsonelimit))
                 ax.set(xlim=(0.0, trait['max']), xticks=(0.0, trait['max']), xticklabels=(0.0, trait['max']))
                 ax.tick_params(axis='x', labelsize=fstick)
                 ax.tick_params(axis='y', labelsize=fstick)
-                if row == 0:
-                    ax.set(xticks=[])
+                if (len(module.folderss) > 1) & (row == 0): ax.set(xticks=[])
                 ax.set_box_aspect(1)
 
         plt.savefig(outfile, dpi=100)
@@ -257,9 +251,7 @@ class ScatterAll:
         fig = plt.figure(figsize=(width + 0.0, height))
         fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], y=0.00, fontsize=fslabel)
         fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.003*width, fontsize=fslabel, ha='center')
-
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
-
         outer_grid = fig.add_gridspec(nrows=len(module.folders), ncols=len(module.traits), hspace=0.1, wspace=0.1)
 
         for nr, folder in enumerate(module.folders):
@@ -267,15 +259,14 @@ class ScatterAll:
             for nc, trait in enumerate(self.traits):
                 innergrid = outer_grid[nr, nc].subgridspec(nrows=len(self.innerrows), ncols=len(self.innercols), wspace=0.0, hspace=0.0)
                 axs = innergrid.subplots()
-                if nr == 0:    
-                    axs[0, int(len(self.innercols)/2)].set_title(trait['title'], fontsize=fslabel) # Prints the title of the middle column. Bad if there are even columns
+                if nr == 0: axs[0, int(len(self.innercols)/2)].set_title(trait['title'], fontsize=fslabel) # Prints the title of the middle column
                 for row, (rowax, innerrow) in enumerate(zip(axs, self.innerrows)): 
                     for column, (ax, innercol) in enumerate(zip(rowax, self.innercols)):
                         x = dft.loc[(dft[module.glos['x']] == innercol) & (dft[module.glos['y']] == innerrow), trait['x']]
                         y = dft.loc[(dft[module.glos['x']] == innercol) & (dft[module.glos['y']] == innerrow), trait['y']]
                         ax.scatter(x, y, alpha=0.1, s=0.001)
                         ax.set_xlim(0.0, trait['xlimit'])
-                        ax.set_xlim(0.0, trait['ylimit'])
+                        ax.set_ylim(0.0, trait['ylimit'])
                         ax.tick_params(axis='x', labelsize=fstick)
                         ax.tick_params(axis='y', labelsize=fstick)
                         ax.set(xticks=[], yticks=[])
@@ -305,7 +296,6 @@ class ScatterOne:
     def chart(self, dfts):
 
         fig, axs = plt.subplots(nrows=len(module.folders), ncols=len(module.traits), figsize=(width, height), constrained_layout=False, squeeze=False)
-
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
         for row, (rowax, folder) in enumerate(zip(axs, module.folders)):

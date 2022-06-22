@@ -9,4 +9,4 @@ traits = [{'x': 'MimicGrain', 'y': 'w'}, {'x': 'a2Default', 'y': 'w'}, {'x': 'a2
 folders = ['r', 'none']
 zcolor = 'a2Seen'
 
-if ftype == 'scatterone': glovalue = {'x': 4.0, 'y': 0.9}
+if ftype == 'scatterone': glovalue = {'x': 1.0, 'y': 1.0}

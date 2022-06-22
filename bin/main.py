@@ -264,7 +264,7 @@ class ScatterAll:
                     for column, (ax, innercol) in enumerate(zip(rowax, self.innercols)):
                         x = dft.loc[(dft[module.glos['x']] == innercol) & (dft[module.glos['y']] == innerrow), trait['x']]
                         y = dft.loc[(dft[module.glos['x']] == innercol) & (dft[module.glos['y']] == innerrow), trait['y']]
-                        ax.scatter(x, y, alpha=0.1, s=0.001)
+                        ax.scatter(x, y, c=dft.loc[(dft[module.glos['x']] == innercol) & (dft[module.glos['y']] == innerrow), module.zcolor], cmap='viridis', alpha=0.1, s=0.001)
                         ax.set_xlim(0.0, trait['xlimit'])
                         ax.set_ylim(0.0, trait['ylimit'])
                         ax.tick_params(axis='x', labelsize=fstick)
@@ -301,7 +301,7 @@ class ScatterOne:
         for row, (rowax, folder) in enumerate(zip(axs, module.folders)):
             dft = dfts[folder]
             for ax, trait in zip(rowax, self.traits):
-                ax.scatter(dft[trait['x']], dft[trait['y']] , alpha=0.2, s=1)
+                ax.scatter(dft[trait['x']], dft[trait['y']], c=dft[module.zcolor], cmap='viridis', alpha=0.2, s=1)
                 ax.set(xlim=(0.0, trait['xlimit']), xticks=(0.0, trait['xlimit']), xticklabels=(0.0, trait['xlimit']))
                 ax.set(ylim=(0.0, trait['ylimit']), yticks=(0.0, trait['ylimit']), yticklabels=(0.0, trait['ylimit']))
                 ax.tick_params(axis='x', labelsize=fstick)

@@ -305,10 +305,8 @@ class ScatterOne:
             dft = dfts[folder]
             for ax, trait in zip(rowax, module.traits):
                 ax.scatter(dft[trait['x']], dft[trait['y']] , alpha=0.2, s=1)
-                limit = 2.0 if trait['x'] == 'w' else 1.0
-                ax.set(xlim=(0.0, limit), xticks=(0.0, limit), xticklabels=(0.0, limit))
-                limit = 2.0 if trait['y'] == 'w' else 1.0
-                ax.set(ylim=(0.0, limit), yticks=(0.0, limit), yticklabels=(0.0, limit))
+                ax.set(xlim=(0.0, trait['xlimit']), xticks=(0.0, trait['xlimit']), xticklabels=(0.0, trait['xlimit']))
+                ax.set(ylim=(0.0, trait['ylimit']), yticks=(0.0, trait['ylimit']), yticklabels=(0.0, trait['ylimit']))
                 ax.tick_params(axis='x', labelsize=fstick)
                 ax.tick_params(axis='y', labelsize=fstick)
                 if row == 0:    
@@ -371,6 +369,10 @@ if 'one' in module.ftype:
     glovalue_y = float(str("{:.6f}".format(pow(2, int(module.glovalue['y']))))) if dfglos.loc[module.glos['y'], 'log'] else module.glovalue['y']
     for folder in folderlist:
         dfs[folder] = dfs[folder].loc[(dfs[folder][module.glos['x']] == glovalue_x) & (dfs[folder][module.glos['y']] == glovalue_y)]
+
+for trait in module.traits:
+    trait['xlimit'] = 2.0 if trait['x'] == 'w' else 1.0
+    trait['ylimit'] = 2.0 if trait['y'] == 'w' else 1.0
 
 pr.prepare(dfs)
 

@@ -235,14 +235,12 @@ class ScatterAll:
         for trait in self.traits:
             trait['xlimit'] = 2.0 if trait['x'] == 'w' else 1.0
             trait['ylimit'] = 2.0 if trait['y'] == 'w' else 1.0
-            trait['title'] = dftraits.loc[trait['y'], 'label'] + ' $\it{vs}$\n' + dftraits.loc[trait['x'], 'label'] 
+            trait['title'] = '$\it{x}$ = ' + dftraits.loc[trait['x'], 'label'] + '\n$\it{y}$ = ' + dftraits.loc[trait['y'], 'label'] 
 
         self.innercols = dfs[folderlist[0]][module.glos['x']].unique()
         self.innerrows = dfs[folderlist[0]][module.glos['y']].unique()
         self.innercols.sort()
         self.innerrows.sort() if module.glos['y'] == 'GroupSize' else self.innerrows[::-1].sort()
-
-        #self.color = [red-0.15, green-0.15, blue-0.15]
 
         return self
 
@@ -264,7 +262,6 @@ class ScatterAll:
                     for column, (ax, innercol) in enumerate(zip(rowax, self.innercols)):
                         x = dft.loc[(dft[module.glos['x']] == innercol) & (dft[module.glos['y']] == innerrow), trait['x']]
                         y = dft.loc[(dft[module.glos['x']] == innercol) & (dft[module.glos['y']] == innerrow), trait['y']]
-                        #ax.scatter(x, y, c=dft.loc[(dft[module.glos['x']] == innercol) & (dft[module.glos['y']] == innerrow), module.zcolor], cmap=module.colormap, alpha=0.1, s=0.001)
                         alphas = dft.loc[(dft[module.glos['x']] == innercol) & (dft[module.glos['y']] == innerrow), module.zalpha]
                         alphas = 1.0-alphas if module.sensitive else alphas
                         ax.scatter(x, y, c='k', alpha=alphas, s=0.00001)

@@ -303,7 +303,7 @@ class ScatterOne:
             for ax, trait in zip(rowax, self.traits):
                 #ax.scatter(dft[trait['x']], dft[trait['y']], c=dft[module.zcolor], cmap=module.colormap, alpha=0.2, s=1)
                 alphas = 1.0-dft[module.zalpha] if module.sensitive else dft[module.zalpha]
-                ax.scatter(dft[trait['x']], dft[trait['y']], alpha=alphas, s=0.01)
+                ax.scatter(dft[trait['x']], dft[trait['y']], c='k', alpha=alphas, s=0.01)
                 ax.set(xlim=(0.0, trait['xlimit']), xticks=(0.0, trait['xlimit']), xticklabels=(0.0, trait['xlimit']))
                 ax.set(ylim=(0.0, trait['ylimit']), yticks=(0.0, trait['ylimit']), yticklabels=(0.0, trait['ylimit']))
                 ax.tick_params(axis='x', labelsize=fstick)

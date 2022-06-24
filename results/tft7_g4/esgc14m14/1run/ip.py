@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
-filename = 'ip_ChooseGrain_sensitive'
-ftype = 'scatterall' # barsall, barsone, bubbles, scatterall, scatterone
+filename = 'ip_ChooseGrain_sensitive_-51'
+ftype = 'scatterone' # barsall, barsone, bubbles, scatterall, scatterone
 movie = False
 
 glos = {'x': 'ES', 'y': 'Given'}
@@ -10,4 +10,4 @@ folders = ['p', 'none']
 zalpha = 'ChooseGrain'
 sensitive = True
 
-if ftype == 'scatterone': glovalue = {'x': 0.0, 'y': 1.0}
+if ftype == 'scatterone': glovalue = {'x': -5.0, 'y': 1.0}

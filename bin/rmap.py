@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 # Parameters
 
 alpha = 0.5
-rho = 0.0
+ES = -5.0
 R1 = 2.0
 R2 = 2.0
 given = 1.0
@@ -22,16 +22,20 @@ def fitness(a, b):
         w = pow(alpha*pow(a, rho) + (1.0 - alpha)*pow(b, rho), 1.0/rho)
     return w
 
+rho = 1.0 - 1.0/ES
 ais = np.linspace(0.0, 1.0, num=n_curves)
 repeats = 1.0/(1.0 - pow(1.0 - deathrate, 2))
 
 plt.figure()
 
 for ai in ais:
-    y = fitness(R1*(1.0-ai), R2*(ai*(1.0-given) + ais*given))
-    plt.plot(ais, y, c='blue')
-    y = (fitness(R1*(1.0-ais), R2*(ai*(1.0-given) + ais*given)) + fitness((1.0-ais)*R1, R2*(ais*(1.0-given) + ais*given))*(repeats - 1.0))/repeats
+    y0 = fitness(R1*(1.0-ai), R2*(ai*(1.0-given) + ais*given))
+    plt.plot(ais, y0, c='blue')
+    yr = fitness(R1*(1.0-ais), R2*(ais*(1.0-given) + ais*given))
+    y = (y0 + yr*(repeats - 1.0))/repeats
     plt.plot(ais, y, c='red')
+    y = ((y0 + yr)/2.0)
+    plt.plot(ais, y, c='green')
     #ax.set_xlim(0.0, max_a2)
     #ax.set_ylim(0.0, 1.5, 1)
     #ax.set_xticks(np.linspace(0.0, max_a2, num=3))

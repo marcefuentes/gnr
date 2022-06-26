@@ -29,13 +29,13 @@ repeats = 1.0/(1.0 - pow(1.0 - deathrate, 2))
 plt.figure()
 
 for ai in ais:
-    y0 = fitness(R1*(1.0-ais), R2*(ais*(1.0-given) + ai*given))
+    y0 = fitness(R1*(1.0-ai), R2*(ai*(1.0-given) + ais*given))
     plt.plot(ais, y0, c='yellow', linewidth=ai*2.0)
-    yr = fitness(R1*(1.0-ai), R2*(ai*(1.0-given) + ai*given))
+    yr = fitness(R1*(1.0-ais), R2*(ais*(1.0-given) + ais*given))
     y = (y0 + yr*(repeats - 1.0))/repeats
     plt.plot(ais, y, c='red', linewidth=ai*2.0)
     y = ((y0 + yr)/2.0)
-    #plt.plot(ais, y, c='orange', linewidth=ai*2.0)
+    plt.plot(ais, y, c='orange', linewidth=ai*2.0)
     plt.xlim(0.0, 1.0)
     plt.ylim(0.0, 2.0)
     #ax.set_xticks(np.linspace(0.0, max_a2, num=3))
@@ -45,5 +45,5 @@ for ai in ais:
 
 # Save
 
-plt.savefig('l.png')
+plt.savefig('l-5.png')
 

@@ -235,7 +235,7 @@ class ScatterAll:
         for trait in self.traits:
             trait['xlimit'] = 2.0 if trait['x'] == 'w' else 1.0
             trait['ylimit'] = 2.0 if trait['y'] == 'w' else 1.0
-            trait['title'] = '$\it{x}$ = ' + dftraits.loc[trait['x'], 'label'] + '\n$\it{y}$ = ' + dftraits.loc[trait['y'], 'label'] 
+            trait['title'] = f"$\it{x}$ = {dftraits.loc[trait['x'], 'label']}\n$\it{y}$ = {dftraits.loc[trait['y'], 'label']}" 
 
         self.innercols = dfs[folderlist[0]][module.glos['x']].unique()
         self.innerrows = dfs[folderlist[0]][module.glos['y']].unique()
@@ -289,7 +289,7 @@ class ScatterOne:
         for trait in self.traits:
             trait['xlimit'] = 2.0 if trait['x'] == 'w' else 1.0
             trait['ylimit'] = 2.0 if trait['y'] == 'w' else 1.0
-            trait['title'] = '$\it{x}$ = ' + dftraits.loc[trait['x'], 'label'] + '\n$\it{y}$ = ' + dftraits.loc[trait['y'], 'label'] 
+            trait['title'] = f"$\it{x}$ = {dftraits.loc[trait['x'], 'label']}\n$\it{y}$ = {dftraits.loc[trait['y'], 'label']}" 
 
         return self
 
@@ -383,9 +383,9 @@ if module.movie:
         percent = t*100/laststep
         print(f'Created {percent:.1f}% of frames', end='\r')
     print('\nAdding frames to movie...')
-    iio.mimsave(module.filename + '.gif', frames)
+    iio.mimsave(f'{module.filename}.gif', frames)
 else:
-    outfile = module.filename + '.png'
+    outfile = f'{module.filename}.png'
     create_figure(laststep)
 
 end_time = time.perf_counter ()

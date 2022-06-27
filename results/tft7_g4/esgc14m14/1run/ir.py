@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
-filename = 'ir_MimicGrain_insensitive_-51Seen'
+filename = 'ir_MimicGrain_insensitive'
 sensitive = False
-ftype = 'scatterone' # barsall, barsone, bubbles, scatterall, scatterone
+ftype = 'scatterall' # barsall, barsone, bubbles, scatterall, scatterone
 movie = False
 
 glos = {'x': 'ES', 'y': 'Given'}

@@ -1,11 +1,13 @@
 #!/usr/bin/python
 
-filename = 'bp0'
+filename = 'bp-11'
 ftype = 'barsone' # barsall, barsone, scatter
 movie = False
 
 glos = {'x': 'ES', 'y': 'Given'}
-traits = ['MimicGrain', 'a2Seen', 'w']
-folderss = [{'treatment':'p', 'control': 'none'}, {'treatment': 'none', 'control': 'p'}]
+traits = ['ChooseGrain', 'a2Seen', 'w']
+top_row = [{'treatment':'p', 'control': 'none'}, {'treatment':'p', 'control': 'none'}, {'treatment':'p', 'control': 'none'}]
+bottom_row = [{'treatment': 'none', 'control': 'optimal'}, {'treatment': 'none', 'control': 'optimal'}, {'treatment': 'none', 'control': 'optimal'}]
+rows = [top_row, bottom_row]
 
-if ftype == 'barsone': glovalue = {'x': 0.0, 'y': 1.0}
+if ftype == 'barsone': glovalue = {'x': -1.0, 'y': 1.0}

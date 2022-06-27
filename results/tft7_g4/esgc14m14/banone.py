@@ -1,11 +1,12 @@
 #!/usr/bin/python
 
 filename = 'banone'
-ftype = 'barsall' # barsall, barsone, scatter
+ftype = 'barsall' # barsall, barsone, bubbles, scatterall, scatterone
 movie = False
 
 glos = {'x': 'ES', 'y': 'Given'}
 traits = ['a2Seen', 'help', 'w']
-folderss = [{'treatment':'none', 'control': 'optimal'}, {'treatment': 'optimal', 'control': 'none'}]
+top_row = [{'treatment':'none', 'control': 'optimal'}, {'treatment': 'none', 'control': 'optimal'}, {'treatment': 'none', 'control': 'optimal'}]
+rows = [top_row]
 
-if ftype == 'barsone': glovalue = {'x': 0.0, 'y': 1.0}
+if ftype == 'barsone': glovalue = {'x': -1.0, 'y': 1.0}

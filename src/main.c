@@ -120,7 +120,9 @@ int main (int argc, char *argv[])
 	else if ( strcmp (factorName1, "ChooseGrainInit") == 0 )
 		factor1 = &gChooseGrainInit;
 	else if ( strcmp (factorName1, "ES") == 0 )
-		factor2 = &gES;
+		factor1 = &gES;
+	else if ( strcmp (factorName1, "alpha") == 0 )
+		factor1 = &galpha;
 	else
 	{
 		fprintf (stderr, "I don't know factor %s.\n", factorName1);
@@ -143,6 +145,8 @@ int main (int argc, char *argv[])
 		factor2 = &gMimicGrainInit;
 	else if ( strcmp (factorName2, "ES") == 0 )
 		factor2 = &gES;
+	else if ( strcmp (factorName2, "alpha") == 0 )
+		factor2 = &galpha;
 	else
 	{
 		fprintf (stderr, "I don't know factor %s.\n", factorName2);

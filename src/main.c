@@ -177,7 +177,11 @@ int main (int argc, char *argv[])
 
 	write_globals (gl2); 
 	write_headers (out, factorName1, factorName2, factorName3);
-	write_headers_i (ics, factorName1, factorName2, factorName3);
+
+	if ( gRuns == 1 )
+	{
+		write_headers_i (ics, factorName1, factorName2, factorName3);
+	}
 
 	if ( fLevels1 > 1 )
 	{

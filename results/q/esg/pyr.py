@@ -4,7 +4,7 @@ filename = 'pyr'
 ftype = 'bubbles' # barsall, barsone, scatter
 movie = False
 
-glos = {'x': 'ES', 'y': 'Given'}
+glos = {'x': 'alpha', 'y': 'Given'}
 traits = ['ChooseGrainmedian', 'wmedian', 'wmedian']
 top_traits = ['ChooseGrainmedian', 'wmedian', 'wmedian']
 bottom_traits = ['MimicGrainmedian', 'wmedian', 'wmedian']

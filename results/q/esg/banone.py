@@ -4,7 +4,7 @@ filename = 'banone'
 ftype = 'barsall' # barsall, barsone, bubbles, scatterall, scatterone
 movie = False
 
-glos = {'x': 'ES', 'y': 'Given'}
+glos = {'x': 'alpha', 'y': 'Given'}
 traits = ['a2Seen', 'help', 'w']
 top_row = [{'treatment':'none', 'control': 'optimal'}, {'treatment': 'none', 'control': 'optimal'}, {'treatment': 'none', 'control': 'optimal'}]
 rows = [top_row]

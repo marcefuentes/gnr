@@ -3,7 +3,7 @@
 filename = 'changepr'
 ftype = 'scatter' # barsall, barsone, scatter
 movie = False
-x = 'ES'
+x = 'alpha'
 y = 'Given'
 
 z0 = {}

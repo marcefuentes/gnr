@@ -34,6 +34,7 @@ barsonelimit = 0.2
 
 dfglos = pd.DataFrame(
     [('ES', 'Substitutability of resource $\it{A}$', True, pow(2, -5.5), None), 
+    ('alpha', 'Substitutability of resource $\it{A}$', True, None, None), 
     ('Given', 'Partner\'s share of resource $\it{A}$', False, None, None),
     ('ChooseCost', 'Cost of comparing potential partners', True, None, None),
     ('MimicCost', 'Cost of comparing partner to self', True, None, None),

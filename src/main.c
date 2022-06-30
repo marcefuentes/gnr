@@ -656,9 +656,9 @@ double mutate_a2 (double a2)
 		{
 			newa2 = 0.5;
 		}
-		else if ( newa2 <= 0.1 )
+		else if ( newa2 <= 0.2 )
 		{
-			newa2 = 0.1;
+			newa2 = 0.2;
 		}
 		else
 		{
@@ -692,9 +692,9 @@ void fix_a2_macromutation (struct itype *i, struct itype *i_last)
 {
 	for ( ; i < i_last; i++ )
 	{
-		if ( i->a2Decided < 0.3 )
+		if ( i->a2Decided < 0.35 )
 		{
-			i->a2Decided = 0.1;
+			i->a2Decided = 0.2;
 		}
 		else
 		{

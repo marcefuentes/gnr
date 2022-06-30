@@ -26,7 +26,7 @@ PartnerChoice,1
 Reciprocity,1
 Optimal,0
 a2Macromutation,0
-IndirectReciprocity,0
+IndirectR,0
 factorName1,MimicCost
 fFirst1,-10
 fLast1,-10

@@ -44,7 +44,7 @@ int	gPartnerChoice;
 int	gReciprocity;
 int	gOptimal;
 int	ga2Macromutation;
-int	gIndirectReciprocity;
+int	gIndirectR;
 
 char	factorName1[20], factorName2[20], factorName3[20];
 double	fFirst1, fLast1;
@@ -339,7 +339,7 @@ void read_globals (char *filename)
 	fscanf (fp, "Reciprocity,%i\n", &gReciprocity);
 	fscanf (fp, "Optimal,%i\n", &gOptimal);
 	fscanf (fp, "a2Macromutation,%i\n", &ga2Macromutation);
-	fscanf (fp, "IndirectReciprocity,%i\n", &gIndirectReciprocity);
+	fscanf (fp, "IndirectR,%i\n", &gIndirectR);
 	fscanf (fp, "factorName1,%s\n", factorName1);
 	fscanf (fp, "fFirst1,%lf\n", &fFirst1);
 	fscanf (fp, "fLast1,%lf\n", &fLast1);
@@ -417,7 +417,7 @@ void write_globals (char *filename)
 	fprintf (fp, "Reciprocity,%i\n", gReciprocity);
 	fprintf (fp, "Optimal,%i\n", gOptimal);
 	fprintf (fp, "a2Macromutation,%i\n", ga2Macromutation);
-	fprintf (fp, "IndirectReciprocity,%i\n", gIndirectReciprocity);
+	fprintf (fp, "IndirectR,%i\n", gIndirectR);
 
 	fclose (fp);
 }
@@ -456,7 +456,7 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 
 			update_for_stats (i_first, i_last);
 
-			if ( gIndirectReciprocity == 1 )
+			if ( gIndirectR == 1 )
 			{
 				shuffle_partners (i_first, i_last, gGroupSize);
 			}
@@ -492,7 +492,7 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 			
 			if ( gReciprocity == 1 )
 			{
-				if ( gIndirectReciprocity == 1 )
+				if ( gIndirectR == 1 )
 				{
 					decide_a2_ir (i_first, i_last, ga2Max);
 				}
@@ -565,7 +565,7 @@ double fitness (struct itype *i, struct itype *i_last)
 
 		i->age++;
 
-		if ( gIndirectReciprocity == 1 )
+		if ( gIndirectR == 1 )
 		{
 			i->a2SeenSum += i->a2Decided;
 			i->a2Seen = i->a2SeenSum/i->age;

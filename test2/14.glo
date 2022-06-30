@@ -24,7 +24,7 @@ MimicCost,-12
 Self,-4
 Drift,0
 a2Macromutation,1
-IndirectReciprocity,0
+IndirectR,0
 factorName1,ChooseCost
 fFirst1,-14
 fLast1,-14

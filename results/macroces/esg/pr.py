@@ -4,7 +4,7 @@ filename = 'pr'
 ftype = 'bubbles' # barsall, barsone, scatter
 movie = False
 
-glos = {'x': 'alpha', 'y': 'Given'}
+glos = {'x': 'ES', 'y': 'Given'}
 traits = ['ChooseGrainmedian', 'MimicGrainmedian', 'wmedian']
 top_row = [{'treatment':'pr', 'control': 'none'}, {'treatment':'pr', 'control': 'none'}, {'treatment':'pr', 'control': 'optimal'}]
 bottom_row = [{'treatment': 'none', 'control': 'optimal'}, {'treatment': 'none', 'control': 'optimal'}, {'treatment': 'none', 'control': 'optimal'}]

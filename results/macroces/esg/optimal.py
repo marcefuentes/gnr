@@ -4,7 +4,7 @@ filename = 'optimal'
 ftype = 'bubbles' # barsall, barsone, scatter
 movie = False
 
-glos = {'x': 'alpha', 'y': 'Given'}
+glos = {'x': 'ES', 'y': 'Given'}
 traits = ['a2Seenmedian', 'helpmedian', 'wmedian']
 top_row = [{'treatment':'optimal', 'control': 'none'}, {'treatment':'optimal', 'control': 'none'}, {'treatment':'optimal', 'control': 'none'}]
 bottom_row = [{'treatment': 'none', 'control': 'optimal'}, {'treatment': 'none', 'control': 'optimal'}, {'treatment': 'none', 'control': 'optimal'}]

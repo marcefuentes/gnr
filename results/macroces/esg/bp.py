@@ -4,7 +4,7 @@ filename = 'bp-11'
 ftype = 'barsone' # barsall, barsone, scatter
 movie = False
 
-glos = {'x': 'alpha', 'y': 'Given'}
+glos = {'x': 'ES', 'y': 'Given'}
 traits = ['ChooseGrain', 'a2Seen', 'w']
 top_row = [{'treatment':'p', 'control': 'none'}, {'treatment':'p', 'control': 'none'}, {'treatment':'p', 'control': 'none'}]
 bottom_row = [{'treatment': 'none', 'control': 'optimal'}, {'treatment': 'none', 'control': 'optimal'}, {'treatment': 'none', 'control': 'optimal'}]

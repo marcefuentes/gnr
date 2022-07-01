@@ -3,7 +3,7 @@
 filename = 'changepyr'
 ftype = 'scatter' # barsall, barsone, scatter
 movie = False
-x = 'alpha'
+x = 'ES'
 y = 'Given'
 
 z0 = {}

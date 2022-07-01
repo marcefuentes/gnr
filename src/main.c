@@ -649,16 +649,33 @@ double calculate_cost (double choose, double mimic)
 double mutate_a2 (double a2)
 {
 	double newa2 = dtnorm (a2, ga2MutationSize, ga2Min, ga2Max, rng);
+	double a2low, a2high;
+
+	switch ( gFFunction )
+	{
+		case 'q':
+			a2low = 0.2;
+			a2high = 0.5;
+			break;
+		case 'c':
+			a2low = 0.3;
+			a2high = 0.9;
+			break;
+		default:
+			a2low = 0.2;
+			a2high = 0.5;
+			break;
+	}
 
 	if ( ga2Macromutation == 1 )
 	{
-		if ( newa2 >= 0.5 )
+		if ( newa2 >= a2high )
 		{
-			newa2 = 0.5;
+			newa2 = a2high;
 		}
-		else if ( newa2 <= 0.2 )
+		else if ( newa2 <= a2low )
 		{
-			newa2 = 0.2;
+			newa2 = a2low;
 		}
 		else
 		{
@@ -690,15 +707,35 @@ void update_for_stats (struct itype *i, struct itype *i_last)
 
 void fix_a2_macromutation (struct itype *i, struct itype *i_last)
 {
+	double a2low, a2high, a2mid;
+
+	switch ( gFFunction )
+	{
+		case 'q':
+			a2low = 0.2;
+			a2high = 0.5;
+			break;
+		case 'c':
+			a2low = 0.3;
+			a2high = 0.9;
+			break;
+		default:
+			a2low = 0.2;
+			a2high = 0.5;
+			break;
+	}
+
+	a2mid = (a2high - a2low)/2.0;
+
 	for ( ; i < i_last; i++ )
 	{
-		if ( i->a2Decided < 0.35 )
+		if ( i->a2Decided < a2mid )
 		{
-			i->a2Decided = 0.2;
+			i->a2Decided = a2low;
 		}
 		else
 		{
-			i->a2Decided = 0.5;
+			i->a2Decided = a2high;
 		}
 	}
 }

@@ -2,7 +2,7 @@
 
 filename = 'r'
 ftype = 'bubbles' # barsall, barsone, scatter
-movie = False
+movie = True
 
 glos = {'x': 'alpha', 'y': 'Given'}
 traits = ['MimicGrainmedian', 'wmedian', 'wmedian']

@@ -725,7 +725,7 @@ void fix_a2_macromutation (struct itype *i, struct itype *i_last)
 			break;
 	}
 
-	a2mid = (a2high - a2low)/2.0;
+	a2mid = (a2high + a2low)/2.0;
 
 	for ( ; i < i_last; i++ )
 	{

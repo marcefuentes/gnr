@@ -11,5 +11,6 @@ results/**/*.gl2
 results/**/*.glo
 results/**/*.out
 results/**/*.png
+results/**/*.txt
 resultsold/
 charts/*.png

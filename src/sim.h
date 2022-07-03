@@ -54,8 +54,7 @@ struct rtype
 
 // Functions
 
-void		decide_a2		(struct itype *i, struct itype *i_last, double amax);
-void		decide_a2_ir		(struct itype *i, struct itype *i_last, double amax);
+void		decide_a2		(struct itype *i, struct itype *i_last, double amax, int indirectr, int macromutation);
 void		shuffle_partners	(struct itype *i, struct itype *i_last, int groupsize);
 void		choose_partner		(struct itype *i, struct itype *i_last, int groupsize);
 struct rtype	*create_recruits	(int deaths, double wc);

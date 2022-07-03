@@ -43,7 +43,7 @@ double	gGiven;					// Effect on partner: q2 = a2*R2*Given
 int	gPartnerChoice;
 int	gReciprocity;
 int	gOptimal;
-int	ga2Macromutation;
+int	gMacromutation;
 int	gIndirectR;
 
 char	factorName1[20], factorName2[20], factorName3[20];
@@ -338,7 +338,7 @@ void read_globals (char *filename)
 	fscanf (fp, "PartnerChoice,%i\n", &gPartnerChoice);
 	fscanf (fp, "Reciprocity,%i\n", &gReciprocity);
 	fscanf (fp, "Optimal,%i\n", &gOptimal);
-	fscanf (fp, "a2Macromutation,%i\n", &ga2Macromutation);
+	fscanf (fp, "Macromutation,%i\n", &gMacromutation);
 	fscanf (fp, "IndirectR,%i\n", &gIndirectR);
 	fscanf (fp, "factorName1,%s\n", factorName1);
 	fscanf (fp, "fFirst1,%lf\n", &fFirst1);
@@ -416,7 +416,7 @@ void write_globals (char *filename)
 	fprintf (fp, "PartnerChoice,%i\n", gPartnerChoice);
 	fprintf (fp, "Reciprocity,%i\n", gReciprocity);
 	fprintf (fp, "Optimal,%i\n", gOptimal);
-	fprintf (fp, "a2Macromutation,%i\n", ga2Macromutation);
+	fprintf (fp, "Macromutation,%i\n", gMacromutation);
 	fprintf (fp, "IndirectR,%i\n", gIndirectR);
 
 	fclose (fp);
@@ -480,7 +480,7 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 						i++;
 					}
 
-					if ( ga2Macromutation == 0 )
+					if ( gMacromutation == 0 )
 					{
 						recruit->a2Default = dtnorm (i->a2Default, ga2MutationSize, ga2Min, ga2Max, rng);
 						recruit->ChooseGrain = dtnorm (i->ChooseGrain, gGrainMutationSize, ga2Min, ga2Max, rng);
@@ -494,7 +494,6 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 					}
 
 					recruit->cost = calculate_cost (recruit->ChooseGrain, recruit->MimicGrain);
-
 				}
 
 				kill (recruit_first, i_first, gN);
@@ -503,19 +502,7 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 			
 			if ( gReciprocity == 1 )
 			{
-				if ( gIndirectR == 1 )
-				{
-					decide_a2_ir (i_first, i_last, ga2Max);
-				}
-				else
-				{
-					decide_a2 (i_first, i_last, ga2Max);
-				}
-
-				if ( ga2Macromutation == 1 )
-				{
-					fix_a2_macromutation (i_first, i_last);
-				}
+				decide_a2 (i_first, i_last, ga2Max, gIndirectR, gMacromutation);
 			}
 		}
 

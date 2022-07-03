@@ -653,13 +653,13 @@ double mutate_a2 (double a2)
 
 	switch ( gFFunction )
 	{
-		case 'q':
+		case 'c':
 			a2low = 0.2;
 			a2high = 0.5;
 			break;
-		case 'c':
+		case 'q':
 			a2low = 0.3;
-			a2high = 0.9;
+			a2high = 0.8;
 			break;
 		default:
 			a2low = 0.2;
@@ -711,13 +711,13 @@ void fix_a2_macromutation (struct itype *i, struct itype *i_last)
 
 	switch ( gFFunction )
 	{
-		case 'q':
+		case 'c':
 			a2low = 0.2;
 			a2high = 0.5;
 			break;
-		case 'c':
+		case 'q':
 			a2low = 0.3;
-			a2high = 0.9;
+			a2high = 0.8;
 			break;
 		default:
 			a2low = 0.2;

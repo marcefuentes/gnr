@@ -5,7 +5,7 @@ sensitive = False
 ftype = 'scatterall' # barsall, barsone, bubbles, scatterall, scatterone
 movie = False
 
-glos = {'x': 'ES', 'y': 'Given'}
+glos = {'x': 'alpha', 'y': 'Given'}
 traits = [{'x': 'MimicGrain', 'y': 'w'}, {'x': 'a2Default', 'y': 'w'}, {'x': 'a2Default', 'y': 'MimicGrain'}]
 top_row = 'r'
 bottom_row = 'none'

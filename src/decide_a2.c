@@ -43,8 +43,11 @@ void decide_a2 (struct itype *i, struct itype *i_last, double amax, int indirect
 		}
 		else
 		{
-			i->a2Decided = i->partner->a2Seen;
-			i->changed_a2 = true;
+			if ( fabs(i->partner->a2Seen - i->a2Decided) > i->MimicGrain )
+			{
+				i->a2Decided = i->partner->a2Seen;
+				i->changed_a2 = true;
+			}
 		}
 	}
 }

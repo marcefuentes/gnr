@@ -683,14 +683,7 @@ double macromutate_grain (double grain)
 {
 	if ( gsl_rng_uniform (rng) < 0.01 )
 	{
-		if ( grain == 1.0 )
-		{
-			grain = 0.01;
-		}
-		else
-		{
-			grain = 1.0;
-		}
+		grain = 1.0 - grain
 	}
 
 	return grain;
@@ -715,37 +708,3 @@ void update_for_stats (struct itype *i, struct itype *i_last)
 	}
 }
 
-void fix_a2_macromutation (struct itype *i, struct itype *i_last)
-{
-	double a2low, a2high, a2mid;
-
-	switch ( gFFunction )
-	{
-		case 'c':
-			a2low = 0.2;
-			a2high = 0.5;
-			break;
-		case 'q':
-			a2low = 0.3;
-			a2high = 0.8;
-			break;
-		default:
-			a2low = 0.2;
-			a2high = 0.5;
-			break;
-	}
-
-	a2mid = (a2high + a2low)/2.0;
-
-	for ( ; i < i_last; i++ )
-	{
-		if ( i->a2Decided < a2mid )
-		{
-			i->a2Decided = a2low;
-		}
-		else
-		{
-			i->a2Decided = a2high;
-		}
-	}
-}

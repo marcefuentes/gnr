@@ -62,8 +62,8 @@ double	fitness (struct itype *i, struct itype *i_last);	// gFFunction
 double	calculate_wmax (double q1, double q2);
 double	ces (double q1, double q2);				// gES, galpha
 double	quasilinear (double q1, double q2);			// galpha, gc1, gc2
-double	mutate_a2 (double a2);					// ga2MutationSize, ga2Min, ga2Max
-double	mutate_grain (double grain);				// gGrainMutationSize, ga2Min, ga2Max
+double	macromutate_a2 (double a2);				// ga2MutationSize, ga2Min, ga2Max
+double	macromutate_grain (double grain);			// gGrainMutationSize, ga2Min, ga2Max
 double	calculate_q1 (double a2);				// ga2Max, ga1Max, gR1
 double	calculate_q2 (double a2, double a2partner);		// gR2, gGiven
 double	calculate_cost	(double choose, double mimic);		// gChooseCost, gMimicCost
@@ -480,10 +480,21 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 						i++;
 					}
 
-					recruit->a2Default = mutate_a2 (i->a2Default);
-					recruit->ChooseGrain = mutate_grain (i->ChooseGrain);
-					recruit->MimicGrain = mutate_grain (i->MimicGrain);
+					if ( ga2Macromutation == 0 )
+					{
+						recruit->a2Default = dtnorm (i->a2Default, ga2MutationSize, ga2Min, ga2Max, rng);
+						recruit->ChooseGrain = dtnorm (i->ChooseGrain, gGrainMutationSize, ga2Min, ga2Max, rng);
+						recruit->MimicGrain =  dtnorm (i->MimicGrain, gGrainMutationSize, ga2Min, ga2Max, rng);;
+					}
+					else
+					{
+						recruit->a2Default = macromutate_a2 (i->a2Default);
+						recruit->ChooseGrain = macromutate_grain (i->ChooseGrain);
+						recruit->MimicGrain = macromutate_grain (i->MimicGrain);
+					}
+
 					recruit->cost = calculate_cost (recruit->ChooseGrain, recruit->MimicGrain);
+
 				}
 
 				kill (recruit_first, i_first, gN);
@@ -646,47 +657,59 @@ double calculate_cost (double choose, double mimic)
 	return c;
 }
 
-double mutate_a2 (double a2)
+double macromutate_a2 (double a2)
 {
-	double newa2 = dtnorm (a2, ga2MutationSize, ga2Min, ga2Max, rng);
-	double a2low, a2high;
-
-	switch ( gFFunction )
+	if ( gsl_rng_uniform (rng) < 0.01 )
 	{
-		case 'c':
-			a2low = 0.2;
-			a2high = 0.5;
-			break;
-		case 'q':
-			a2low = 0.3;
-			a2high = 0.8;
-			break;
-		default:
-			a2low = 0.2;
-			a2high = 0.5;
-			break;
-	}
+		double a2low, a2high;
 
-	if ( ga2Macromutation == 1 )
-	{
-		if ( newa2 >= a2high )
+		switch ( gFFunction )
 		{
-			newa2 = a2high;
+			case 'c':
+				a2low = 0.2;
+				a2high = 0.5;
+				break;
+			case 'q':
+				a2low = 0.3;
+				a2high = 0.8;
+				break;
+			default:
+				a2low = 0.2;
+				a2high = 0.5;
+				break;
 		}
-		else if ( newa2 <= a2low )
+
+		if ( a2 == a2low )
 		{
-			newa2 = a2low;
+			a2 = a2high;
 		}
 		else
 		{
-			newa2 = a2;
+			a2 = a2low;
 		}
 	}
 
-	return newa2;
+	return a2;
 }
 
-double mutate_grain (double grain)
+double macromutate_grain (double grain)
+{
+	if ( gsl_rng_uniform (rng) < 0.01 )
+	{
+		if ( grain == 1.0 )
+		{
+			grain = 0.01;
+		}
+		else
+		{
+			grain = 1.0;
+		}
+	}
+
+	return grain;
+}
+
+/*double mutate_grain (double grain)
 {
 	if ( gGrainMutationSize > 0.0001 )
 	{
@@ -694,7 +717,7 @@ double mutate_grain (double grain)
 	}
 
 	return grain;
-}
+}*/
 
 void update_for_stats (struct itype *i, struct itype *i_last)
 {

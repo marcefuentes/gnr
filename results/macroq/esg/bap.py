@@ -5,7 +5,7 @@ ftype = 'barsall' # barsall, barsone, bubbles, scatterall, scatterone
 movie = False
 
 glos = {'x': 'alpha', 'y': 'Given'}
-traits = ['ChooseGrain', 'a2Seen', 'w']
+traits = ['ChooseGrain', 'a2Seen31', 'w']
 top_row = [{'treatment':'p', 'control': 'none'}, {'treatment': 'p', 'control': 'none'}, {'treatment': 'p', 'control': 'none'}]
 rows = [top_row]
 

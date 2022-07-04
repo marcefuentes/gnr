@@ -28,7 +28,7 @@ void write_headers (char *filename, char *header1, char *header2, char *header3)
 	{
 		for ( int b = 0; b < BINS; b++ )
 		{
-			fprintf (fp, ",%s%d,%sSD%d", headersc[v], b, headersc[v], b);
+			fprintf (fp, ",%s%i,%s%iSD", headersc[v], b, headersc[v], b);
 		}
 
 		fprintf (fp, ",%sBD,%sBDSD", headersc[v], headersc[v]);
@@ -106,7 +106,7 @@ void write_i (char *filename, float factor1, float factor2, int factor3, struct 
 
 	for ( ; i < i_last; i++ )
 	{
-		fprintf (fp, "\n%f,%f,%i,%i,%f,%f,%f,%f,%f,%f,%f,%f,%d,%d,%d", factor1, factor2, factor3, 1, i->a2Default, i->a2Decided, i->a2Seen, i->a2SeenSum, i->wCumulative - wc, i->ChooseGrain, i->MimicGrain, i->cost, i->age, i->chose_partner, i->changed_a2); 
+		fprintf (fp, "\n%f,%f,%i,%i,%f,%f,%f,%f,%f,%f,%f,%f,%i,%i,%i", factor1, factor2, factor3, 1, i->a2Default, i->a2Decided, i->a2Seen, i->a2SeenSum, i->wCumulative - wc, i->ChooseGrain, i->MimicGrain, i->cost, i->age, i->chose_partner, i->changed_a2); 
 		wc = i->wCumulative;
 	}
 
@@ -129,14 +129,14 @@ void write_time_elapsed (char *filename, float time_elapsed)
 	m = (time_elapsed - (3600*h))/60;
 	s = time_elapsed - 3600*h - 60*m;
 
-	fprintf (fp, "TimeElapsed,%d:", h);
+	fprintf (fp, "TimeElapsed,%i:", h);
 
 	if ( m < 10 )
 	{
 		fprintf (fp, "0");
 	}
 
-	fprintf (fp, "%d:", m);
+	fprintf (fp, "%i:", m);
 
 	if ( s < 10 )
 	{

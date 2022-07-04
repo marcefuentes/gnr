@@ -683,7 +683,7 @@ double macromutate_grain (double grain)
 {
 	if ( gsl_rng_uniform (rng) < 0.01 )
 	{
-		grain = 1.0 - grain
+		grain = 1.0 - grain;
 	}
 
 	return grain;

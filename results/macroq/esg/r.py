@@ -2,10 +2,10 @@
 
 filename = 'r'
 ftype = 'bubbles' # barsall, barsone, scatter
-movie = False
+movie = True
 
 glos = {'x': 'alpha', 'y': 'Given'}
-traits = ['MimicGrainmedian', 'wmedian', 'wmedian']
+traits = ['MimicGrain0', 'wmedian', 'wmedian']
 top_row = [{'treatment':'r', 'control': 'none'}, {'treatment':'r', 'control': 'none'}, {'treatment':'r', 'control': 'optimal'}]
 bottom_row = [{'treatment': 'none', 'control': 'optimal'}, {'treatment': 'none', 'control': 'optimal'}, {'treatment': 'none', 'control': 'optimal'}]
 rows = [top_row]

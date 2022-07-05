@@ -5,7 +5,7 @@ ftype = 'bubbles' # barsall, barsone, scatter
 movie = False
 
 glos = {'x': 'alpha', 'y': 'Given'}
-traits = ['ChooseGrainmedian', 'wmedian', 'wmedian']
+traits = ['ChooseGrain0', 'a2Seen51', 'chose_partner']
 top_row = [{'treatment':'p', 'control': 'none'}, {'treatment':'p', 'control': 'none'}, {'treatment':'p', 'control': 'optimal'}]
 bottom_row = [{'treatment': 'none', 'control': 'optimal'}, {'treatment': 'none', 'control': 'optimal'}, {'treatment': 'none', 'control': 'optimal'}]
 rows = [top_row]

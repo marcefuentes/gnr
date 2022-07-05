@@ -5,7 +5,7 @@ ftype = 'bubbles' # barsall, barsone, scatter
 movie = True
 
 glos = {'x': 'alpha', 'y': 'Given'}
-traits = ['MimicGrain0', 'wmedian', 'wmedian']
+traits = ['MimicGrain0', 'changed_a2', 'wmedian']
 top_row = [{'treatment':'r', 'control': 'none'}, {'treatment':'r', 'control': 'none'}, {'treatment':'r', 'control': 'optimal'}]
 bottom_row = [{'treatment': 'none', 'control': 'optimal'}, {'treatment': 'none', 'control': 'optimal'}, {'treatment': 'none', 'control': 'optimal'}]
 rows = [top_row]

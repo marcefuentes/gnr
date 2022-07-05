@@ -27,7 +27,7 @@ int	gPeriods;				// Periods recorded
 char	gFFunction;				// Fitness function
 double	ga2Min = 0.0, ga1Max, ga2Max;		// Functional tradeoff
 int	gR1, gR2;				// Resource abundance: q1 = a1*R1, q2 = a2*R2
-double	ga2Init;
+double	ga2Init, ga2High;
 double	gChooseGrainInit;			// Initial ChooseGrain
 double	gMimicGrainInit;			// Initial MimicGrain
 double	ga2MutationSize;			// For a2Default
@@ -322,6 +322,7 @@ void read_globals (char *filename)
 	fscanf (fp, "R1,%i\n", &gR1);
 	fscanf (fp, "R2,%i\n", &gR2);
 	fscanf (fp, "a2Init,%lf\n", &ga2Init);
+	fscanf (fp, "a2High,%lf\n", &ga2High);
 	fscanf (fp, "ChooseGrainInit,%lf\n", &gChooseGrainInit);
 	fscanf (fp, "MimicGrainInit,%lf\n", &gMimicGrainInit);
 	fscanf (fp, "a2MutationSize,%lf\n", &ga2MutationSize);
@@ -398,6 +399,7 @@ void write_globals (char *filename)
 		fprintf (fp, "ES,%f,%f\n", gES, log(gES)/log(2));
 	}
 	fprintf (fp, "a2Init,%f\n", ga2Init);
+	fprintf (fp, "a2High,%f\n", ga2High);
 	fprintf (fp, "ChooseGrainInit,%f\n", gChooseGrainInit);
 	fprintf (fp, "MimicGrainInit,%f\n", gMimicGrainInit);
 	fprintf (fp, "a2MutationSize,%f,%f\n", ga2MutationSize, log(ga2MutationSize)/log(2));
@@ -646,34 +648,9 @@ double calculate_cost (double choose, double mimic)
 
 double macromutate_a2 (double a2)
 {
-	if ( gsl_rng_uniform (rng) < 0.01 )
+	if ( gsl_rng_uniform (rng) < 0.1 )
 	{
-		double a2low, a2high;
-
-		switch ( gFFunction )
-		{
-			case 'c':
-				a2low = 0.2;
-				a2high = 0.5;
-				break;
-			case 'q':
-				a2low = 0.3;
-				a2high = 0.8;
-				break;
-			default:
-				a2low = 0.2;
-				a2high = 0.5;
-				break;
-		}
-
-		if ( a2 == a2low )
-		{
-			a2 = a2high;
-		}
-		else
-		{
-			a2 = a2low;
-		}
+		a2 =  ga2Init + ga2High - a2;
 	}
 
 	return a2;
@@ -681,7 +658,7 @@ double macromutate_a2 (double a2)
 
 double macromutate_grain (double grain)
 {
-	if ( gsl_rng_uniform (rng) < 0.01 )
+	if ( gsl_rng_uniform (rng) < 0.1 )
 	{
 		grain = 1.0 - grain;
 	}

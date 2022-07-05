@@ -14,7 +14,7 @@ void decide_a2 (struct itype *i, struct itype *i_last, double amax, int indirect
 
 			i->a2Decided = i->a2Default;
 		}
-		else if ( macromutation < 0.000001 )
+		else if ( macromutation < pow(2.0, -7) )
 		{
 			int block = (i->partner->a2Seen - i->a2Decided) / i->MimicGrain;
 

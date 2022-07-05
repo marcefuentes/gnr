@@ -9,8 +9,8 @@ R1,2
 R2,2
 alpha,0.500000
 ES,1.000000,0.000000
-a2Init,0.1
-a2High,0,800000
+a2Init,0.100000
+a2High,0.800000
 ChooseGrainInit,0.062500
 MimicGrainInit,0.062500
 a2MutationSize,0.007812,-7.000000
@@ -21,6 +21,6 @@ Given,0.875000
 PartnerChoice,1
 Reciprocity,1
 Optimal,0
-Macromutation,0
+Macromutation,0.003906,-8.000000
 IndirectR,0
-TimeElapsed,0:00:00.080512
+TimeElapsed,0:00:00.115536

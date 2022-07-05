@@ -482,7 +482,7 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 						i++;
 					}
 
-					if ( gMacromutation > 0.0 )
+					if ( gMacromutation > pow(2.0, -7) )
 					{
 						recruit->a2Default = macromutate (ga2Init + ga2High, i->a2Default);
 						recruit->ChooseGrain = macromutate (ga2Max, i->ChooseGrain);

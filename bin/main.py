@@ -57,6 +57,7 @@ dftraits = pd.DataFrame(
     ('a2Seenmedian', '$\it{a}$', 600.0),
     ('a2Seen', '$\it{a}$', 600.0),
     ('a2Seen51', 'Frequency of $\it{C}$', 600.0),
+    ('a2Seen31', 'Frequency of $\it{C}$', 600.0),
     ('a2Defaultmedian', 'Default $\it{a}$', 600.0),
     ('a2Default', 'Default $\it{a}$', 600.0),
     ('wmedian', 'Fitness', 600.0),

@@ -62,7 +62,7 @@ double	fitness (struct itype *i, struct itype *i_last);	// gFFunction
 double	calculate_wmax (double q1, double q2);
 double	ces (double q1, double q2);				// gES, galpha
 double	quasilinear (double q1, double q2);			// galpha, gc1, gc2
-double	macromutate (double sum, double trait);			// gMacromutation
+double	macromutate (double trait, double sum);			// gMacromutation
 double	calculate_q1 (double a2);				// ga2Max, ga1Max, gR1
 double	calculate_q2 (double a2, double a2partner);		// gR2, gGiven
 double	calculate_cost	(double choose, double mimic);		// gChooseCost, gMimicCost
@@ -482,17 +482,17 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 						i++;
 					}
 
-					if ( gMacromutation > pow(2.0, -7) )
-					{
-						recruit->a2Default = macromutate (ga2Init + ga2High, i->a2Default);
-						recruit->ChooseGrain = macromutate (ga2Max, i->ChooseGrain);
-						recruit->MimicGrain = macromutate (ga2Max, i->MimicGrain);
-					}
-					else
+					if ( gMacromutation < pow(2.0, -7) )
 					{
 						recruit->a2Default = dtnorm (i->a2Default, ga2MutationSize, ga2Min, ga2Max, rng);
 						recruit->ChooseGrain = dtnorm (i->ChooseGrain, gGrainMutationSize, ga2Min, ga2Max, rng);
 						recruit->MimicGrain =  dtnorm (i->MimicGrain, gGrainMutationSize, ga2Min, ga2Max, rng);
+					}
+					else
+					{
+						recruit->a2Default = macromutate (i->a2Default, ga2Init + ga2High);
+						recruit->ChooseGrain = macromutate (i->ChooseGrain, ga2Max);
+						recruit->MimicGrain = macromutate (i->MimicGrain, ga2Max);
 					}
 
 					recruit->cost = calculate_cost (recruit->ChooseGrain, recruit->MimicGrain);
@@ -646,7 +646,7 @@ double calculate_cost (double choose, double mimic)
 	return c;
 }
 
-double macromutate (double sum, double trait)
+double macromutate (double trait, double sum)
 {
 	if ( gsl_rng_uniform (rng) < gMacromutation )
 	{

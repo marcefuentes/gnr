@@ -1,7 +1,7 @@
 #include <math.h>
 #include "sim.h"
 
-void decide_a2 (struct itype *i, struct itype *i_last, double amax, int indirectr, int macromutation)
+void decide_a2 (struct itype *i, struct itype *i_last, double amax, int indirectr, double macromutation)
 {
 	for ( ; i < i_last; i++ )
 	{

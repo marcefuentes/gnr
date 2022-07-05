@@ -62,8 +62,7 @@ double	fitness (struct itype *i, struct itype *i_last);	// gFFunction
 double	calculate_wmax (double q1, double q2);
 double	ces (double q1, double q2);				// gES, galpha
 double	quasilinear (double q1, double q2);			// galpha, gc1, gc2
-double	macromutate_a2 (double a2);				// ga2MutationSize, ga2Min, ga2Max
-double	macromutate_grain (double grain);			// gGrainMutationSize, ga2Min, ga2Max
+double	macromutate (double sum, double trait);			// gMacromutation
 double	calculate_q1 (double a2);				// ga2Max, ga1Max, gR1
 double	calculate_q2 (double a2, double a2partner);		// gR2, gGiven
 double	calculate_cost	(double choose, double mimic);		// gChooseCost, gMimicCost

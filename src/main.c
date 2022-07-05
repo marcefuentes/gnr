@@ -360,6 +360,7 @@ void read_globals (char *filename)
 	gPeriods = pow(2.0, gPeriods);
 	ga2MutationSize = pow(2.0, ga2MutationSize);
 	gGrainMutationSize = pow(2.0, gGrainMutationSize);
+	gMacromutation = pow(2.0, gMacromutation);
 	gDeathRate = pow(2.0, gDeathRate);
 	gES = pow(2.0, gES);
 	gGroupSize = pow(2.0, gGroupSize);
@@ -417,7 +418,7 @@ void write_globals (char *filename)
 	fprintf (fp, "PartnerChoice,%i\n", gPartnerChoice);
 	fprintf (fp, "Reciprocity,%i\n", gReciprocity);
 	fprintf (fp, "Optimal,%i\n", gOptimal);
-	fprintf (fp, "Macromutation,%f\n", gMacromutation);
+	fprintf (fp, "Macromutation,%f,%f\n", gMacromutation, log(gMacromutation)/log(2));
 	fprintf (fp, "IndirectR,%i\n", gIndirectR);
 
 	fclose (fp);

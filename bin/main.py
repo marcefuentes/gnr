@@ -104,6 +104,7 @@ class Bubbles:
                 s = df[trait]
                 difs = dfts[traitfolder['control']][trait]/s
                 if ('Grain' in trait) or ('BD' in trait): difs = 1.0/difs
+                if '6' in trait: difs = 1.0/difs
                 color = []
                 [color.append(dif_color(dif)) for dif in difs]
                 for suffix, suffixalpha in zip(['SD', ''], [0.2, 1.0]):
@@ -167,6 +168,7 @@ class BarsAll:
                     [medians.append(d.loc[(d[module.glos['x']] == innercol) & (d[module.glos['y']] == innerrow), trait['name'] + 'median'].values[0]) for d in ds]
                     dif = medians[0]/medians[1]
                     if ('Grain' in trait['name']) or ('BD' in trait['name']): dif = 1.0/dif
+                    if '6' in trait: dif = 1.0/dif
                     self.colors[1] = dif_color(dif)
                     for d, color, alpha in zip(ds, self.colors, self.alphas):
                         for b, name0, name1 in zip(self.bins[::2], trait['namebins_list'][::2], trait['namebins_list'][1::2]):
@@ -212,6 +214,7 @@ class BarsOne:
                 if row == module.bottom_row: ax.set_xlabel(trait['label'], fontsize=fslabel)
                 dif = dfts[folder['control']][trait['name'] + 'median'].values[0]/dfts[folder['treatment']][trait['name'] + 'median'].values[0]
                 if ('Grain' in trait['name']) or ('BD' in trait['name']): dif = 1.0/dif
+                if '6' in trait: dif = 1.0/dif
                 color = dif_color(dif)
                 for b, namebin, namesdbin in zip(trait['binslist'], trait['namebins_list'], trait['namesdbins_list']):
                     barheight = dfts[folder['treatment']][namebin]

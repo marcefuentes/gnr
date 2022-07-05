@@ -48,10 +48,10 @@ dfglos = pd.DataFrame(
 dftraits = pd.DataFrame(
     [('ChooseGrainmedian', 'Sensitivity for comparing\npotential partners', 600.0),
     ('ChooseGrain', 'Sensitivity for comparing\npotential partners', 600.0),
-    ('ChooseGrain0', 'Sensitivity for comparing\npotential partners', 600.0),
+    ('ChooseGrain6', 'Sensitivity for comparing\npotential partners', 600.0),
     ('MimicGrainmedian', 'Sensitivity for comparing\npartner to self', 600.0),
     ('MimicGrain', 'Sensitivity for comparing\npartner to self', 600.0),
-    ('MimicGrain0', 'Sensitivity for comparing\npartner to self', 600.0),
+    ('MimicGrain6', 'Sensitivity for comparing\npartner to self', 600.0),
     ('helpmedian', 'Help', 600.0*2.00),
     ('help', 'Help', 600.0*2.00),
     ('a2Seenmedian', '$\it{a}$', 600.0),

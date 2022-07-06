@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-filename = 'p'
+filename = 'p2'
 ftype = 'bubbles' # barsall, barsone, scatter
 movie = False
 

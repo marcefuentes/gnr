@@ -67,7 +67,6 @@ double	calculate_q1 (double a2);				// ga2Max, ga1Max, gR1
 double	calculate_q2 (double a2, double a2partner);		// gR2, gGiven
 double	calculate_cost	(double choose, double mimic);		// gChooseCost, gMimicCost
 void	update_for_stats (struct itype *i, struct itype *i_last);
-void	fix_a2_macromutation (struct itype *i, struct itype *i_last);
 
 int main (int argc, char *argv[])
 {
@@ -171,7 +170,9 @@ int main (int argc, char *argv[])
 
 	if ( gSeed == 1 )
 	{
-		gsl_rng_set (rng, (unsigned long) time(NULL));
+		struct timeval tv;
+		gettimeofday(&tv,0);
+		gsl_rng_set (rng, tv.tv_sec + tv.tv_usec);
 	}
 
 	write_globals (gl2); 

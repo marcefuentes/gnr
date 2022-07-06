@@ -3,6 +3,7 @@
 #include <string.h>
 #include <math.h>
 #include <time.h>
+#include <sys/time.h>
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
 #include "sim.h"

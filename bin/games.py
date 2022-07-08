@@ -13,7 +13,7 @@ deathrate = 1.0
 width = 15
 height = 15
 
-n_data = 10
+n_data = 2
 fs = 14
 
 ess = np.linspace(-5, 5, num=11)

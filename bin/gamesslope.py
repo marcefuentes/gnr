@@ -37,9 +37,12 @@ none = []
 for rho in rhos:
     wR = fitness(q1C, R2*aC, rho)
     for given in givens:
-        wS = fitness(q1C, R2*(aC*(1.0-given)+aD*given), rho)
-        optimal.append([1/(1-rho), given, 1, wR - wS, 0.0])
-        none.append([1/(1-rho), given, 1, 0.0, 0.0])
+        wS = fitness(q1C, R2*(aC*(1.0-given) + aD*given), rho)
+        wP = fitness(q1D, R2*aD, rho)
+        optimal.append([1/(1-rho), given, 1, wS, 0.0])
+        none.append([1/(1-rho), given, 1, wP, 0.0])
+        #optimal.append([1/(1-rho), given, 1, wR - wS, 0.0])
+        #none.append([1/(1-rho), given, 1, 0.0, 0.0])
 
 df = pd.DataFrame(optimal, columns=['ES', 'Given', 'Time', 'wmedian', 'wmedianSD'])
 df.to_csv('optimal/optimal.csv', index=False)

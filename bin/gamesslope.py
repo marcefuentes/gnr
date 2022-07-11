@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import math
 import numpy as np
 import pandas as pd
 
@@ -35,13 +36,14 @@ optimal= []
 none = []
 
 for rho in rhos:
-    wR = fitness(q1C, R2*aC, rho)
+    R = fitness(q1C, R2*aC, rho)
+    P = fitness(q1D, R2*aD, rho)
     for given in givens:
-        wS = fitness(q1C, R2*(aC*(1.0-given) + aD*given), rho)
-        wP = fitness(q1D, R2*aD, rho)
-        optimal.append([1/(1-rho), given, 1, wS, 0.0])
-        none.append([1/(1-rho), given, 1, wP, 0.0])
-        #optimal.append([1/(1-rho), given, 1, wR - wS, 0.0])
+        T = fitness(q1D, R2*(aD*(1.0-given) + aC*given), rho)
+        S = fitness(q1C, R2*(aC*(1.0-given) + aD*given), rho)
+        optimal.append([1/(1-rho), given, 1, abs((P-S)*0.00001/(R+P-S-T+0.0000001)), 0.0])
+        none.append([1/(1-rho), given, 1, 0.0, 0.0])
+        #optimal.append([1/(1-rho), given, 1, R - S, 0.0])
         #none.append([1/(1-rho), given, 1, 0.0, 0.0])
 
 df = pd.DataFrame(optimal, columns=['ES', 'Given', 'Time', 'wmedian', 'wmedianSD'])

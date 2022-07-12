@@ -62,8 +62,8 @@ for rho in rhos:
         size1.append(abs(diff1))
 
 fig, ax = plt.subplots(figsize=(7,7))
-ax.scatter(x=x, y=y, s=1200.0*np.array(size0), color='none', ec=color0, alpha=0.5)
-ax.scatter(x=x, y=y, s=1200.0*np.array(size1), color='none', ec=color1, alpha=0.5)
+ax.scatter(x=x, y=y, s=1200.0*np.array(size0), color='none', ec=color0, linewidth=3, alpha=0.5)
+ax.scatter(x=x, y=y, s=1200.0*np.array(size1), color='none', ec=color1, linewidth=3, alpha=0.5)
 ax.set_xlabel('Substitutability of resource $\it{A}$', fontsize=fs+6)
 ax.set_ylabel('Partner\'s share of resource $\it{A}$', fontsize=fs+6)
 ax.tick_params(axis='x', labelsize=fs)

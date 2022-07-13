@@ -9,6 +9,9 @@ width = 4
 height = 4
 fslabel = 15
 fstick = 10    
+red = 0.97
+green = 0.97
+blue = 0.97
 
 # Parameters
 
@@ -32,6 +35,10 @@ def fitness(q1, q2, rho):
         w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
     return w
 
+def dif_color(dif):
+    color = (red*pow(dif,1.7), green*pow(dif,0.7), blue*pow(dif,1.7)) if dif <= 1.0 else (red*pow(dif,-1.7), green*pow(dif,-1.7), blue*pow(dif,-0.7))
+    return color
+
 x = []
 y = []
 size = []
@@ -43,17 +50,16 @@ for rho in rhos:
     for given in givens:
         T = wD1 = fitness(q1D, R2*(aD*(1.0-given) + aC*given), rho)
         S = wC0 = fitness(q1C, R2*(aC*(1.0-given) + aD*given), rho)
-        diff = (P-S)*(R-P)
-        if diff > 0:
-            color.append('#05a630') 
-        else:
-            color.append('#c9beec')
+        diff = P-S
         size.append(abs(diff))
+        diff = R-P
+        color.append(dif_color(diff))
         x.append([1/(1-rho)])
         y.append(given)
 
 fig, ax = plt.subplots(figsize=(width,height))
-ax.scatter(x=x, y=y, s=16000.0*np.array(size), color=color, ec=color)
+ax.scatter(x=x, y=y, s=600.0*np.array(size), color=color, ec=color)
+#ax.scatter(x=x, y=y, s=600.0*np.array(size1), color=color1, ec=color1, alpha=0.5)
 ax.set_xlabel('Substitutability of resource $\it{A}$', fontsize=fslabel)
 ax.set_ylabel('Partner\'s share of resource $\it{A}$', fontsize=fslabel)
 ax.tick_params(axis='x', labelsize=fstick)

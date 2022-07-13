@@ -43,7 +43,7 @@ for rho in rhos:
     for given in givens:
         T = wD1 = fitness(q1D, R2*(aD*(1.0-given) + aC*given), rho)
         S = wC0 = fitness(q1C, R2*(aC*(1.0-given) + aD*given), rho)
-        diff = T-R
+        diff = P-S
         if diff > 0:
             color.append('#05a630') 
         else:

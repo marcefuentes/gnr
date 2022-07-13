@@ -5,7 +5,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-fs = 16     # Label font size
+fslabel = 24
+fstick = 16    
 
 # Parameters
 
@@ -17,7 +18,7 @@ ess = np.linspace(-5, 5, num=11)
 ess = pow(2, ess)
 rhos = 1.0 - 1.0/ess
 givens = np.linspace(1.0, 0.0, num=11)
-aC = 0.5
+aC = 0.3
 aD = 0.2
 q1C = R1*(1.0-aC);
 q1D = R1*(1.0-aD);
@@ -31,39 +32,30 @@ def fitness(q1, q2, rho):
 
 x = []
 y = []
-size0 = []
-size1 = []
-color0 = []
-color1 = []
+size = []
+color = []
 
 for rho in rhos:
-    wC1 = R = fitness(q1C, R2*aC, rho)
-    wD0 = P = fitness(q1D, R2*aD, rho)
+    R = wC1 = fitness(q1C, R2*aC, rho)
+    P = wD0 = fitness(q1D, R2*aD, rho)
     for given in givens:
+        T = wD1 = fitness(q1D, R2*(aD*(1.0-given) + aC*given), rho)
+        S = wC0 = fitness(q1C, R2*(aC*(1.0-given) + aD*given), rho)
+        diff = T-R
+        if diff > 0:
+            color.append('#05a630') 
+        else:
+            color.append('#c9beec')
+        size.append(abs(diff))
         x.append([1/(1-rho)])
         y.append(given)
-        wD1 = T = fitness(q1D, R2*(aD*(1.0-given) + aC*given), rho)
-        wC0 = S = fitness(q1C, R2*(aC*(1.0-given) + aD*given), rho)
-        diff0 = wC0 - wD0
-        if diff0 > 0:
-            color0.append('#59ff00') 
-        else:
-            color0.append('#ff8300')
-        size0.append(abs(diff0))
-        diff1 = wC1 - wD1
-        if diff1 > 0:
-            color1.append('#2d8000') 
-        else:
-            color1.append('#ff0000')
-        size1.append(abs(diff1))
 
 fig, ax = plt.subplots(figsize=(7,7))
-ax.scatter(x=x, y=y, s=1200.0*np.array(size0), color='none', ec=color0, linewidth=3, alpha=0.5)
-ax.scatter(x=x, y=y, s=1200.0*np.array(size1), color='none', ec=color1, linewidth=3, alpha=0.5)
-ax.set_xlabel('Substitutability of resource $\it{A}$', fontsize=fs+6)
-ax.set_ylabel('Partner\'s share of resource $\it{A}$', fontsize=fs+6)
-ax.tick_params(axis='x', labelsize=fs)
-ax.tick_params(axis='y', labelsize=fs)
+ax.scatter(x=x, y=y, s=4000.0*np.array(size), color=color, ec=color)
+ax.set_xlabel('Substitutability of resource $\it{A}$', fontsize=fslabel)
+ax.set_ylabel('Partner\'s share of resource $\it{A}$', fontsize=fslabel)
+ax.tick_params(axis='x', labelsize=fstick)
+ax.tick_params(axis='y', labelsize=fstick)
 ax.set_xscale('log', base=2)
 ax.set_box_aspect(1)
 

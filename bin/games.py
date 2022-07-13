@@ -36,7 +36,7 @@ def fitness(q1, q2, rho):
     return w
 
 def dif_color(dif):
-    color = (red*pow(dif,1.7), green*pow(dif,0.7), blue*pow(dif,1.7)) if dif <= 1.0 else (red*pow(dif,-1.7), green*pow(dif,-1.7), blue*pow(dif,-0.7))
+    color = (red+2.0*dif, green+2.0*dif, blue) if dif <= 0.0 else (red-2.0*dif, green, blue-2.0*dif)
     return color
 
 x = []
@@ -50,9 +50,9 @@ for rho in rhos:
     for given in givens:
         T = wD1 = fitness(q1D, R2*(aD*(1.0-given) + aC*given), rho)
         S = wC0 = fitness(q1C, R2*(aC*(1.0-given) + aD*given), rho)
-        diff = P-S
-        size.append(abs(diff))
         diff = R-P
+        size.append(abs(diff))
+        diff = P-S
         color.append(dif_color(diff))
         x.append([1/(1-rho)])
         y.append(given)

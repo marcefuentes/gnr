@@ -37,17 +37,13 @@ color0 = []
 color1 = []
 
 for rho in rhos:
-    R = fitness(q1C, R2*aC, rho)
-    P = fitness(q1D, R2*aD, rho)
+    wC1 = R = fitness(q1C, R2*aC, rho)
+    wD0 = P = fitness(q1D, R2*aD, rho)
     for given in givens:
         x.append([1/(1-rho)])
         y.append(given)
-        T = fitness(q1D, R2*(aD*(1.0-given) + aC*given), rho)
-        S = fitness(q1C, R2*(aC*(1.0-given) + aD*given), rho)
-        wC0 = S
-        wD0 = P
-        wC1 = R
-        wD1 = T
+        wD1 = T = fitness(q1D, R2*(aD*(1.0-given) + aC*given), rho)
+        wC0 = S = fitness(q1C, R2*(aC*(1.0-given) + aD*given), rho)
         diff0 = wC0 - wD0
         if diff0 > 0:
             color0.append('#59ff00') 

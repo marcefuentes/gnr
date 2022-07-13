@@ -5,8 +5,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-fslabel = 24
-fstick = 16    
+width = 4
+height = 4
+fslabel = 15
+fstick = 10    
 
 # Parameters
 
@@ -50,8 +52,8 @@ for rho in rhos:
         x.append([1/(1-rho)])
         y.append(given)
 
-fig, ax = plt.subplots(figsize=(7,7))
-ax.scatter(x=x, y=y, s=4000.0*np.array(size), color=color, ec=color)
+fig, ax = plt.subplots(figsize=(width,height))
+ax.scatter(x=x, y=y, s=1600.0*np.array(size), color=color, ec=color)
 ax.set_xlabel('Substitutability of resource $\it{A}$', fontsize=fslabel)
 ax.set_ylabel('Partner\'s share of resource $\it{A}$', fontsize=fslabel)
 ax.tick_params(axis='x', labelsize=fstick)
@@ -59,6 +61,6 @@ ax.tick_params(axis='y', labelsize=fstick)
 ax.set_xscale('log', base=2)
 ax.set_box_aspect(1)
 
-fig.savefig('games.png', transparent=False)
+fig.savefig('games.png', bbox_inches='tight', transparent=False)
 plt.close()
 

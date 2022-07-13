@@ -43,7 +43,7 @@ for rho in rhos:
     for given in givens:
         T = wD1 = fitness(q1D, R2*(aD*(1.0-given) + aC*given), rho)
         S = wC0 = fitness(q1C, R2*(aC*(1.0-given) + aD*given), rho)
-        diff = P-S
+        diff = (P-S)*(R-P)
         if diff > 0:
             color.append('#05a630') 
         else:
@@ -53,7 +53,7 @@ for rho in rhos:
         y.append(given)
 
 fig, ax = plt.subplots(figsize=(width,height))
-ax.scatter(x=x, y=y, s=1600.0*np.array(size), color=color, ec=color)
+ax.scatter(x=x, y=y, s=16000.0*np.array(size), color=color, ec=color)
 ax.set_xlabel('Substitutability of resource $\it{A}$', fontsize=fslabel)
 ax.set_ylabel('Partner\'s share of resource $\it{A}$', fontsize=fslabel)
 ax.tick_params(axis='x', labelsize=fstick)

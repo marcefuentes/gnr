@@ -20,8 +20,10 @@ R1 = 2.0
 R2 = 2.0
 
 ess = np.linspace(-5, 5, num=11)
+essq = np.linspace(-10, 0, num=11)
 ess = pow(2, ess)
 rhos = 1.0 - 1.0/ess
+rhosq = ess
 givens = np.linspace(1.0, 0.0, num=11)
 aC = 0.3
 aD = 0.2
@@ -33,6 +35,10 @@ def fitness(q1, q2, rho):
         w = pow(q1, alpha)*pow(q2, 1.0 - alpha)
     else:
         w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
+    return w
+
+def fitnessq(q1, q2, rho):
+    w = 4.0*pow(q1, rho)/9.0 + 4.0*q2/9.0
     return w
 
 def dif_color(dif):

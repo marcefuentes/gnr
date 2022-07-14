@@ -4,6 +4,7 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import sys
 
 width = 4
 height = 4
@@ -19,11 +20,8 @@ alpha = 0.5
 R1 = 2.0
 R2 = 2.0
 
-ess = np.linspace(-5, 5, num=11)
-essq = np.linspace(-10, 0, num=11)
+ess = np.linspace(-5, 5, num=11) if sys.argv[1] == 'ces' else np.linspace(-10, 0, num=11)
 ess = pow(2, ess)
-rhos = 1.0 - 1.0/ess
-rhosq = ess
 givens = np.linspace(1.0, 0.0, num=11)
 aC = 0.3
 aD = 0.2
@@ -31,18 +29,17 @@ q1C = R1*(1.0-aC);
 q1D = R1*(1.0-aD);
 
 def fitness(q1, q2, rho):
-    if rho == 0.0:
-        w = pow(q1, alpha)*pow(q2, 1.0 - alpha)
+    if sys.argv[1] == 'ces':
+        if rho == 0.0:
+            w = pow(q1, alpha)*pow(q2, 1.0 - alpha)
+        else:
+            w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
     else:
-        w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
-    return w
-
-def fitnessq(q1, q2, rho):
-    w = 4.0*pow(q1, rho)/9.0 + 4.0*q2/9.0
+        w = 4.0*pow(q1, rho)/9.0 + 4.0*q2/9.0
     return w
 
 def dif_color(dif):
-    color = (red+2.0*dif, green+2.0*dif, blue) if dif <= 0.0 else (red-2.0*dif, green, blue-2.0*dif)
+    color = (red+4.0*dif, green+4.0*dif, blue) if dif <= 0.0 else (red-4.0*dif, green, blue-4.0*dif)
     return color
 
 x = []
@@ -50,7 +47,8 @@ y = []
 size = []
 color = []
 
-for rho in rhos:
+for es in ess:
+    rho = 1.0 - 1.0/es if sys.argv[1] == 'ces' else es
     R = wC1 = fitness(q1C, R2*aC, rho)
     P = wD0 = fitness(q1D, R2*aD, rho)
     for given in givens:
@@ -60,12 +58,11 @@ for rho in rhos:
         size.append(abs(diff))
         diff = P-S
         color.append(dif_color(diff))
-        x.append([1/(1-rho)])
+        x.append(es)
         y.append(given)
 
 fig, ax = plt.subplots(figsize=(width,height))
 ax.scatter(x=x, y=y, s=600.0*np.array(size), color=color, ec=color)
-#ax.scatter(x=x, y=y, s=600.0*np.array(size1), color=color1, ec=color1, alpha=0.5)
 ax.set_xlabel('Substitutability of resource $\it{A}$', fontsize=fslabel)
 ax.set_ylabel('Partner\'s share of resource $\it{A}$', fontsize=fslabel)
 ax.tick_params(axis='x', labelsize=fstick)
@@ -73,6 +70,6 @@ ax.tick_params(axis='y', labelsize=fstick)
 ax.set_xscale('log', base=2)
 ax.set_box_aspect(1)
 
-fig.savefig('games.png', bbox_inches='tight', transparent=False)
+fig.savefig(f'games{sys.argv[1]}.png', bbox_inches='tight', transparent=False)
 plt.close()
 

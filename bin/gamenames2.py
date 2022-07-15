@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import sys
 
-width = 4
-height = 4
+width = 8
+height = 4.5
 fslabel = 15
 fstick = 10    
 red = 0.97
@@ -23,10 +23,8 @@ R2 = 2.0
 ess = np.linspace(-5, 5, num=11) if sys.argv[1] == 'ces' else np.linspace(-10, 0, num=11)
 ess = pow(2, ess)
 givens = np.linspace(1.0, 0.0, num=11)
-aC = 0.5
-aD = 0.4
-q1C = R1*(1.0-aC);
-q1D = R1*(1.0-aD);
+aCs = [0.3, 0.5]
+aDs = [0.2, 0.4]
 
 def fitness(q1, q2, rho):
     if sys.argv[1] == 'ces':
@@ -44,35 +42,42 @@ def dif_color(dif):
 
 x = []
 y = []
-size = []
-color = []
-
 for es in ess:
-    rho = 1.0 - 1.0/es if sys.argv[1] == 'ces' else es
-    R = wC1 = fitness(q1C, R2*aC, rho)
-    P = wD0 = fitness(q1D, R2*aD, rho)
     for given in givens:
-        T = wD1 = fitness(q1D, R2*(aD*(1.0-given) + aC*given), rho)
-        S = wC0 = fitness(q1C, R2*(aC*(1.0-given) + aD*given), rho)
-        if (T<R) and (P<S):
-            rgb = (red-0.3-T+R, green-0.1-R+T, blue-0.2+P-S)    # No dilemma
-        elif (T>R) and (P<S):
-            rgb = (red-0.3-T+R, green, blue-0.2+P-S)    # Snowdrift
-        else:
-            rgb = (red-0.3-T+R, green-0.2-P+S, blue-0.2+P-S)    # Prisoner's dilemma
-        color.append(rgb)
-        size.append(2.0*abs(R-P))
         x.append(es)
         y.append(given)
 
-fig, ax = plt.subplots(figsize=(width,height))
-ax.scatter(x=x, y=y, s=600.0*np.array(size), color=color, ec=color)
-ax.set_xlabel('Substitutability of resource $\it{A}$', fontsize=fslabel)
-ax.set_ylabel('Partner\'s share of resource $\it{A}$', fontsize=fslabel)
-ax.tick_params(axis='x', labelsize=fstick)
-ax.tick_params(axis='y', labelsize=fstick)
-ax.set_xscale('log', base=2)
-ax.set_box_aspect(1)
+sizes = [[], []]
+colors = [[], []]
+for aC, aD, size, color in zip(aCs, aDs, sizes, colors):
+    q1C = R1*(1.0-aC);
+    q1D = R1*(1.0-aD);
+    for es in ess:
+        rho = 1.0 - 1.0/es if sys.argv[1] == 'ces' else es
+        R = wC1 = fitness(q1C, R2*aC, rho)
+        P = wD0 = fitness(q1D, R2*aD, rho)
+        for given in givens:
+            T = wD1 = fitness(q1D, R2*(aD*(1.0-given) + aC*given), rho)
+            S = wC0 = fitness(q1C, R2*(aC*(1.0-given) + aD*given), rho)
+            if (T<R) and (P<S):
+                rgb = (red-0.3-T+R, green-0.1-R+T, blue-0.2+P-S)    # No dilemma
+            elif (T>R) and (P<S):
+                rgb = (red-0.3-T+R, green, blue-0.2+P-S)    # Snowdrift
+            else:
+                rgb = (red-0.3-T+R, green-0.2-P+S, blue-0.2+P-S)    # Prisoner's dilemma
+            color.append(rgb)
+            size.append(2.0*abs(R-P))
+
+fig, axs = plt.subplots(nrows=1, ncols=2, sharey=True, figsize=(width,height))
+fig.supxlabel('Substitutability of resource $\it{A}$', fontsize=fslabel)
+fig.supylabel('Partner\'s share of resource $\it{A}$', fontsize=fslabel)
+
+for size, color, ax in zip(sizes,colors, axs): 
+    ax.scatter(x=x, y=y, s=600.0*np.array(size), color=color, ec=color)
+    ax.tick_params(axis='x', labelsize=fstick)
+    ax.tick_params(axis='y', labelsize=fstick)
+    ax.set_xscale('log', base=2)
+    ax.set_box_aspect(1)
 
 fig.savefig(f'games{sys.argv[1]}.png', bbox_inches='tight', transparent=False)
 plt.close()

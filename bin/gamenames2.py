@@ -55,11 +55,11 @@ for es in ess:
         T = wD1 = fitness(q1D, R2*(aD*(1.0-given) + aC*given), rho)
         S = wC0 = fitness(q1C, R2*(aC*(1.0-given) + aD*given), rho)
         if (T<R) and (P<S):
-            rgb = (red-0.1, green-0.2-R+T, blue-0.2+P-S)    # No dilemma
+            rgb = (red-0.2, green-0.1-R+T, blue-0.2+P-S)    # No dilemma
         elif (T>R) and (P<S):
-            rgb = (red-0.2-T+R, green-0.1, blue-0.2+P-S)    # Snowdrift
+            rgb = (red-0.3-T+R, green, blue-0.2+P-S)    # Snowdrift
         else:
-            rgb = (red-0.2-T+R, green-0.2-P+S, blue-0.1)    # Prisoner's dilemma
+            rgb = (red-0.4-T+R, green-0.2-P+S, blue-0.2+P-S)    # Prisoner's dilemma
         color.append(rgb)
         size.append(abs(R-P))
         x.append(es)

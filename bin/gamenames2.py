@@ -54,14 +54,13 @@ for es in ess:
     for given in givens:
         T = wD1 = fitness(q1D, R2*(aD*(1.0-given) + aC*given), rho)
         S = wC0 = fitness(q1C, R2*(aC*(1.0-given) + aD*given), rho)
-        if (T>R) and (R>P) and (P>S):
-            color.append('blue')
-        elif (T<R) and (P<S):
-            color.append('gray')
+        if (T<R) and (P<S):
+            rgb = (red-0.1, green-0.4-R+T, blue-0.4+P-S)    # No dilemma
         elif (T>R) and (P<S):
-            color.append('yellow')
+            rgb = (red-0.4-T+R, green-0.1, blue-0.4+P-S)    # Snowdrift
         else:
-            color.append('red')
+            rgb = (red-0.4-T+R, green-0.4-P+S, blue-0.1)    # Prisoner's dilemma
+        color.append(rgb)
         size.append(abs(R-P))
         x.append(es)
         y.append(given)

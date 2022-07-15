@@ -23,8 +23,8 @@ R2 = 2.0
 ess = np.linspace(-5, 5, num=11) if sys.argv[1] == 'ces' else np.linspace(-10, 0, num=11)
 ess = pow(2, ess)
 givens = np.linspace(1.0, 0.0, num=11)
-aC = 0.3
-aD = 0.2
+aC = 0.5
+aD = 0.4
 q1C = R1*(1.0-aC);
 q1D = R1*(1.0-aD);
 

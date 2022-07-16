@@ -62,13 +62,13 @@ for aC, aD, size, color, edgecolor in zip(aCs, aDs, sizes, colors, edgecolors):
             S = wC0 = fitness(q1C, R2*(aC*(1.0-given) + aD*given), rho)
             if (T<R) and (P<S):
                 rgb = (red-0.3-T+R, green, blue-0.3+P-S)    # No dilemma
-                rgb_edge = (0.7, 0.2, 0.2) # No dilemma
+                rgb_edge = (1.0, 1.0, 0.0) # No dilemma
             elif (T>R) and (P<S):
                 rgb = (red-0.3-T+R, green, blue-0.3+P-S)    # Snowdrift
-                rgb_edge = (0.2, 0.7, 0.2) # Snowdrift
+                rgb_edge = (0.0, 1.0, 0.0) # Snowdrift
             else:
                 rgb = (red-0.3-T+R, green, blue-0.3+P-S)    # Prisoner's dilemma
-                rgb_edge = (0.2, 0.2, 0.7) # Prisoner's dilemma
+                rgb_edge = (0.0, 0.0, 1.0) # Prisoner's dilemma
             color.append(rgb)
             edgecolor.append(rgb_edge)
             size.append(2.0*abs(R-P))

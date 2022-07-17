@@ -6,13 +6,12 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import sys
 
+filename = f'gamesTR{sys.argv[1]}.png'
+
 width = 8
 height = 4.5
 fslabel = 15
 fstick = 10    
-red = 0.97
-green = 0.97
-blue = 0.97
 
 # Parameters
 
@@ -49,7 +48,8 @@ for es in ess:
 
 sizes = [[], []]
 colors = [[], []]
-for aC, aD, size, color in zip(aCs, aDs, sizes, colors):
+edgecolors = [[], []]
+for aC, aD, size, color, edgecolor in zip(aCs, aDs, sizes, colors, edgecolors):
     q1C = R1*(1.0-aC);
     q1D = R1*(1.0-aD);
     for es in ess:
@@ -60,25 +60,30 @@ for aC, aD, size, color in zip(aCs, aDs, sizes, colors):
             T = wD1 = fitness(q1D, R2*(aD*(1.0-given) + aC*given), rho)
             S = wC0 = fitness(q1C, R2*(aC*(1.0-given) + aD*given), rho)
             if (T<R) and (P<S):
-                rgb = (red-0.3-T+R, green-0.1-R+T, blue-0.2+P-S)    # No dilemma
+                rgb_edge = (1.0, 1.0, 0.0) # No dilemma
+                rgb = (1.0, 1.0, 1.0)
             elif (T>R) and (P<S):
-                rgb = (red-0.3-T+R, green, blue-0.2+P-S)    # Snowdrift
+                rgb_edge = (0.0, 1.0, 0.0) # Snowdrift
+                rgb = (1.0-8*(T-R), 1.0-8*(T-R), 1.0)
             else:
-                rgb = (red-0.3-T+R, green-0.2-P+S, blue-0.2+P-S)    # Prisoner's dilemma
+                rgb_edge = (0.0, 0.0, 1.0) # Prisoner's dilemma
+                rgb = (1.0-8*(T-R), 1.0-8*(T-R), 1.0)
+            #rgb = (0.7-T+R, 1.0, 0.7+P-S)
             color.append(rgb)
+            edgecolor.append(rgb_edge)
             size.append(2.0*abs(R-P))
 
 fig, axs = plt.subplots(nrows=1, ncols=2, sharey=True, figsize=(width,height))
 fig.supxlabel('Substitutability of resource $\it{A}$', fontsize=fslabel)
 fig.supylabel('Partner\'s share of resource $\it{A}$', fontsize=fslabel)
 
-for size, color, ax in zip(sizes,colors, axs): 
-    ax.scatter(x=x, y=y, s=600.0*np.array(size), color=color, ec=color)
+for size, color, edgecolor, ax in zip(sizes, colors, edgecolors, axs): 
+    ax.scatter(x=x, y=y, s=600.0*np.array(size), color=color, ec=edgecolor)
     ax.tick_params(axis='x', labelsize=fstick)
     ax.tick_params(axis='y', labelsize=fstick)
     ax.set_xscale('log', base=2)
     ax.set_box_aspect(1)
 
-fig.savefig(f'games{sys.argv[1]}.png', bbox_inches='tight', transparent=False)
+fig.savefig(filename, bbox_inches='tight', transparent=False)
 plt.close()
 

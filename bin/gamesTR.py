@@ -64,10 +64,10 @@ for aC, aD, size, color, edgecolor in zip(aCs, aDs, sizes, colors, edgecolors):
                 rgb = (1.0, 1.0, 1.0)
             elif (T>R) and (P<S):
                 rgb_edge = (0.0, 1.0, 0.0) # Snowdrift
-                rgb = (1.0-8*(T-R), 1.0-8*(T-R), 1.0)
+                rgb = (1.0-8*(T-R), 1.0, 1.0-8*(T-R))
             else:
                 rgb_edge = (0.0, 0.0, 1.0) # Prisoner's dilemma
-                rgb = (1.0-8*(T-R), 1.0-8*(T-R), 1.0)
+                rgb = (1.0-8*(T-R), 1.0, 1.0-8*(T-R))
             #rgb = (0.7-T+R, 1.0, 0.7+P-S)
             color.append(rgb)
             edgecolor.append(rgb_edge)

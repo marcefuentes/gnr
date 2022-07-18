@@ -33,9 +33,9 @@ barsalllimit = 0.3
 barsonelimit = 0.2
 
 dfglos = pd.DataFrame(
-    [('ES', 'Substitutability of resource $\it{A}$', True, pow(2, -5.5), None), 
-    ('alpha', 'Substitutability of resource $\it{A}$', True, None, None), 
-    ('Given', 'Partner\'s share of resource $\it{A}$', False, None, None),
+    [('ES', 'Substitutability of $\it{A}$', True, pow(2, -5.5), None), 
+    ('alpha', 'Substitutability of $\it{A}$', True, None, None), 
+    ('Given', 'Partner\'s share of $\it{A}$', False, None, None),
     ('ChooseCost', 'Cost of comparing potential partners', True, None, None),
     ('MimicCost', 'Cost of comparing partner to self', True, None, None),
     ('DeathRate', 'Death rate', True, 0.005, 0.2),
@@ -52,10 +52,10 @@ dftraits = pd.DataFrame(
     ('MimicGrainmedian', 'Sensitivity for comparing\npartner to self', 600.0),
     ('MimicGrain', 'Sensitivity for comparing\npartner to self', 600.0),
     ('MimicGrain6', 'Sensitivity for comparing\npartner to self', 600.0),
-    ('helpmedian', 'Help', 600.0*2.00),
-    ('help', 'Help', 600.0*2.00),
-    ('a2Seenmedian', '$\it{a}$', 600.0),
-    ('a2Seen', '$\it{a}$', 600.0),
+    ('helpmedian', 'Byproduct help', 600.0*2.00),
+    ('help', 'Byproduct help', 600.0*2.00),
+    ('a2Seenmedian', 'Effort to get $\it{A}$', 600.0),
+    ('a2Seen', 'Effort to get $\it{A}$', 600.0),
     ('a2Seen31', 'Frequency of $\it{C}$', 600.0),
     ('a2Seen51', 'Frequency of $\it{C}$', 600.0),
     ('a2Defaultmedian', 'Default $\it{a}$', 600.0),
@@ -86,9 +86,9 @@ class Bubbles:
 
     def chart(self, dfts):
 
-        fig, axs = plt.subplots(nrows=len(module.rows), ncols=len(module.traits), figsize=(width, height+1.0), sharex=True, sharey=True, constrained_layout=False, squeeze=False)
-        fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], y=0.02, fontsize=fslabel)
-        fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.04, fontsize=fslabel, ha='center')
+        fig, axs = plt.subplots(nrows=len(module.rows), ncols=len(module.traits), figsize=(width-1, height-1), sharex=True, sharey=True, constrained_layout=False, squeeze=False)
+        fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], y=0.02, fontsize=fslabel+2)
+        fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.06, fontsize=fslabel+2, ha='center')
 
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 

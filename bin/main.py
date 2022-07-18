@@ -87,7 +87,7 @@ class Bubbles:
     def chart(self, dfts):
 
         fig, axs = plt.subplots(nrows=len(module.rows), ncols=len(module.traits), figsize=(width-1, height-1), sharex=True, sharey=True, constrained_layout=False, squeeze=False)
-        fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], y=0.02, fontsize=fslabel+2)
+        fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], y=0.02, x=0.513, fontsize=fslabel+2)
         fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.06, fontsize=fslabel+2, ha='center')
 
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')

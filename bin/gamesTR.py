@@ -8,10 +8,10 @@ import sys
 
 filename = f'gamesTR{sys.argv[1]}.png'
 
-width = 8
-height = 4.5
-fslabel = 15
-fstick = 10    
+width = 10
+height = 5.5
+fslabel = 26
+fstick = 16    
 
 # Parameters
 
@@ -60,8 +60,8 @@ for aC, aD, size, color, edgecolor in zip(aCs, aDs, sizes, colors, edgecolors):
             T = wD1 = fitness(q1D, R2*(aD*(1.0-given) + aC*given), rho)
             S = wC0 = fitness(q1C, R2*(aC*(1.0-given) + aD*given), rho)
             if (T<R) and (P<S):
-                rgb_edge = (1.0, 1.0, 0.0) # No dilemma
-                rgb = (1.0, 1.0, 1.0)
+                rgb_edge = (0.97, 0.97, 0.97) # No dilemma
+                rgb = (0.97, 0.97, 0.97)
             elif (T>R) and (P<S):
                 rgb_edge = (0.0, 1.0, 0.0) # Snowdrift
                 rgb = (1.0-8*(T-R), 1.0, 1.0-8*(T-R))
@@ -74,8 +74,8 @@ for aC, aD, size, color, edgecolor in zip(aCs, aDs, sizes, colors, edgecolors):
             size.append(2.0*abs(R-P))
 
 fig, axs = plt.subplots(nrows=1, ncols=2, sharey=True, figsize=(width,height))
-fig.supxlabel('Substitutability of resource $\it{A}$', fontsize=fslabel)
-fig.supylabel('Partner\'s share of resource $\it{A}$', fontsize=fslabel)
+fig.supxlabel('Substitutability of $\it{A}$', fontsize=fslabel)
+fig.supylabel('Partner\'s share of $\it{A}$', fontsize=fslabel)
 
 for size, color, edgecolor, ax in zip(sizes, colors, edgecolors, axs): 
     ax.scatter(x=x, y=y, s=600.0*np.array(size), color=color, ec=edgecolor)
@@ -84,6 +84,6 @@ for size, color, edgecolor, ax in zip(sizes, colors, edgecolors, axs):
     ax.set_xscale('log', base=2)
     ax.set_box_aspect(1)
 
-fig.savefig(filename, bbox_inches='tight', transparent=False)
+fig.savefig(filename, transparent=False)
 plt.close()
 

@@ -52,8 +52,8 @@ dftraits = pd.DataFrame(
     ('MimicGrainmedian', 'Sensitivity for comparing\npartner to self', 600.0),
     ('MimicGrain', 'Sensitivity for comparing\npartner to self', 600.0),
     ('MimicGrain6', 'Sensitivity for comparing\npartner to self', 600.0),
-    ('helpmedian', 'Byproduct help', 600.0*2.00),
-    ('help', 'Byproduct help', 600.0*2.00),
+    ('helpmedian', 'Help', 600.0*2.00),
+    ('help', 'Help', 600.0*2.00),
     ('a2Seenmedian', 'Effort to get $\it{A}$', 600.0),
     ('a2Seen', 'Effort to get $\it{A}$', 600.0),
     ('a2Seen31', 'Frequency of $\it{C}$', 600.0),
@@ -86,7 +86,7 @@ class Bubbles:
 
     def chart(self, dfts):
 
-        fig, axs = plt.subplots(nrows=len(module.rows), ncols=len(module.traits), figsize=(width-1, height-1), sharex=True, sharey=True, constrained_layout=False, squeeze=False)
+        fig, axs = plt.subplots(nrows=len(module.rows), ncols=len(module.traits), figsize=(width-1, height), sharex=True, sharey=True, constrained_layout=False, squeeze=False)
         fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], y=0.02, x=0.513, fontsize=fslabel+2)
         fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.06, fontsize=fslabel+2, ha='center')
 

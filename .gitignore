@@ -13,4 +13,5 @@ results/**/*.out
 results/**/*.png
 results/**/*.txt
 resultsold/
+final/
 charts/*.png

@@ -32,6 +32,8 @@ blue = 0.97
 barsalllimit = 0.3
 barsonelimit = 0.2
 
+letter = ('a', 'b', 'c', 'd', 'e', 'f')
+
 dfglos = pd.DataFrame(
     [('ES', 'Substitutability of $\it{A}$', True, pow(2, -5.5), None), 
     ('alpha', 'Substitutability of $\it{A}$', True, None, None), 
@@ -94,6 +96,7 @@ class Bubbles:
 
         [dfts[folder].sort_values(by=[module.glos['x'], module.glos['y']], inplace=True) for folder in folderlist]
 
+        count = 0;
         for rowax, traits, folders in zip(axs, module.traits, module.folders):
             for ax, trait, folder in zip(rowax, traits, folders):
                 df = dfts[folder['treatment']]
@@ -117,6 +120,8 @@ class Bubbles:
                     ax.set_xlim(self.glosx_min, self.glosx_max)
                     ax.set_ylim(self.glosy_min, self.glosy_max)
                     ax.set_box_aspect(1)
+                ax.text(0.01, 1.1, letter[count], fontsize=18, weight='bold')
+                count = count + 1
 
         plt.savefig(outfile, transparent=False)
         plt.close()

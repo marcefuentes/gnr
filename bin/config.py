@@ -1,13 +1,15 @@
 #!/usr/bin/python
 
-filename = 'optimal'
+filename = 'pyr'
 ftype = 'bubbles' # barsall, barsone, scatter
 movie = False
 
 glos = {'x': 'ES', 'y': 'Given'}
-traits = ['a2Seenmedian', 'helpmedian', 'wmedian']
-top_row = [{'treatment':'optimal', 'control': 'none'}, {'treatment':'optimal', 'control': 'none'}, {'treatment':'optimal', 'control': 'none'}]
-bottom_row = [{'treatment': 'none', 'control': 'optimal'}, {'treatment': 'none', 'control': 'optimal'}, {'treatment': 'none', 'control': 'optimal'}]
-rows = [top_row, bottom_row]
+top_traits = ['ChooseGrainmedian', 'wmedian', 'wmedian']
+bottom_traits = ['MimicGrainmedian', 'wmedian', 'wmedian']
+traits = [top_traits, bottom_traits]
+top_folders = [{'treatment':'p', 'control': 'none'}, {'treatment':'p', 'control': 'none'}, {'treatment':'p', 'control': 'optimal'}]
+bottom_folders = [{'treatment': 'r', 'control': 'none'}, {'treatment': 'r', 'control': 'none'}, {'treatment': 'r', 'control': 'optimal'}]
+folders = [top_folders, bottom_folders]
 
 if ftype == 'barsone': glovalue = {'x': -1.0, 'y': 1.0}

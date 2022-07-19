@@ -82,13 +82,16 @@ fig.supxlabel('Substitutability of $\it{A}$', fontsize=fslabel)
 fig.supylabel('Partner\'s share of $\it{A}$', fontsize=fslabel)
 
 titles = ['$\it{T}$ - $\it{R}$ and $\it{R}$ - $\it{P}$\nfor $\it{a}$ = {0.2, 0.3}', '$\it{T}$ - $\it{R}$ and $\it{R}$ - $\it{P}$\nfor $\it{a}$ = {0.4, 0.5}']
-for size, color, edgecolor, title, ax in zip(sizes, colors, edgecolors, titles, axs): 
+letters = ['a', 'b']
+
+for ax, size, color, edgecolor, title, letter in zip(axs, sizes, colors, edgecolors, titles, letters): 
     ax.scatter(x=x, y=y, s=size, color=color, ec=edgecolor)
     ax.set_title(title, pad=10.0, fontsize=fstitle)
     ax.tick_params(axis='x', labelsize=fstick)
     ax.tick_params(axis='y', labelsize=fstick)
     ax.set_xscale('log', base=2)
     ax.set_box_aspect(1)
+    ax.text(0.01, 1.1, letter, fontsize=18, weight='bold')
 
 fig.savefig(filename, transparent=False)
 plt.close()

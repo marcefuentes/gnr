@@ -1,16 +1,19 @@
 #!/usr/bin/env python
 
 import math
-import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
+import numpy as np
 import sys
 
 filename = f'gamesRP{sys.argv[1]}.png'
 
-width = 10
-height = 5.5
+plt.rcParams['pdf.fonttype'] = 42
+plt.rcParams['ps.fonttype'] = 42
+
+width = 11.0
+height = 6.0
 fslabel = 26
+fstitle= 24
 fstick = 16    
 
 # Parameters
@@ -70,14 +73,17 @@ for aC, aD, size, color, edgecolor in zip(aCs, aDs, sizes, colors, edgecolors):
                 rgb = (0.2, 0.6, 0.2)
             color.append(rgb)
             edgecolor.append(rgb)
-            size.append(2.0*abs(R-P))
+            size.append(1200.0*abs(R-P))
 
-fig, axs = plt.subplots(nrows=1, ncols=2, sharey=True, figsize=(width,height))
+fig, axs = plt.subplots(nrows=1, ncols=2, sharey=True, figsize=(width,height), constrained_layout=False, squeeze=False)
+axs = axs.flatten()
 fig.supxlabel('Substitutability of $\it{A}$', fontsize=fslabel)
 fig.supylabel('Partner\'s share of $\it{A}$', fontsize=fslabel)
 
-for size, color, edgecolor, ax in zip(sizes, colors, edgecolors, axs): 
-    ax.scatter(x=x, y=y, s=600.0*np.array(size), color=color, ec=edgecolor)
+titles = ['$\it{R}$ - $\it{P}$\nfor $\it{a}$ = {0.2, 0.3}', '$\it{R}$ - $\it{P}$\nfor $\it{a}$ = {0.4, 0.5}']
+for size, color, edgecolor, title, ax in zip(sizes, colors, edgecolors, titles, axs): 
+    ax.scatter(x=x, y=y, s=size, color=color, ec=edgecolor)
+    ax.set_title(title, pad=10.0, fontsize=fstitle)
     ax.tick_params(axis='x', labelsize=fstick)
     ax.tick_params(axis='y', labelsize=fstick)
     ax.set_xscale('log', base=2)

@@ -21,8 +21,8 @@ module = __import__(sys.argv[1])
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-height = 6.0*len(module.rows)
-width = 6.0*len(module.traits)
+height = 6.0*len(module.folders)
+width = 6.0*len(module.top_traits)
 fslabel = 24 # Label font size
 fstitle= 24 # Title font size
 fstick = 16 # Tick font size
@@ -40,18 +40,18 @@ dfglos = pd.DataFrame(
     ('MimicCost', 'Cost of comparing partner to self', True, None, None),
     ('DeathRate', 'Death rate', True, 0.005, 0.2),
     ('GroupSize', 'Number of potential partners', True, 48.0, 2.6),
-    ('MimicGrainInit', 'Sensitivity for comparing partner to self', False, None, None),
-    ('ChooseGrainInit', 'Sensitivity for comparing potential partners', False, None, None),
+    ('MimicGrainInit', 'Sensitivity for mimicking partner', False, None, None),
+    ('ChooseGrainInit', 'Sensitivity for choosing partner', False, None, None),
     ('N', 'Population size', True, None, None)],
     columns = ['name', 'label', 'log', 'min', 'max'])
 
 dftraits = pd.DataFrame(
-    [('ChooseGrainmedian', 'Sensitivity for comparing\npotential partners', 600.0),
-    ('ChooseGrain', 'Sensitivity for comparing\npotential partners', 600.0),
-    ('ChooseGrain6', 'Sensitivity for comparing\npotential partners', 600.0),
-    ('MimicGrainmedian', 'Sensitivity for comparing\npartner to self', 600.0),
-    ('MimicGrain', 'Sensitivity for comparing\npartner to self', 600.0),
-    ('MimicGrain6', 'Sensitivity for comparing\npartner to self', 600.0),
+    [('ChooseGrainmedian', 'Sensitivity for\nchoosing partner', 600.0),
+    ('ChooseGrain', 'Sensitivity for\nchoosing partner', 600.0),
+    ('ChooseGrain6', 'Sensitivity for\nchoosing partner', 600.0),
+    ('MimicGrainmedian', 'Sensitivity for\nmimicking partner', 600.0),
+    ('MimicGrain', 'Sensitivity for\nmimicking partner', 600.0),
+    ('MimicGrain6', 'Sensitivity for\nmimicking partner', 600.0),
     ('helpmedian', 'Help', 600.0*2.00),
     ('help', 'Help', 600.0*2.00),
     ('a2Seenmedian', 'Effort to get $\it{A}$', 600.0),
@@ -86,7 +86,7 @@ class Bubbles:
 
     def chart(self, dfts):
 
-        fig, axs = plt.subplots(nrows=len(module.rows), ncols=len(module.traits), figsize=(width-1, height), sharex=True, sharey=True, constrained_layout=False, squeeze=False)
+        fig, axs = plt.subplots(nrows=len(module.folders), ncols=len(module.top_traits), figsize=(width-1, height), sharex=True, sharey=True, constrained_layout=False, squeeze=False)
         fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], y=0.02, x=0.513, fontsize=fslabel+2)
         fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.06, fontsize=fslabel+2, ha='center')
 
@@ -94,18 +94,19 @@ class Bubbles:
 
         [dfts[folder].sort_values(by=[module.glos['x'], module.glos['y']], inplace=True) for folder in folderlist]
 
-        for rowax, row in zip(axs, module.rows):
-            for ax, trait, traitfolder in zip(rowax, module.traits, row):
-                df = dfts[traitfolder['treatment']]
+        for rowax, traits, folders in zip(axs, module.traits, module.folders):
+            for ax, trait, folder in zip(rowax, traits, folders):
+                df = dfts[folder['treatment']]
                 x = df[module.glos['x']]
                 y = df[module.glos['y']]
-                if row == module.top_row: ax.set_title(dftraits.loc[trait, 'label'], pad=10.0, fontsize=fstitle)
+                #if traits == module.top_traits: ax.set_title(dftraits.loc[trait, 'label'], pad=10.0, fontsize=fstitle)
+                ax.set_title(dftraits.loc[trait, 'label'], pad=10.0, fontsize=fstitle)
                 ax.tick_params(axis='x', labelsize=fstick)
                 ax.tick_params(axis='y', labelsize=fstick)
                 if dfglos.loc[module.glos['x'], 'log']: ax.set_xscale('log', base=2)
                 if dfglos.loc[module.glos['y'], 'log']: ax.set_yscale('log', base=2)
                 s = df[trait]
-                difs = dfts[traitfolder['control']][trait]/s
+                difs = dfts[folder['control']][trait]/s
                 if ('Grain' in trait) or ('BD' in trait): difs = 1.0/difs
                 if '6' in trait: difs = 1.0/difs
                 color = []
@@ -124,9 +125,9 @@ class BarsAll:
 
     def prepare(self, dfs):
 
-        bincount = int(sum(map(lambda x: module.traits[0] in x, [*dfs[folderlist[0]]]))/2) - 2
+        bincount = int(sum(map(lambda x: module.top_traits[0] in x, [*dfs[folderlist[0]]]))/2) - 2
 
-        self.traits = [{'name': trait} for trait in module.traits]
+        self.traits = [{'name': trait} for trait in module.top_traits]
         for trait in self.traits:
             trait['namebins_list'] = [trait['name'] + str(x) for x in range(bincount)]
             trait['title'] = dftraits.loc[trait['name'], 'label']
@@ -157,9 +158,9 @@ class BarsAll:
 
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
-        outergrids = fig.add_gridspec(nrows=1, ncols=len(module.traits), wspace=0.1)
+        outergrids = fig.add_gridspec(nrows=1, ncols=len(module.top_traits), wspace=0.1)
 
-        ds = [dfts[module.rows[0][0]['control']], dfts[module.rows[0][0]['treatment']]]
+        ds = [dfts[module.folders[0][0]['control']], dfts[module.folders[0][0]['treatment']]]
 
         for trait, outergrid in zip(self.traits, outergrids):
             innergrid = outergrid.subgridspec(nrows=len(self.innerrows), ncols=len(self.innercols), wspace=0.0, hspace=0.0)
@@ -179,7 +180,7 @@ class BarsAll:
                             ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=self.barwidth, alpha=alpha)
                             ax.set(xticks=[], yticks=[], ylim=[0, barsalllimit])
                             ax.set_box_aspect(1)
-                    if (trait['name'] == module.traits[0]) & (column == 0):
+                    if (trait['name'] == module.top_traits[0]) & (column == 0):
                         y = '$2^{{{}}}$'.format(round(math.log(innerrow, 2))) if dfglos.loc[module.glos['y'], 'log'] else innerrow
                         ax.set_ylabel(y, rotation='horizontal', horizontalalignment='right', verticalalignment='center')
                     if row == len(self.innerrows) - 1:
@@ -193,9 +194,9 @@ class BarsOne:
 
     def prepare(self, dfs):
 
-        bincount = int(sum(map(lambda x: module.traits[0] in x, [*dfs[folderlist[0]]]))/2) - 2
+        bincount = int(sum(map(lambda x: module.top_traits[0] in x, [*dfs[folderlist[0]]]))/2) - 2
 
-        self.traits = [{'name': trait} for trait in module.traits]
+        self.traits = [{'name': trait} for trait in module.top_traits]
         for trait in self.traits:
             trait['namebins_list'] = [trait['name'] + str(x) for x in range(bincount)]
             trait['namesdbins_list'] = [trait['name'] + 'SD' + str(x) for x in range(bincount)]
@@ -208,11 +209,11 @@ class BarsOne:
 
     def chart(self, dfts):
 
-        fig, axs = plt.subplots(nrows=len(module.rows), ncols=len(module.traits), figsize=(width, height), sharey=True, constrained_layout=False, squeeze=False)
+        fig, axs = plt.subplots(nrows=len(module.folders), ncols=len(module.top_traits), figsize=(width, height), sharey=True, constrained_layout=False, squeeze=False)
         fig.supylabel('Frequency', fontsize=fslabel, ha='center')
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
-        for rowax, row in zip(axs, module.rows):
+        for rowax, row in zip(axs, module.folders):
             for ax, trait, folder in zip(rowax, self.traits, row):
                 if row == module.bottom_row: ax.set_xlabel(trait['label'], fontsize=fslabel)
                 dif = dfts[folder['control']][trait['name'] + 'median'].values[0]/dfts[folder['treatment']][trait['name'] + 'median'].values[0]
@@ -228,7 +229,7 @@ class BarsOne:
                 ax.set(xlim=(0.0, trait['max']), xticks=(0.0, trait['max']), xticklabels=(0.0, trait['max']))
                 ax.tick_params(axis='x', labelsize=fstick)
                 ax.tick_params(axis='y', labelsize=fstick)
-                if (len(module.rows) > 1) & (row != module.bottom_row): ax.set(xticks=[])
+                if (len(module.folders) > 1) & (row != module.bottom_row): ax.set(xticks=[])
                 ax.set_box_aspect(1)
 
         plt.savefig(outfile, dpi=100)
@@ -238,7 +239,7 @@ class ScatterAll:
 
     def prepare(self, dfs):
 
-        self.traits = module.traits
+        self.traits = module.top_traits
         for trait in self.traits:
             trait['xlimit'] = 2.0 if trait['x'] == 'w' else 1.0
             trait['ylimit'] = 2.0 if trait['y'] == 'w' else 1.0
@@ -257,9 +258,9 @@ class ScatterAll:
         fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], y=0.00, fontsize=fslabel)
         fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.003*width, fontsize=fslabel, ha='center')
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
-        outer_grid = fig.add_gridspec(nrows=len(module.rows), ncols=len(module.traits), hspace=0.1, wspace=0.1)
+        outer_grid = fig.add_gridspec(nrows=len(module.folders), ncols=len(module.top_traits), hspace=0.1, wspace=0.1)
 
-        for nr, row in enumerate(module.rows):
+        for nr, row in enumerate(module.folders):
             dft = dfts[row]
             for nc, trait in enumerate(self.traits):
                 innergrid = outer_grid[nr, nc].subgridspec(nrows=len(self.innerrows), ncols=len(self.innercols), wspace=0.0, hspace=0.0)
@@ -292,7 +293,7 @@ class ScatterOne:
 
     def prepare(self, dfs):
 
-        self.traits = module.traits
+        self.traits = module.top_traits
         for trait in self.traits:
             trait['xlimit'] = 2.0 if trait['x'] == 'w' else 1.0
             trait['ylimit'] = 2.0 if trait['y'] == 'w' else 1.0
@@ -301,10 +302,10 @@ class ScatterOne:
 
     def chart(self, dfts):
 
-        fig, axs = plt.subplots(nrows=len(module.rows), ncols=len(module.traits), figsize=(width, height), constrained_layout=False, squeeze=False)
+        fig, axs = plt.subplots(nrows=len(module.folders), ncols=len(module.top_traits), figsize=(width, height), constrained_layout=False, squeeze=False)
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
-        for rowax, row in zip(axs, module.rows):
+        for rowax, row in zip(axs, module.folders):
             dft = dfts[row]
             for ax, trait in zip(rowax, self.traits):
                 #ax.scatter(dft[trait['x']], dft[trait['y']], c=dft[module.zcolor], cmap=module.colormap, alpha=0.2, s=1)
@@ -333,10 +334,10 @@ def create_figure(t):
     pr.chart(dfts)
 
 def folderlist_csv(folderlist):
-    for row in module.rows:
-        for trait in row:
-            folderlist.append(trait['treatment'])
-            folderlist.append(trait['control'])
+    for folders in module.folders:
+        for folder in folders:
+            folderlist.append(folder['treatment'])
+            folderlist.append(folder['control'])
     folderlist = list(set(folderlist))
     return folderlist
 
@@ -355,11 +356,11 @@ elif module.ftype == 'bubbles':
     extension = '*.csv'
     pr = Bubbles()
 elif module.ftype == 'scatterall':
-    folderlist = module.rows
+    folderlist = module.top_folders
     extension = '*.ics'
     pr = ScatterAll()
 elif module.ftype == 'scatterone':
-    folderlist = module.rows
+    folderlist = module.top_folders
     extension = '*.ics'
     pr = ScatterOne()
 else:

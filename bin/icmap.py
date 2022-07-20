@@ -88,9 +88,11 @@ x = np.linspace(0.000001, 3.0, num=n)
 # Plot indifference curves and budget line
 
 fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(width, height), sharey=True)
-fig.supxlabel('Quantity of $\it{A}$ consumed', fontsize=fslabel) 
-fig.supylabel('Quantity of $\it{B}$ consumed', x=0.02, fontsize=fslabel, ha='center') 
+#fig.supxlabel('Quantity of $\it{A}$ consumed', fontsize=fslabel) 
+#fig.supylabel('Quantity of $\it{B}$ consumed', x=0.02, fontsize=fslabel, ha='center') 
 
+ax.set_xlabel('Quantity of $\it{A}$ consumed', fontsize=fslabel) 
+ax.set_ylabel('Quantity of $\it{B}$ consumed', fontsize=fslabel) 
 ax.set_xlim(0.0, max_a1*R1*1.5)
 ax.set_ylim(0.0, max_a2*R2*1.5)
 ax.set_xticks(np.linspace(0.0, max_a1*R1*1.5, num=4))
@@ -108,7 +110,7 @@ budget = max_a2*R2 - MRT*x
 ax.plot(x, budget, c='darkgreen')
 ax.set_box_aspect(1)
 
-plt.savefig('ICmap.png', transparent=False)
+plt.savefig('icmap.png', bbox_inches = 'tight', transparent=False)
 
 # q1
 

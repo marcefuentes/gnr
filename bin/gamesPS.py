@@ -66,21 +66,21 @@ for aC, aD, size, color, edgecolor in zip(aCs, aDs, sizes, colors, edgecolors):
                 rgb_edge = (0.97, 0.97, 0.97) # No dilemma
                 rgb = (0.97, 0.97, 0.97)
             elif (T>R) and (P<S):
-                rgb_edge = (0.8, 1.0, 0.8) # Snowdrift
+                rgb_edge = (0.0, 1.0, 1.0) # Snowdrift
                 rgb = (0.5-5*(S-P), 0.5+5*(S-P), 0.5+5*(S-P))
             else:
-                rgb_edge = (0.8, 0.8, 1.0) # Prisoner's dilemma
                 rgb = (0.5-5*(S-P), 0.5+5*(S-P), 0.5+5*(S-P))
+                rgb_edge = rgb # Prisoner's dilemma
             color.append(rgb)
-            edgecolor.append(rgb)
-            size.append(1200.0*abs(R-P))
+            edgecolor.append(rgb_edge)
+            size.append(2000.0*abs(R-P))
 
 fig, axs = plt.subplots(nrows=1, ncols=2, sharey=True, figsize=(width,height), constrained_layout=False, squeeze=False)
 axs = axs.flatten()
 fig.supxlabel('Substitutability of $\it{A}$', fontsize=fslabel)
 fig.supylabel('Partner\'s share of $\it{A}$', fontsize=fslabel)
 
-titles = ['$\it{T}$ - $\it{R}$ and $\it{P}$ - $\it{S}$\nfor $\it{a}$ = {0.2, 0.3}', '$\it{T}$ - $\it{R}$ and $\it{P}$ - $\it{S}$\nfor $\it{a}$ = {0.4, 0.5}']
+titles = ['$\it{R}$ - $\it{P}$ and $\it{P}$ - $\it{S}$\nfor $\it{a}$ = {0.2, 0.3}', '$\it{R}$ - $\it{P}$ and $\it{P}$ - $\it{S}$\nfor $\it{a}$ = {0.4, 0.5}']
 letters = ['a', 'b']
 
 for ax, size, color, edgecolor, title, letter in zip(axs, sizes, colors, edgecolors, titles, letters): 

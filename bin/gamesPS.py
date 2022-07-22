@@ -26,7 +26,7 @@ ess = np.linspace(-5, 5, num=11) if sys.argv[1] == 'ces' else np.linspace(-10, 0
 ess = pow(2, ess)
 givens = np.linspace(1.0, 0.0, num=11)
 aCs = [0.3, 0.5]
-aDs = [0.2, 0.49]
+aDs = [0.2, 0.4]
 
 def fitness(q1, q2, rho):
     if sys.argv[1] == 'ces':

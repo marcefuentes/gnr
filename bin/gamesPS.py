@@ -26,7 +26,7 @@ ess = np.linspace(-5, 5, num=11) if sys.argv[1] == 'ces' else np.linspace(-10, 0
 ess = pow(2, ess)
 givens = np.linspace(1.0, 0.0, num=11)
 aCs = [0.3, 0.5]
-aDs = [0.2, 0.4]
+aDs = [0.2, 0.49]
 
 def fitness(q1, q2, rho):
     if sys.argv[1] == 'ces':
@@ -80,7 +80,8 @@ axs = axs.flatten()
 fig.supxlabel('Substitutability of $\it{A}$', fontsize=fslabel)
 fig.supylabel('Partner\'s share of $\it{A}$', fontsize=fslabel)
 
-titles = ['$\it{R}$ - $\it{P}$ and $\it{P}$ - $\it{S}$\nfor $\it{a}$ = {0.2, 0.3}', '$\it{R}$ - $\it{P}$ and $\it{P}$ - $\it{S}$\nfor $\it{a}$ = {0.4, 0.5}']
+titles = ['$\it{R}$ - $\it{P}$ and $\it{P}$ - $\it{S}$\nfor $\it{a}$ = {' + str(aDs[0]) + ', ' + str(aCs[0]) + '}', 
+        '$\it{R}$ - $\it{P}$ and $\it{P}$ - $\it{S}$\nfor $\it{a}$ = {' + str(aDs[1]) + ', ' + str(aCs[1]) + '}']
 letters = ['a', 'b']
 
 for ax, size, color, edgecolor, title, letter in zip(axs, sizes, colors, edgecolors, titles, letters): 

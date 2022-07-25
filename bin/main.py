@@ -23,7 +23,7 @@ plt.rcParams['ps.fonttype'] = 42
 
 height = 6.0*len(module.folders)
 width = 6.0*len(module.top_traits)
-fslabel = 24 # Label font size
+fslabel = 26 # Label font size
 fstitle= 24 # Title font size
 fstick = 16 # Tick font size
 red = 0.97
@@ -87,8 +87,8 @@ class Bubbles:
     def chart(self, dfts):
 
         fig, axs = plt.subplots(nrows=len(module.folders), ncols=len(module.top_traits), figsize=(width-1, height), sharex=True, sharey=True, constrained_layout=False, squeeze=False)
-        fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], y=0.02, x=0.513, fontsize=fslabel+2)
-        fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.06, fontsize=fslabel+2, ha='center')
+        fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], y=0.02, x=0.513, fontsize=fslabel)
+        fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.06, fontsize=fslabel, ha='center')
 
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 

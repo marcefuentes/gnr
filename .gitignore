@@ -15,4 +15,4 @@ results/**/*.txt
 resultsold/
 final/
 final_link
-charts/*.png
+charts/

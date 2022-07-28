@@ -12,4 +12,9 @@ top_folders = [{'treatment':'p', 'control': 'none'}, {'treatment':'p', 'control'
 bottom_folders = [{'treatment': 'r', 'control': 'none'}, {'treatment': 'r', 'control': 'none'}, {'treatment': 'r', 'control': 'optimal'}]
 folders = [top_folders, bottom_folders]
 
-if ftype == 'barsone': glovalue = {'x': -1.0, 'y': 1.0}
+if ftype == 'barsone':
+    glovalue = {'x': -5.0, 'y': 0.9}
+    ylim = 1.0
+
+if ftype == 'bars':
+    ylim = 1.0

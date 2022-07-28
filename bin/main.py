@@ -29,8 +29,6 @@ fstick = 16 # Tick font size
 red = 0.97
 green = 0.97
 blue = 0.97
-barsalllimit = 0.3
-barsonelimit = 1.0
 
 letter = ('a', 'b', 'c', 'd', 'e', 'f')
 
@@ -183,7 +181,7 @@ class BarsAll:
                         for b, name0, name1 in zip(self.bins[::2], trait['namebins_list'][::2], trait['namebins_list'][1::2]):
                             barheight=d.loc[(d[module.glos['x']] == innercol) & (d[module.glos['y']] == innerrow), name0] + d.loc[(d[module.glos['x']] == innercol) & (d[module.glos['y']] == innerrow), name1]
                             ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=self.barwidth, alpha=alpha)
-                            ax.set(xticks=[], yticks=[], ylim=[0, barsalllimit])
+                            ax.set(xticks=[], yticks=[], ylim=[0, module.ylim])
                             ax.set_box_aspect(1)
                     if (trait['name'] == module.top_traits[0]) & (column == 0):
                         y = '$2^{{{}}}$'.format(round(math.log(innerrow, 2))) if dfglos.loc[module.glos['y'], 'log'] else innerrow
@@ -230,7 +228,7 @@ class BarsOne:
                     barheightsd = dfts[folder['treatment']][namebinsd]
                     ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0.0, width=trait['barwidth'])
                     ax.bar(x=b, height=barheightsd, align='edge', color=color, linewidth=0.0, width=trait['barwidth'], bottom=barheight, alpha=0.2)
-                ax.set(ylim=(0.0, barsonelimit), yticks=(0.0, barsonelimit), yticklabels=(0.0, barsonelimit))
+                ax.set(ylim=(0.0, module.ylim), yticks=(0.0, module.ylim), yticklabels=(0.0, module.ylim))
                 ax.set(xlim=(0.0, trait['max']), xticks=(0.0, trait['max']), xticklabels=(0.0, trait['max']))
                 ax.tick_params(axis='x', labelsize=fstick)
                 ax.tick_params(axis='y', labelsize=fstick)

@@ -493,8 +493,8 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 					else
 					{
 						recruit->a2Default = macromutate (i->a2Default, ga2Init + ga2High);
-						recruit->ChooseGrain = macromutate (i->ChooseGrain, gChooseGrainInit);
-						recruit->MimicGrain = macromutate (i->MimicGrain, gMimicGrainInit);
+						recruit->ChooseGrain = macromutate (i->ChooseGrain, gChooseGrainInit - ga2Init + ga2High - 0.1);
+						recruit->MimicGrain = macromutate (i->MimicGrain, gMimicGrainInit - ga2Init + ga2High - 0.1);
 					}
 
 					recruit->cost = calculate_cost (recruit->ChooseGrain, recruit->MimicGrain);

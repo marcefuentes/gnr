@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sys
 
-filename = f'gamesPS{sys.argv[1]}.png'
+filename = f'games{sys.argv[1]}.png'
 
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
@@ -15,6 +15,8 @@ height = 6.0
 fslabel = 26
 fstitle= 24
 fstick = 16    
+shiftconstant = 5.0 # Micromutations
+shiftconstant = 0.7 # Macromutations
 
 # Parameters
 
@@ -26,16 +28,16 @@ ess = np.linspace(-5, 5, num=11) if sys.argv[1] == 'ces' else np.linspace(-10, 0
 ess = pow(2, ess)
 givens = np.linspace(1.0, 0.0, num=11)
 aCs = [0.3, 0.5]
-aDs = [0.2, 0.4]
+aDs = [0.2, 0.2]
 
 def fitness(q1, q2, rho):
-    if sys.argv[1] == 'ces':
+    if sys.argv[1] == 'q':
+        w = 4.0*pow(q1, rho)/9.0 + 4.0*q2/9.0
+    else:
         if rho == 0.0:
             w = pow(q1, alpha)*pow(q2, 1.0 - alpha)
         else:
             w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
-    else:
-        w = 4.0*pow(q1, rho)/9.0 + 4.0*q2/9.0
     return w
 
 def dif_color(dif):
@@ -65,12 +67,13 @@ for aC, aD, size, color, edgecolor in zip(aCs, aDs, sizes, colors, edgecolors):
             if (T<R) and (P<S):
                 rgb_edge = (0.97, 0.97, 0.97) # No dilemma
                 rgb = (0.97, 0.97, 0.97)
-            elif (T>R) and (P<S):
-                rgb_edge = (0.0, 1.0, 1.0) # Snowdrift
-                rgb = (0.5-5*(S-P), 0.5+5*(S-P), 0.5+5*(S-P))
             else:
-                rgb = (0.5-5*(S-P), 0.5+5*(S-P), 0.5+5*(S-P))
-                rgb_edge = rgb # Prisoner's dilemma
+                shift = shiftconstant*(S-P)
+                rgb = (0.5-shift, 0.5+shift, 0.5+shift)
+                if (T>R) and (P<S):
+                    rgb_edge = (0.0, 1.0, 1.0) # Snowdrift
+                else:
+                    rgb_edge = rgb # Prisoner's dilemma
             color.append(rgb)
             edgecolor.append(rgb_edge)
             size.append(2000.0*abs(R-P))

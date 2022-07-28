@@ -16,5 +16,5 @@ if ftype == 'barsone':
     glovalue = {'x': -5.0, 'y': 0.9}
     ylim = 1.0
 
-if ftype == 'bars':
+if ftype == 'barsall':
     ylim = 1.0

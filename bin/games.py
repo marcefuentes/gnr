@@ -10,7 +10,6 @@ filename = f'games{sys.argv[1]}.png'
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-width = 11.0
 height = 6.0
 fslabel = 26
 fstitle= 24
@@ -24,11 +23,16 @@ alpha = 0.5
 R1 = 2.0
 R2 = 2.0
 
+aCs = [0.3, 0.5]
+aDs = [0.2, 0.2]
+        '$\it{R}$ - $\it{P}$ and $\it{P}$ - $\it{S}$\nfor $\it{a}$ = {' + str(aDs[1]) + ', ' + str(aCs[1]) + '}']
 ess = np.linspace(-5, 5, num=11) if sys.argv[1] == 'ces' else np.linspace(-10, 0, num=11)
 ess = pow(2, ess)
 givens = np.linspace(1.0, 0.0, num=11)
-aCs = [0.3, 0.5]
-aDs = [0.2, 0.2]
+titles = []
+for aC, aD in zip(aCs, aDs): 
+    titles.append('$\it{T}$, $\it{R}$, $\it{P}$, $\it{S}$\nfor $\it{a}$ = {' + str(aD) + ', ' + str(aC) + '}')
+letters = ['a', 'b', 'c']
 
 def fitness(q1, q2, rho):
     if sys.argv[1] == 'q':
@@ -39,10 +43,6 @@ def fitness(q1, q2, rho):
         else:
             w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
     return w
-
-def dif_color(dif):
-    color = (red+4.0*dif, green+4.0*dif, blue) if dif <= 0.0 else (red-4.0*dif, green, blue-4.0*dif)
-    return color
 
 x = []
 y = []
@@ -78,14 +78,10 @@ for aC, aD, size, color, edgecolor in zip(aCs, aDs, sizes, colors, edgecolors):
             edgecolor.append(rgb_edge)
             size.append(2000.0*abs(R-P))
 
-fig, axs = plt.subplots(nrows=1, ncols=2, sharey=True, figsize=(width,height), constrained_layout=False, squeeze=False)
+fig, axs = plt.subplots(nrows=1, ncols=len(aCs), sharey=True, figsize=(5.0*len(aCs) + 1.0, height), constrained_layout=False, squeeze=False)
 axs = axs.flatten()
 fig.supxlabel('Substitutability of $\it{A}$', fontsize=fslabel)
 fig.supylabel('Partner\'s share of $\it{A}$', fontsize=fslabel)
-
-titles = ['$\it{R}$ - $\it{P}$ and $\it{P}$ - $\it{S}$\nfor $\it{a}$ = {' + str(aDs[0]) + ', ' + str(aCs[0]) + '}', 
-        '$\it{R}$ - $\it{P}$ and $\it{P}$ - $\it{S}$\nfor $\it{a}$ = {' + str(aDs[1]) + ', ' + str(aCs[1]) + '}']
-letters = ['a', 'b']
 
 for ax, size, color, edgecolor, title, letter in zip(axs, sizes, colors, edgecolors, titles, letters): 
     ax.scatter(x=x, y=y, s=size, color=color, ec=edgecolor)

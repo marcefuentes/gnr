@@ -30,7 +30,7 @@ red = 0.97
 green = 0.97
 blue = 0.97
 barsalllimit = 0.3
-barsonelimit = 0.2
+barsonelimit = 1.0
 
 letter = ('a', 'b', 'c', 'd', 'e', 'f')
 
@@ -204,7 +204,7 @@ class BarsOne:
         self.traits = [{'name': trait} for trait in module.top_traits]
         for trait in self.traits:
             trait['namebins_list'] = [trait['name'] + str(x) for x in range(bincount)]
-            trait['namesdbins_list'] = [trait['name'] + 'SD' + str(x) for x in range(bincount)]
+            trait['namebinsds_list'] = [n + 'SD' for n in trait['namebins_list']]
             trait['max'] = 2.0 if trait['name'] == 'w' else 1.0 # For a1Max = a2Max = 1.0 and R1 = R2 = 2.0.
             trait['binslist'] = [(x+1)*trait['max']/bincount for x in range(bincount)]
             trait['barwidth'] = -trait['max']/bincount
@@ -218,23 +218,23 @@ class BarsOne:
         fig.supylabel('Frequency', fontsize=fslabel, ha='center')
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
-        for rowax, row in zip(axs, module.folders):
-            for ax, trait, folder in zip(rowax, self.traits, row):
-                if row == module.bottom_row: ax.set_xlabel(trait['label'], fontsize=fslabel)
+        for rowax, folders in zip(axs, module.folders):
+            for ax, trait, folder in zip(rowax, self.traits, folders):
+                if folders == module.bottom_folders: ax.set_xlabel(trait['label'], fontsize=fslabel)
                 dif = dfts[folder['control']][trait['name'] + 'median'].values[0]/dfts[folder['treatment']][trait['name'] + 'median'].values[0]
                 if ('Grain' in trait['name']) or ('BD' in trait['name']): dif = 1.0/dif
                 if '6' in trait: dif = 1.0/dif
                 color = dif_color(dif)
-                for b, namebin, namesdbin in zip(trait['binslist'], trait['namebins_list'], trait['namesdbins_list']):
+                for b, namebin, namebinsd in zip(trait['binslist'], trait['namebins_list'], trait['namebinsds_list']):
                     barheight = dfts[folder['treatment']][namebin]
-                    barheightsd = dfts[folder['treatment']][namesdbin]
+                    barheightsd = dfts[folder['treatment']][namebinsd]
                     ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0.0, width=trait['barwidth'])
                     ax.bar(x=b, height=barheightsd, align='edge', color=color, linewidth=0.0, width=trait['barwidth'], bottom=barheight, alpha=0.2)
                 ax.set(ylim=(0.0, barsonelimit), yticks=(0.0, barsonelimit), yticklabels=(0.0, barsonelimit))
                 ax.set(xlim=(0.0, trait['max']), xticks=(0.0, trait['max']), xticklabels=(0.0, trait['max']))
                 ax.tick_params(axis='x', labelsize=fstick)
                 ax.tick_params(axis='y', labelsize=fstick)
-                if (len(module.folders) > 1) & (row != module.bottom_row): ax.set(xticks=[])
+                if (len(module.folders) > 1) & (folders != module.bottom_folders): ax.set(xticks=[])
                 ax.set_box_aspect(1)
 
         plt.savefig(outfile, dpi=100)

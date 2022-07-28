@@ -48,19 +48,19 @@ dfglos = pd.DataFrame(
 dftraits = pd.DataFrame(
     [('ChooseGrainmedian', 'Sensitivity for\nchoosing partner', 600.0),
     ('ChooseGrain', 'Sensitivity for\nchoosing partner', 600.0),
-    ('ChooseGrain6', 'Sensitivity for\nchoosing partner', 600.0),
+    ('ChooseGrain12', 'Frequency of\npartner choosers', 600.0),
     ('MimicGrainmedian', 'Sensitivity for\nmimicking partner', 600.0),
     ('MimicGrain', 'Sensitivity for\nmimicking partner', 600.0),
-    ('MimicGrain6', 'Sensitivity for\nmimicking partner', 600.0),
+    ('MimicGrain12', 'Frequency of\nreciprocators', 600.0),
     ('helpmedian', 'Help', 600.0*2.00),
     ('help', 'Help', 600.0*2.00),
     ('a2Seenmedian', 'Effort to get $\it{A}$', 600.0),
     ('a2Seen', 'Effort to get $\it{A}$', 600.0),
-    ('a2Seen12', 'Frequency of $\it{C}$', 600.0),
+    ('a2Seen12', 'Frequency of $\it{D}$', 600.0),
     ('a2Seen31', 'Frequency of $\it{C}$', 600.0),
     ('a2Defaultmedian', 'Default $\it{a}$', 600.0),
     ('a2Default', 'Default $\it{a}$', 600.0),
-    ('a2Default12', 'Frequency of $\it{C}$', 600.0),
+    ('a2Default12', 'Frequency of $\it{D}$', 600.0),
     ('a2Default31', 'Frequency of $\it{C}$', 600.0),
     ('wmedian', 'Fitness', 600.0),
     ('w', 'Fitness', 600.0),
@@ -108,7 +108,7 @@ class Bubbles:
                 if dfglos.loc[module.glos['y'], 'log']: ax.set_yscale('log', base=2)
                 s = df[trait]
                 difs = dfts[folder['control']][trait]/s
-                if ('Grain' in trait) or ('BD' in trait): difs = 1.0/difs
+                if 'Sensitivity' in dftraits.loc[trait, 'label']: difs = 1.0/difs
                 if '6' in trait: difs = 1.0/difs
                 color = []
                 [color.append(dif_color(dif)) for dif in difs]
@@ -174,7 +174,7 @@ class BarsAll:
                     medians = []
                     [medians.append(d.loc[(d[module.glos['x']] == innercol) & (d[module.glos['y']] == innerrow), trait['name'] + 'median'].values[0]) for d in ds]
                     dif = medians[0]/medians[1]
-                    if ('Grain' in trait['name']) or ('BD' in trait['name']): dif = 1.0/dif
+                    if 'Sensitivity' in dftraits.loc[trait, 'label']: dif = 1.0/dif
                     if '6' in trait: dif = 1.0/dif
                     self.colors[1] = dif_color(dif)
                     for d, color, alpha in zip(ds, self.colors, self.alphas):
@@ -220,7 +220,7 @@ class BarsOne:
             for ax, trait, folder in zip(rowax, self.traits, folders):
                 if folders == module.bottom_folders: ax.set_xlabel(trait['label'], fontsize=fslabel)
                 dif = dfts[folder['control']][trait['name'] + 'median'].values[0]/dfts[folder['treatment']][trait['name'] + 'median'].values[0]
-                if ('Grain' in trait['name']) or ('BD' in trait['name']): dif = 1.0/dif
+                if 'Sensitivity' in dftraits.loc[trait, 'label']: dif = 1.0/dif
                 if '6' in trait: dif = 1.0/dif
                 color = dif_color(dif)
                 for b, namebin, namebinsd in zip(trait['binslist'], trait['namebins_list'], trait['namebinsds_list']):

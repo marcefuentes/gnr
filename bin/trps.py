@@ -23,14 +23,14 @@ alpha = 0.5
 R1 = 2.0
 R2 = 2.0
 
-aCs = [0.3, 0.4, 0.5]
-aDs = [0.2, 0.3, 0.4]
+aCs = [0.3, 0.5]
+aDs = [0.2, 0.4]
 log_ess = np.linspace(-5, 5, num=11) if sys.argv[1] == 'ces' else np.linspace(-10, 0, num=11)
 ess = pow(2, log_ess)
 givens = np.linspace(1.0, 0.0, num=11)
 titles = []
 for aC, aD in zip(aCs, aDs): 
-    titles.append('$\it{T}$, $\it{R}$, $\it{P}$, $\it{S}$\nfor $\it{a}$ = {' + str(aD) + ', ' + str(aC) + '}')
+    titles.append('$\it{a}$ = {' + str(aD) + ', ' + str(aC) + '}')
 letters = ['a', 'b', 'c']
 
 def fitness(q1, q2, rho):
@@ -62,10 +62,10 @@ for ax, title, letter, aC, aD in zip(axs, titles, letters, aCs, aDs):
             S = wC0 = fitness(q1C, R2*(aC*(1.0-given) + aD*given), rho)
             trpss = np.linspace(log_es-0.3, log_es+0.3, num=4)
             [x.append(pow(2, trps)) for trps in trpss]
-            y.append(given + (T-1.0)/20.0)
-            y.append(given + (R-1.0)/20.0)
-            y.append(given + (P-1.0)/20.0)
-            y.append(given + (S-1.0)/20.0)
+            y.append(given + (T-0.8)/6.0)
+            y.append(given + (R-0.8)/6.0)
+            y.append(given + (P-0.8)/6.0)
+            y.append(given + (S-0.8)/6.0)
             shift = shiftconstant*(S-P)
             if (T<R) and (P<S):
                 # rgb = (0.5-shift, 0.5+shift, 0.5+shift)
@@ -76,12 +76,12 @@ for ax, title, letter, aC, aD in zip(axs, titles, letters, aCs, aDs):
                 else:
                     rgb = (1.0, 0.0, 0.5)
                     # rgb = (0.5-shift, 0.5+shift, 0.5+shift)
-            ax.plot(x, y, color=rgb)
+            ax.plot(x, y, color=rgb, marker='o', markerfacecolor='white', linewidth=1.0, markersize=3)
             ax.set_title(title, pad=10.0, fontsize=fstitle)
             ax.tick_params(axis='x', labelsize=fstick)
             ax.tick_params(axis='y', labelsize=fstick)
             ax.set_xlim(pow(2, -5.5), pow(2, 5.5))
-            ax.set_ylim(-0.05, 1.05)
+            ax.set_ylim(-0.08, 1.08)
             ax.set_xscale('log', base=2)
             ax.set_box_aspect(1)
             ax.text(0.01, 1.1, letter, fontsize=18, weight='bold')

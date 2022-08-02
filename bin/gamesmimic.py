@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sys
 
-filename = f'wcwdmimic{sys.argv[1]}.png'
+filename = f'gamesmimic{sys.argv[1]}.png'
 
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42

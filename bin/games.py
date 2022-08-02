@@ -77,7 +77,7 @@ for aC, aD, size, color, edgecolor in zip(aCs, aDs, sizes, colors, edgecolors):
                     rgb_edge = rgb # Prisoner's dilemma
             color.append(rgb)
             edgecolor.append(rgb_edge)
-            size.append(2000.0*abs(R-S))
+            size.append(2000.0*abs(R-P))
 
 fig, axs = plt.subplots(nrows=1, ncols=len(aCs), sharey=True, figsize=(5.0*len(aCs) + 1.0, height), constrained_layout=False, squeeze=False)
 axs = axs.flatten()

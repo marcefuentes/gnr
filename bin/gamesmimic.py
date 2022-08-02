@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sys
 
-filename = f'games{sys.argv[1]}.png'
+filename = f'wcwdmimic{sys.argv[1]}.png'
 
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
@@ -25,12 +25,15 @@ R2 = 2.0
 
 aCs = [0.3, 0.5]
 aDs = [0.2, 0.4]
+fr = 0.1
+fc = 0.0
+fd = 1.0 - fr - fc
 ess = np.linspace(-5, 5, num=11) if sys.argv[1] == 'ces' else np.linspace(-10, 0, num=11)
 ess = pow(2, ess)
 givens = np.linspace(1.0, 0.0, num=11)
 titles = []
 for aC, aD in zip(aCs, aDs): 
-    titles.append('$\it{T}$, $\it{R}$, $\it{P}$, $\it{S}$\nfor $\it{a}$ = {' + str(aD) + ', ' + str(aC) + '}')
+    titles.append('$\it{R}$ - $\it{P}$\nfor $\it{a}$ = {' + str(aD) + ', ' + str(aC) + '}')
 letters = ['a', 'b', 'c']
 
 def fitness(q1, q2, rho):
@@ -63,21 +66,17 @@ for aC, aD, size, color, edgecolor in zip(aCs, aDs, sizes, colors, edgecolors):
         for given in givens:
             T = wD1 = fitness(q1D, R2*(aD*(1.0-given) + aC*given), rho)
             S = wC0 = fitness(q1C, R2*(aC*(1.0-given) + aD*given), rho)
-            shift = shiftconstant*(T-R)
-            if (T<R) and (P<S):
-                #rgb_edge = (0.97, 0.97, 0.97) # No dilemma
-                #rgb = (0.97, 0.97, 0.97)
-                rgb = (0.5-shift, 0.5+shift, 0.5+shift)
-                rgb_edge = rgb # Prisoner's dilemma
+            wcwd0 = R*fc + S*(1.0-fc) - P*(1.0-fc) - T*fc
+            wr = R*(fr+fc) + S*fd/64.0 + P*fd*63.0/64.0
+            wc = R*(fr+fc) + S*fd
+            wd = P*fd + T*fc + T*fr/64.0 + P*fr*63.0/64.0
+            if wr > wd:
+                rgb = (0.2, 1.0, 0.0)
             else:
-                rgb = (0.5-shift, 0.5+shift, 0.5+shift)
-                if (T>R) and (P<S):
-                    rgb_edge = (0.0, 1.0, 1.0) # Snowdrift
-                else:
-                    rgb_edge = rgb # Prisoner's dilemma
+                rgb = (0.8, 0.8, 0.8)
             color.append(rgb)
-            edgecolor.append(rgb_edge)
-            size.append(2000.0*abs(R-S))
+            edgecolor.append(rgb)
+            size.append(2000.0*abs(wr - wd))
 
 fig, axs = plt.subplots(nrows=1, ncols=len(aCs), sharey=True, figsize=(5.0*len(aCs) + 1.0, height), constrained_layout=False, squeeze=False)
 axs = axs.flatten()

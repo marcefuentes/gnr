@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sys
 
-filename = f'trps{sys.argv[1]}.png'
+filename = f'tr{sys.argv[1]}.png'
 
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
@@ -23,7 +23,7 @@ alpha = 0.5
 R1 = 2.0
 R2 = 2.0
 
-aCs = [0.46, 0.50]
+aCs = [0.50, 0.50]
 aDs = [0.45, 0.49]
 log_ess = np.linspace(-5, 5, num=11) if sys.argv[1] == 'ces' else np.linspace(-10, 0, num=11)
 ess = pow(2, log_ess)

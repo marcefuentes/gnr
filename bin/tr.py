@@ -14,15 +14,13 @@ height = 6.0
 fslabel = 26
 fstitle= 24
 fstick = 16    
-shiftconstant = 5.0 # Micromutations
-shiftconstant = 0.7 # Macromutations
 
 # Parameters
 
 alpha = 0.5
 R1 = 2.0
 R2 = 2.0
-mutationsize = 0.0078125*2
+mutationsize = 0.0078125
 
 #log_ess = np.linspace(-5, 5, num=11) if sys.argv[1] == 'ces' else np.linspace(-10, 0, num=11)
 log_ess = np.linspace(-3, -3, num=1) if sys.argv[1] == 'ces' else np.linspace(-10, 0, num=11)
@@ -62,12 +60,15 @@ for ax, title, letter in zip(axs, titles, letters):
                     T = wD1 = fitness(q1D, R2*(aD*(1.0-given) + aC*given), rho)
                     S = wC0 = fitness(q1C, R2*(aC*(1.0-given) + aD*given), rho)
                     if (T<R) and (P<S):
-                        rgb = (0.5, 0.0, 1.0) # No dilemma
+                        #rgb = (0.5, 0.0, 1.0)
+                        rgb = (0.2+(T-R)/2.0, 0.2, 0.3+(P-S)/2.0) # No dilemma
                     else:
                         if (T>R) and (P<S):
-                            rgb = (0.0, 1.0, 0.0) # Snowdrift
+                            #rgb = (0.0, 0.1, 0.0)
+                            rgb = (0.2+(T-R)/2.0, 0.6, 0.3+(P-S)/2.0) # Snowdrift
                         else:
-                            rgb = (1.0, 0.0, 0.5) # Prisoner's dilemma
+                            #rgb = (1.0, 0.0, 0.5)
+                            rgb = (0.2+(T-R)/2.0, 0.2, 0.3+(P-S)/2.0) # Prisoner's dilemma
                     ax.plot(aC, aD, color=rgb, marker='o', markerfacecolor=rgb, markersize=3)
                     #ax.set_title(title, pad=10.0, fontsize=fstitle)
                     #ax.tick_params(axis='x', labelsize=fstick)

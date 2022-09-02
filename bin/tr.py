@@ -23,10 +23,10 @@ R2 = 2.0
 mutationsize = 0.0078125
 
 #log_ess = np.linspace(-5, 5, num=11) if sys.argv[1] == 'ces' else np.linspace(-10, 0, num=11)
-log_ess = np.linspace(-3, -3, num=1) if sys.argv[1] == 'ces' else np.linspace(-10, 0, num=11)
+log_ess = np.linspace(0, 0, num=1) if sys.argv[1] == 'ces' else np.linspace(-10, 0, num=11)
 ess = pow(2, log_ess)
 #givens = np.linspace(1.0, 0.0, num=11)
-givens = [ 0.7 ]
+givens = [ 1.0 ]
 titles = ['T - R', 'P - S']
 letters = ['a', 'b', 'c']
 
@@ -59,17 +59,24 @@ for ax, title, letter in zip(axs, titles, letters):
                     P = wD0 = fitness(q1D, R2*aD, rho)
                     T = wD1 = fitness(q1D, R2*(aD*(1.0-given) + aC*given), rho)
                     S = wC0 = fitness(q1C, R2*(aC*(1.0-given) + aD*given), rho)
+                    if R>P:
+                        red = 1.0/(1.0 + math.exp((T-R-0.4)*10.0))
+                        blue = 1.0/(1.0 + math.exp((P-S-0.4)*10.0))
+                    else:
+                        red = 1.0/(1.0 + math.exp(-(T-R-0.4)*10.0))
+                        blue = 1.0/(1.0 + math.exp(-(P-S-0.4)*10.0))
+                    rgb = (red, 0.9, blue) # No dilemma
                     if (T<R) and (P<S):
                         #rgb = (0.5, 0.0, 1.0)
-                        rgb = (0.2+(T-R)/2.0, 0.2, 0.3+(P-S)/2.0) # No dilemma
+                        rgb = (red, 0.9, blue) # No dilemma
                     else:
                         if (T>R) and (P<S):
                             #rgb = (0.0, 0.1, 0.0)
-                            rgb = (0.2+(T-R)/2.0, 0.6, 0.3+(P-S)/2.0) # Snowdrift
+                            rgb = (red, 0.9, blue) # Snowdrift
                         else:
                             #rgb = (1.0, 0.0, 0.5)
-                            rgb = (0.2+(T-R)/2.0, 0.2, 0.3+(P-S)/2.0) # Prisoner's dilemma
-                    ax.plot(aC, aD, color=rgb, marker='o', markerfacecolor=rgb, markersize=3)
+                            rgb = (red, 0.9, blue) # Prisoner's dilemma
+                    ax.plot(aC, aD, color=rgb, marker='o', markerfacecolor=rgb, markersize=math.fabs((R-P)*1.0))
                     #ax.set_title(title, pad=10.0, fontsize=fstitle)
                     #ax.tick_params(axis='x', labelsize=fstick)
                     #ax.tick_params(axis='y', labelsize=fstick)

@@ -19,13 +19,13 @@ fsnumbers= 24
 alpha = 0.5
 R1 = 2.0
 R2 = 2.0
-mutationsize = 0.0078125
+npoints = 50
 
 log_ess = np.linspace(-5, 5, num=11) if sys.argv[1] == 'ces' else np.linspace(-10, 0, num=11)
 ess = pow(2, log_ess)
 givens = np.linspace(1.0, 0.0, num=11)
-x = np.linspace(mutationsize, 1.0 - mutationsize, num = 128)
-y = np.linspace(1.0 - mutationsize, mutationsize, num = 128)
+x = np.linspace(1/(npoints + 1), 1.0 - 1/(npoints + 1), num = npoints)
+y = np.linspace(1.0 - 1/(npoints + 1), 1/(npoints + 1), num = npoints)
 X, Y = np.meshgrid(x, y)
 
 def fitness(x, y, given, rho):
@@ -40,8 +40,8 @@ def fitness(x, y, given, rho):
             w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
     return w
 
-fig, axs = plt.subplots(nrows=11, ncols=11, figsize=(14.0, 14.0), constrained_layout=True)
-fig.supxlabel('Substitutability of $\it{A}$', fontsize=fslabel)
+fig, axs = plt.subplots(nrows=11, ncols=11, figsize=(14.0, 14.0), constrained_layout=False)
+fig.supxlabel('Substitutability of $\it{A}$', fontsize=fslabel, x=0.513)
 fig.supylabel('Partner\'s share of $\it{A}$', fontsize=fslabel)
 
 for row, given in zip(axs, givens):
@@ -51,7 +51,7 @@ for row, given in zip(axs, givens):
         nZ = Z
         nZ[np.argmax(Z, axis=0), np.arange(Z.shape[1])] = 2
         ax.imshow(nZ, vmin=0, vmax=2)
-        ax.set(xticks=[], yticks=[])
+        ax.set(xticks=[], yticks=[], xlim=(0, npoints-2), ylim=(npoints-2, 0))
         #ax.set_box_aspect(1)
         #ax.text(0.01, 1.1, letter, fontsize=18, weight='bold')
         if given == 0.0:

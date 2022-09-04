@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import math
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
@@ -19,7 +18,7 @@ fsnumbers= 24
 alpha = 0.5
 R1 = 2.0
 R2 = 2.0
-npoints = 50
+npoints = 32
 
 log_ess = np.linspace(-5, 5, num=11) if sys.argv[1] == 'ces' else np.linspace(-10, 0, num=11)
 ess = pow(2, log_ess)

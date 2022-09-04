@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
-import glob
-import math
+from glob import glob
+from math import log
 import os
 import sys
 import time
@@ -183,10 +183,10 @@ class BarsAll:
                             ax.set(xticks=[], yticks=[], ylim=[0, module.ylim])
                             ax.set_box_aspect(1)
                     if (trait['name'] == module.top_traits[0]) & (column == 0):
-                        y = '$2^{{{}}}$'.format(round(math.log(innerrow, 2))) if dfglos.loc[module.glos['y'], 'log'] else innerrow
+                        y = '$2^{{{}}}$'.format(round(log(innerrow, 2))) if dfglos.loc[module.glos['y'], 'log'] else innerrow
                         ax.set_ylabel(y, rotation='horizontal', horizontalalignment='right', verticalalignment='center')
                     if row == len(self.innerrows) - 1:
-                        x = '$2^{{{}}}$'.format(round(math.log(innercol, 2))) if dfglos.loc[module.glos['x'], 'log'] else innercol
+                        x = '$2^{{{}}}$'.format(round(log(innercol, 2))) if dfglos.loc[module.glos['x'], 'log'] else innercol
                         ax.set_xlabel(x)
 
         plt.savefig(outfile, dpi=100)
@@ -280,10 +280,10 @@ class ScatterAll:
                         ax.tick_params(axis='y', labelsize=fstick)
                         ax.set(xticks=[], yticks=[])
                         if (nc == 0) & (column == 0):
-                            y = '$2^{{{}}}$'.format(round(math.log(innerrow, 2))) if dfglos.loc[module.glos['y'], 'log'] else innerrow
+                            y = '$2^{{{}}}$'.format(round(log(innerrow, 2))) if dfglos.loc[module.glos['y'], 'log'] else innerrow
                             ax.set_ylabel(y, rotation='horizontal', horizontalalignment='right', verticalalignment='center')
                         if (nr == 1) & (row == len(self.innerrows) - 1):
-                            x = '$2^{{{}}}$'.format(round(math.log(innercol, 2))) if dfglos.loc[module.glos['x'], 'log'] else innercol
+                            x = '$2^{{{}}}$'.format(round(log(innercol, 2))) if dfglos.loc[module.glos['x'], 'log'] else innercol
                             ax.set_xlabel(x)
                         ax.set_box_aspect(1)
 
@@ -370,7 +370,7 @@ else:
 
 dfs = {}
 for folder in folderlist:
-    dfs[folder] = pd.concat(map(pd.read_csv, glob.glob(os.path.join(folder, extension))), ignore_index=True)
+    dfs[folder] = pd.concat(map(pd.read_csv, glob(os.path.join(folder, extension))), ignore_index=True)
 
 if 'one' in module.ftype:
     glovalue_x = float(str(f"{pow(2, int(module.glovalue['x'])):.6f}")) if dfglos.loc[module.glos['x'], 'log'] else module.glovalue['x'] 

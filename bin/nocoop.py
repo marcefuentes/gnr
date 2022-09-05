@@ -146,8 +146,8 @@ class BarsAll:
         fig = plt.figure(figsize=(width*2.0, height+0.5))
         hs=-0.5900
         ws=0.0
-        fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], y=0.00, fontsize=fslabel)
-        fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.02, fontsize=fslabel, ha='center')
+        fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], x=0.51, y=0.00, fontsize=fslabel)
+        fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.04, fontsize=fslabel, ha='center')
 
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
 
@@ -173,6 +173,7 @@ class BarsAll:
                     ax.set_xlabel(labelx, fontsize=fstick)
                 if log_es == -5:
                     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
+        fig.text(0.125, 0.85, 'a', fontsize=20, weight='bold')
 
         innergrid = outergrids[1].subgridspec(nrows=len(self.innerrows), ncols=len(self.innercols), wspace=ws, hspace=hs)
         axs = innergrid.subplots()
@@ -197,6 +198,7 @@ class BarsAll:
                 if row == len(self.innerrows) - 1:
                     x = '$2^{{{}}}$'.format(round(log(innercol, 2))) if dfglos.loc[module.glos['x'], 'log'] else innercol
                     ax.set_xlabel(x, fontsize=fstick)
+        fig.text(0.53, 0.85, 'b', fontsize=20, weight='bold')
 
         plt.savefig(outfile, dpi=100)
         plt.close()

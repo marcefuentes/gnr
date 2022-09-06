@@ -142,18 +142,21 @@ class BarsAll:
 
     def chart(self, dfts):
  
-        fig = plt.figure(figsize=(width*2.0+1.2, height+0.5))
-        hs=-0.5300
         ws=0.0
-        fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], x=0.51, y=0.00, fontsize=fslabel)
+        hs=0.0
+        to=0.85
+        bo=0.16
+
+        fig = plt.figure(figsize=(width*2.0-0.8, height))
         fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.04, fontsize=fslabel, ha='center')
+        fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], x=0.51, y=0.00, fontsize=fslabel)
 
         if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=fstick, color='grey', ha='right')
 
         outergrids = fig.add_gridspec(nrows=1, ncols=2, wspace=0.1)
 
-        innergrid = outergrids[0].subgridspec(nrows=len(self.innerrows), ncols=len(self.innercols), wspace=ws, hspace=hs)
-        plt.subplots_adjust(hspace=0.0, wspace=0.0)
+        innergrid = outergrids[0].subgridspec(nrows=len(self.innerrows), ncols=len(self.innercols))
+        plt.subplots_adjust(hspace=hs, wspace=ws, top=to, bottom=bo)
         axs = innergrid.subplots()
         axs[0, int(len(self.innercols)/2)].set_title('Fitness', pad=1.0, fontsize=fslabel) # Prints the title of the middle column. Bad if there are even columns
         
@@ -166,13 +169,15 @@ class BarsAll:
                 yaxis = a2maxw(given, rho)*npoints
                 ax.plot(xaxis, yaxis, color='white')
                 ax.set(xticks=[], yticks=[], xlim=(0, npoints-1), ylim=(npoints-1, 0))
+                ax.set_box_aspect(1)
                 if given == 0.0:
                     ax.set_xlabel(round(log_es), fontsize=fstick)
                 if log_es == -5:
                     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
         fig.text(0.125, 0.86, 'a', fontsize=fslabel, weight='bold')
 
-        innergrid = outergrids[1].subgridspec(nrows=len(self.innerrows), ncols=len(self.innercols), wspace=ws, hspace=hs)
+        innergrid = outergrids[1].subgridspec(nrows=len(self.innerrows), ncols=len(self.innercols))
+        plt.subplots_adjust(hspace=hs, wspace=ws, top=to, bottom=bo)
         axs = innergrid.subplots()
         trait = self.traits[0]
         axs[0, int(len(self.innercols)/2)].set_title(trait['title'], pad=1.0, fontsize=fslabel) # Prints the title of the middle column. Bad if there are even columns

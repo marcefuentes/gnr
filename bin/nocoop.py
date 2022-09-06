@@ -142,9 +142,8 @@ class BarsAll:
 
     def chart(self, dfts):
  
-        fig = plt.figure(figsize=(width*2.0, height+0.5))
-        #hs=-0.5900
-        hs=0.0
+        fig = plt.figure(figsize=(width*2.0+1.2, height+0.5))
+        hs=-0.5300
         ws=0.0
         fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], x=0.51, y=0.00, fontsize=fslabel)
         fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.04, fontsize=fslabel, ha='center')
@@ -171,7 +170,7 @@ class BarsAll:
                     ax.set_xlabel(round(log_es), fontsize=fstick)
                 if log_es == -5:
                     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
-        fig.text(0.125, 0.85, 'a', fontsize=fslabel, weight='bold')
+        fig.text(0.125, 0.86, 'a', fontsize=fslabel, weight='bold')
 
         innergrid = outergrids[1].subgridspec(nrows=len(self.innerrows), ncols=len(self.innercols), wspace=ws, hspace=hs)
         axs = innergrid.subplots()
@@ -195,7 +194,7 @@ class BarsAll:
                 if row == len(self.innerrows) - 1:
                     xlabel = round(log(innercol, 2)) if dfglos.loc[module.glos['x'], 'log'] else innercol
                     ax.set_xlabel(xlabel, fontsize=fstick)
-        fig.text(0.53, 0.85, 'b', fontsize=fslabel, weight='bold')
+        fig.text(0.53, 0.86, 'b', fontsize=fslabel, weight='bold')
 
         plt.savefig(outfile, dpi=100)
         plt.close()

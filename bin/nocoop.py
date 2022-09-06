@@ -143,7 +143,8 @@ class BarsAll:
     def chart(self, dfts):
  
         fig = plt.figure(figsize=(width*2.0, height+0.5))
-        hs=-0.5900
+        #hs=-0.5900
+        hs=0.0
         ws=0.0
         fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], x=0.51, y=0.00, fontsize=fslabel)
         fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.04, fontsize=fslabel, ha='center')
@@ -153,6 +154,7 @@ class BarsAll:
         outergrids = fig.add_gridspec(nrows=1, ncols=2, wspace=0.1)
 
         innergrid = outergrids[0].subgridspec(nrows=len(self.innerrows), ncols=len(self.innercols), wspace=ws, hspace=hs)
+        plt.subplots_adjust(hspace=0.0, wspace=0.0)
         axs = innergrid.subplots()
         axs[0, int(len(self.innercols)/2)].set_title('Fitness', pad=1.0, fontsize=fslabel) # Prints the title of the middle column. Bad if there are even columns
         
@@ -160,8 +162,7 @@ class BarsAll:
             for ax, es, log_es in zip(row, ess, log_ess):
                 rho = 1.0 - 1.0/es if module.ic == 'ces' else es
                 Z = fitness(X, Y, given, rho)
-                nZ = Z
-                ax.imshow(nZ, vmin=0, vmax=2)
+                ax.imshow(Z, vmin=0, vmax=2)
                 xaxis = a2partner*npoints
                 yaxis = a2maxw(given, rho)*npoints
                 ax.plot(xaxis, yaxis, color='white')
@@ -180,18 +181,17 @@ class BarsAll:
 
         for row, (rowax, innerrow) in enumerate(zip(axs, self.innerrows)): 
             for column, (ax, innercol) in enumerate(zip(rowax, self.innercols)):
-                #medians = []
-                #[medians.append(d.loc[(d[module.glos['x']] == innercol) & (d[module.glos['y']] == innerrow), trait['name'] + 'median'].values[0]) for d in ds]
-                #dif = medians[0]/medians[1]
-                dif = 0.5
+                medians = []
+                [medians.append(d.loc[(d[module.glos['x']] == innercol) & (d[module.glos['y']] == innerrow), trait['name'] + 'median'].values[0]) for d in ds]
+                dif = medians[0]/medians[1] + 0.05
+                #dif = 0.5
                 if 'Sensitivity' in trait['title']: dif = 1.0/dif
                 self.colors[1] = dif_color(dif)
-                for d, color, alpha in zip(ds, self.colors, self.alphas):
-                    for b, name0, name1 in zip(self.bins[::2], trait['namebins_list'][::2], trait['namebins_list'][1::2]):
-                        barheight=d.loc[(d[module.glos['x']] == innercol) & (d[module.glos['y']] == innerrow), name0] + d.loc[(d[module.glos['x']] == innercol) & (d[module.glos['y']] == innerrow), name1]
-                        ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=self.barwidth, alpha=alpha)
-                        ax.set(xticks=[], yticks=[], xlim=[0.0005, 1.0], ylim=[0, module.ylim])
-                        ax.set_box_aspect(1)
+                for b, name0, name1 in zip(self.bins[::2], trait['namebins_list'][::2], trait['namebins_list'][1::2]):
+                    barheight=ds[1].loc[(ds[1][module.glos['x']] == innercol) & (ds[1][module.glos['y']] == innerrow), name0] + ds[1].loc[(ds[1][module.glos['x']] == innercol) & (ds[1][module.glos['y']] == innerrow), name1]
+                    ax.bar(x=b, height=barheight, align='edge', color=self.colors[1], linewidth=0, width=self.barwidth)
+                    ax.set(xticks=[], yticks=[], xlim=[0, 1], ylim=[0, module.ylim])
+                    ax.set_box_aspect(1)
                 if row == len(self.innerrows) - 1:
                     xlabel = round(log(innercol, 2)) if dfglos.loc[module.glos['x'], 'log'] else innercol
                     ax.set_xlabel(xlabel, fontsize=fstick)

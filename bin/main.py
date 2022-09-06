@@ -2,6 +2,7 @@
 
 from glob import glob
 from math import log
+import numpy as np
 import os
 import sys
 import time
@@ -32,7 +33,7 @@ blue = 0.97
 letter = ('a', 'b', 'c', 'd', 'e', 'f')
 
 dfglos = pd.DataFrame(
-    [('ES', 'Substitutability of $\it{A}$', True, pow(2, -5.5), None), 
+    [('ES', 'Substitutability of $\it{A}$', True, None), 
     ('alpha', 'Substitutability of $\it{A}$', True, None, None), 
     ('Given', 'Partner\'s share of $\it{A}$', False, None, None),
     ('ChooseCost', 'Cost of comparing potential partners', True, None, None),
@@ -98,13 +99,16 @@ class Bubbles:
             for ax, trait, folder in zip(rowax, traits, folders):
                 df = dfts[folder['treatment']]
                 x = df[module.glos['x']]
+                if dfglos.loc[module.glos['x'], 'log']: x = x.apply(lambda i: log(i, 2))
                 y = df[module.glos['y']]
                 #if traits == module.top_traits: ax.set_title(dftraits.loc[trait, 'label'], pad=10.0, fontsize=fslabel)
                 ax.set_title(dftraits.loc[trait, 'label'], pad=10.0, fontsize=fslabel)
                 ax.tick_params(axis='x', labelsize=fstick)
                 ax.tick_params(axis='y', labelsize=fstick)
-                if dfglos.loc[module.glos['x'], 'log']: ax.set_xscale('log', base=2)
-                if dfglos.loc[module.glos['y'], 'log']: ax.set_yscale('log', base=2)
+                ax.set_xticks([-5, 0, 5])
+                ax.set_xticklabels([-5, 0, 5])
+                #if dfglos.loc[module.glos['x'], 'log']: ax.set_xscale('log', base=2)
+                #if dfglos.loc[module.glos['y'], 'log']: ax.set_yscale('log', base=2)
                 s = df[trait]
                 difs = dfts[folder['control']][trait]/s
                 if 'Sensitivity' in dftraits.loc[trait, 'label']: difs = 1.0/difs
@@ -116,7 +120,7 @@ class Bubbles:
                     ax.set_xlim(self.glosx_min, self.glosx_max)
                     ax.set_ylim(self.glosy_min, self.glosy_max)
                     ax.set_box_aspect(1)
-                ax.text(0.01, 1.1, letter[count], fontsize=fslabel, weight='bold')
+                ax.text(-6.6, 1.09, letter[count], fontsize=fslabel, weight='bold')
                 count = count + 1
 
         plt.savefig(outfile, transparent=False)

@@ -24,8 +24,7 @@ plt.rcParams['ps.fonttype'] = 42
 height = 6.0*len(module.folders)
 width = 6.0*len(module.top_traits)
 fslabel = 26 # Label font size
-fstitle= 24 # Title font size
-fstick = 16 # Tick font size
+fstick = 18 # Tick font size
 red = 0.97
 green = 0.97
 blue = 0.97
@@ -90,7 +89,7 @@ class Bubbles:
         fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], y=0.02, x=0.513, fontsize=fslabel)
         fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.06, fontsize=fslabel, ha='center')
 
-        if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
+        if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=fstick, color='grey', ha='right')
 
         [dfts[folder].sort_values(by=[module.glos['x'], module.glos['y']], inplace=True) for folder in folderlist]
 
@@ -100,8 +99,8 @@ class Bubbles:
                 df = dfts[folder['treatment']]
                 x = df[module.glos['x']]
                 y = df[module.glos['y']]
-                #if traits == module.top_traits: ax.set_title(dftraits.loc[trait, 'label'], pad=10.0, fontsize=fstitle)
-                ax.set_title(dftraits.loc[trait, 'label'], pad=10.0, fontsize=fstitle)
+                #if traits == module.top_traits: ax.set_title(dftraits.loc[trait, 'label'], pad=10.0, fontsize=fslabel)
+                ax.set_title(dftraits.loc[trait, 'label'], pad=10.0, fontsize=fslabel)
                 ax.tick_params(axis='x', labelsize=fstick)
                 ax.tick_params(axis='y', labelsize=fstick)
                 if dfglos.loc[module.glos['x'], 'log']: ax.set_xscale('log', base=2)
@@ -117,7 +116,7 @@ class Bubbles:
                     ax.set_xlim(self.glosx_min, self.glosx_max)
                     ax.set_ylim(self.glosy_min, self.glosy_max)
                     ax.set_box_aspect(1)
-                ax.text(0.01, 1.1, letter[count], fontsize=18, weight='bold')
+                ax.text(0.01, 1.1, letter[count], fontsize=fslabel, weight='bold')
                 count = count + 1
 
         plt.savefig(outfile, transparent=False)
@@ -158,7 +157,7 @@ class BarsAll:
         fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], y=0.00, fontsize=fslabel)
         fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.003*width, fontsize=fslabel, ha='center')
 
-        if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
+        if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=fstick, color='grey', ha='right')
 
         outergrids = fig.add_gridspec(nrows=1, ncols=len(module.top_traits), wspace=0.1)
 
@@ -212,7 +211,7 @@ class BarsOne:
 
         fig, axs = plt.subplots(nrows=len(module.folders), ncols=len(module.top_traits), figsize=(width, height), sharey=True, constrained_layout=False, squeeze=False)
         fig.supylabel('Frequency', fontsize=fslabel, ha='center')
-        if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
+        if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=fstick, color='grey', ha='right')
 
         for rowax, folders in zip(axs, module.folders):
             for ax, trait, folder in zip(rowax, self.traits, folders):
@@ -257,7 +256,7 @@ class ScatterAll:
         fig = plt.figure(figsize=(width + 0.0, height))
         fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], y=0.00, fontsize=fslabel)
         fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.003*width, fontsize=fslabel, ha='center')
-        if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
+        if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=fstick, color='grey', ha='right')
         outer_grid = fig.add_gridspec(nrows=len(module.folders), ncols=len(module.top_traits), hspace=0.1, wspace=0.1)
 
         for nr, row in enumerate(module.folders):
@@ -303,7 +302,7 @@ class ScatterOne:
     def chart(self, dfts):
 
         fig, axs = plt.subplots(nrows=len(module.folders), ncols=len(module.top_traits), figsize=(width, height), constrained_layout=False, squeeze=False)
-        if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
+        if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=fstick, color='grey', ha='right')
 
         for rowax, row in zip(axs, module.folders):
             dft = dfts[row]

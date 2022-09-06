@@ -25,8 +25,7 @@ plt.rcParams['ps.fonttype'] = 42
 height = 6.0*len(module.folders)
 width = 6.0*len(module.top_traits)
 fslabel = 26 # Label font size
-fstitle= 24 # Title font size
-fstick = 14 # Tick font size
+fstick = 18 # Tick font size
 red = 0.97
 green = 0.97
 blue = 0.97
@@ -149,7 +148,7 @@ class BarsAll:
         fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], x=0.51, y=0.00, fontsize=fslabel)
         fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.04, fontsize=fslabel, ha='center')
 
-        if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=14, color='grey', ha='right')
+        if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=fstick, color='grey', ha='right')
 
         outergrids = fig.add_gridspec(nrows=1, ncols=2, wspace=0.1)
 
@@ -162,18 +161,16 @@ class BarsAll:
                 rho = 1.0 - 1.0/es if module.ic == 'ces' else es
                 Z = fitness(X, Y, given, rho)
                 nZ = Z
-                #nZ[np.argmax(Z, axis=0), np.arange(Z.shape[1])] = 2
                 ax.imshow(nZ, vmin=0, vmax=2)
                 xaxis = a2partner*npoints
                 yaxis = a2maxw(given, rho)*npoints
                 ax.plot(xaxis, yaxis, color='white')
                 ax.set(xticks=[], yticks=[], xlim=(0, npoints-1), ylim=(npoints-1, 0))
                 if given == 0.0:
-                    labelx = '$2^{{{}}}$'.format(round(log_es))
-                    ax.set_xlabel(labelx, fontsize=fstick)
+                    ax.set_xlabel(round(log_es), fontsize=fstick)
                 if log_es == -5:
                     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
-        fig.text(0.125, 0.85, 'a', fontsize=20, weight='bold')
+        fig.text(0.125, 0.85, 'a', fontsize=fslabel, weight='bold')
 
         innergrid = outergrids[1].subgridspec(nrows=len(self.innerrows), ncols=len(self.innercols), wspace=ws, hspace=hs)
         axs = innergrid.subplots()
@@ -196,9 +193,9 @@ class BarsAll:
                         ax.set(xticks=[], yticks=[], xlim=[0.0005, 1.0], ylim=[0, module.ylim])
                         ax.set_box_aspect(1)
                 if row == len(self.innerrows) - 1:
-                    x = '$2^{{{}}}$'.format(round(log(innercol, 2))) if dfglos.loc[module.glos['x'], 'log'] else innercol
-                    ax.set_xlabel(x, fontsize=fstick)
-        fig.text(0.53, 0.85, 'b', fontsize=20, weight='bold')
+                    xlabel = round(log(innercol, 2)) if dfglos.loc[module.glos['x'], 'log'] else innercol
+                    ax.set_xlabel(xlabel, fontsize=fstick)
+        fig.text(0.53, 0.85, 'b', fontsize=fslabel, weight='bold')
 
         plt.savefig(outfile, dpi=100)
         plt.close()

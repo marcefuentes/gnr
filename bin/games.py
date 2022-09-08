@@ -57,8 +57,8 @@ fslabel = 26 # Label font size
 fstick = 18 # Tick font size
 
 fig = plt.figure(figsize=(6, 6))
-fig.supylabel("Partner's share of $\it{A}$", x=0.03, y=0.55, fontsize=fslabel)
-fig.supxlabel("Substitutability of $\it{A}$", x=0.55, y=0.05, fontsize=fslabel)
+fig.supylabel("Partner's share of $\it{A}$", x=0.03, y=0.54, fontsize=fslabel)
+fig.supxlabel("Substitutability of $\it{A}$", x=0.553, y=0.05, fontsize=fslabel)
 
 grid = fig.add_gridspec(len(givens), len(log_ess))
 
@@ -73,11 +73,10 @@ for row, given in zip(axs, givens):
         yaxis = a2maxw(given, rho)*npoints
         ax.plot(xaxis, yaxis, color='white')
         ax.set(xticks=[], yticks=[], xlim=(0, npoints-1), ylim=(npoints-1, 0))
-        #ax.set_box_aspect(1)
-        if given == 0.0:
-            ax.set_xlabel(round(log_es), fontsize=fstick)
-        if log_es == -5:
-            ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
+for ax, log_es in zip(axs[-1, ::5], log_ess[::5]):
+    ax.set_xlabel(round(log_es), fontsize=fstick)
+for ax, given in zip(axs[::5, 0], givens[::5]):
+    ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 
 plt.savefig('games.png', dpi=100)
 plt.close()

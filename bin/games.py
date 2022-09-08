@@ -68,7 +68,7 @@ plt.subplots_adjust(hspace=0, wspace=0, bottom=0.2, left=0.2)
 for row, given in zip(axs, givens):
     for ax, rho, log_es in zip(row, rhos, log_ess):
         Z = fitness(X, Y, given, rho)
-        ax.imshow(Z, vmin=0, vmax=2)
+        ax.imshow(Z, cmap='magma', vmin=0, vmax=2)
         xaxis = a2partner*npoints
         yaxis = a2maxw(given, rho)*npoints
         ax.plot(xaxis, yaxis, color='white')

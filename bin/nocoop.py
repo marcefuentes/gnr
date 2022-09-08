@@ -46,29 +46,29 @@ dfglos = pd.DataFrame(
     columns = ['name', 'label', 'log', 'min', 'max'])
 
 dftraits = pd.DataFrame(
-    [('ChooseGrainmedian', 'Sensitivity for\nchoosing partner', 600.0),
-    ('ChooseGrain', 'Sensitivity for\nchoosing partner', 600.0),
-    ('ChooseGrain12', 'Frequency of\npartner choosers', 600.0),
-    ('MimicGrainmedian', 'Sensitivity for\nmimicking partner', 600.0),
-    ('MimicGrain', 'Sensitivity for\nmimicking partner', 600.0),
-    ('MimicGrain12', 'Frequency of\nreciprocators', 600.0),
-    ('helpmedian', 'Help', 600.0*2.00),
-    ('help', 'Help', 600.0*2.00),
-    ('a2Seenmedian', 'Effort to get $\it{A}$', 600.0),
-    ('a2Seen', 'Effort to get $\it{A}$', 600.0),
-    ('a2Seen12', 'Frequency of\ndefectors', 600.0),
-    ('a2Seen31', 'Frequency of\ncooperators', 600.0),
-    ('a2Defaultmedian', 'Default $\it{a}$', 600.0),
-    ('a2Default', 'Default $\it{a}$', 600.0),
-    ('a2Default12', 'Frequency of\ndefectors', 600.0),
-    ('a2Default31', 'Frequency of\ncooperators', 600.0),
-    ('wmedian', 'Fitness', 600.0),
-    ('w', 'Fitness', 600.0),
+    [('ChooseGrainmedian', 'Sensitivity for\nchoosing partner', 610.0, 1.0),
+    ('ChooseGrain', 'Sensitivity for\nchoosing partner', 610.0),
+    ('ChooseGrain12', 'Frequency of\npartner choosers', 610.0),
+    ('MimicGrainmedian', 'Sensitivity for\nmimicking partner', 610.0, 1.0),
+    ('MimicGrain', 'Sensitivity for\nmimicking partner', 610.0),
+    ('MimicGrain12', 'Frequency of\nreciprocators', 610.0),
+    ('helpmedian', 'Help', 610.0, 1.0),
+    ('help', 'Help', 610.0),
+    ('a2Seenmedian', 'Effort to get $\it{A}$', 610.0, 0.5),
+    ('a2Seen', 'Effort to get $\it{A}$', 610.0),
+    ('a2Seen12', 'Frequency of\ndefectors', 610.0),
+    ('a2Seen31', 'Frequency of\ncooperators', 610.0),
+    ('a2Defaultmedian', 'Default $\it{a}$', 610.0),
+    ('a2Default', 'Default $\it{a}$', 610.0),
+    ('a2Default12', 'Frequency of\ndefectors', 610.0),
+    ('a2Default31', 'Frequency of\ncooperators', 610.0),
+    ('wmedian', 'Fitness', 610.0, 1.0),
+    ('w', 'Fitness', 610.0),
     ('chose_partner', 'Frequency of\nswitching to a new partner', 2000.0),
     ('changed_a2', 'Frequency of\nchanging $\it{a}$', 2000.0),
     ('helpBD', 'Fluctuation of help', 2000.0),
     ('wBD', 'Fluctuation of fitness', 2000.0)],
-    columns = ['name', 'label', 'bubble_size'])
+    columns = ['name', 'label', 'bubble_size', 'vmax'])
 
 dfglos = dfglos.set_index('name')
 dftraits = dftraits.set_index('name')
@@ -96,13 +96,13 @@ class Bubbles:
 
         extent = 0, num, 0, num
         Z0 = a2eq(Xrhos, Ygivens)
-        axs[0, 0].imshow(Z0, extent=extent, cmap='magma')
+        axs[0, 0].imshow(Z0, extent=extent, cmap='magma', vmin=0, vmax=0.5)
 
         Z1 = Z0*R2*Ygivens
-        axs[0, 1].imshow(Z1, extent=extent, cmap='magma')
+        axs[0, 1].imshow(Z1, extent=extent, cmap='magma', vmin=0, vmax=1.0)
 
         Z1 = fitness(Z0, Xrhos, Ygivens)
-        axs[0, 2].imshow(Z1, extent=extent, cmap='magma')
+        axs[0, 2].imshow(Z1, extent=extent, cmap='magma', vmin=0, vmax=1.0)
 
         for ax, trait, folder in zip(axs[1], module.top_traits, module.top_folders):
             df = dfts[folder['treatment']]
@@ -110,16 +110,11 @@ class Bubbles:
             if dfglos.loc[module.glos['x'], 'log']: x = x.apply(lambda i: log(i, 2))
             y = df[module.glos['y']]
             s = df[trait]
-            difs = dfts[folder['control']][trait]/s
-            if 'Sensitivity' in dftraits.loc[trait, 'label']: difs = 1.0/difs
-            color = []
-            [color.append(dif_color(dif)) for dif in difs]
-            for suffix, suffixalpha in zip(['SD', ''], [0.2, 1.0]):
-                size = s + df[trait + suffix] if suffix == 'SD' else s
-                ax.scatter(x, y, c=color, ec=color, alpha=suffixalpha, s=size*dftraits.loc[trait, 'bubble_size'])
-                ax.set_xlim(self.glosx_min, self.glosx_max)
-                ax.set_ylim(self.glosy_min, self.glosy_max)
-                ax.set_box_aspect(1)
+            if 'Sensitivity' in dftraits.loc[trait, 'label']: s = 1 - s
+            ax.scatter(x, y, c=s, cmap='magma', marker='s', vmin=0, vmax=dftraits.loc[trait, 'vmax'], s=dftraits.loc[trait, 'bubble_size'])
+            ax.set_xlim(self.glosx_min, self.glosx_max)
+            ax.set_ylim(self.glosy_min, self.glosy_max)
+            ax.set_box_aspect(1)
 
         for ax, trait in zip(axs[0], module.top_traits):
             ax.set_title(dftraits.loc[trait, 'label'], pad=10.0, fontsize=fslabel)
@@ -138,7 +133,7 @@ class Bubbles:
         axs[1, 0].set_yticklabels([0.0, 0.5, 1.0], fontsize=fstick) 
         count = 0
         for ax in axs[0]:
-            ax.text(-32, 2070, letter[count], fontsize=fslabel, weight='bold')
+            ax.text(-200, 2070, letter[count], fontsize=fslabel, weight='bold')
             count += 1
         for ax in axs[1]:
             ax.text(-6.6, 1.09, letter[count], fontsize=fslabel, weight='bold')

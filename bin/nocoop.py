@@ -30,7 +30,7 @@ red = 0.97
 green = 0.97
 blue = 0.97
 
-letter = ('a', 'b', 'c', 'd', 'e', 'f')
+letters = ('a', 'b', 'c', 'd', 'e', 'f')
 
 dfglos = pd.DataFrame(
     [('ES', 'Substitutability of $\it{A}$', True, pow(2, -5.5), None), 
@@ -76,40 +76,66 @@ dftraits = dftraits.set_index('name')
 alpha = 0.5
 R1 = 2.0
 R2 = 2.0
+R = R2/R1
 a1max = 1.0
 a2max = 1.0
 b = a2max/a1max
 npoints = 32
 
 log_ess = np.linspace(-5, 5, num=11) if module.ic == 'ces' else np.linspace(-10, 0, num=11)
-ess = pow(2, log_ess)
+rhos = 1.0 - 1.0/pow(2, log_ess)
 givens = np.linspace(1.0, 0.0, num=11)
 givens[0] = 0.99999
+Xrhos, Ygivens = np.meshgrid(rhos, givens)
+
 x = np.linspace(1.0/(npoints + 1), 1.0 - 1.0/(npoints + 1), num = npoints)
 a2partner = x
 y = np.linspace(1.0 - 1.0/(npoints + 1), 1.0/(npoints + 1), num = npoints)
 X, Y = np.meshgrid(x, y)
 
-def fitness(x, y, given, rho):
-    q1 = (1.0-y)*R1
-    q2 = y*R2*(1.0-given) + x*R2*given
-    if sys.argv[1] == 'q':
-        w = 4.0*pow(q1, rho)/9.0 + 4.0*q2/9.0
-    else:
-        if rho == 0.0:
-            w = pow(q1, alpha)*pow(q2, 1.0 - alpha)
-        else:
-            w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
-    return w
+class Bubbles:
 
-def a2maxw(given, rho):
-    R = R2/R1
-    T = b*R*(1.0 - given)
-    Q = R*pow(T*(1.0 - alpha)/alpha, 1.0/(rho - 1.0))
-    a1 = Q*(b - given + a2partner*given)/(1.0 + Q*b*(1 - given))
-    a2 = a2max - b*a1
-    a2 = 1.0 - a2
-    return a2
+    def prepare(self, dfs):
+
+        self.glosx_min = None if pd.isnull(dfglos.loc[module.glos['x'], 'min']) else dfglos.loc[module.glos['x'], 'min']
+        self.glosx_max = None if pd.isnull(dfglos.loc[module.glos['x'], 'max']) else dfglos.loc[module.glos['x'], 'max']
+        self.glosy_min = None if pd.isnull(dfglos.loc[module.glos['y'], 'min']) else dfglos.loc[module.glos['y'], 'min']
+        self.glosy_max = None if pd.isnull(dfglos.loc[module.glos['y'], 'max']) else dfglos.loc[module.glos['y'], 'max']
+
+        return self
+
+    def chart(self, dfts):
+
+        fig, axs = plt.subplots(nrows=1, ncols=1, figsize=(width-1, height), sharex=True, sharey=True, constrained_layout=False, squeeze=False)
+        fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], y=0.02, x=0.513, fontsize=fslabel)
+        fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.06, fontsize=fslabel, ha='center')
+
+        axs = axs.flatten()
+        #rho = 1.0 - 1.0/es if module.ic == 'ces' else es
+        Z0 = a2eq(Xrhos, Ygivens)
+        #color=dif_color(Z0 - 0.5)
+        axs[0].imshow(Z0)
+
+        Z1 = Z0*R2*givens
+        #color=dif_color(Z1 - 0.5*givens)
+        #axs[1].scatter(log_ess, givens, s=Z1*dftraits.loc[module.traits[1], 'bubble_size'])
+
+        #Z2 = fitness(X, Y, given, rho)
+        
+        for ax, letter, trait in zip(axs, letters, module.traits):
+            fig.text(0.125, 0.86, letter, fontsize=fslabel, weight='bold')
+            #ax.set_title(dftraits.loc[trait, 'label'], pad=10.0, fontsize=fslabel)
+            ax.tick_params(axis='x', labelsize=fstick)
+            ax.tick_params(axis='y', labelsize=fstick)
+            ax.set_xticks([-5, 0, 5])
+            ax.set_xticklabels([-5, 0, 5])
+            ax.set_xlim(self.glosx_min, self.glosx_max)
+            ax.set_ylim(self.glosy_min, self.glosy_max)
+            ax.set_box_aspect(1)
+            ax.text(-6.6, 1.09, letter, fontsize=fslabel, weight='bold')
+
+        plt.savefig(outfile, transparent=False)
+        plt.close()
 
 class BarsAll:
 
@@ -161,7 +187,7 @@ class BarsAll:
         axs[0, int(len(self.innercols)/2)].set_title('Fitness', pad=1.0, fontsize=fslabel) # Prints the title of the middle column. Bad if there are even columns
         
         for row, given in zip(axs, givens):
-            for ax, es, log_es in zip(row, ess, log_ess):
+            for ax, rho, log_es in zip(row, rhos, log_ess):
                 rho = 1.0 - 1.0/es if module.ic == 'ces' else es
                 Z = fitness(X, Y, given, rho)
                 ax.imshow(Z, vmin=0, vmax=2)
@@ -204,8 +230,36 @@ class BarsAll:
         plt.savefig(outfile, dpi=100)
         plt.close()
 
+def fitness(x, y, given, rho):
+    q1 = (1.0 - y)*R1
+    q2 = y*R2*(1.0 - given) + x*R2*given
+    if sys.argv[1] == 'q':
+        w = 4.0*pow(q1, rho)/9.0 + 4.0*q2/9.0
+    else:
+        if rho == 0.0:
+            w = pow(q1, alpha)*pow(q2, 1.0 - alpha)
+        else:
+            w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
+    return w
+
+def a2maxw(given, rho):
+    T = b*R*(1.0 - given)
+    Q = R*pow(T*(1.0 - alpha)/alpha, 1.0/(rho - 1.0))
+    a1 = Q*(b - given + a2partner*given)/(1.0 + Q*b*(1 - given))
+    a2 = a2max - b*a1
+    a2 = 1.0 - a2
+    return a2
+
+def a2eq(loges, given):
+    T = b*R*(1.0 - given)
+    rho = 1.0 - 1.0/pow(2, loges)
+    Q = R*pow(T*(1.0 - alpha)/alpha, 1.0/(rho - 1.0))
+    a2 = 1.0/(1.0 + Q)
+    return a2
+
 def dif_color(dif):
-    color = (red*pow(dif,1.7), green*pow(dif,0.7), blue*pow(dif,1.7)) if dif <= 1.0 else (red*pow(dif,-1.7), green*pow(dif,-1.7), blue*pow(dif,-0.7))
+    color = (red*pow(dif,1.7), green*pow(dif,0.7), blue*pow(dif,1.7)) 
+    #color = (red*pow(dif,-1.7), green*pow(dif,-1.7), blue*pow(dif,-0.7))
     return color
 
 def create_figure(t):

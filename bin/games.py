@@ -1,98 +1,86 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 
-import math
+import time
 import matplotlib.pyplot as plt
 import numpy as np
-import sys
 
-filename = f'games{sys.argv[1]}.png'
-
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
-
-height = 6.0
-fslabel = 26
-fstitle= 24
-fstick = 16    
-shiftconstant = 5.0 # Micromutations
-shiftconstant = 0.7 # Macromutations
-
-# Parameters
+start_time = time.perf_counter ()
 
 alpha = 0.5
 R1 = 2.0
 R2 = 2.0
+R = R2/R1
+a1max = 1.0
+a2max = 1.0
+b = a2max/a1max
+npoints = 32
 
-aCs = [0.50, 0.50]
-aDs = [0.45, 0.49]
-ess = np.linspace(-5, 5, num=11) if sys.argv[1] == 'ces' else np.linspace(-10, 0, num=11)
-ess = pow(2, ess)
+log_ess = np.linspace(-5, 5, num=11)
+rhos = 1.0 - 1.0/pow(2, log_ess)
 givens = np.linspace(1.0, 0.0, num=11)
-titles = []
-for aC, aD in zip(aCs, aDs): 
-    titles.append('$\it{T}$, $\it{R}$, $\it{P}$, $\it{S}$\nfor $\it{a}$ = {' + str(aD) + ', ' + str(aC) + '}')
-letters = ['a', 'b', 'c']
+givens[0] = 0.99999
+Xrhos, Ygivens = np.meshgrid(rhos, givens)
 
-def fitness(q1, q2, rho):
-    if sys.argv[1] == 'q':
-        w = 4.0*pow(q1, rho)/9.0 + 4.0*q2/9.0
+x = np.linspace(0.001, 0.999, npoints)
+a2partner = x
+y = np.linspace(0.999, 0.001, npoints)
+X, Y = np.meshgrid(x, y)
+
+def fitness(x, y, given, rho):
+    q1 = (1.0 - y)*R1
+    q2 = y*R2*(1.0 - given) + x*R2*given
+    if rho == 0.0:
+        w = pow(q1, alpha)*pow(q2, 1.0 - alpha)
     else:
-        if rho == 0.0:
-            w = pow(q1, alpha)*pow(q2, 1.0 - alpha)
-        else:
-            w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
+        w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
     return w
 
-x = []
-y = []
-for es in ess:
-    for given in givens:
-        x.append(es)
-        y.append(given)
+def a2maxw(given, rho):
+    T = b*R*(1.0 - given)
+    Q = R*pow(T*(1.0 - alpha)/alpha, 1.0/(rho - 1.0))
+    a1 = Q*(b - given + a2partner*given)/(1.0 + Q*b*(1.0 - given))
+    a2 = a2max - b*a1
+    a2 = 1.0 - a2
+    return a2
 
-sizes = [[], []]
-colors = [[], []]
-edgecolors = [[], []]
-for aC, aD, size, color, edgecolor in zip(aCs, aDs, sizes, colors, edgecolors):
-    q1C = R1*(1.0-aC);
-    q1D = R1*(1.0-aD);
-    for es in ess:
-        rho = 1.0 - 1.0/es if sys.argv[1] == 'ces' else es
-        R = wC1 = fitness(q1C, R2*aC, rho)
-        P = wD0 = fitness(q1D, R2*aD, rho)
-        for given in givens:
-            T = wD1 = fitness(q1D, R2*(aD*(1.0-given) + aC*given), rho)
-            S = wC0 = fitness(q1C, R2*(aC*(1.0-given) + aD*given), rho)
-            shift = shiftconstant*(T-R)
-            if (T<R) and (P<S):
-                #rgb_edge = (0.97, 0.97, 0.97) # No dilemma
-                #rgb = (0.97, 0.97, 0.97)
-                rgb = (0.5-shift, 0.5+shift, 0.5+shift)
-                rgb_edge = rgb # Prisoner's dilemma
-            else:
-                rgb = (0.5-shift, 0.5+shift, 0.5+shift)
-                if (T>R) and (P<S):
-                    rgb_edge = (0.0, 1.0, 1.0) # Snowdrift
-                else:
-                    rgb_edge = rgb # Prisoner's dilemma
-            color.append(rgb)
-            edgecolor.append(rgb_edge)
-            size.append(2000.0*abs(R-P))
+def a2eq(loges, given):
+    T = b*R*(1.0 - given)
+    rho = 1.0 - 1.0/pow(2, loges)
+    Q = R*pow(T*(1.0 - alpha)/alpha, 1.0/(rho - 1.0))
+    a2 = 1.0/(1.0 + Q)
+    return a2
 
-fig, axs = plt.subplots(nrows=1, ncols=len(aCs), sharey=True, figsize=(5.0*len(aCs) + 1.0, height), constrained_layout=False, squeeze=False)
-axs = axs.flatten()
-fig.supxlabel('Substitutability of $\it{A}$', fontsize=fslabel)
-fig.supylabel('Partner\'s share of $\it{A}$', fontsize=fslabel)
+plt.rcParams['pdf.fonttype'] = 42
+plt.rcParams['ps.fonttype'] = 42
 
-for ax, size, color, edgecolor, title, letter in zip(axs, sizes, colors, edgecolors, titles, letters): 
-    ax.scatter(x=x, y=y, s=size, color=color, ec=edgecolor)
-    ax.set_title(title, pad=10.0, fontsize=fstitle)
-    ax.tick_params(axis='x', labelsize=fstick)
-    ax.tick_params(axis='y', labelsize=fstick)
-    ax.set_xscale('log', base=2)
-    ax.set_box_aspect(1)
-    ax.text(0.01, 1.1, letter, fontsize=18, weight='bold')
+fslabel = 26 # Label font size
+fstick = 18 # Tick font size
 
-fig.savefig(filename, transparent=False)
+fig = plt.figure(figsize=(6, 6))
+fig.supylabel("Partner's share of $\it{A}$", x=0.03, y=0.55, fontsize=fslabel)
+fig.supxlabel("Substitutability of $\it{A}$", x=0.55, y=0.05, fontsize=fslabel)
+
+grid = fig.add_gridspec(len(givens), len(log_ess))
+
+axs = grid.subplots()
+plt.subplots_adjust(hspace=0, wspace=0, bottom=0.2, left=0.2)
+
+for row, given in zip(axs, givens):
+    for ax, rho, log_es in zip(row, rhos, log_ess):
+        Z = fitness(X, Y, given, rho)
+        ax.imshow(Z, vmin=0, vmax=2)
+        xaxis = a2partner*npoints
+        yaxis = a2maxw(given, rho)*npoints
+        ax.plot(xaxis, yaxis, color='white')
+        ax.set(xticks=[], yticks=[], xlim=(0, npoints-1), ylim=(npoints-1, 0))
+        #ax.set_box_aspect(1)
+        if given == 0.0:
+            ax.set_xlabel(round(log_es), fontsize=fstick)
+        if log_es == -5:
+            ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
+
+plt.savefig('games.png', dpi=100)
 plt.close()
 
+end_time = time.perf_counter ()
+print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')

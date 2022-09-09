@@ -70,18 +70,18 @@ x = dfts[folders[0]]['ES']
 x = x.apply(lambda i: log(i, 2))
 y = dfts[folders[0]]['Given']
 
-fslabel = 26 # Label font size
-fstick = 18 # Tick font size
+fslabel=36 # Label font size
+fstick=24 # Tick font size
 
 fig, axs = plt.subplots(nrows=5, ncols=5, figsize=(30, 30)) # constrained_layout=False, squeeze=False
 
-fig.supxlabel('Substitutability of $\it{A}$', x=0.513, y=0.05, fontsize=fslabel*1.5)
-fig.supylabel('Partner\'s share of $\it{A}$', x=0.05, y=0.493, fontsize=fslabel*1.5, ha='center')
+fig.supxlabel('Substitutability of $\it{A}$', x=0.513, y=0.05, fontsize=fslabel*1.25)
+fig.supylabel('Partner\'s share of $\it{A}$', x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
 
 extent = 0, num, 0, num
 for ax, Z, Zmax, letter, traitlabel in zip(axs[0], Zs, Zmaxs, letters[0], traitlabels):
     ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=Zmax)
-    ax.set_title(traitlabel, pad=40.0, fontsize=fslabel)
+    ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
     ax.set_xticks([0, num/2.0, num])
     ax.set_yticks([0, num/2.0, num])
     ax.set_xticklabels([])

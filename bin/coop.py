@@ -42,7 +42,7 @@ Xrhos, Ygivens = np.meshgrid(rhos, givens)
 def a2eq(X, Y):
     T = b*R*(1.0 - Y)
     Q = R*pow(T*(1.0 - alpha)/alpha, 1.0/(X - 1.0))
-    a2 = (a2max - (a2max - 1.0)*Q*b*Y)/(1.0 + Q*b)
+    a2 = a2max/(1.0 + Q*b)
     return a2
 
 def fitness(Z, X, Y):

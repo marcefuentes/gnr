@@ -38,7 +38,7 @@ def fitness(x, y, given, rho):
 def a2maxw(given, rho):
     T = b*R*(1.0 - given)
     Q = R*pow(T*(1.0 - alpha)/alpha, 1.0/(rho - 1.0))
-    a2 = a2max - Q*b*(a2max - given + a2partner*given)/(1.0 + Q*b*(1.0 - given))
+    a2 = (a2max - a2partner*given*Q*b)/(1.0 + Q*b*(1.0 - given))
     a2 = 1.0 - a2
     return a2
 

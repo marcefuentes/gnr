@@ -38,16 +38,8 @@ def fitness(x, y, given, rho):
 def a2maxw(given, rho):
     T = b*R*(1.0 - given)
     Q = R*pow(T*(1.0 - alpha)/alpha, 1.0/(rho - 1.0))
-    a1 = Q*(b - given + a2partner*given)/(1.0 + Q*b*(1.0 - given))
-    a2 = a2max - b*a1
+    a2 = a2max - Q*b*(a2max - given + a2partner*given)/(1.0 + Q*b*(1.0 - given))
     a2 = 1.0 - a2
-    return a2
-
-def a2eq(loges, given):
-    T = b*R*(1.0 - given)
-    rho = 1.0 - 1.0/pow(2, loges)
-    Q = R*pow(T*(1.0 - alpha)/alpha, 1.0/(rho - 1.0))
-    a2 = 1.0/(1.0 + Q)
     return a2
 
 plt.rcParams['pdf.fonttype'] = 42
@@ -66,7 +58,7 @@ axs = grid.subplots()
 plt.subplots_adjust(hspace=0, wspace=0, bottom=0.2, left=0.2)
 
 for row, given in zip(axs, givens):
-    for ax, rho, log_es in zip(row, rhos, log_ess):
+    for ax, rho in zip(row, rhos):
         Z = fitness(X, Y, given, rho)
         ax.imshow(Z, cmap='magma', vmin=0, vmax=2)
         xaxis = a2partner*npoints

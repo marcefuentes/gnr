@@ -35,12 +35,18 @@ def fitness(x, y, given, rho):
         w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
     return w
 
-def a2maxw(given, rho):
+def a2maxw(x, given, rho):
     T = b*R*(1.0 - given)
     Q = R*pow(T*(1.0 - alpha)/alpha, 1.0/(rho - 1.0))
-    a2 = (a2max - a2partner*given*Q*b)/(1.0 + Q*b*(1.0 - given))
+    a2 = (a2max - x*given*Q*b)/(1.0 + Q*b*(1.0 - given))
     a2 = 1.0 - a2
     return a2
+
+def reversea2(a2, given, rho):
+    T = b*R*(1.0 - given)
+    Q = R*pow(T*(1.0 - alpha)/alpha, 1.0/(rho - 1.0))
+    x = (a2max - a2*(1.0 + Q*b*(1.0 - given)))/(given*Q*b)
+    return x
 
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
@@ -62,8 +68,9 @@ for row, given in zip(axs, givens):
         Z = fitness(X, Y, given, rho)
         ax.imshow(Z, cmap='magma', vmin=0, vmax=2)
         xaxis = a2partner*npoints
-        yaxis = a2maxw(given, rho)*npoints
+        yaxis = a2maxw(a2partner, given, rho)*npoints
         ax.plot(xaxis, yaxis, color='white')
+        ax.plot(npoints - yaxis, npoints - xaxis, color='grey')
         ax.set(xticks=[], yticks=[], xlim=(0, npoints-1), ylim=(npoints-1, 0))
 for ax, log_es in zip(axs[-1, ::5], log_ess[::5]):
     ax.set_xlabel(round(log_es), fontsize=fstick)

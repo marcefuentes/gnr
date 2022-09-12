@@ -69,8 +69,8 @@ for row, given in zip(axs, givens):
         ax.imshow(Z, cmap='magma', vmin=0, vmax=2)
         xaxis = a2partner*npoints
         yaxis = a2maxw(a2partner, given, rho)*npoints
-        ax.plot(npoints - yaxis, npoints - xaxis, color='grey')
-        ax.plot(xaxis, yaxis, color='white')
+        #ax.plot(npoints - yaxis, npoints - xaxis, color='grey')
+        ax.plot(xaxis, yaxis, color='white', alpha=0.5)
         ax.set(xticks=[], yticks=[], xlim=(0, npoints-1), ylim=(npoints-1, 0))
 for ax, log_es in zip(axs[-1, ::5], log_ess[::5]):
     ax.set_xlabel(round(log_es), fontsize=fstick)

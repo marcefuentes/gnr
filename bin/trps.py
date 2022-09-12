@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 
-import math
 import matplotlib.pyplot as plt
 import numpy as np
-import sys
 
-filename = f'trps{sys.argv[1]}.png'
+filename = f'trps.png'
 
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
@@ -23,10 +21,10 @@ alpha = 0.5
 R1 = 2.0
 R2 = 2.0
 
-aCs = [0.46, 0.50]
-aDs = [0.45, 0.49]
-log_ess = np.linspace(-5, 5, num=11) if sys.argv[1] == 'ces' else np.linspace(-10, 0, num=11)
-ess = pow(2, log_ess)
+aCs = [0.50]
+aDs = [0.0001]
+log_ess = np.linspace(-5, 5, num=11)
+rhos = 1.0 - 1.0/pow(2, log_ess)
 givens = np.linspace(1.0, 0.0, num=11)
 titles = []
 for aC, aD in zip(aCs, aDs): 
@@ -34,13 +32,10 @@ for aC, aD in zip(aCs, aDs):
 letters = ['a', 'b', 'c']
 
 def fitness(q1, q2, rho):
-    if sys.argv[1] == 'q':
-        w = 4.0*pow(q1, rho)/9.0 + 4.0*q2/9.0
+    if rho == 0.0:
+        w = pow(q1, alpha)*pow(q2, 1.0 - alpha)
     else:
-        if rho == 0.0:
-            w = pow(q1, alpha)*pow(q2, 1.0 - alpha)
-        else:
-            w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
+        w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
     return w
 
 fig, axs = plt.subplots(nrows=1, ncols=len(aCs), sharey=True, figsize=(5.0*len(aCs) + 1.0, height), constrained_layout=False, squeeze=False)
@@ -51,8 +46,7 @@ fig.supylabel('Partner\'s share of $\it{A}$', fontsize=fslabel)
 for ax, title, letter, aC, aD in zip(axs, titles, letters, aCs, aDs):
     q1C = R1*(1.0-aC);
     q1D = R1*(1.0-aD);
-    for es, log_es in zip(ess, log_ess):
-        rho = 1.0 - 1.0/es if sys.argv[1] == 'ces' else es
+    for log_es, rho in zip(log_ess, rhos):
         R = wC1 = fitness(q1C, R2*aC, rho)
         P = wD0 = fitness(q1D, R2*aD, rho)
         for given in givens:
@@ -62,10 +56,10 @@ for ax, title, letter, aC, aD in zip(axs, titles, letters, aCs, aDs):
             S = wC0 = fitness(q1C, R2*(aC*(1.0-given) + aD*given), rho)
             trpss = np.linspace(log_es-0.3, log_es+0.3, num=4)
             [x.append(pow(2, trps)) for trps in trpss]
-            y.append(given + (T-0.8)/6.0)
-            y.append(given + (R-0.8)/6.0)
-            y.append(given + (P-0.8)/6.0)
-            y.append(given + (S-0.8)/6.0)
+            y.append(given + (T-0.8)/20.0)
+            y.append(given + (R-0.8)/20.0)
+            y.append(given + (P-0.8)/20.0)
+            y.append(given + (S-0.8)/20.0)
             shift = shiftconstant*(S-P)
             if (T<R) and (P<S):
                 # rgb = (0.5-shift, 0.5+shift, 0.5+shift)

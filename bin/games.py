@@ -42,11 +42,11 @@ def a2maxw(x, given, rho):
     a2 = 1.0 - a2
     return a2
 
-def reversea2(a2, given, rho):
+def a2eq(given, rho):
     T = b*R*(1.0 - given)
     Q = R*pow(T*(1.0 - alpha)/alpha, 1.0/(rho - 1.0))
-    x = (a2max - a2*(1.0 + Q*b*(1.0 - given)))/(given*Q*b)
-    return x
+    a2 = a2max/(1.0 + Q*b)
+    return a2
 
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
@@ -70,7 +70,9 @@ for row, given in zip(axs, givens):
         xaxis = a2partner*npoints
         yaxis = a2maxw(a2partner, given, rho)*npoints
         #ax.plot(npoints - yaxis, npoints - xaxis, color='grey')
-        ax.plot(xaxis, yaxis, color='white', alpha=0.5)
+        ax.plot(xaxis, yaxis, color='white', alpha=0.6)
+        #ypoint = a2eq(given, rho)*npoints
+        #ax.scatter(ypoint, npoints - ypoint, color='white', s=0.3)
         ax.set(xticks=[], yticks=[], xlim=(0, npoints-1), ylim=(npoints-1, 0))
 for ax, log_es in zip(axs[-1, ::5], log_ess[::5]):
     ax.set_xlabel(round(log_es), fontsize=fstick)

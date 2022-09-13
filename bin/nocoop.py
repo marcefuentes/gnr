@@ -1,9 +1,9 @@
 #! /usr/bin/env python
 
 from math import log
+import matplotlib.pyplot as plt
 import numpy as np
 import time
-import matplotlib.pyplot as plt
 
 start_time = time.perf_counter ()
 

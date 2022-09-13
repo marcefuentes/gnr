@@ -22,10 +22,11 @@ R1 = 2.0
 R2 = 2.0
 
 aCs = [0.50]
-aDs = [0.0001]
-log_ess = np.linspace(-5, 5, num=11)
+aDs = [0.0000]
+num=21
+log_ess = np.linspace(-5, 5, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
-givens = np.linspace(1.0, 0.0, num=11)
+givens = np.linspace(1.0, 0.0, num=num)
 titles = []
 for aC, aD in zip(aCs, aDs): 
     titles.append('$\it{a}$ = {' + str(aD) + ', ' + str(aC) + '}')
@@ -54,12 +55,12 @@ for ax, title, letter, aC, aD in zip(axs, titles, letters, aCs, aDs):
             y = []
             T = wD1 = fitness(q1D, R2*(aD*(1.0-given) + aC*given), rho)
             S = wC0 = fitness(q1C, R2*(aC*(1.0-given) + aD*given), rho)
-            trpss = np.linspace(log_es-0.3, log_es+0.3, num=4)
+            trpss = np.linspace(log_es-0.15, log_es+0.15, num=4)
             [x.append(pow(2, trps)) for trps in trpss]
-            y.append(given + (T-0.8)/20.0)
-            y.append(given + (R-0.8)/20.0)
-            y.append(given + (P-0.8)/20.0)
-            y.append(given + (S-0.8)/20.0)
+            y.append(given + (T-0.8)/((num-1)*2))
+            y.append(given + (R-0.8)/((num-1)*2))
+            y.append(given + (P-0.8)/((num-1)*2))
+            y.append(given + (S-0.8)/((num-1)*2))
             shift = shiftconstant*(S-P)
             if (T<R) and (P<S):
                 # rgb = (0.5-shift, 0.5+shift, 0.5+shift)

@@ -4,9 +4,9 @@ from glob import glob
 from math import log
 import numpy as np
 import os
-import time
 import matplotlib.pyplot as plt
 import pandas as pd
+import time
 
 start_time = time.perf_counter ()
 
@@ -19,10 +19,10 @@ letters = [['a', 'b', 'c', 'd', 'e'],
             ['p', 'q', 'r', 's', 't'],
             ['u', 'v', 'w', 'x', 'y']]
 
-folders = ['none', 'p', 'r', 'pr']
 traits = ['a2Seenmedian', 'helpmedian', 'wmedian', 'ChooseGrainmedian', 'MimicGrainmedian']
 traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
 traitvmaxs = [0.5, 1.0, 1.0, 1.0, 1.0]
+folders = ['none', 'p', 'r', 'pr']
 
 alpha = 0.5
 R1 = 2.0
@@ -33,9 +33,14 @@ a2max = 1.0
 b = a2max/a1max
 
 num = 2000
-log_ess = np.linspace(-5, 5, num=num)
+minlog_es = -5.0
+maxlog_es = 5.0
+mingiven = 0.0
+maxgiven = 1.0
+
+log_ess = np.linspace(minlog_es, maxlog_es, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
-givens = np.linspace(1.0, 0.0, num=num)
+givens = np.linspace(maxgiven, mingiven, num=num)
 givens[0] = 0.99999
 Xrhos, Ygivens = np.meshgrid(rhos, givens)
 

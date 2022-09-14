@@ -73,12 +73,14 @@ def a2maxw(x, given, rho):
 fslabel = 26 # Label font size
 fstick = 18 # Tick font size
 
-fig = plt.figure() 
+fig = plt.figure(figsize=(11, 6), constrained_layout=False) 
+fig.supylabel("Partner's share of $\it{A}$", x=0.03, y=0.54, fontsize=fslabel)
+fig.supxlabel("Substitutability of $\it{A}$", x=0.553, y=0.05, fontsize=fslabel)
 
-gs0 = gridspec.GridSpec(1, 2, figure=fig)
+outer_grid = fig.add_gridspec(1, 2, wspace=0.20, bottom=0.25)
 
-gs00 = gridspec.GridSpecFromSubplotSpec(num, num, subplot_spec=gs0[0])
-axs = gs00.subplots()
+left_grid = outer_grid[0].subgridspec(num, num, wspace=0, hspace=0)
+axs = left_grid.subplots()
 
 for row, given in zip(axs, givens):
     for ax, rho in zip(row, rhos):
@@ -98,11 +100,8 @@ for ax, log_es in zip(axs[-1, ::5], log_ess[::5]):
 for ax, given in zip(axs[::5, 0], givens[::5]):
     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 
-#subfigs[0].suptitle('a', fontsize=fslabel, horizontalalignment='left', weight='bold')
-#subfigs[0].subplots_adjust(wspace=0, hspace=0)
-
-gs01 = gridspec.GridSpecFromSubplotSpec(num, num, subplot_spec=gs0[1])
-axs = gs01.subplots()
+right_grid = outer_grid[1].subgridspec(num, num, wspace=0, hspace=0)
+axs = right_grid.subplots()
 
 xaxis = [1, 2, 3, 4]
 givens[0] = 1.0
@@ -123,13 +122,10 @@ for row, given in zip(axs, givens):
                 rgb = (1.0, 0.0, 0.5)
         ax.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=1.0, markersize=3)
         ax.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))
+        ax.set_box_aspect(1)
 
 for ax, log_es in zip(axs[-1, ::5], log_ess[::5]):
     ax.set_xlabel(round(log_es), fontsize=fstick)
-
-#gs[1].subplots_adjust(wspace=0, hspace=0)
-
-plt.suptitle("Substitutability of $\it{A}$", fontsize=fslabel)
 
 plt.savefig('games.png', dpi=100)
 plt.close()

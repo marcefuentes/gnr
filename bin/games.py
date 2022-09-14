@@ -32,7 +32,6 @@ log_ess = np.linspace(minlog_es, maxlog_es, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
 givens = np.linspace(maxgiven, mingiven, num=num)
 givens[0] = 0.99999
-Xrhos, Ygivens = np.meshgrid(rhos, givens)
 
 x = np.linspace(0.001, 0.999, npoints)
 a2partner = x
@@ -74,8 +73,8 @@ fslabel = 26 # Label font size
 fstick = 18 # Tick font size
 
 fig = plt.figure(figsize=(11, 6), constrained_layout=False) 
-fig.supylabel("Partner's share of $\it{A}$", x=0.03, y=0.54, fontsize=fslabel)
-fig.supxlabel("Substitutability of $\it{A}$", x=0.553, y=0.05, fontsize=fslabel)
+fig.supylabel("Partner's share of $\it{A}$", x=0.02, y=0.56, fontsize=fslabel)
+fig.supxlabel("Substitutability of $\it{A}$", x=0.51, y=0.06, fontsize=fslabel)
 
 outer_grid = fig.add_gridspec(1, 2, wspace=0.20, bottom=0.25)
 
@@ -85,13 +84,11 @@ axs = left_grid.subplots()
 for row, given in zip(axs, givens):
     for ax, rho in zip(row, rhos):
         Z = fitness(X, Y, given, rho)
-        ax.imshow(Z, cmap='magma', vmin=0, vmax=2)
+        Z_normed = Z/Z.max(axis=0)
+        ax.imshow(Z_normed, cmap='magma', vmin=0, vmax=2)
         xaxis = a2partner*npoints
         yaxis = a2maxw(a2partner, given, rho)*npoints
-        #ax.plot(npoints - yaxis, npoints - xaxis, color='grey')
         ax.plot(xaxis, yaxis, color='white', alpha=0.6)
-        #ypoint = a2eq(given, rho)*npoints
-        #ax.scatter(ypoint, npoints - ypoint, color='white', s=0.3)
         ax.set(xticks=[], yticks=[], xlim=(0, npoints-1), ylim=(npoints-1, 0))
         if (given == 0.5) and (rho == rhos[0]):
             ax.set_ylabel("Partner's share of $\it{A}$", fontsize=fslabel)
@@ -99,6 +96,7 @@ for ax, log_es in zip(axs[-1, ::5], log_ess[::5]):
     ax.set_xlabel(round(log_es), fontsize=fstick)
 for ax, given in zip(axs[::5, 0], givens[::5]):
     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
+axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
 
 right_grid = outer_grid[1].subgridspec(num, num, wspace=0, hspace=0)
 axs = right_grid.subplots()
@@ -122,10 +120,11 @@ for row, given in zip(axs, givens):
                 rgb = (1.0, 0.0, 0.5)
         ax.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=1.0, markersize=3)
         ax.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))
-        ax.set_box_aspect(1)
+        #ax.set_aspect('equal')
 
 for ax, log_es in zip(axs[-1, ::5], log_ess[::5]):
     ax.set_xlabel(round(log_es), fontsize=fstick)
+axs[0, 0].set_title('b', fontsize=fslabel, weight='bold')
 
 plt.savefig('games.png', dpi=100)
 plt.close()

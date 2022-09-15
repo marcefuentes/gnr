@@ -37,16 +37,10 @@ maxlog_es = 5.0
 mingiven = 0.0
 maxgiven = 1.0
 
-def a2eq(X, Y):
-    T = b*R*(1.0 - Y)
-    Q = R*pow(T*(1.0 - alpha)/alpha, 1.0/(X - 1.0))
-    a2 = a2max/(1.0 + Q*b)
-    return a2
-
-def fitness(Z, X, Y):
-    q1 = (1.0 - Z)*R1
-    q2 = Z*R2*(1.0 - Y) + Z*R2*Y
-    w = np.where(X == 0.0, pow(q1, alpha)*pow(q2, 1.0 - alpha), pow(alpha*pow(q1, X) + (1.0 - alpha)*pow(q2, X), 1.0/X)) 
+def fitness(A, Apartner):
+    q1 = R1*(a2max - A)/b
+    q2 = R2*(A*(1.0 - Ygivens) + Apartner*Ygivens)
+    w = np.where(Xrhos == 0.0, pow(q1, alpha)*pow(q2, 1.0 - alpha), pow(alpha*pow(q1, Xrhos) + (1.0 - alpha)*pow(q2, Xrhos), 1.0/Xrhos)) 
     return w
 
 R = R2/R1
@@ -56,8 +50,12 @@ rhos = 1.0 - 1.0/pow(2, log_ess)
 givens = np.linspace(maxgiven, mingiven, num=num)
 givens[0] = 0.99999
 Xrhos, Ygivens = np.meshgrid(rhos, givens)
-Z0 = a2eq(Xrhos, Ygivens)
-Zs = [Z0, Z0*R2*Ygivens, fitness(Z0, Xrhos, Ygivens), np.ones([num, num])*0.1, np.ones([num, num])*0.1]
+T = b*R*(1.0 - Ygivens)
+Q = R*pow(T*(1.0 - alpha)/alpha, 1.0/(Xrhos - 1.0))
+Aeq = a2max/(1.0 + Q*b)
+
+Feq = fitness(Aeq, Aeq)
+Zs = [Aeq, Aeq*R2*Ygivens, Feq, np.ones([num, num])*0.1, np.ones([num, num])*0.1]
 Zmaxs = [0.5, 1.0, 1.0, 1.0, 1.0]
 
 dfs = {}

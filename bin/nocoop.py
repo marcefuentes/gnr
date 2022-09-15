@@ -10,15 +10,10 @@ start_time = time.perf_counter ()
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-letters = [['a', 'b', 'c', 'd', 'e'],
-            ['f', 'g', 'h', 'i', 'j'],
-            ['k', 'l', 'm', 'n', 'o'],
-            ['p', 'q', 'r', 's', 't'],
-            ['u', 'v', 'w', 'x', 'y']]
+letters = ['a', 'b', 'c', 'd', 'e']
 
-traits = ['a2Seenmedian', 'helpmedian', 'wmedian']
-traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness']
-traitvmaxs = [0.5, 1.0, 1.0]
+traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness', 'R - P']
+traitvmaxs = [0.5, 1.0, 1.0, 1.0]
 
 alpha = 0.5
 R1 = 2.0
@@ -32,16 +27,10 @@ maxlog_es = 5.0
 mingiven = 0.0
 maxgiven = 1.0
 
-def a2eq(X, Y):
-    T = b*R*(1.0 - Y)
-    Q = R*pow(T*(1.0 - alpha)/alpha, 1.0/(X - 1.0))
-    a2 = a2max/(1.0 + Q*b)
-    return a2
-
-def fitness(Z, X, Y):
-    q1 = (1.0 - Z)*R1
-    q2 = Z*R2*(1.0 - Y) + Z*R2*Y
-    w = np.where(X == 0.0, pow(q1, alpha)*pow(q2, 1.0 - alpha), pow(alpha*pow(q1, X) + (1.0 - alpha)*pow(q2, X), 1.0/X)) 
+def fitness(A, Apartner):
+    q1 = R1*(a2max - A)/b
+    q2 = R2*(A*(1.0 - Ygivens) + Apartner*Ygivens)
+    w = np.where(Xrhos == 0.0, pow(q1, alpha)*pow(q2, 1.0 - alpha), pow(alpha*pow(q1, Xrhos) + (1.0 - alpha)*pow(q2, Xrhos), 1.0/Xrhos)) 
     return w
 
 R = R2/R1
@@ -51,21 +40,26 @@ rhos = 1.0 - 1.0/pow(2, log_ess)
 givens = np.linspace(maxgiven, mingiven, num=num)
 givens[0] = 0.99999
 Xrhos, Ygivens = np.meshgrid(rhos, givens)
-Z0 = a2eq(Xrhos, Ygivens)
-Zs = [Z0, Z0*R2*Ygivens, fitness(Z0, Xrhos, Ygivens)]
-Zmaxs = [0.5, 1.0, 1.0]
+T = b*R*(1.0 - Ygivens)
+Q = R*pow(T*(1.0 - alpha)/alpha, 1.0/(Xrhos - 1.0))
+Aeq = a2max/(1.0 + Q*b)
+
+Feq = fitness(Aeq, Aeq)
+Fpc = fitness(0.5, 0.5) - fitness(0.5, Aeq) 
+Zs = [Aeq, Aeq*R2*Ygivens, Feq, Fpc]
+Zmaxs = [0.5, 1.0, 1.0, 0.7]
 
 fslabel=24 # Label font size
 fstick=16 # Tick font size
 
-fig, axs = plt.subplots(nrows=1, ncols=3, figsize=(18, 6)) # constrained_layout=False, squeeze=False
+fig, axs = plt.subplots(nrows=1, ncols=len(Zs), figsize=(6*len(Zs), 6)) # constrained_layout=False, squeeze=False
 
 fig.supxlabel('Substitutability of $\it{A}$', x=0.513, y=0.00, fontsize=fslabel*1.25)
 fig.supylabel('Partner\'s share of $\it{A}$', x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
 
 axs.flatten()
 extent = 0, num, 0, num
-for ax, Z, Zmax, letter, traitlabel in zip(axs, Zs, Zmaxs, letters[0], traitlabels):
+for ax, Z, Zmax, letter, traitlabel in zip(axs, Zs, Zmaxs, letters, traitlabels):
     ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=Zmax)
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
     ax.set_xticks([0, num/2.0, num])

@@ -2,9 +2,9 @@
 
 from glob import glob
 from math import log
-import numpy as np
 import os
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import time
 
@@ -92,7 +92,7 @@ for ax, Z, Zmax, letter, traitlabel in zip(axs[0], Zs, Zmaxs, letters[0], traitl
     ax.set_xticklabels([])
     ax.set_yticklabels([])
     if traitlabel == traitlabels[0]:
-        ax.set_yticklabels([0.0, 0.5, 1.0], fontsize=fstick) 
+        ax.set_yticklabels([round(mingiven, 1), round((mingiven + maxgiven)/2, 1), round(maxgiven, 1)], fontsize=fstick) 
     ax.text(0, 2070, letter, fontsize=fslabel, weight='bold')
 
 for axrow, folder, letterrow in zip(axs[1:], folders, letters[1:]):
@@ -107,10 +107,10 @@ for axrow, folder, letterrow in zip(axs[1:], folders, letters[1:]):
         ax.set_yticks([0.0, 0.5, 1.0])
         ax.set_xticklabels([])
         if folder == folders[-1]:
-            ax.set_xticklabels([-5, 0, 5], fontsize=fstick)
+            ax.set_xticklabels([round(minlog_es, 1), round((minlog_es + maxlog_es)/2, 1), round(maxlog_es, 1)], fontsize=fstick)
         ax.set_yticklabels([])
         if traitlabel == traitlabels[0]:
-            ax.set_yticklabels([0.0, 0.5, 1.0], fontsize=fstick) 
+            ax.set_yticklabels([round(mingiven, 1), round((mingiven + maxgiven)/2, 1), round(maxgiven, 1)], fontsize=fstick) 
         ax.text(-5.5, 1.09, letter, fontsize=fslabel, weight='bold')
 
 plt.savefig('coop.png', transparent=False)

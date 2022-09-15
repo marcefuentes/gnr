@@ -7,17 +7,11 @@ import time
 
 start_time = time.perf_counter ()
 
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
-
 alpha = 0.5
 R1 = 2.0
 R2 = 2.0
-R = R2/R1
 a1max = 1.0
 a2max = 1.0
-b = a2max/a1max
-
 npoints = 32
 
 num = 11
@@ -28,15 +22,12 @@ maxgiven = 1.0
 aC = 0.5
 aD = 0.0
 
-log_ess = np.linspace(minlog_es, maxlog_es, num=num)
-rhos = 1.0 - 1.0/pow(2, log_ess)
-givens = np.linspace(maxgiven, mingiven, num=num)
-givens[0] = 0.99999
-
-x = np.linspace(0.001, 0.999, npoints)
-a2partner = x
-y = np.linspace(0.999, 0.001, npoints)
-X, Y = np.meshgrid(x, y)
+def a2maxw(x, given, rho):
+    T = b*R*(1.0 - given)
+    Q = R*pow(T*(1.0 - alpha)/alpha, 1.0/(rho - 1.0))
+    a2 = (a2max - x*given*Q*b)/(1.0 + Q*b*(1.0 - given))
+    a2 = 1.0 - a2
+    return a2
 
 def a2eq(given, rho):
     T = b*R*(1.0 - given)
@@ -62,15 +53,23 @@ def fitness2(x, y, given, rho):
         w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
     return w
 
-def a2maxw(x, given, rho):
-    T = b*R*(1.0 - given)
-    Q = R*pow(T*(1.0 - alpha)/alpha, 1.0/(rho - 1.0))
-    a2 = (a2max - x*given*Q*b)/(1.0 + Q*b*(1.0 - given))
-    a2 = 1.0 - a2
-    return a2
+R = R2/R1
+b = a2max/a1max
+x = np.linspace(0.001, 0.999, npoints)
+a2partner = x
+y = np.linspace(0.999, 0.001, npoints)
+X, Y = np.meshgrid(x, y)
+
+log_ess = np.linspace(minlog_es, maxlog_es, num=num)
+rhos = 1.0 - 1.0/pow(2, log_ess)
+givens = np.linspace(maxgiven, mingiven, num=num)
+givens[0] = 0.99999
 
 fslabel = 26 # Label font size
 fstick = 18 # Tick font size
+
+plt.rcParams['pdf.fonttype'] = 42
+plt.rcParams['ps.fonttype'] = 42
 
 fig = plt.figure(figsize=(11, 6), constrained_layout=False) 
 fig.supylabel("Partner's share of $\it{A}$", x=0.02, y=0.56, fontsize=fslabel)

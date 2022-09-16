@@ -23,7 +23,7 @@ letters = [['a', 'b', 'c', 'd', 'e'],
 traits = ['a2Seenmedian', 'helpmedian', 'wmedian', 'ChooseGrainmedian', 'MimicGrainmedian']
 traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
 traitvmaxs = [0.5, 1.0, 1.0, 1.0, 1.0]
-folders = ['none', 'p', 'r', 'pr', 'pr']
+folders = ['none', 'p', 'r', 'pr', 'p8r']
 
 alpha = 0.5
 R1 = 2.0

@@ -84,10 +84,10 @@ for row, given in zip(axs, givens):
     for ax, rho in zip(row, rhos):
         Z = fitness(X, Y, given, rho)
         Z_normed = Z/Z.max(axis=0)
-        ax.imshow(Z_normed, cmap='magma', vmin=0, vmax=2)
+        ax.imshow(Z_normed, cmap='magma', vmin=0, vmax=1.1)
         xaxis = a2partner*npoints
         yaxis = a2maxw(a2partner, given, rho)*npoints
-        ax.plot(xaxis, yaxis, color='white', alpha=0.6)
+        ax.plot(xaxis, yaxis, color='white')
         ax.set(xticks=[], yticks=[], xlim=(0, npoints-1), ylim=(npoints-1, 0))
         if (given == 0.5) and (rho == rhos[0]):
             ax.set_ylabel("Partner's share of $\it{A}$", fontsize=fslabel)

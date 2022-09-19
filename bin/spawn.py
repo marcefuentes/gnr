@@ -15,7 +15,7 @@ for given in givens:
         f.write('Seed,1\n')
         f.write('N,12\n')
         f.write('Runs,30\n')
-        f.write('Time,20\n')
+        f.write('Time,21\n')
         f.write('Periods,2\n')
         f.write('FFunction,c\n')
         f.write('a1Max,1.0\n')

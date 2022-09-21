@@ -1,14 +1,14 @@
 #! /usr/bin/env python
 
-ess = range(-5, 6)
-givens = range(0, 11)
+import numpy as np
+
+num = 21
+ess = np.linspace(-5.0, 5.0, num)
+givens = np.linspace(0.0, 1.0, num)
 c = 101
 
 for given in givens:
-    givenstring = str('{:.1f}'.format(given/10.0))
     for es in ess:
-        esstring = str(es)
-
         filename = str(c) + '.glo'
         f = open(filename, 'w')
 
@@ -43,12 +43,12 @@ for given in givens:
         f.write('Macromutation,-8\n')
         f.write('IndirectR,0\n')
         f.write('factorName1,Given\n')
-        f.write('fFirst1,' + givenstring + '\n')
-        f.write('fLast1,' + givenstring + '\n')
+        f.write(f'fFirst1,{given}\n')
+        f.write(f'fLast1,{given}\n')
         f.write('fLevels1,1\n')
         f.write('factorName2,ES\n')
-        f.write('fFirst2,' + esstring + '\n')
-        f.write('fLast2,' + esstring + '\n')
+        f.write(f'fFirst2,{es}\n')
+        f.write(f'fLast2,{es}\n')
         f.write('fLevels2,1\n')
         f.write('factorName3,N\n')
         f.write('fFirst3,12\n')

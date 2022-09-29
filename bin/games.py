@@ -110,13 +110,14 @@ for row, given in zip(axs, givens):
         T = wD1 = fitness2(aD, aC, given, rho)
         S = wC0 = fitness2(aC, aD, given, rho)
         yaxis = [T, R, P, S]
-        if (T<R) and (P<S):
+        if (T < R) and (P < S):
             rgb = (0.5, 0.0, 1.0)
+        elif (T > R) and (P < S):
+            rgb = (0.0, 1.0, 0.0) # Snowdrift
+        elif (2.0*R > T + S):
+            rgb = (1.0, 0.0, 0.5)
         else:
-            if (T>R) and (P<S):
-                rgb = (0.0, 1.0, 0.0) # Snowdrift
-            else:
-                rgb = (1.0, 0.0, 0.5)
+            rgb = (1.0, 0.0, 1.0)
         ax.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=1.0, markersize=3)
         ax.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))
         #ax.set_aspect('equal')

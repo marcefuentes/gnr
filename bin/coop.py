@@ -1,7 +1,6 @@
 #! /usr/bin/env python
 
 from glob import glob
-from math import log
 import os
 import matplotlib.pyplot as plt
 import numpy as np
@@ -63,7 +62,26 @@ Xrhos, Ygivens = np.meshgrid(rhos, givens)
 Aeq = a2eq(Ygivens)
 Feq = fitness(Aeq, Aeq)
 Zs = [Aeq, Aeq*R2*Ygivens, Feq, np.ones([num, num])*0.1, np.ones([num, num])*0.1]
-Zmaxs = [0.5, 1.0, 1.0, 1.0, 1.0]
+
+fslabel=36 # Label font size
+fstick=24 # Tick font size
+
+fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+1))) # constrained_layout=False, squeeze=False
+
+fig.supxlabel('Substitutability of $\it{A}$', x=0.513, y=0.05, fontsize=fslabel*1.25)
+fig.supylabel('Partner\'s share of $\it{A}$', x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
+
+extent = 0, num, 0, num
+for ax, Z, traitvmax, letter, traitlabel in zip(axs[0], Zs, traitvmaxs, letters[0], traitlabels):
+    ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
+    ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
+    ax.set_xticks([0, num/2.0, num])
+    ax.set_yticks([0, num/2.0, num])
+    ax.set_xticklabels([])
+    ax.set_yticklabels([])
+    if traitlabel == traitlabels[0]:
+        ax.set_yticklabels([round(mingiven, 1), round((mingiven + maxgiven)/2, 1), round(maxgiven, 1)], fontsize=fstick) 
+    ax.text(0, num*1.035, letter, fontsize=fslabel, weight='bold')
 
 dfs = {}
 for folder in folders:
@@ -75,48 +93,25 @@ dfts = {}
 for folder in folders:
     dfts[folder] = dfs[folder].loc[dfs[folder]['Time'] == t].copy()
     dfts[folder].sort_values(by=['ES', 'Given'], inplace=True)
+nr = len(pd.unique(dfts[folders[0]]['Given']))
+nc = len(pd.unique(dfts[folders[0]]['ES']))
 
-x = dfts[folders[0]]['ES']
-x = x.apply(lambda i: log(i, 2))
-y = dfts[folders[0]]['Given']
-
-fslabel=36 # Label font size
-fstick=24 # Tick font size
-
-fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+1))) # constrained_layout=False, squeeze=False
-
-fig.supxlabel('Substitutability of $\it{A}$', x=0.513, y=0.05, fontsize=fslabel*1.25)
-fig.supylabel('Partner\'s share of $\it{A}$', x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
-
-extent = 0, num, 0, num
-for ax, Z, Zmax, letter, traitlabel in zip(axs[0], Zs, Zmaxs, letters[0], traitlabels):
-    ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=Zmax)
-    ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
-    ax.set_xticks([0, num/2.0, num])
-    ax.set_yticks([0, num/2.0, num])
-    ax.set_xticklabels([])
-    ax.set_yticklabels([])
-    if traitlabel == traitlabels[0]:
-        ax.set_yticklabels([round(mingiven, 1), round((mingiven + maxgiven)/2, 1), round(maxgiven, 1)], fontsize=fstick) 
-    ax.text(0, 2070, letter, fontsize=fslabel, weight='bold')
-
+extent = 0, nr, 0, nc
 for axrow, folder, letterrow in zip(axs[1:], folders, letters[1:]):
     for ax, trait, traitvmax, letter, traitlabel in zip(axrow, traits, traitvmaxs, letterrow, traitlabels):
         df = dfts[folder]
-        s = df[trait]
-        if 'Sensitivity' in traitlabel: s = 1 - s
-        ax.scatter(x, y, c=s, cmap='magma', marker='s', vmin=0, vmax=traitvmax, s=155)
-        ax.set_xlim(-5.1, 5.1)
-        ax.set_ylim(-0.01, 1.01)
-        ax.set_xticks([-5, 0, 5])
-        ax.set_yticks([0.0, 0.5, 1.0])
+        if 'Sensitivity' in traitlabel: df[trait] = 1.0 - df[trait]
+        df_piv = pd.pivot_table(df, values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)
+        ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
+        ax.set_xticks([0, nc/2.0, nc])
+        ax.set_yticks([0, nr/2.0, nr])
         ax.set_xticklabels([])
         if folder == folders[-1]:
-            ax.set_xticklabels([round(minlog_es, 1), round((minlog_es + maxlog_es)/2, 1), round(maxlog_es, 1)], fontsize=fstick)
+            ax.set_xticklabels([round(minlog_es), round((minlog_es + maxlog_es)/2), round(maxlog_es)], fontsize=fstick)
         ax.set_yticklabels([])
         if traitlabel == traitlabels[0]:
             ax.set_yticklabels([round(mingiven, 1), round((mingiven + maxgiven)/2, 1), round(maxgiven, 1)], fontsize=fstick) 
-        ax.text(-5.5, 1.09, letter, fontsize=fslabel, weight='bold')
+        ax.text(0, nr*1.035, letter, fontsize=fslabel, weight='bold')
 
 plt.savefig('coop.png', transparent=False)
 plt.close()

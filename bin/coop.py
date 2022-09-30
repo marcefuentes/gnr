@@ -105,9 +105,9 @@ for axrow, folder, letterrow in zip(axs[1:], folders, letters[1:]):
         df = dfts[folder]
         s = df[trait]
         if 'Sensitivity' in traitlabel: s = 1 - s
-        ax.scatter(x, y, c=s, cmap='magma', marker='s', vmin=0, vmax=traitvmax, s=700)
-        ax.set_xlim(-5.5, 5.5)
-        ax.set_ylim(-0.05, 1.05)
+        ax.scatter(x, y, c=s, cmap='magma', marker='s', vmin=0, vmax=traitvmax, s=155)
+        ax.set_xlim(-5.1, 5.1)
+        ax.set_ylim(-0.01, 1.01)
         ax.set_xticks([-5, 0, 5])
         ax.set_yticks([0.0, 0.5, 1.0])
         ax.set_xticklabels([])

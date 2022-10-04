@@ -15,8 +15,8 @@ alpha = 0.5
 rho = 0.0
 R1 = 2.0
 R2 = 2.0
-max_a1 = 1.0
-max_a2 = 1.0
+a1max = 1.0
+a2max = 1.0
 
 alpha_q = 0.125
 c1 = 4/9
@@ -59,22 +59,22 @@ def wquasilinear(a, b):
     w = c1*pow(a, alpha_q) + c2*b
     return w
 
-MRT = max_a2*R2/(max_a1*R1)
+MRT = a2max*R2/(a1max*R1)
 
 # For ces
 
 Q = R2*pow(MRT*(1.0 - alpha)/alpha,-1.0/(1.0 - rho))/R1
-a1 = max_a2*Q/(1.0 + max_a2*Q/max_a1)   # CES
+a1 = a2max*Q/(1.0 + a2max*Q/a1max)   # CES
 q1 = a1*R1
-a2 = max_a2 - max_a2*a1/max_a1
+a2 = a2max - a2max*a1/a1max
 q2 = a2*R2
 cesdict = {'wfunction': wces, 'icfunction': icces, 'q1': q1, 'q2': q2}
 
 # For quasilinear
 
-a1 = min(max_a1, pow(MRT*c2/(alpha_q*c1), 1/(alpha_q - 1.0))/R1)
+a1 = min(a1max, pow(MRT*c2/(alpha_q*c1), 1/(alpha_q - 1.0))/R1)
 q1 = a1*R1
-a2 = max_a2 - max_a2*a1/max_a1
+a2 = a2max - a2max*a1/a1max
 q2 = a2*R2
 qdict = {'wfunction':  wquasilinear, 'icfunction': icquasilinear, 'q1': q1, 'q2': q2}
 
@@ -93,10 +93,10 @@ fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(width, height), sharey=True)
 
 ax.set_xlabel('Quantity of $\it{A}$ consumed', fontsize=fslabel) 
 ax.set_ylabel('Quantity of $\it{B}$ consumed', fontsize=fslabel) 
-ax.set_xlim(0.0, max_a1*R1*1.5)
-ax.set_ylim(0.0, max_a2*R2*1.5)
-ax.set_xticks(np.linspace(0.0, max_a1*R1*1.5, num=4))
-ax.set_yticks(np.linspace(0.0, max_a2*R2*1.5, num=4))
+ax.set_xlim(0.0, a1max*R1*1.5)
+ax.set_ylim(0.0, a2max*R2*1.5)
+ax.set_xticks(np.linspace(0.0, a1max*R1*1.5, num=4))
+ax.set_yticks(np.linspace(0.0, a2max*R2*1.5, num=4))
 ax.tick_params(axis='x', labelsize=fstick)
 ax.tick_params(axis='y', labelsize=fstick)
 
@@ -106,7 +106,7 @@ for w in np.linspace(0.4, 1.6, num=n_ic):
 max_w = uf['wfunction'](uf['q1'], uf['q2'])
 ax.plot(x, uf['icfunction'](max_w), c='#7e7e7e')
 
-budget = max_a2*R2 - MRT*x
+budget = a2max*R2 - MRT*x
 ax.plot(x, budget, c='darkgreen')
 ax.set_box_aspect(1)
 
@@ -114,7 +114,7 @@ plt.savefig('icmap.png', bbox_inches = 'tight', transparent=False)
 
 # q1
 
-x = np.linspace(0.0, max_a2, num=n)
+x = np.linspace(0.0, a2max, num=n)
 
 # Plot fitness landscape
 
@@ -122,13 +122,13 @@ fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(width, height), sharey=True)
 fig.supxlabel('Effort to get $\it{A}$', fontsize=fslabel) 
 fig.supylabel('Fitness', fontsize=fslabel, x=0.02, ha='center')
 
-ax.set_xlim(0.0, max_a2)
+ax.set_xlim(0.0, a2max)
 ax.set_ylim(0.0, 1.5, 1)
-ax.set_xticks(np.linspace(0.0, max_a2, num=3))
+ax.set_xticks(np.linspace(0.0, a2max, num=3))
 ax.set_yticks(np.linspace(0.0, 1.5, num=4))
 ax.tick_params(axis='x', labelsize=fstick)
 ax.tick_params(axis='y', labelsize=fstick)
-ax.plot(x, uf['wfunction']((max_a2 - x)*max_a1*R1/max_a2, x*R2), c='black')
+ax.plot(x, uf['wfunction']((a2max - x)*a1max*R1/a2max, x*R2), c='black')
 ax.set_box_aspect(1)
 
 plt.savefig('landscape.png')

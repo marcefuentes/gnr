@@ -13,8 +13,8 @@ R2 = 2.0
 a1max = 1.0
 a2max = 1.0
 npoints = 32
+npoints_ic = 32
 
-n = 100     # Number of x-axis points
 n_ic = 7    # Number of indifference curves
 
 num = 11
@@ -47,38 +47,24 @@ def fitness(x, y, given, rho):
         w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
     return w
 
-def fitness2(x, y, given, rho):
-    q1 = (1.0 - x)*R1
-    q2 = x*R2*(1.0 - given) + y*R2*given
+def icces(w, rho):
     if rho == 0.0:
-        w = pow(q1, alpha)*pow(q2, 1.0 - alpha)
+        ics = pow(w/pow(x_ics, alpha), 1.0/(1.0 - alpha))
     else:
-        w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
-    return w
-
-def icces(x, w, given, rho):
-    T = b*R*(1.0 - given)
-    Q = R*pow(T*(1.0 - alpha)/alpha, 1.0/(rho - 1.0))
-    if rho == 0.0:
-        indiff = pow(w/pow(x, alpha), 1.0/(1.0 - alpha))
-    else:
-        indiff = [0.0]*npoints
-        for xi, indiffi in zip(x, indiff):
-            if pow(w, rho) <= alpha*pow(xi, rho):
-                if rho < 0.0:
-                    indiffi = 1000.0
-                else:
-                    indiffi = -0.1
-            else:
-                indiffi = pow((pow(w, rho) - alpha*pow(xi, rho))/(1.0 - alpha), 1.0/rho)
-    return indiff
+        ics = pow((pow(w, rho) - alpha*pow(x_ics, rho))/(1.0 - alpha), 1.0/rho)
+        if rho < 0.0:
+            ics[pow(w, rho) <= alpha*pow(x_ics, rho)] = 1000.0
+        else:
+            ics[pow(w, rho) <= alpha*pow(x_ics, rho)] = -0.1
+    return ics
 
 R = R2/R1
 b = a2max/a1max
-x = np.linspace(0.001, 0.999, npoints)
+x = np.linspace(0.001, 0.999, num=npoints)
 a2partner = x
-y = np.linspace(0.999, 0.001, npoints)
+y = np.linspace(0.999, 0.001, num=npoints)
 X, Y = np.meshgrid(x, y)
+x_ics = np.linspace(0.0, R1*1.5, num=npoints_ic)
 
 log_ess = np.linspace(minlog_es, maxlog_es, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
@@ -100,17 +86,26 @@ outer_grid = fig.add_gridspec(1, 3, wspace=0.20, bottom=0.25)
 # Plot indifference curves and budget line
 
 left_grid = outer_grid[0].subgridspec(num, num, wspace=0, hspace=0)
-axs = center_grid.subplots()
-
-x1 = x*3.0
+axs = left_grid.subplots()
 
 for row, given in zip(axs, givens):
     for ax, rho in zip(row, rhos):
-        max_w = uf['wfunction'](uf['q1'], uf['q2'])
-        ax.plot(x, uf['icfunction'](max_w), c='#7e7e7e')
-
-        budget = a2max*R2 - MRT*x
-        ax.plot(x, budget, c='darkgreen')
+        a2 = a2eq(given, rho)
+        w = fitness(a2, a2, given, rho)
+        ics = icces(w, rho)
+        ax.plot(x_ics, ics, c='#7e7e7e')
+        ax.set(xticks=[], yticks=[], xlim=(0, R1*1.5), ylim=(0, R2*1.5))
+        T = b*R*(1.0 - given)
+        budget = R2*a2max*(1.0 - given) + a2*R2*given - T*x_ics
+        ax.plot(x_ics, budget, c='darkgreen')
+        ax.set(xticks=[], yticks=[], xlim=(0, R1*1.5), ylim=(0, R2*1.5))
+        if (given == 0.5) and (rho == rhos[0]):
+            ax.set_ylabel("Partner's share of $\it{A}$", fontsize=fslabel)
+axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
+for ax, log_es in zip(axs[-1, ::5], log_ess[::5]):
+    ax.set_xlabel(round(log_es), fontsize=fstick)
+for ax, given in zip(axs[::5, 0], givens[::5]):
+    ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 
 center_grid = outer_grid[1].subgridspec(num, num, wspace=0, hspace=0)
 axs = center_grid.subplots()
@@ -124,15 +119,11 @@ for row, given in zip(axs, givens):
         yaxis = a2maxw(a2partner, given, rho)*npoints
         ax.plot(xaxis, yaxis, color='white')
         ax.set(xticks=[], yticks=[], xlim=(0, npoints-1), ylim=(npoints-1, 0))
-        if (given == 0.5) and (rho == rhos[0]):
-            ax.set_ylabel("Partner's share of $\it{A}$", fontsize=fslabel)
+axs[0, 0].set_title('b', fontsize=fslabel, weight='bold')
 for ax, log_es in zip(axs[-1, ::5], log_ess[::5]):
     ax.set_xlabel(round(log_es), fontsize=fstick)
-for ax, given in zip(axs[::5, 0], givens[::5]):
-    ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
-axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
 
-right_grid = outer_grid[1].subgridspec(num, num, wspace=0, hspace=0)
+right_grid = outer_grid[2].subgridspec(num, num, wspace=0, hspace=0)
 axs = right_grid.subplots()
 
 xaxis = [1, 2, 3, 4]
@@ -140,10 +131,10 @@ givens[0] = 1.0
 
 for row, given in zip(axs, givens):
     for ax, rho in zip(row, rhos):
-        R = wC1 = fitness2(aC, aC, given, rho)
-        P = wD0 = fitness2(aD, aD, given, rho)
-        T = wD1 = fitness2(aD, aC, given, rho)
-        S = wC0 = fitness2(aC, aD, given, rho)
+        R = wC1 = fitness(aC, aC, given, rho)
+        P = wD0 = fitness(aD, aD, given, rho)
+        T = wD1 = fitness(aC, aD, given, rho)
+        S = wC0 = fitness(aD, aC, given, rho)
         yaxis = [T, R, P, S]
         if (T < R) and (P < S):
             rgb = (0.5, 0.0, 1.0)
@@ -155,11 +146,10 @@ for row, given in zip(axs, givens):
             rgb = (1.0, 0.0, 1.0)
         ax.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=1.0, markersize=3)
         ax.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))
-        #ax.set_aspect('equal')
 
 for ax, log_es in zip(axs[-1, ::5], log_ess[::5]):
     ax.set_xlabel(round(log_es), fontsize=fstick)
-axs[0, 0].set_title('b', fontsize=fslabel, weight='bold')
+axs[0, 0].set_title('c', fontsize=fslabel, weight='bold')
 
 plt.savefig('games.png', dpi=100)
 plt.close()

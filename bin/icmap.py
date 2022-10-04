@@ -23,28 +23,24 @@ c1 = 4/9
 c2 = 4/9
 
 n = 100     # Number of x-axis points
-n_ic = 7    # Number of indifference curves
+n_ic = 7    # Number of icserence curves
 
 # Indifference curves
 
 def icces(w):
     if rho == 0.0:
-        indiff = pow(w/pow(x, alpha), 1.0/(1.0 - alpha))
+        ics = pow(w/pow(xs, alpha), 1.0/(1.0 - alpha))
     else:
-        indiff = [0.0]*n
-        for i in range(n):
-            if pow(w, rho) <= alpha*pow(x[i], rho):
-                if rho < 0.0:
-                    indiff[i] = 1000.0
-                else:
-                    indiff[i] = -0.1
-            else:
-                indiff[i] = pow((pow(w, rho) - alpha*pow(x[i], rho))/(1.0 - alpha), 1.0/rho)
-    return indiff
+        ics = pow((pow(w, rho) - alpha*pow(x_ics, rho))/(1.0 - alpha), 1.0/rho)
+        if rho < 0.0:
+            ics[pow(w, rho) <= alpha*pow(x_ics, rho)] = 1000.0
+        else:
+            ics[pow(w, rho) <= alpha*pow(x_ics, rho)] = -0.1
+    return ics
 
 def icquasilinear(w):
-    indiff = (w - c1*pow(x, alpha_q))/c2
-    return indiff
+    ics = (w - c1*pow(xs, alpha_q))/c2
+    return ics
 
 # Fitness landscapes
 
@@ -60,6 +56,7 @@ def wquasilinear(a, b):
     return w
 
 MRT = a2max*R2/(a1max*R1)
+xs = np.linspace(0.000001, 3.0, num=n)
 
 # For ces
 
@@ -81,10 +78,6 @@ qdict = {'wfunction':  wquasilinear, 'icfunction': icquasilinear, 'q1': q1, 'q2'
 #ufs = [cesdict, qdict]
 uf = cesdict
 
-# x-axis data
-
-x = np.linspace(0.000001, 3.0, num=n)
-
 # Plot indifference curves and budget line
 
 fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(width, height), sharey=True)
@@ -101,13 +94,13 @@ ax.tick_params(axis='x', labelsize=fstick)
 ax.tick_params(axis='y', labelsize=fstick)
 
 for w in np.linspace(0.4, 1.6, num=n_ic):
-    ax.plot(x, uf['icfunction'](w), c='#dbdbdb')
+    ax.plot(xs, uf['icfunction'](w), c='#dbdbdb')
 
 max_w = uf['wfunction'](uf['q1'], uf['q2'])
-ax.plot(x, uf['icfunction'](max_w), c='#7e7e7e')
+ax.plot(xs, uf['icfunction'](max_w), c='#7e7e7e')
 
-budget = a2max*R2 - MRT*x
-ax.plot(x, budget, c='darkgreen')
+budget = a2max*R2 - MRT*xs
+ax.plot(xs, budget, c='darkgreen')
 ax.set_box_aspect(1)
 
 plt.savefig('icmap.png', bbox_inches = 'tight', transparent=False)
@@ -128,7 +121,7 @@ ax.set_xticks(np.linspace(0.0, a2max, num=3))
 ax.set_yticks(np.linspace(0.0, 1.5, num=4))
 ax.tick_params(axis='x', labelsize=fstick)
 ax.tick_params(axis='y', labelsize=fstick)
-ax.plot(x, uf['wfunction']((a2max - x)*a1max*R1/a2max, x*R2), c='black')
+ax.plot(xs, uf['wfunction']((a2max - x)*a1max*R1/a2max, x*R2), c='black')
 ax.set_box_aspect(1)
 
 plt.savefig('landscape.png')

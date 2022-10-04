@@ -71,16 +71,16 @@ fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-fig = plt.figure(figsize=(17, 6), constrained_layout=False) 
-fig.supylabel("Partner's share of $\it{A}$", x=0.04, y=0.56, fontsize=fslabel)
-fig.supxlabel("Substitutability of $\it{A}$", x=0.51, y=0.06, fontsize=fslabel)
+fig = plt.figure(figsize=(7, 18), constrained_layout=False) 
+fig.supylabel("Partner's share of $\it{A}$", fontsize=fslabel)
+fig.supxlabel("Substitutability of $\it{A}$", fontsize=fslabel)
 
-outer_grid = fig.add_gridspec(1, 3, wspace=0.20, bottom=0.25)
+outer_grid = fig.add_gridspec(3, 1, left=0.3, right=0.9)
 
 # Plot indifference curves and budget line
 
-left_grid = outer_grid[0].subgridspec(num, num, wspace=0, hspace=0)
-axs = left_grid.subplots()
+top_grid = outer_grid[0].subgridspec(num, num, wspace=0, hspace=0)
+axs = top_grid.subplots()
 
 x_ics = np.linspace(0.0, R1*1.5, num=npoints_ic)
 
@@ -95,9 +95,8 @@ for row, given in zip(axs, givens):
         budget = R2*a2max*(1.0 - given) + a2*R2*given - T*x_ics
         ax.plot(x_ics, budget, c='orange')
         ax.set(xticks=[], yticks=[], xlim=(0, R1*1.5), ylim=(0, R2*1.5))
+        ax.set_box_aspect(1)
 axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
-for ax, log_es in zip(axs[-1, ::5], log_ess[::5]):
-    ax.set_xlabel(round(log_es), fontsize=fstick)
 for ax, given in zip(axs[::5, 0], givens[::5]):
     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 
@@ -121,14 +120,14 @@ for row, given in zip(axs, givens):
         yaxis = a2maxw(a2partner, given, rho)*npoints
         ax.plot(xaxis, yaxis, color='white')
         ax.set(xticks=[], yticks=[], xlim=(-0.5, npoints-0.5), ylim=(npoints-0.5, -0.5))
+for ax, given in zip(axs[::5, 0], givens[::5]):
+    ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 axs[0, 0].set_title('b', fontsize=fslabel, weight='bold')
-for ax, log_es in zip(axs[-1, ::5], log_ess[::5]):
-    ax.set_xlabel(round(log_es), fontsize=fstick)
 
 # Plot game types
 
-right_grid = outer_grid[2].subgridspec(num, num, wspace=0, hspace=0)
-axs = right_grid.subplots()
+bottom_grid = outer_grid[2].subgridspec(num, num, wspace=0, hspace=0)
+axs = bottom_grid.subplots()
 
 xaxis = [1, 2, 3, 4]
 givens[0] = 1.0
@@ -150,7 +149,10 @@ for row, given in zip(axs, givens):
             rgb = (1.0, 0.0, 1.0)
         ax.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=1.0, markersize=3)
         ax.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))
+        ax.set_box_aspect(1)
 
+for ax, given in zip(axs[::5, 0], givens[::5]):
+    ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 for ax, log_es in zip(axs[-1, ::5], log_ess[::5]):
     ax.set_xlabel(round(log_es), fontsize=fstick)
 axs[0, 0].set_title('c', fontsize=fslabel, weight='bold')

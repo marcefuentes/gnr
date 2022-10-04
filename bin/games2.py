@@ -61,7 +61,7 @@ def icces(w, rho):
 log_ess = np.linspace(minlog_es, maxlog_es, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
 givens = np.linspace(maxgiven, mingiven, num=num)
-givens[0] = 0.99999
+givens[0] = 0.99
 R = R2/R1
 b = a2max/a1max
 
@@ -71,8 +71,8 @@ fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-fig = plt.figure(figsize=(16, 6), constrained_layout=False) 
-fig.supylabel("Partner's share of $\it{A}$", x=0.02, y=0.56, fontsize=fslabel)
+fig = plt.figure(figsize=(17, 6), constrained_layout=False) 
+fig.supylabel("Partner's share of $\it{A}$", x=0.04, y=0.56, fontsize=fslabel)
 fig.supxlabel("Substitutability of $\it{A}$", x=0.51, y=0.06, fontsize=fslabel)
 
 outer_grid = fig.add_gridspec(1, 3, wspace=0.20, bottom=0.25)
@@ -93,15 +93,15 @@ for row, given in zip(axs, givens):
         ax.plot(x_ics, icces(w, rho), c='#7e7e7e')
         T = b*R*(1.0 - given)
         budget = R2*a2max*(1.0 - given) + a2*R2*given - T*x_ics
-        ax.plot(x_ics, budget, c='darkgreen')
+        ax.plot(x_ics, budget, c='orange')
         ax.set(xticks=[], yticks=[], xlim=(0, R1*1.5), ylim=(0, R2*1.5))
-        if (given == 0.5) and (rho == rhos[0]):
-            ax.set_ylabel("Partner's share of $\it{A}$", fontsize=fslabel)
 axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
 for ax, log_es in zip(axs[-1, ::5], log_ess[::5]):
     ax.set_xlabel(round(log_es), fontsize=fstick)
 for ax, given in zip(axs[::5, 0], givens[::5]):
     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
+
+# Plot fitness landscapes
 
 center_grid = outer_grid[1].subgridspec(num, num, wspace=0, hspace=0)
 axs = center_grid.subplots()
@@ -111,18 +111,21 @@ a2partner = x
 y = np.linspace(0.999, 0.001, num=npoints)
 X, Y = np.meshgrid(x, y)
 
+extent = 0, npoints, npoints, 0
 for row, given in zip(axs, givens):
     for ax, rho in zip(row, rhos):
         Z = fitness(X, Y, given, rho)
         Z_normed = Z/Z.max(axis=0)
-        ax.imshow(Z_normed, cmap='magma', vmin=0, vmax=1.1)
+        ax.imshow(Z_normed, extent=extent, cmap='magma', vmin=0, vmax=1.1)
         xaxis = a2partner*npoints
         yaxis = a2maxw(a2partner, given, rho)*npoints
         ax.plot(xaxis, yaxis, color='white')
-        ax.set(xticks=[], yticks=[], xlim=(0, npoints-1), ylim=(npoints-1, 0))
+        ax.set(xticks=[], yticks=[], xlim=(-0.5, npoints-0.5), ylim=(npoints-0.5, -0.5))
 axs[0, 0].set_title('b', fontsize=fslabel, weight='bold')
 for ax, log_es in zip(axs[-1, ::5], log_ess[::5]):
     ax.set_xlabel(round(log_es), fontsize=fstick)
+
+# Plot game types
 
 right_grid = outer_grid[2].subgridspec(num, num, wspace=0, hspace=0)
 axs = right_grid.subplots()
@@ -138,11 +141,11 @@ for row, given in zip(axs, givens):
         S = wC0 = fitness(aD, aC, given, rho)
         yaxis = [T, R, P, S]
         if (T < R) and (P < S):
-            rgb = (0.5, 0.0, 1.0)
+            rgb = 'orange'
         elif (T > R) and (P < S):
-            rgb = (0.0, 1.0, 0.0) # Snowdrift
+            rgb = 'red'
         elif (2.0*R > T + S):
-            rgb = (1.0, 0.0, 0.5)
+            rgb = 'black'
         else:
             rgb = (1.0, 0.0, 1.0)
         ax.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=1.0, markersize=3)

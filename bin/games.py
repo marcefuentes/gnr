@@ -44,15 +44,6 @@ def fitness(x, y, given, rho):
         w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
     return w
 
-def fitness2(x, y, given, rho):
-    q1 = (1.0 - x)*R1
-    q2 = x*R2*(1.0 - given) + y*R2*given
-    if rho == 0.0:
-        w = pow(q1, alpha)*pow(q2, 1.0 - alpha)
-    else:
-        w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
-    return w
-
 R = R2/R1
 b = a2max/a1max
 x = np.linspace(0.001, 0.999, npoints)
@@ -105,10 +96,10 @@ givens[0] = 1.0
 
 for row, given in zip(axs, givens):
     for ax, rho in zip(row, rhos):
-        R = wC1 = fitness2(aC, aC, given, rho)
-        P = wD0 = fitness2(aD, aD, given, rho)
-        T = wD1 = fitness2(aD, aC, given, rho)
-        S = wC0 = fitness2(aC, aD, given, rho)
+        R = wC1 = fitness(aC, aC, given, rho)
+        P = wD0 = fitness(aD, aD, given, rho)
+        T = wD1 = fitness(aC, aD, given, rho)
+        S = wC0 = fitness(aD, aC, given, rho)
         yaxis = [T, R, P, S]
         if (T < R) and (P < S):
             rgb = (0.5, 0.0, 1.0)

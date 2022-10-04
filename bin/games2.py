@@ -15,7 +15,7 @@ a2max = 1.0
 npoints = 32
 npoints_ic = 32
 
-n_ic = 7    # Number of indifference curves
+n_ic = 6    # Number of indifference curves
 
 num = 11
 minlog_es = -5.0
@@ -58,18 +58,12 @@ def icces(w, rho):
             ics[pow(w, rho) <= alpha*pow(x_ics, rho)] = -0.1
     return ics
 
-R = R2/R1
-b = a2max/a1max
-x = np.linspace(0.001, 0.999, num=npoints)
-a2partner = x
-y = np.linspace(0.999, 0.001, num=npoints)
-X, Y = np.meshgrid(x, y)
-x_ics = np.linspace(0.0, R1*1.5, num=npoints_ic)
-
 log_ess = np.linspace(minlog_es, maxlog_es, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
 givens = np.linspace(maxgiven, mingiven, num=num)
 givens[0] = 0.99999
+R = R2/R1
+b = a2max/a1max
 
 fslabel = 26 # Label font size
 fstick = 18 # Tick font size
@@ -88,13 +82,15 @@ outer_grid = fig.add_gridspec(1, 3, wspace=0.20, bottom=0.25)
 left_grid = outer_grid[0].subgridspec(num, num, wspace=0, hspace=0)
 axs = left_grid.subplots()
 
+x_ics = np.linspace(0.0, R1*1.5, num=npoints_ic)
+
 for row, given in zip(axs, givens):
     for ax, rho in zip(row, rhos):
+        for w in np.linspace(0.5, 3.0, num=n_ic):
+            ax.plot(x_ics, icces(w, rho), c='#dbdbdb')
         a2 = a2eq(given, rho)
         w = fitness(a2, a2, given, rho)
-        ics = icces(w, rho)
-        ax.plot(x_ics, ics, c='#7e7e7e')
-        ax.set(xticks=[], yticks=[], xlim=(0, R1*1.5), ylim=(0, R2*1.5))
+        ax.plot(x_ics, icces(w, rho), c='#7e7e7e')
         T = b*R*(1.0 - given)
         budget = R2*a2max*(1.0 - given) + a2*R2*given - T*x_ics
         ax.plot(x_ics, budget, c='darkgreen')
@@ -109,6 +105,11 @@ for ax, given in zip(axs[::5, 0], givens[::5]):
 
 center_grid = outer_grid[1].subgridspec(num, num, wspace=0, hspace=0)
 axs = center_grid.subplots()
+
+x = np.linspace(0.001, 0.999, num=npoints)
+a2partner = x
+y = np.linspace(0.999, 0.001, num=npoints)
+X, Y = np.meshgrid(x, y)
 
 for row, given in zip(axs, givens):
     for ax, rho in zip(row, rhos):

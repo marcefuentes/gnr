@@ -71,11 +71,11 @@ fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-fig = plt.figure(figsize=(7, 18), constrained_layout=False) 
+fig = plt.figure(figsize=(6, 18), constrained_layout=False) 
 fig.supylabel("Partner's share of $\it{A}$", fontsize=fslabel)
-fig.supxlabel("Substitutability of $\it{A}$", fontsize=fslabel)
+fig.supxlabel("Substitutability of $\it{A}$", x=0.555, y=0.045, fontsize=fslabel)
 
-outer_grid = fig.add_gridspec(3, 1, left=0.3, right=0.9)
+outer_grid = fig.add_gridspec(3, 1, left=0.2, right=0.9)
 
 # Plot indifference curves and budget line
 

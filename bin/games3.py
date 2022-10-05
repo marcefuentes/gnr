@@ -62,6 +62,9 @@ givens = np.linspace(maxgiven, mingiven, num=num)
 givens[0] = 0.9999999
 R = R2/R1
 b = a2max/a1max
+Ts = b*R*(1.0 - givens)
+RR, TT = np.meshgrid(rhos, Ts)
+Q = R*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
 
 fslabel = 26 # Label font size
 fstick = 18 # Tick font size
@@ -81,10 +84,10 @@ top_grid = outer_grid[0].subgridspec(num, num, wspace=0, hspace=0)
 axs = top_grid.subplots()
 
 x_ics = np.linspace(0.0, R1*a1max, num=npoints_ic)
+a2eqs = a2max/(1.0 + Q*b)
 
-for row, given in zip(axs, givens):
-    for ax, rho in zip(row, rhos):
-        a2 = a2eq(given, rho)
+for row, given, g in zip(axs, givens, a2eqs):
+    for ax, rho, a2 in zip(row, rhos, g):
         weq = fitness(a2, a2, given, rho)
         w = 0.2
         while w < weq:
@@ -110,14 +113,14 @@ a2 = np.linspace(0.999, 0.001, num=npoints)
 X, Y = np.meshgrid(a2partner, a2)
 
 extent = 0, npoints, npoints, 0
-for row, given in zip(axs, givens):
-    for ax, rho in zip(row, rhos):
+for row, given, g in zip(axs, givens, Q):
+    for ax, rho, q in zip(row, rhos, g):
         Z = fitness(X, Y, given, rho)
         Z_normed = Z/Z.max(axis=0)
         ax.imshow(Z_normed, extent=extent, cmap='magma', vmin=0, vmax=1.1)
         xaxis = a2partner*npoints
-        yaxis = a2maxw(a2partner, given, rho)*npoints
-        ax.plot(xaxis, yaxis, color='white')
+        a2 = 1.0 - (a2max - a2partner*given*q*b)/(1.0 + q*b*(1.0 - given))
+        ax.plot(xaxis, a2, color='white')
         ax.set(xticks=[], yticks=[], xlim=(-0.5, npoints-0.5), ylim=(npoints-0.5, -0.5))
 for ax, given in zip(axs[::5, 0], givens[::5]):
     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)

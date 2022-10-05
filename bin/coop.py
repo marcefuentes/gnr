@@ -65,7 +65,7 @@ b = a2max/a1max
 log_ess = np.linspace(minlog_es, maxlog_es, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
 givens = np.linspace(maxgiven, mingiven, num=num)
-givens[0] = 0.99999
+givens[0] = 0.9999999
 Xrhos, Ygivens = np.meshgrid(rhos, givens)
 Aeq = a2eq(Ygivens)
 Feq = fitness(Aeq, Aeq)

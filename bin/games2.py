@@ -2,6 +2,7 @@
 
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
+from matplotlib import cm
 import numpy as np
 import time
 
@@ -15,15 +16,13 @@ a2max = 1.0
 npoints = 32
 npoints_ic = 32
 
-n_ic = 6    # Number of indifference curves
+n_ic = 3    # Number of indifference curves
 
 num = 11
 minlog_es = -5.0
 maxlog_es = 5.0
 mingiven = 0.0
 maxgiven = 1.0
-aC = 0.5
-aD = 0.0
 
 def a2maxw(x, given, rho):
     T = b*R*(1.0 - given)
@@ -82,19 +81,21 @@ outer_grid = fig.add_gridspec(3, 1, left=0.2, right=0.9)
 top_grid = outer_grid[0].subgridspec(num, num, wspace=0, hspace=0)
 axs = top_grid.subplots()
 
-x_ics = np.linspace(0.0, R1*1.5, num=npoints_ic)
+x_ics = np.linspace(0.0, R1*a1max, num=npoints_ic)
 
 for row, given in zip(axs, givens):
     for ax, rho in zip(row, rhos):
-        for w in np.linspace(0.5, 3.0, num=n_ic):
-            ax.plot(x_ics, icces(w, rho), c='#dbdbdb')
         a2 = a2eq(given, rho)
-        w = fitness(a2, a2, given, rho)
-        ax.plot(x_ics, icces(w, rho), c='#7e7e7e')
+        weq = fitness(a2, a2, given, rho)
+        w = 0.2
+        while w < weq:
+            ax.plot(x_ics, icces(w, rho), c='#dbdbdb')
+            w += 0.2
+        ax.plot(x_ics, icces(weq, rho), c=cm.magma(weq))
         T = b*R*(1.0 - given)
         budget = R2*a2max*(1.0 - given) + a2*R2*given - T*x_ics
-        ax.plot(x_ics, budget, c='orange')
-        ax.set(xticks=[], yticks=[], xlim=(0, R1*1.5), ylim=(0, R2*1.5))
+        ax.plot(x_ics, budget, c='green')
+        ax.set(xticks=[], yticks=[], xlim=(0, R1*a1max), ylim=(0, R2*a2max))
         ax.set_box_aspect(1)
 axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
 for ax, given in zip(axs[::5, 0], givens[::5]):
@@ -134,19 +135,21 @@ givens[0] = 1.0
 
 for row, given in zip(axs, givens):
     for ax, rho in zip(row, rhos):
+        aC = a2eq(0.0, rho)
+        aD = a2eq(given, rho)
         R = wC1 = fitness(aC, aC, given, rho)
         P = wD0 = fitness(aD, aD, given, rho)
         T = wD1 = fitness(aC, aD, given, rho)
         S = wC0 = fitness(aD, aC, given, rho)
         yaxis = [T, R, P, S]
-        if (T < R) and (P < S):
-            rgb = 'orange'
-        elif (T > R) and (P < S):
+        if (T <= R) and (P <= S):
+            rgb = 'white'
+        elif (T > R) and (P <= S):
             rgb = 'red'
         elif (2.0*R > T + S):
-            rgb = 'black'
+            rgb = (0.8-(R-P), 0.8-(R-P), 0.8-(R-P))
         else:
-            rgb = (1.0, 0.0, 1.0)
+            rgb = 'cyan'
         ax.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=1.0, markersize=3)
         ax.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))
         ax.set_box_aspect(1)

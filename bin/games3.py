@@ -136,15 +136,17 @@ givens[0] = 1.0
 
 for row, given in zip(axs, givens):
     for ax, rho in zip(row, rhos):
-        aC = a2eq(0.0, rho)
-        aD = a2eq(given, rho)
+        #aC = a2eq(0.0, rho)
+        #aD = a2eq(given, rho)
+        aC = 0.5
+        aD = 0.0
         R = wC1 = fitness(aC, aC, given, rho)
         P = wD0 = fitness(aD, aD, given, rho)
         T = wD1 = fitness(aC, aD, given, rho)
         S = wC0 = fitness(aD, aC, given, rho)
         yaxis = [T, R, P, S]
         if (T <= R) and (P <= S):
-            rgb = 'white'
+            rgb = 'goldenrod'
         elif (T > R) and (P <= S):
             rgb = 'red'
         elif (2.0*R > T + S):

@@ -85,18 +85,17 @@ axs = top_grid.subplots()
 
 x_ics = np.linspace(0.0, R1*a1max, num=npoints_ic)
 a2eqs = a2max/(1.0 + Q*b)
+ws = np.linspace(0.5, 1.5, num=5)
 
 for row, given, g in zip(axs, givens, a2eqs):
     for ax, rho, a2 in zip(row, rhos, g):
-        weq = fitness(a2, a2, given, rho)
-        w = 0.2
-        while w < weq:
+        for w in ws:
             ax.plot(x_ics, icces(w, rho), c='#dbdbdb')
-            w += 0.2
+        weq = fitness(a2, a2, given, rho)
         ax.plot(x_ics, icces(weq, rho), c=cm.magma(weq))
         T = b*R*(1.0 - given)
         budget = R2*a2max*(1.0 - given) + a2*R2*given - T*x_ics
-        ax.plot(x_ics, budget, c='green')
+        ax.plot(x_ics, budget, c='green', alpha=0.4)
         ax.set(xticks=[], yticks=[], xlim=(0, R1*a1max), ylim=(0, R2*a2max))
         ax.set_box_aspect(1)
 axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
@@ -120,7 +119,7 @@ for row, given, g in zip(axs, givens, Q):
         ax.imshow(Z_normed, extent=extent, cmap='magma', vmin=0, vmax=1.1)
         xaxis = npoints*a2partner
         a2maxw = npoints*(a2max - a2partner*given*q*b)/(1.0 + q*b*(1.0 - given))
-        ax.plot(xaxis, a2maxw, color='white')
+        ax.plot(xaxis, a2maxw, color='white', alpha=0.7)
         ax.set(xticks=[], yticks=[], xlim=(-0.5, npoints-0.5), ylim=(-0.5, npoints-0.5))
 for ax, given in zip(axs[::5, 0], givens[::5]):
     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)

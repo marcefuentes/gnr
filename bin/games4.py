@@ -14,7 +14,7 @@ R2 = 2.0
 a1max = 1.0
 a2max = 1.0
 npoints = 128
-npoints_ic = 32
+npoints_ic = 128
 
 n_ic = 3    # Number of indifference curves
 
@@ -108,10 +108,10 @@ for row, given, g in zip(axs, givens, Q):
     for ax, rho, q in zip(row, rhos, g):
         Z = fitness(X, Y, given, rho)
         Z_normed = Z/Z.max(axis=0)
-        ax.imshow(Z_normed, cmap='magma', vmin=0, vmax=1.1)
+        ax.imshow(Z_normed, cmap='Greys_r', vmin=0, vmax=1.0)
         xaxis = npoints*a2-0.5
         a2maxw = npoints*(a2max - a2*given*q*b)/(1.0 + q*b*(1.0 - given))-0.5
-        ax.plot(xaxis, a2maxw, color='white', alpha=0.7)
+        ax.plot(xaxis, a2maxw, color='black')
         ax.set(xticks=[], yticks=[], xlim=(-0.5, npoints-0.5), ylim=(-0.5, npoints-0.5))
 axs[0, 0].set_title('b', fontsize=fslabel, weight='bold')
 

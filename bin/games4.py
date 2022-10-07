@@ -13,7 +13,7 @@ R1 = 2.0
 R2 = 2.0
 a1max = 1.0
 a2max = 1.0
-npoints = 32
+npoints = 128
 npoints_ic = 32
 
 n_ic = 3    # Number of indifference curves
@@ -67,10 +67,10 @@ plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
 fig = plt.figure(figsize=(12, 12), constrained_layout=False) 
-fig.supylabel("Partner's share of $\it{A}$", fontsize=fslabel)
-fig.supxlabel("Substitutability of $\it{A}$", fontsize=fslabel)
+fig.supylabel("Partner's share of $\it{A}$", y=0.485, fontsize=fslabel)
+fig.supxlabel("Substitutability of $\it{A}$", x=0.525, fontsize=fslabel)
 
-outer_grid = fig.add_gridspec(2, 2, left=0.2, right=0.9)
+outer_grid = fig.add_gridspec(2, 2, left=0.15, right=0.9, top=0.86, bottom=0.11)
 
 # Top left: indifference curves and budget line
 
@@ -121,7 +121,6 @@ bottomleft_grid = outer_grid[1, 0].subgridspec(num, num, wspace=0, hspace=0)
 axs = bottomleft_grid.subplots()
 
 xaxis = [1, 2, 3, 4]
-givens[0] = 1.0
 
 for row, given in zip(axs, givens):
     for ax, rho in zip(row, rhos):
@@ -137,7 +136,7 @@ for row, given in zip(axs, givens):
         if (T <= R) and (P <= S):
             rgb = 'orange'
         elif (T > R) and (P <= S):
-            rgb = 'red'
+            rgb = 'crimson'
         elif (2.0*R > T + S):
             rgb = (0.8-(R-P), 0.8-(R-P), 0.8-(R-P))
         else:
@@ -157,10 +156,9 @@ axs[0, 0].set_title('c', fontsize=fslabel, weight='bold')
 bottomright_grid = outer_grid[1, 1].subgridspec(num, num, wspace=0, hspace=0)
 axs = bottomright_grid.subplots()
 
-a2 = np.linspace(0.001, 0.5, num=npoints)
+a2 = np.linspace(0.000, 0.5, num=npoints)
 X, Y = np.meshgrid(a2, a2)
 
-extent = -0.5, npoints+0.5, -0.5, npoints+0.5
 for row, given in zip(axs, givens):
     for ax, rho in zip(row, rhos):
         R = fitness(Y, Y, given, rho)
@@ -173,10 +171,10 @@ for row, given in zip(axs, givens):
         Z = np.tril(Z, k=-1)
         Z = np.ma.masked_where(Z == 0.0, Z)
         Z = Z - 1
-        cmap = cm.get_cmap('magma').copy()
+        cmap = cm.get_cmap('inferno').copy()
         cmap.set_bad(color='white')
-        ax.imshow(Z, origin='lower', cmap=cmap, extent=extent)
-        ax.set(xticks=[], yticks=[], xlim=(-0.5, npoints+0.5), ylim=(-0.5, npoints+0.5))
+        ax.imshow(Z, origin='lower', cmap=cmap, vmin=0, vmax=2.2)
+        ax.set(xticks=[], yticks=[], xlim=(-0.5, npoints-0.5), ylim=(-0.5, npoints-0.5))
 for ax, log_es in zip(axs[-1, ::5], log_ess[::5]):
     ax.set_xlabel(round(log_es), fontsize=fstick)
 axs[0, 0].set_title('d', fontsize=fslabel, weight='bold')

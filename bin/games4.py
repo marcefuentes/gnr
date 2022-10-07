@@ -3,6 +3,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from matplotlib import cm
+from matplotlib.colors import ListedColormap
 import numpy as np
 import time
 
@@ -136,7 +137,7 @@ for row, given in zip(axs, givens):
         if (T <= R) and (P <= S):
             rgb = 'orange'
         elif (T > R) and (P <= S):
-            rgb = 'crimson'
+            rgb = 'red'
         elif (2.0*R > T + S):
             rgb = (0.8-(R-P), 0.8-(R-P), 0.8-(R-P))
         else:
@@ -158,6 +159,8 @@ axs = bottomright_grid.subplots()
 
 a2 = np.linspace(0.000, 0.5, num=npoints)
 X, Y = np.meshgrid(a2, a2)
+mycolors = [[0.2, 0.2, 0.2, 1.0], [1.0, 0.0, 0.0, 1.0], [1.0, 165/265, 0.0, 1.0]]
+mycmap = ListedColormap(mycolors)
 
 for row, given in zip(axs, givens):
     for ax, rho in zip(row, rhos):
@@ -171,9 +174,9 @@ for row, given in zip(axs, givens):
         Z = np.tril(Z, k=-1)
         Z = np.ma.masked_where(Z == 0.0, Z)
         Z = Z - 1
-        cmap = cm.get_cmap('inferno').copy()
+        cmap = cm.get_cmap(mycmap).copy()
         cmap.set_bad(color='white')
-        ax.imshow(Z, origin='lower', cmap=cmap, vmin=0, vmax=2.2)
+        ax.imshow(Z, origin='lower', cmap=cmap, vmin=0, vmax=2)
         ax.set(xticks=[], yticks=[], xlim=(-0.5, npoints-0.5), ylim=(-0.5, npoints-0.5))
 for ax, log_es in zip(axs[-1, ::5], log_ess[::5]):
     ax.set_xlabel(round(log_es), fontsize=fstick)

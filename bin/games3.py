@@ -112,16 +112,16 @@ a2partner = np.linspace(0.001, 0.999, num=npoints)
 a2 = np.linspace(0.999, 0.001, num=npoints)
 X, Y = np.meshgrid(a2partner, a2)
 
-extent = 0, npoints, npoints, 0
+extent = -0.5, npoints-0.5, -0.5, npoints-0.5
 for row, given, g in zip(axs, givens, Q):
     for ax, rho, q in zip(row, rhos, g):
         Z = fitness(X, Y, given, rho)
         Z_normed = Z/Z.max(axis=0)
         ax.imshow(Z_normed, extent=extent, cmap='magma', vmin=0, vmax=1.1)
-        xaxis = a2partner*npoints
-        a2 = 1.0 - (a2max - a2partner*given*q*b)/(1.0 + q*b*(1.0 - given))
-        ax.plot(xaxis, a2, color='white')
-        ax.set(xticks=[], yticks=[], xlim=(-0.5, npoints-0.5), ylim=(npoints-0.5, -0.5))
+        xaxis = npoints*a2partner
+        a2maxw = npoints*(a2max - a2partner*given*q*b)/(1.0 + q*b*(1.0 - given))
+        ax.plot(xaxis, a2maxw, color='white')
+        ax.set(xticks=[], yticks=[], xlim=(-0.5, npoints-0.5), ylim=(-0.5, npoints-0.5))
 for ax, given in zip(axs[::5, 0], givens[::5]):
     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 axs[0, 0].set_title('b', fontsize=fslabel, weight='bold')

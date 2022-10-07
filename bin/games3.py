@@ -78,7 +78,7 @@ fig.supxlabel("Substitutability of $\it{A}$", x=0.555, y=0.045, fontsize=fslabel
 
 outer_grid = fig.add_gridspec(3, 1, left=0.2, right=0.9)
 
-# Plot indifference curves and budget line
+# Top: indifference curves and budget line
 
 top_grid = outer_grid[0].subgridspec(num, num, wspace=0, hspace=0)
 axs = top_grid.subplots()
@@ -103,7 +103,7 @@ axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
 for ax, given in zip(axs[::5, 0], givens[::5]):
     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 
-# Plot fitness landscapes
+# Center: fitness landscapes
 
 center_grid = outer_grid[1].subgridspec(num, num, wspace=0, hspace=0)
 axs = center_grid.subplots()
@@ -126,7 +126,7 @@ for ax, given in zip(axs[::5, 0], givens[::5]):
     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 axs[0, 0].set_title('b', fontsize=fslabel, weight='bold')
 
-# Plot game types
+# Bottom: game types
 
 bottom_grid = outer_grid[2].subgridspec(num, num, wspace=0, hspace=0)
 axs = bottom_grid.subplots()
@@ -146,7 +146,7 @@ for row, given in zip(axs, givens):
         S = wC0 = fitness(aD, aC, given, rho)
         yaxis = [T, R, P, S]
         if (T <= R) and (P <= S):
-            rgb = 'goldenrod'
+            rgb = 'orange'
         elif (T > R) and (P <= S):
             rgb = 'red'
         elif (2.0*R > T + S):

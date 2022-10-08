@@ -112,7 +112,7 @@ for row, given, g in zip(axs, givens, Q):
         ax.imshow(Z_normed, cmap='Greys_r', vmin=0, vmax=1.0)
         xaxis = npoints*a2-0.5
         a2maxw = npoints*(a2max - a2*given*q*b)/(1.0 + q*b*(1.0 - given))-0.5
-        ax.plot(xaxis, a2maxw, color='black')
+        ax.plot(xaxis, a2maxw, color='orange')
         ax.set(xticks=[], yticks=[], xlim=(-0.5, npoints-0.5), ylim=(-0.5, npoints-0.5))
 axs[0, 0].set_title('b', fontsize=fslabel, weight='bold')
 
@@ -139,7 +139,7 @@ for row, given in zip(axs, givens):
         elif (T > R) and (P <= S):
             rgb = 'red'
         elif (2.0*R > T + S):
-            rgb = (0.8-(R-P), 0.8-(R-P), 0.8-(R-P))
+            rgb = 'black'
         else:
             rgb = 'cyan'
         ax.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=1.0, markersize=3)
@@ -159,7 +159,7 @@ axs = bottomright_grid.subplots()
 
 a2 = np.linspace(0.000, 0.5, num=npoints)
 X, Y = np.meshgrid(a2, a2)
-mycolors = [[0.2, 0.2, 0.2, 1.0], [1.0, 0.0, 0.0, 1.0], [1.0, 165/265, 0.0, 1.0]]
+mycolors = [[0.4, 0.4, 0.4, 1.0], [1.0, 0.0, 0.0, 1.0], [1.0, 165/265, 0.0, 1.0]]
 mycmap = ListedColormap(mycolors)
 
 for row, given in zip(axs, givens):

@@ -26,12 +26,12 @@ void write_headers (char *filename, char *header1, char *header2, char *header3)
 
 	for ( int v = 0; v < CONTINUOUS_V; v++ )
 	{
-		//for ( int b = 0; b < BINS; b++ )
-		//{
-		//	fprintf (fp, ",%s%i,%s%iSD", headersc[v], b, headersc[v], b);
-		//}
+		for ( int b = 0; b < BINS; b++ )
+		{
+			fprintf (fp, ",%s%i,%s%iSD", headersc[v], b, headersc[v], b);
+		}
 
-		//fprintf (fp, ",%sBD,%sBDSD", headersc[v], headersc[v]);
+		fprintf (fp, ",%sBD,%sBDSD", headersc[v], headersc[v]);
 		fprintf (fp, ",%smedian,%smedianSD", headersc[v], headersc[v]);
 		fprintf (fp, ",%siqr,%siqrSD", headersc[v], headersc[v]);
 	}
@@ -61,12 +61,12 @@ void write_stats (char *filename, float factor1, float factor2, int factor3, str
 
 		for ( int v = 0; v < CONTINUOUS_V; v++ )
 		{
-			//for ( int b = 0; b < BINS; b++)
-			//{
-			//	fprintf (fp, ",%f,%f", p->sumc[v][b], p->sumc2[v][b]);
-			//}
+			for ( int b = 0; b < BINS; b++)
+			{
+				fprintf (fp, ",%f,%f", p->sumc[v][b], p->sumc2[v][b]);
+			}
 
-			//fprintf (fp, ",%f,%f", p->sumBD[v], p->sumBD2[v]);
+			fprintf (fp, ",%f,%f", p->sumBD[v], p->sumBD2[v]);
 			fprintf (fp, ",%f,%f", p->summedian[v], p->summedian2[v]);
 			fprintf (fp, ",%f,%f", p->sumiqr[v], p->sumiqr2[v]);
 		}

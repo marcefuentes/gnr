@@ -13,6 +13,7 @@ struct ptype
 	double		sumc[CONTINUOUS_V][BINS], sumc2[CONTINUOUS_V][BINS];
 	double		sumBD[CONTINUOUS_V], sumBD2[CONTINUOUS_V];
 	double		summedian[CONTINUOUS_V], summedian2[CONTINUOUS_V];
+	double		sumiqr[CONTINUOUS_V], sumiqr2[CONTINUOUS_V];
 	double		sumb[BOOLEAN_V], sumb2[BOOLEAN_V];
 };
 
@@ -22,6 +23,7 @@ struct pruntype
 	double		wmax;
 	double		frc[CONTINUOUS_V][BINS];
 	double		median[CONTINUOUS_V];
+	double		iqr[CONTINUOUS_V];
 	double		frb[BOOLEAN_V];
 };
 

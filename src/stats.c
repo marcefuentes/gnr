@@ -13,7 +13,7 @@ void stats_period (struct itype *i, struct itype *i_last, struct pruntype *prun,
 	double aceiling = amin + abinsize;
 	double hbinsize = abinsize*r2;
 	double hceiling = aceiling*r2;
-	double e, f;
+	double e, f, qi, qs;
 	int b;
 
 	double w;
@@ -43,20 +43,39 @@ void stats_period (struct itype *i, struct itype *i_last, struct pruntype *prun,
 		b = 0;
 		e = 0.0;
 
-		for ( f = prun->frc[v][b]; f < 0.5; f += prun->frc[v][b] )
+		for ( f = prun->frc[v][b]; f < 0.25; f += prun->frc[v][b] )
+		{
+			e = f;
+			b++;
+		}
+
+		qi = (double)b/BINS + (0.25 - e)/((f - e)*BINS);
+
+		for ( ; f < 0.5; f += prun->frc[v][b] )
 		{
 			e = f;
 			b++;
 		}
 
 		prun->median[v] = (double)b/BINS + (0.5 - e)/((f - e)*BINS);
+
+		for ( ; f < 0.75; f += prun->frc[v][b] )
+		{
+			e = f;
+			b++;
+		}
+
+		qs = (double)b/BINS + (0.75 - e)/((f - e)*BINS);
+		prun->iqr[v] = qs - qi;
 	}
 
 	prun->median[0] *= prun->wmax;
+	prun->iqr[0] *= prun->wmax;
 
 	for ( int v = 1; v < CONTINUOUS_V; v++ )
 	{
 		prun->median[v] *= (amax - amin);
+		prun->iqr[v] *= (amax - amin);
 	}
 
 	for ( int v = 0; v < BOOLEAN_V; v++ )
@@ -107,6 +126,10 @@ void stats_end (struct pruntype *prun, struct pruntype *prun_last, struct ptype 
 			h = prun->median[v];
 			p->summedian[v] += h;
 			p->summedian2[v] += h*h;
+
+			h = prun->iqr[v];
+			p->sumiqr[v] += h;
+			p->sumiqr2[v] += h*h;
 		}
 
 		for ( int v = 0; v < BOOLEAN_V; v++ )
@@ -134,6 +157,8 @@ void stats_runs (struct ptype *p, struct ptype *p_last, int runs)
 			p->sumBD[v] /= runs;
 			p->summedian2[v] = stdev (p->summedian[v], p->summedian2[v], runs);
 			p->summedian[v] /= runs;
+			p->sumiqr2[v] = stdev (p->sumiqr[v], p->sumiqr2[v], runs);
+			p->sumiqr[v] /= runs;
 		}
 
 		for ( int v = 0; v < BOOLEAN_V; v++)

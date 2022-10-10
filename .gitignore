@@ -2,6 +2,7 @@ depend
 gnr
 *.o
 *.pyc
+*.ics
 charts/
 final/
 final_link

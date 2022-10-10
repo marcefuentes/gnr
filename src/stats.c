@@ -98,7 +98,7 @@ void stats_period (struct itype *i, struct itype *i_last, struct pruntype *prun,
 
 	for ( int v = 0; v < CONTINUOUS_V; v++ )
 	{
-		prun->sd[v] =stdev(prun->mean[v], prun->sd[v], n);
+		prun->sd[v] = stdev(prun->mean[v], prun->sd[v], n);
 		prun->mean[v] = prun->mean[v]/n;
 	}
 
@@ -152,12 +152,12 @@ void stats_end (struct pruntype *prun, struct pruntype *prun_last, struct ptype 
 			p->sumiqr2[v] += h*h;
 			
 			h = prun->mean[v];
-			p->summean[v] +=h;
-			p->summean2[v] +=h*h;
+			p->summean[v] += h;
+			p->summean2[v] += h*h;
 
 			h = prun->sd[v];
-			p->sumsd[v] +=h;
-			p->sumsd2[v] +=h*h;
+			p->sumsd[v] += h;
+			p->sumsd2[v] += h*h;
 		}
 
 		for ( int v = 0; v < BOOLEAN_V; v++ )
@@ -187,9 +187,9 @@ void stats_runs (struct ptype *p, struct ptype *p_last, int runs)
 			p->summedian[v] /= runs;
 			p->sumiqr2[v] = stdev (p->sumiqr[v], p->sumiqr2[v], runs);
 			p->sumiqr[v] /= runs;
-			p->summean2[v] = stdev (p->summedian[v], p->summedian2[v], runs);
+			p->summean2[v] = stdev (p->summean[v], p->summean2[v], runs);
 			p->summean[v] /= runs;
-			p->sumsd2[v] = stdev (p->sumiqr[v], p->sumiqr2[v], runs);
+			p->sumsd2[v] = stdev (p->sumsd[v], p->sumsd2[v], runs);
 			p->sumsd[v] /= runs;
 		}
 

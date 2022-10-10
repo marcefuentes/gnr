@@ -2,7 +2,7 @@
 #include "sim.h"
 
 int select_bin (double ceiling, double binsize, double v);
-double stdev (double sum, double sum2, int runs);
+double stdev (double sum, double sum2, int n);
 
 void stats_period (struct itype *i, struct itype *i_last, struct pruntype *prun, int n, double amin, double amax, double r2, double given)
 {
@@ -11,13 +11,17 @@ void stats_period (struct itype *i, struct itype *i_last, struct pruntype *prun,
 	double wbinsize = prun->wmax/BINS;
 	double abinsize = (amax - amin)/BINS;
 	double aceiling = amin + abinsize;
-	double hbinsize = abinsize*r2;
-	double hceiling = aceiling*r2;
 	double e, f, qi, qs;
 	int b;
 
 	double w;
 	double p = 0.0;
+
+	for ( int v = 0; v < CONTINUOUS_V; v++ )
+	{
+		prun->mean[CONTINUOUS_V] = 0.0;
+		prun->sd[CONTINUOUS_V] = 0.0;
+	}
 
 	for ( ; i < i_last; i++ )
 	{
@@ -26,11 +30,20 @@ void stats_period (struct itype *i, struct itype *i_last, struct pruntype *prun,
 		bin[0][select_bin(wbinsize, wbinsize, w)] ++;
 		bin[1][select_bin(aceiling, abinsize, i->a2Default)] ++;
 		bin[2][select_bin(aceiling, abinsize, i->a2Seen)] ++;
-		bin[3][select_bin(hceiling, hbinsize, i->a2Seen*r2*given)] ++;
-		bin[4][select_bin(aceiling, abinsize, i->ChooseGrain)] ++;
-		bin[5][select_bin(aceiling, abinsize, i->MimicGrain)] ++;
+		bin[3][select_bin(aceiling, abinsize, i->ChooseGrain)] ++;
+		bin[4][select_bin(aceiling, abinsize, i->MimicGrain)] ++;
 		boolean[0] += i->chose_partner;
 		boolean[1] += i->changed_a2;
+		prun->mean[0] += w;
+		prun->mean[1] += i->a2Default;
+		prun->mean[2] += i->a2Seen;
+		prun->mean[3] += i->ChooseGrain;
+		prun->mean[4] += i->MimicGrain;
+		prun->sd[0] += w*w;
+		prun->sd[1] += i->a2Default*i->a2Default;
+		prun->sd[2] += i->a2Seen*i->a2Seen;
+		prun->sd[3] += i->ChooseGrain*i->ChooseGrain;
+		prun->sd[4] += i->MimicGrain*i->MimicGrain;
 	}
 
 	for ( int v = 0; v < CONTINUOUS_V; v++ )
@@ -82,6 +95,13 @@ void stats_period (struct itype *i, struct itype *i_last, struct pruntype *prun,
 	{
 		prun->frb[v] = (double) boolean[v]/n;
 	}
+
+	for ( int v = 0; v < CONTINUOUS_V; v++ )
+	{
+		prun->sd[v] =stdev(prun->mean[v], prun->sd[v], n);
+		prun->mean[v] = prun->mean[v]/n;
+	}
+
 }
 
 int select_bin (double ceiling, double binsize, double v)
@@ -130,6 +150,14 @@ void stats_end (struct pruntype *prun, struct pruntype *prun_last, struct ptype 
 			h = prun->iqr[v];
 			p->sumiqr[v] += h;
 			p->sumiqr2[v] += h*h;
+			
+			h = prun->mean[v];
+			p->summean[v] +=h;
+			p->summean2[v] +=h*h;
+
+			h = prun->sd[v];
+			p->sumsd[v] +=h;
+			p->sumsd2[v] +=h*h;
 		}
 
 		for ( int v = 0; v < BOOLEAN_V; v++ )
@@ -159,6 +187,10 @@ void stats_runs (struct ptype *p, struct ptype *p_last, int runs)
 			p->summedian[v] /= runs;
 			p->sumiqr2[v] = stdev (p->sumiqr[v], p->sumiqr2[v], runs);
 			p->sumiqr[v] /= runs;
+			p->summean2[v] = stdev (p->summedian[v], p->summedian2[v], runs);
+			p->summean[v] /= runs;
+			p->sumsd2[v] = stdev (p->sumiqr[v], p->sumiqr2[v], runs);
+			p->sumsd[v] /= runs;
 		}
 
 		for ( int v = 0; v < BOOLEAN_V; v++)
@@ -169,11 +201,11 @@ void stats_runs (struct ptype *p, struct ptype *p_last, int runs)
 	}
 }
 
-double stdev (double sum, double sum2, int runs)
+double stdev (double sum, double sum2, int n)
 {
-	if ( runs > 1 )
+	if ( n > 1 )
 	{
-		sum2 = sqrt ((sum2 - sum*sum/runs)/(runs - 1));
+		sum2 = sqrt ((sum2 - sum*sum/n)/(n - 1));
 	}
 	else
 	{

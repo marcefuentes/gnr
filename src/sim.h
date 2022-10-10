@@ -1,6 +1,6 @@
 #include <stdbool.h>
 
-#define CONTINUOUS_V 6
+#define CONTINUOUS_V 5
 #define BINS 64
 #define BOOLEAN_V 2
 
@@ -10,6 +10,8 @@ struct ptype
 {
 	int		time;
 	double		wmax;
+	double		summean[CONTINUOUS_V], summean2[CONTINUOUS_V];
+	double		sumsd[CONTINUOUS_V], sumsd2[CONTINUOUS_V];
 	double		sumc[CONTINUOUS_V][BINS], sumc2[CONTINUOUS_V][BINS];
 	double		sumBD[CONTINUOUS_V], sumBD2[CONTINUOUS_V];
 	double		summedian[CONTINUOUS_V], summedian2[CONTINUOUS_V];
@@ -21,6 +23,8 @@ struct pruntype
 {
 	int		time;
 	double		wmax;
+	double		mean[CONTINUOUS_V];
+	double		sd[CONTINUOUS_V];
 	double		frc[CONTINUOUS_V][BINS];
 	double		median[CONTINUOUS_V];
 	double		iqr[CONTINUOUS_V];

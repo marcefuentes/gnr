@@ -19,8 +19,8 @@ void stats_period (struct itype *i, struct itype *i_last, struct pruntype *prun,
 
 	for ( int v = 0; v < CONTINUOUS_V; v++ )
 	{
-		prun->mean[CONTINUOUS_V] = 0.0;
-		prun->sd[CONTINUOUS_V] = 0.0;
+		prun->mean[v] = 0.0;
+		prun->sd[v] = 0.0;
 	}
 
 	for ( ; i < i_last; i++ )

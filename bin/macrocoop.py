@@ -96,8 +96,8 @@ extent = 0, nr, 0, nc
 for axrow, folder, letterrow in zip(axs[1:], folders, letters[1:]):
     for ax, trait, traitvmax, letter, traitlabel in zip(axrow, traits, traitvmaxs, letterrow, traitlabels):
         df = dfts[folder]
+        if 'Help' in traitlabel: df[trait] = df[trait]*R2*df['Given']
         df_piv = pd.pivot_table(df, values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)
-        if 'Help' in traitlabel: df_piv = df_piv*0.5*R2*Ygivens
         ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
         ax.set_xticks([0, nc/2.0, nc])
         ax.set_yticks([0, nr/2.0, nr])

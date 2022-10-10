@@ -16,7 +16,7 @@ letters = [['a', 'b', 'c', 'd', 'e'],
             ['u', 'v', 'w', 'x', 'y'],
             ['z', 'aa', 'ab', 'ac', 'ad']]
 
-traits = ['a2Seenmedian', 'helpmedian', 'wmedian', 'ChooseGrainmedian', 'MimicGrainmedian']
+traits = ['a2Seenmedian', 'a2Seenmedian', 'wmedian', 'ChooseGrainmedian', 'MimicGrainmedian']
 traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
 traitvmaxs = [0.5, 1.0, 1.0, 1.0, 1.0]
 folders = ['none', 'p', 'r', 'pr', 'p8r']
@@ -103,6 +103,7 @@ for axrow, folder, letterrow in zip(axs[1:], folders, letters[1:]):
     for ax, trait, traitvmax, letter, traitlabel in zip(axrow, traits, traitvmaxs, letterrow, traitlabels):
         df = dfts[folder]
         if 'Sensitivity' in traitlabel: df[trait] = 1.0 - df[trait]
+        if 'Help' in traitlabel: df[trait] = df[trait]*R2*df['Given']
         df_piv = pd.pivot_table(df, values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)
         ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
         ax.set_xticks([0, nc/2.0, nc])

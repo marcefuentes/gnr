@@ -93,14 +93,17 @@ int main (int argc, char *argv[])
 	char gl2[13];
 	char csv[13];
 	char ics[13];
+	char frq[13];
 	strcpy (glo, argv[1]);
 	strcpy (gl2, argv[1]);
 	strcpy (csv, argv[1]);
 	strcpy (ics, argv[1]);
+	strcpy (frq, argv[1]);
 	strcat (glo, ".glo");
 	strcat (gl2, ".gl2");
 	strcat (csv, ".csv");
 	strcat (ics, ".ics");
+	strcat (frq, ".frq");
 
 	read_globals (glo);
 
@@ -178,6 +181,7 @@ int main (int argc, char *argv[])
 
 	write_globals (gl2); 
 	write_headers (csv, factorName1, factorName2, factorName3);
+	write_headers_frq (frq, factorName1, factorName2, factorName3);
 
 	if ( gRuns == 1 )
 	{
@@ -289,6 +293,7 @@ int main (int argc, char *argv[])
 				p_last = p_first + gPeriods + 1;
 				stats_runs (p_first, p_last, gRuns);
 				write_stats (csv, *factor1, *factor2, *factor3, p_first, p_last); // Writes periodic data
+				write_stats_frq (frq, *factor1, *factor2, *factor3, p_first, p_last); // Writes periodic data
 
 				free (p_first);
 			}

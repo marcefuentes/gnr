@@ -3,6 +3,7 @@ gnr
 *.o
 *.pyc
 *.ics
+*.frq
 charts/
 final/
 final_link

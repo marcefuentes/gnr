@@ -25,14 +25,6 @@ void write_headers (char *filename, char *header1, char *header2, char *header3)
 
 	for ( int v = 0; v < CONTINUOUS_V; v++ )
 	{
-		//for ( int b = 0; b < BINS; b++ )
-		//{
-		//	fprintf (fp, ",%s%i,%s%iSD", headersc[v], b, headersc[v], b);
-		//}
-
-		//fprintf (fp, ",%sBD,%sBDSD", headersc[v], headersc[v]);
-		fprintf (fp, ",%smedian,%smedianSD", headersc[v], headersc[v]);
-		fprintf (fp, ",%siqr,%siqrSD", headersc[v], headersc[v]);
 		fprintf (fp, ",%smean,%smeanSD", headersc[v], headersc[v]);
 		fprintf (fp, ",%ssd,%ssdSD", headersc[v], headersc[v]);
 	}
@@ -40,6 +32,41 @@ void write_headers (char *filename, char *header1, char *header2, char *header3)
 	for ( int v = 0; v < BOOLEAN_V; v++ )
 	{
 		fprintf (fp, ",%s,%sSD", headersb[v], headersb[v]);
+	}
+
+	fprintf (fp, "\n");
+
+	fclose (fp);
+}
+
+void write_headers_frq (char *filename, char *header1, char *header2, char *header3)
+{
+	FILE *fp;
+
+	// 20 is the maximum number of characters of variable names
+	char headersc[CONTINUOUS_V][20] = { "w",
+						"a2Default",
+						"a2Seen",
+						"ChooseGrain",
+						"MimicGrain" };
+
+	if ( (fp = fopen (filename, "a+")) == NULL )
+	{
+		file_write_error (filename);
+	}
+
+	fprintf (fp, "%s,%s,%s,wmax,Time", header1, header2, header3);
+
+	for ( int v = 0; v < CONTINUOUS_V; v++ )
+	{
+		fprintf (fp, ",%sBD,%sBDSD", headersc[v], headersc[v]);
+		fprintf (fp, ",%smedian,%smedianSD", headersc[v], headersc[v]);
+		fprintf (fp, ",%siqr,%siqrSD", headersc[v], headersc[v]);
+
+		for ( int b = 0; b < BINS; b++ )
+		{
+			fprintf (fp, ",%s%i,%s%iSD", headersc[v], b, headersc[v], b);
+		}
 	}
 
 	fprintf (fp, "\n");
@@ -62,14 +89,6 @@ void write_stats (char *filename, float factor1, float factor2, int factor3, str
 
 		for ( int v = 0; v < CONTINUOUS_V; v++ )
 		{
-			//for ( int b = 0; b < BINS; b++)
-			//{
-			//	fprintf (fp, ",%f,%f", p->sumc[v][b], p->sumc2[v][b]);
-			//}
-
-			//fprintf (fp, ",%f,%f", p->sumBD[v], p->sumBD2[v]);
-			fprintf (fp, ",%f,%f", p->summedian[v], p->summedian2[v]);
-			fprintf (fp, ",%f,%f", p->sumiqr[v], p->sumiqr2[v]);
 			fprintf (fp, ",%f,%f", p->summean[v], p->summean2[v]);
 			fprintf (fp, ",%f,%f", p->sumsd[v], p->sumsd2[v]);
 		}
@@ -77,6 +96,37 @@ void write_stats (char *filename, float factor1, float factor2, int factor3, str
 		for ( int v = 0; v < BOOLEAN_V; v++ )
 		{
 			fprintf (fp, ",%f,%f", p->sumb[v], p->sumb2[v]);
+		}
+
+		fprintf (fp, "\n");
+	}
+
+	fclose (fp);
+}
+
+void write_stats_frq (char *filename, float factor1, float factor2, int factor3, struct ptype *p, struct ptype *p_last)
+{
+	FILE *fp;
+
+	if ( (fp = fopen (filename, "a+")) == NULL )
+	{
+		file_write_error (filename);
+	}
+
+	for ( ; p < p_last; p++ )
+	{
+		fprintf (fp, "%f,%f,%i,%f,%i", factor1, factor2, factor3, p->wmax, p->time);
+
+		for ( int v = 0; v < CONTINUOUS_V; v++ )
+		{
+			fprintf (fp, ",%f,%f", p->sumBD[v], p->sumBD2[v]);
+			fprintf (fp, ",%f,%f", p->summedian[v], p->summedian2[v]);
+			fprintf (fp, ",%f,%f", p->sumiqr[v], p->sumiqr2[v]);
+
+			for ( int b = 0; b < BINS; b++)
+			{
+				fprintf (fp, ",%f,%f", p->sumc[v][b], p->sumc2[v][b]);
+			}
 		}
 
 		fprintf (fp, "\n");

@@ -43,7 +43,7 @@ for folder in folders:
     dffrq = dffrq.loc[dffrq.Time == t].copy()
     dfts.append(pd.merge(dfcsv, dffrq, on=['ES', 'Given']))
 for dft in dfts:
-    dft['help'] = dft['a2Seen31']*0.5*R2*dft['Given']
+    dft['help'] = dft[traits[0]]*0.5*R2*dft['Given']
 
 nr = len(pd.unique(dfts[0].Given))
 nc = len(pd.unique(dfts[0].ES))

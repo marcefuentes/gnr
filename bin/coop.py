@@ -49,9 +49,11 @@ for folder in folders:
     dfcsv = pd.concat(map(pd.read_csv, glob(os.path.join(folder, '*.csv'))), ignore_index=True)
     #dffrq = pd.concat(map(pd.read_csv, glob(os.path.join(folder, '*.frq'))), ignore_index=True)
     t = dfcsv.Time.iat[-1]
-    #dfcsv= dfcsv.loc[dfcsv.Time == t].copy()
-    dffrq= dffrq.loc[dffrq.Time == t].copy()
+    #dfcsv = dfcsv.loc[dfcsv.Time == t].copy()
+    dffrq = dffrq.loc[dffrq.Time == t].copy()
     dfts.append(pd.merge(dfcsv, dffrq, on=['ES', 'Given']))
+for dft in dfts:
+    dft['help'] = dft[traits[0]]**R2*dft['Given']
 
 nr = len(pd.unique(dfts[0].Given))
 nc = len(pd.unique(dfts[0].ES))
@@ -62,13 +64,10 @@ rhos = 1.0 - 1.0/ess
 givens = np.sort(pd.unique(dfts[0].Given))[::-1]
 givens[0] = 0.9999999
 Xrhos, Ygivens = np.meshgrid(rhos, givens)
-xeq = (fitness(0.0, 0.0) - fitness(0.5, 0.0))/(fitness(0.5, 0.5) - fitness(0.5, 0.0) - fitness(0.0, 0.5) + fitness(0.0, 0.0))
-xeq[Ygivens == 0.0] = 1.0
-xeq[xeq < 0.0] = 0.0
-xeq[xeq > 1.0] = 1.0
-Feq = fitness(0.5, 0.5)*xeq*xeq + (fitness(0.5, 0.0) + fitness(0.0, 0.5))*xeq*(1.0 - xeq) + fitness(0.0, 0.0)*(1.0 - xeq)*(1.0 - xeq)
-helpeq = xeq*0.5*R2*Ygivens 
-Zs = [xeq, helpeq, Feq, np.ones([nr, nc])*0.1, np.ones([nr, nc])*0.1]
+Aeq = a2eq(Ygivens)
+Feq = fitness(Aeq, Aeq)
+helpeq = Aeq*R2*Ygivens 
+Zs = [Aeq, helpeq, Feq, np.ones([nr, nc])*0.1, np.ones([nr, nc])*0.1]
 
 fslabel=36 # Label font size
 fstick=24 # Tick font size
@@ -84,27 +83,41 @@ extent = 0, nr, 0, nc
 
 # Top row of subplots
 
-for ax, Z, traitvmax, letter, traitlabel in zip(axs[0], Zs, traitvmaxs, letters[0], traitlabels):
+for ax, Z, traitvmax in zip(axs[0], Zs, traitvmaxs):
     ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
-    ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
 # Remaining rows of plots
 
-for axrow, folder, letterrow in zip(axs[1:], folders, letters[1:]):
-    for ax, trait, traitvmax, letter, traitlabel in zip(axrow, traits, traitvmaxs, letterrow, traitlabels):
-        df = dfts[folder]
-        if 'Sensitivity' in traitlabel: df[trait] = 1.0 - df[trait]
-        if 'Help' in traitlabel: df[trait] = df[trait]*R2*df['Given']
+for axrow, df in zip(axs[1:], dfts):
+    for ax, trait, traitvmax  in zip(axrow, traits, traitvmaxs):
+        if 'Grain' in trait: df[trait] = 1.0 - df[trait]
         df_piv = pd.pivot_table(df, values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)
         ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
-        ax.set_xticks([0, nc/2.0, nc])
-        ax.set_yticks([0, nr/2.0, nr])
-        ax.set_xticklabels([])
-        if folder == folders[-1]:
-            ax.set_xticklabels([round(minlog_es), round((minlog_es + maxlog_es)/2), round(maxlog_es)], fontsize=fstick)
-        ax.set_yticklabels([])
-        if traitlabel == traitlabels[0]:
-            ax.set_yticklabels([round(mingiven, 1), round((mingiven + maxgiven)/2, 1), round(maxgiven, 1)], fontsize=fstick) 
+
+# All plots
+
+for axrow in axs:
+    for ax in axrow:
+        ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
+
+givens[0] = 1.0
+minx = round(log(ess[0], 2))
+maxx = round(log(ess[-1], 2))
+miny = givens[-1]
+maxy = givens[0]
+
+xticklabels = [minx, round((minx + maxx)/2), maxx]
+yticklabels = [miny, (miny + maxy)/2, maxy]
+for axrow in axs:
+    axrow[0].set_yticklabels(yticklabels, fontsize=fstick) 
+for ax in axs[-1]:
+    ax.set_xticklabels(xticklabels, fontsize=fstick)
+
+for ax, traitlabel in zip(axs[0], traitlabels):
+    ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
+
+for axrow, letterrow in zip(axs, letters):
+    for ax, letter in zip(axrow, letterrow):
         ax.text(0, nr*1.035, letter, fontsize=fslabel, weight='bold')
 
 plt.savefig('coop.png', transparent=False)

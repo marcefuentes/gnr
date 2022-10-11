@@ -17,7 +17,7 @@ letters = [['a', 'b', 'c', 'd', 'e'],
             ['u', 'v', 'w', 'x', 'y'],
             ['z', 'aa', 'ab', 'ac', 'ad']]
 
-traits = ['a2Seenmedian', 'a2Seenmedian', 'wmedian', 'ChooseGrainmedian', 'MimicGrainmedian']
+traits = ['a2Seenmean', 'a2Seenmean', 'wmean', 'ChooseGrainmean', 'MimicGrainmean']
 traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
 traitvmaxs = [0.5, 1.0, 1.0, 1.0, 1.0]
 folders = ['none', 'p', 'r', 'pr', 'p8r']
@@ -44,22 +44,24 @@ def a2eq(given):
     a2 = a2max/(1.0 + Q*b)
     return a2
     
-dfs = []
+dfts = []
 for folder in folders:
-    dfs.append(pd.concat(map(pd.read_csv, glob(os.path.join(folder, '*.csv'))), ignore_index=True))
-t = dfs[0].Time.iat[-1]
-for df in dfs:
-    df = df.loc[df.Time == t].copy()
-#for df in dfs:
-#    df['help'] = df[traits[0]]*R2*df['Given']
+    dfcsv = pd.concat(map(pd.read_csv, glob(os.path.join(folder, '*.csv'))), ignore_index=True)
+    #dffrq = pd.concat(map(pd.read_csv, glob(os.path.join(folder, '*.frq'))), ignore_index=True)
+    t = dfcsv.Time.iat[-1]
+    #dfcsv = dfcsv.loc[dfcsv.Time == t].copy()
+    dffrq = dffrq.loc[dffrq.Time == t].copy()
+    dfts.append(pd.merge(dfcsv, dffrq, on=['ES', 'Given']))
+for dft in dfts:
+    dft['help'] = dft[traits[0]]**R2*dft['Given']
 
-nr = len(pd.unique(dfs[0].Given))
-nc = len(pd.unique(dfs[0].ES))
+nr = len(pd.unique(dfts[0].Given))
+nc = len(pd.unique(dfts[0].ES))
 R = R2/R1
 b = a2max/a1max
-ess = np.sort(pd.unique(dfs[0].ES))
+ess = np.sort(pd.unique(dfts[0].ES))
 rhos = 1.0 - 1.0/ess
-givens = np.sort(pd.unique(dfs[0].Given))[::-1]
+givens = np.sort(pd.unique(dfts[0].Given))[::-1]
 givens[0] = 0.9999999
 Xrhos, Ygivens = np.meshgrid(rhos, givens)
 Aeq = a2eq(Ygivens)
@@ -86,9 +88,9 @@ for ax, Z, traitvmax in zip(axs[0], Zs, traitvmaxs):
 
 # Remaining rows of plots
 
-for axrow, df in zip(axs[1:], dfs):
-    for ax, trait, traitvmax in zip(axrow, traits, traitvmaxs):
-        #if 'Grain' in trait: df[trait] = 1.0 - df[trait]
+for axrow, df in zip(axs[1:], dfts):
+    for ax, trait, traitvmax  in zip(axrow, traits, traitvmaxs):
+        if 'Grain' in trait: df[trait] = 1.0 - df[trait]
         df_piv = pd.pivot_table(df, values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)
         ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
 

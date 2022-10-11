@@ -17,7 +17,7 @@ letters = [['a', 'b', 'c', 'd', 'e'],
             ['u', 'v', 'w', 'x', 'y'],
             ['z', 'aa', 'ab', 'ac', 'ad']]
 
-traits = ['a2Seen31', 'a2Seen31', 'wmean', 'ChooseGrain25', 'MimicGrain25']
+traits = ['a2Seen31', 'help', 'wmean', 'ChooseGrain25', 'MimicGrain25']
 traitlabels = ['Helpers', 'Help', 'Fitness', 'Partner choosers', 'Reciprocators']
 traitvmaxs = [1.0, 1.0, 1.0, 1.0, 1.0]
 folders = ['none', 'p', 'r', 'pr', 'p8r']
@@ -39,9 +39,11 @@ for folder in folders:
     dfcsv = pd.concat(map(pd.read_csv, glob(os.path.join(folder, '*.csv'))), ignore_index=True)
     dffrq = pd.concat(map(pd.read_csv, glob(os.path.join(folder, '*.frq'))), ignore_index=True)
     t = dfcsv.Time.iat[-1]
-    dfcsv= dfcsv.loc[dfcsv.Time == t].copy()
-    dffrq= dffrq.loc[dffrq.Time == t].copy()
+    dfcsv = dfcsv.loc[dfcsv.Time == t].copy()
+    dffrq = dffrq.loc[dffrq.Time == t].copy()
     dfts.append(pd.merge(dfcsv, dffrq, on=['ES', 'Given']))
+for dft in dfts:
+    dft['help'] = dft['a2Seen31']*0.5*R2*dft['Given']
 
 nr = len(pd.unique(dfts[0].Given))
 nc = len(pd.unique(dfts[0].ES))
@@ -74,15 +76,13 @@ extent = 0, nr, 0, nc
 
 # Top row of subplots
 
-for ax, Z, traitvmax, traitlabel in zip(axs[0], Zs, traitvmaxs, traitlabels):
+for ax, Z, traitvmax in zip(axs[0], Zs, traitvmaxs):
     ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
-    ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
 # Remaining rows of plots
 
 for axrow, df in zip(axs[1:], dfts):
-    for ax, trait, traitvmax, traitlabel in zip(axrow, traits, traitvmaxs, traitlabels):
-        if traitlabel == 'Help': df[trait] = df[trait]*0.5*R2*df.Given
+    for ax, trait, traitvmax  in zip(axrow, traits, traitvmaxs):
         df_piv = pd.pivot_table(df, values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)
         ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
 
@@ -104,6 +104,9 @@ for axrow in axs:
     axrow[0].set_yticklabels(yticklabels, fontsize=fstick) 
 for ax in axs[-1]:
     ax.set_xticklabels(xticklabels, fontsize=fstick)
+
+for ax, traitlabel in zip(axs[0], traitlabels):
+    ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
 for axrow, letterrow in zip(axs, letters):
     for ax, letter in zip(axrow, letterrow):

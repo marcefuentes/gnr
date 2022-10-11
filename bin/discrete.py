@@ -82,17 +82,17 @@ for folder in folders:
     dfcsv = pd.concat(map(pd.read_csv, glob(os.path.join(folder, '*.csv'))), ignore_index=True)
     dffrq = pd.concat(map(pd.read_csv, glob(os.path.join(folder, '*.frq'))), ignore_index=True)
     t = dfcsv.Time.iat[-1]
-    dfcsv= dfcsv.loc[dfcsv['Time'] == t].copy()
-    dffrq= dffrq.loc[dffrq['Time'] == t].copy()
+    dfcsv= dfcsv.loc[dfcsv.Time == t].copy()
+    dffrq= dffrq.loc[dffrq.Time == t].copy()
     dfts.append(pd.merge(dfcsv, dffrq, on=['ES', 'Given']))
 
-nr = len(pd.unique(dfts[0]['Given']))
-nc = len(pd.unique(dfts[0]['ES']))
+nr = len(pd.unique(dfts[0].Given))
+nc = len(pd.unique(dfts[0].ES))
 
 extent = 0, nr, 0, nc
 for axrow, df, letterrow in zip(axs[1:], dfts, letters[1:]):
     for ax, trait, traitvmax, letter, traitlabel in zip(axrow, traits, traitvmaxs, letterrow, traitlabels):
-        if traitlabel == 'Help': df[trait] = df[trait]*0.5*R2*df['Given']
+        if traitlabel == 'Help': df[trait] = df[trait]*0.5*R2*df.Given
         df_piv = pd.pivot_table(df, values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)
         ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
         ax.set_xticks([0, nc/2.0, nc])

@@ -17,7 +17,8 @@ letters = [['a', 'b', 'c', 'd', 'e'],
             ['u', 'v', 'w', 'x', 'y'],
             ['z', 'aa', 'ab', 'ac', 'ad']]
 
-traits = ['a2Seenmedian', 'help', 'wmedian', 'ChooseGrainmedian', 'MimicGrainmedian']
+#traits = ['a2Seenmedian', 'help', 'wmedian', 'ChooseGrainmedian', 'MimicGrainmedian']
+traits = ['a2Seenmean', 'help', 'wmean', 'ChooseGrainmean', 'MimicGrainmean']
 traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
 traitvmaxs = [0.5, 1.0, 1.0, 1.0, 1.0]
 folders = ['none', 'p', 'r', 'pr', 'p8r']

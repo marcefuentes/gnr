@@ -34,16 +34,6 @@ def fitness(A, Apartner):
     w = np.where(Xrhos == 0.0, pow(q1, alpha)*pow(q2, 1.0 - alpha), pow(alpha*pow(q1, Xrhos) + (1.0 - alpha)*pow(q2, Xrhos), 1.0/Xrhos)) 
     return w
 
-def a2eq(given):
-    if (R == 1.0) and (b == 1.0) and (alpha == 0.5):
-        T = 1.0 - given
-        Q = pow(T, 1.0/(Xrhos - 1.0))
-    else:
-        T = b*R*(1.0 - given)
-        Q = R*pow(T*(1.0 - alpha)/alpha, 1.0/(Xrhos - 1.0))
-    a2 = a2max/(1.0 + Q*b)
-    return a2
-    
 dfs = []
 for folder in folders:
     dfs.append(pd.concat(map(pd.read_csv, glob(os.path.join(folder, '*.csv'))), ignore_index=True))
@@ -65,9 +55,9 @@ rhos = 1.0 - 1.0/ess
 givens = np.sort(pd.unique(dfts[0].Given))[::-1]
 givens[0] = 0.9999999
 Xrhos, Ygivens = np.meshgrid(rhos, givens)
-Aeq = a2eq(Ygivens)
-Feq = fitness(Aeq, Aeq)
+Aeq = a2max/(1.0 + b*R*pow(b*R*(1.0 - Ygivens)*(1.0 - alpha)/alpha, 1.0/(Xrhos - 1.0)))
 helpeq = Aeq*R2*Ygivens 
+Feq = fitness(Aeq, Aeq)
 Zs = [Aeq, helpeq, Feq, np.ones([nr, nc])*0.1, np.ones([nr, nc])*0.1]
 
 fslabel=36 # Label font size
@@ -75,7 +65,7 @@ fstick=24 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+1))) # constrained_layout=False, squeeze=False
+fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+1)))
 
 fig.supxlabel('Substitutability of $\it{A}$', x=0.513, y=0.05, fontsize=fslabel*1.25)
 fig.supylabel('Partner\'s share of $\it{A}$', x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')

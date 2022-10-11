@@ -61,8 +61,8 @@ xeq = (fitness(0.0, 0.0) - fitness(0.5, 0.0))/(fitness(0.5, 0.5) - fitness(0.5, 
 xeq[Ygivens == 0.0] = 1.0
 xeq[xeq < 0.0] = 0.0
 xeq[xeq > 1.0] = 1.0
-Feq = fitness(0.5, 0.5)*xeq*xeq + (fitness(0.5, 0.0) + fitness(0.0, 0.5))*xeq*(1.0 - xeq) + fitness(0.0, 0.0)*(1.0 - xeq)*(1.0 - xeq)
 helpeq = xeq*0.5*R2*Ygivens 
+Feq = fitness(0.5, 0.5)*xeq*xeq + (fitness(0.5, 0.0) + fitness(0.0, 0.5))*xeq*(1.0 - xeq) + fitness(0.0, 0.0)*(1.0 - xeq)*(1.0 - xeq)
 Zs = [xeq, helpeq, Feq, np.ones([nr, nc])*0.1, np.ones([nr, nc])*0.1]
 
 fslabel=36 # Label font size

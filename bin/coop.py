@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 from glob import glob
+from math import log
 import os
 import matplotlib.pyplot as plt
 import numpy as np
@@ -16,7 +17,7 @@ letters = [['a', 'b', 'c', 'd', 'e'],
             ['u', 'v', 'w', 'x', 'y'],
             ['z', 'aa', 'ab', 'ac', 'ad']]
 
-traits = ['a2Seenmedian', 'a2Seenmedian', 'wmedian', 'ChooseGrainmedian', 'MimicGrainmedian']
+traits = ['a2Seenmean', 'a2Seenmean', 'wmean', 'ChooseGrainmean', 'MimicGrainmean']
 traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
 traitvmaxs = [0.5, 1.0, 1.0, 1.0, 1.0]
 folders = ['none', 'p', 'r', 'pr', 'p8r']
@@ -26,11 +27,6 @@ R1 = 2.0
 R2 = 2.0
 a1max = 1.0
 a2max = 1.0
-num = 21
-minlog_es = -5.0
-maxlog_es = 5.0
-mingiven = 0.0
-maxgiven = 1.0
 
 def fitness(A, Apartner):
     q1 = R1*(a2max - A)/b
@@ -48,6 +44,32 @@ def a2eq(given):
     a2 = a2max/(1.0 + Q*b)
     return a2
     
+dfts = []
+for folder in folders:
+    dfcsv = pd.concat(map(pd.read_csv, glob(os.path.join(folder, '*.csv'))), ignore_index=True)
+    #dffrq = pd.concat(map(pd.read_csv, glob(os.path.join(folder, '*.frq'))), ignore_index=True)
+    t = dfcsv.Time.iat[-1]
+    #dfcsv= dfcsv.loc[dfcsv.Time == t].copy()
+    dffrq= dffrq.loc[dffrq.Time == t].copy()
+    dfts.append(pd.merge(dfcsv, dffrq, on=['ES', 'Given']))
+
+nr = len(pd.unique(dfts[0].Given))
+nc = len(pd.unique(dfts[0].ES))
+R = R2/R1
+b = a2max/a1max
+ess = np.sort(pd.unique(dfts[0].ES))
+rhos = 1.0 - 1.0/ess
+givens = np.sort(pd.unique(dfts[0].Given))[::-1]
+givens[0] = 0.9999999
+Xrhos, Ygivens = np.meshgrid(rhos, givens)
+xeq = (fitness(0.0, 0.0) - fitness(0.5, 0.0))/(fitness(0.5, 0.5) - fitness(0.5, 0.0) - fitness(0.0, 0.5) + fitness(0.0, 0.0))
+xeq[Ygivens == 0.0] = 1.0
+xeq[xeq < 0.0] = 0.0
+xeq[xeq > 1.0] = 1.0
+Feq = fitness(0.5, 0.5)*xeq*xeq + (fitness(0.5, 0.0) + fitness(0.0, 0.5))*xeq*(1.0 - xeq) + fitness(0.0, 0.0)*(1.0 - xeq)*(1.0 - xeq)
+helpeq = xeq*0.5*R2*Ygivens 
+Zs = [xeq, helpeq, Feq, np.ones([nr, nc])*0.1, np.ones([nr, nc])*0.1]
+
 fslabel=36 # Label font size
 fstick=24 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
@@ -58,47 +80,16 @@ fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(
 fig.supxlabel('Substitutability of $\it{A}$', x=0.513, y=0.05, fontsize=fslabel*1.25)
 fig.supylabel('Partner\'s share of $\it{A}$', x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
 
+extent = 0, nr, 0, nc
+
 # Top row of subplots
 
-R = R2/R1
-b = a2max/a1max
-log_ess = np.linspace(minlog_es, maxlog_es, num=num)
-rhos = 1.0 - 1.0/pow(2, log_ess)
-givens = np.linspace(maxgiven, mingiven, num=num)
-givens[0] = 0.9999999
-Xrhos, Ygivens = np.meshgrid(rhos, givens)
-Aeq = a2eq(Ygivens)
-Feq = fitness(Aeq, Aeq)
-Zs = [Aeq, Aeq*R2*Ygivens, Feq, np.ones([num, num])*0.1, np.ones([num, num])*0.1]
-
-extent = 0, num, 0, num
 for ax, Z, traitvmax, letter, traitlabel in zip(axs[0], Zs, traitvmaxs, letters[0], traitlabels):
     ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
-    ax.set_xticks([0, num/2.0, num])
-    ax.set_yticks([0, num/2.0, num])
-    ax.set_xticklabels([])
-    ax.set_yticklabels([])
-    if traitlabel == traitlabels[0]:
-        ax.set_yticklabels([round(mingiven, 1), round((mingiven + maxgiven)/2, 1), round(maxgiven, 1)], fontsize=fstick) 
-    ax.text(0, num*1.035, letter, fontsize=fslabel, weight='bold')
 
 # Remaining rows of plots
 
-dfs = {}
-for folder in folders:
-    dfs[folder] = pd.concat(map(pd.read_csv, glob(os.path.join(folder, '*.csv'))), ignore_index=True)
-
-t = dfs[folders[0]].Time.iat[-1]
-
-dfts = {}
-for folder in folders:
-    dfts[folder] = dfs[folder].loc[dfs[folder]['Time'] == t].copy()
-    dfts[folder].sort_values(by=['ES', 'Given'], inplace=True)
-nr = len(pd.unique(dfts[folders[0]]['Given']))
-nc = len(pd.unique(dfts[folders[0]]['ES']))
-
-extent = 0, nr, 0, nc
 for axrow, folder, letterrow in zip(axs[1:], folders, letters[1:]):
     for ax, trait, traitvmax, letter, traitlabel in zip(axrow, traits, traitvmaxs, letterrow, traitlabels):
         df = dfts[folder]

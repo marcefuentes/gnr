@@ -74,14 +74,14 @@ extent = 0, nr, 0, nc
 
 # Top row of subplots
 
-for ax, Z, traitvmax, letter, traitlabel in zip(axs[0], Zs, traitvmaxs, letters[0], traitlabels):
+for ax, Z, traitvmax, traitlabel in zip(axs[0], Zs, traitvmaxs, traitlabels):
     ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
 # Remaining rows of plots
 
-for axrow, df, letterrow in zip(axs[1:], dfts, letters[1:]):
-    for ax, trait, traitvmax, letter, traitlabel in zip(axrow, traits, traitvmaxs, letterrow, traitlabels):
+for axrow, df in zip(axs[1:], dfts):
+    for ax, trait, traitvmax, traitlabel in zip(axrow, traits, traitvmaxs, traitlabels):
         if traitlabel == 'Help': df[trait] = df[trait]*0.5*R2*df.Given
         df_piv = pd.pivot_table(df, values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)
         ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)

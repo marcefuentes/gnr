@@ -19,7 +19,8 @@ npoints_ic = 128
 
 n_ic = 3    # Number of indifference curves
 
-num = 11
+num = 5
+every = int(num/2)
 minlog_es = -5.0
 maxlog_es = 5.0
 mingiven = 0.0
@@ -54,7 +55,7 @@ def icces(w, rho):
 log_ess = np.linspace(minlog_es, maxlog_es, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
 givens = np.linspace(maxgiven, mingiven, num=num)
-givens[0] = 0.9999999
+givens[0] = 0.99999999999
 R = R2/R1
 b = a2max/a1max
 Ts = b*R*(1.0 - givens)
@@ -85,7 +86,7 @@ ws = np.linspace(0.5, 1.5, num=5)
 for row, given, g in zip(axs, givens, a2eqs):
     for ax, rho, a2 in zip(row, rhos, g):
         for w in ws:
-            ax.plot(x_ics, icces(w, rho), c='#dbdbdb')
+            ax.plot(x_ics, icces(w, rho), c='0.950')
         weq = fitness(a2, a2, given, rho)
         ax.plot(x_ics, icces(weq, rho), c=cm.magma(weq))
         T = b*R*(1.0 - given)
@@ -94,7 +95,7 @@ for row, given, g in zip(axs, givens, a2eqs):
         ax.set(xticks=[], yticks=[], xlim=(0, R1*a1max), ylim=(0, R2*a2max))
         ax.set_box_aspect(1)
 axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
-for ax, given in zip(axs[::5, 0], givens[::5]):
+for ax, given in zip(axs[::every, 0], givens[::every]):
     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 
 # Top right: fitness landscapes
@@ -113,7 +114,7 @@ for row, given, g in zip(axs, givens, Q):
         xaxis = npoints*a2-0.5
         a2maxw = npoints*(a2max - a2*given*q*b)/(1.0 + q*b*(1.0 - given))-0.5
         ax.plot(xaxis, a2maxw, color='orange')
-        ax.set(xticks=[], yticks=[], xlim=(-0.5, npoints-0.5), ylim=(-0.5, npoints-0.5))
+        ax.set(xticks=[], yticks=[], xlim=(-0.5, npoints/2.0 - 0.5), ylim=(-0.5, npoints/2.0 - 0.5))
 axs[0, 0].set_title('b', fontsize=fslabel, weight='bold')
 
 # Bottom left: extreme game types
@@ -134,11 +135,11 @@ for row, given in zip(axs, givens):
         T = fitness(aC, aD, given, rho)
         S = fitness(aD, aC, given, rho)
         yaxis = [T, R, P, S]
-        if (T <= R) and (P <= S):
+        if (T < R) and (P < S):
             rgb = 'orange'
-        elif (T > R) and (P <= S):
+        elif (T > R) and (P < S):
             rgb = 'red'
-        elif (2.0*R > T + S):
+        elif (T > R) and (P > S) and (2.0*R > T + S):
             rgb = 'black'
         else:
             rgb = 'cyan'
@@ -146,9 +147,9 @@ for row, given in zip(axs, givens):
         ax.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))
         ax.set_box_aspect(1)
 
-for ax, given in zip(axs[::5, 0], givens[::5]):
+for ax, given in zip(axs[::every, 0], givens[::every]):
     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
-for ax, log_es in zip(axs[-1, ::5], log_ess[::5]):
+for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):
     ax.set_xlabel(round(log_es), fontsize=fstick)
 axs[0, 0].set_title('c', fontsize=fslabel, weight='bold')
 
@@ -177,8 +178,8 @@ for row, given in zip(axs, givens):
         cmap = cm.get_cmap(mycmap).copy()
         cmap.set_bad(color='white')
         ax.imshow(Z, origin='lower', cmap=cmap, vmin=0, vmax=2)
-        ax.set(xticks=[], yticks=[], xlim=(-0.5, npoints-0.5), ylim=(-0.5, npoints-0.5))
-for ax, log_es in zip(axs[-1, ::5], log_ess[::5]):
+        ax.set(xticks=[], yticks=[], xlim=(-0.5, npoints/2.0 - 0.5), ylim=(-0.5, npoints/2.0 - 0.5))
+for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):
     ax.set_xlabel(round(log_es), fontsize=fstick)
 axs[0, 0].set_title('d', fontsize=fslabel, weight='bold')
 

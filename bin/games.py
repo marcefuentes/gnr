@@ -19,7 +19,7 @@ npoints_ic = 128
 
 n_ic = 3    # Number of indifference curves
 
-num = 5
+num = 3
 every = int(num/2)
 minlog_es = -5.0
 maxlog_es = 5.0
@@ -32,11 +32,16 @@ def a2eq(given, rho):
     a2 = a2max/(1.0 + Q*b)
     return a2
 
-def fitness(x, y, given, rho):
+def fitness1(x, y, given, rho):
     q1 = (1.0 - y)*R1
     q2 = y*R2*(1.0 - given) + x*R2*given
     if rho == 0.0:
-        w = pow(q1, alpha)*pow(q2, 1.0 - alpha)
+        w = q1*q2
+        w = pow(q1, alpha)*pow(q2, 1.0 - alpha) if w > 0.0 else 0.0
+    elif rho < 0.0:
+        w = q1*q2
+        w = alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho) if w > 0.0 else 0.0
+        w = pow(w, 1.0/rho) if w > 0.0 else 0.0
     else:
         w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
     return w
@@ -99,10 +104,7 @@ for row, given, g in zip(axs, givens, a2eqs):
     for ax, rho, a2 in zip(row, rhos, g):
         for w in ws:
             ax.plot(x_ics, icces(x_ics, w, rho), c='0.950')
-        if (rho <= 0.0) and ((a2 == 0.0) or (a2 == 1.0)):
-            weq = 0.0
-        else:
-            weq = fitness(a2, a2, given, rho)
+        weq = fitness1(a2, a2, given, rho)
         ax.plot(x_ics, icces(x_ics, weq, rho), c=cm.magma(weq))
         T = b*R*(1.0 - given)
         budget = R2*a2max*(1.0 - given) + a2*R2*given - T*x_ics
@@ -140,6 +142,7 @@ bottom_grid = outer_grid[2, 0].subgridspec(num, num, wspace=0, hspace=0)
 axs = bottom_grid.subplots()
 
 xaxis = [1, 2, 3, 4]
+givens[0] = 1.0
 
 for row, given in zip(axs, givens):
     for ax, rho in zip(row, rhos):
@@ -147,13 +150,10 @@ for row, given in zip(axs, givens):
         #aC = a2eq(0.0, rho)
         aD = 0.0
         aC = 0.5
-        if (given > 0.0) or (rho > 0.0):
-            T = fitness(aC, aD, given, rho)
-        else:
-            T = 0.0
-        R = fitness(aC, aC, given, rho)
-        P = fitness(aD, aD, given, rho) if rho > 0.0 else 0.0
-        S = fitness(aD, aC, given, rho)
+        T = fitness1(aC, aD, given, rho)
+        R = fitness1(aC, aC, given, rho)
+        P = fitness1(aD, aD, given, rho)
+        S = fitness1(aD, aC, given, rho)
         yaxis = [T, R, P, S]
         if (T < R) and (P < S):
             rgb = 'orange'

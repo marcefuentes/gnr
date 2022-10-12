@@ -41,16 +41,15 @@ def fitness(x, y, given, rho):
         w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
     return w
 
-def icces(w, rho):
+def icces(q, w, rho):
     if rho == 0.0:
-        ics = pow(w/pow(x_ics, alpha), 1.0/(1.0 - alpha))
+        q2 = np.piecewise(q, [q == 0.0, q > 0.0], [1000.0, lambda i: pow(w/pow(i, alpha), 1.0/(1.0 - alpha))])
     else:
-        ics = pow((pow(w, rho) - alpha*pow(x_ics, rho))/(1.0 - alpha), 1.0/rho)
         if rho < 0.0:
-            ics[pow(w, rho) <= alpha*pow(x_ics, rho)] = 1000.0
+            q2 = np.piecewise(q, [q == 0.0, q > 0.0], [1000.0, lambda i: np.piecewise(i, [pow(w, rho) <= alpha*pow(i, rho), pow(w, rho) > alpha*pow(i, rho)], [1000.0, lambda j: pow((pow(w, rho) - alpha*pow(j, rho))/(1.0 - alpha), 1.0/rho)])])
         else:
-            ics[pow(w, rho) <= alpha*pow(x_ics, rho)] = -0.1
-    return ics
+            q2 = np.piecewise(q, [pow(w, rho) <= alpha*pow(q, rho), pow(w, rho) > alpha*pow(q, rho)], [-0.1, lambda i: pow((pow(w, rho) - alpha*pow(i, rho))/(1.0 - alpha), 1.0/rho)])
+    return q2
 
 log_ess = np.linspace(minlog_es, maxlog_es, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
@@ -86,9 +85,9 @@ ws = np.linspace(0.5, 1.5, num=5)
 for row, given, g in zip(axs, givens, a2eqs):
     for ax, rho, a2 in zip(row, rhos, g):
         for w in ws:
-            ax.plot(x_ics, icces(w, rho), c='0.950')
+            ax.plot(x_ics, icces(x_ics, w, rho), c='0.950')
         weq = fitness(a2, a2, given, rho)
-        ax.plot(x_ics, icces(weq, rho), c=cm.magma(weq))
+        ax.plot(x_ics, icces(x_ics, weq, rho), c=cm.magma(weq))
         T = b*R*(1.0 - given)
         budget = R2*a2max*(1.0 - given) + a2*R2*given - T*x_ics
         ax.plot(x_ics, budget, c='green', alpha=0.4)

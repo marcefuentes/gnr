@@ -17,7 +17,7 @@ a2max = 1.0
 npoints = 128
 npoints_ic = 128
 
-num = 3     # Number of subplot rows and columns
+num = 5     # Number of subplot rows and columns
 n_ic = 5    # Number of indifference curves
 every = int(num/2)
 minlog_es = -5.0
@@ -49,15 +49,14 @@ def icces(q, w, rho):
     if rho == 0.0:
         q2 = np.piecewise(q, [q == 0.0, q > 0.0], [1000.0, lambda i: pow(w/pow(i, alpha), 1.0/(1.0 - alpha))])
     elif rho < 0.0:
-            q2 = np.piecewise(q, [q == 0.0, q > 0.0], [1000.0, lambda i: np.piecewise(i, [pow(w, rho) <= alpha*pow(i, rho), pow(w, rho) > alpha*pow(i, rho)], [1000.0, lambda j: pow((pow(w, rho) - alpha*pow(j, rho))/(1.0 - alpha), 1.0/rho)])])
+        q2 = np.piecewise(q, [q == 0.0, q > 0.0], [1000.0, lambda i: np.piecewise(i, [pow(w, rho) <= alpha*pow(i, rho), pow(w, rho) > alpha*pow(i, rho)], [1000.0, lambda j: pow((pow(w, rho) - alpha*pow(j, rho))/(1.0 - alpha), 1.0/rho)])])
     else:
-            q2 = np.piecewise(q, [pow(w, rho) <= alpha*pow(q, rho), pow(w, rho) > alpha*pow(q, rho)], [-0.1, lambda i: pow((pow(w, rho) - alpha*pow(i, rho))/(1.0 - alpha), 1.0/rho)])
+        q2 = np.piecewise(q, [pow(w, rho) <= alpha*pow(q, rho), pow(w, rho) > alpha*pow(q, rho)], [-0.1, lambda i: pow((pow(w, rho) - alpha*pow(i, rho))/(1.0 - alpha), 1.0/rho)])
     return q2
 
 log_ess = np.linspace(minlog_es, maxlog_es, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
 givens = np.linspace(maxgiven, mingiven, num=num)
-givens[0] = 0.9999999
 
 fslabel = 26 # Label font size
 fstick = 18 # Tick font size
@@ -65,20 +64,20 @@ fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-fig = plt.figure(figsize=(6, 24), constrained_layout=False) 
+fig = plt.figure(figsize=(12, 12), constrained_layout=False) 
 fig.supylabel("Partner's share of $\it{A}$", y=0.485, fontsize=fslabel)
 fig.supxlabel("Substitutability of $\it{A}$", x=0.525, fontsize=fslabel)
 
-outer_grid = fig.add_gridspec(4, 1, left=0.22, right=0.9, top=0.95, bottom=0.11)
+outer_grid = fig.add_gridspec(2, 2, left=0.15, right=0.9, top=0.86, bottom=0.11)
 
-# Indifference curves and budget line
+# Indifference curves and continuous budget line
 
-gridn = 0
-grid = outer_grid[gridn, 0].subgridspec(num, num, wspace=0, hspace=0)
+grid = outer_grid[0, 0].subgridspec(num, num, wspace=0, hspace=0)
 axs = grid.subplots()
 
 R = R2/R1
 b = a2max/a1max
+givens[0] = 0.9999999
 Ts = b*R*(1.0 - givens)
 RR, TT = np.meshgrid(rhos, Ts)
 Q = R*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
@@ -102,10 +101,9 @@ axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
 for ax, given in zip(axs[::every, 0], givens[::every]):
     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 
-# Indifference curves and budget line
+# Indifference curves and discrete budget line
 
-gridn += 1
-grid = outer_grid[gridn, 0].subgridspec(num, num, wspace=0, hspace=0)
+grid = outer_grid[0, 1].subgridspec(num, num, wspace=0, hspace=0)
 axs = grid.subplots()
 
 a2 = np.array([0.5, 0.0])
@@ -113,36 +111,40 @@ a1 = np.array([0.0, a1max/2.0, a1max])
 X, Y = np.meshgrid(a2, a2)
 x_ics = np.linspace(0.0, R1*a1max, num=npoints_ic)
 ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
+givens[0] = 0.9999999
 
 for row, given in zip(axs, givens):
     for ax, rho in zip(row, rhos):
         Z = fitness(X, Y, given, rho)
-        xeq = (Z[1, 1] - Z[0, 1])/(Z[0, 0] - Z[0, 1] - Z[1, 0] + Z[1, 1])
-        if given == 0.0: xeq = 1.0
-        if xeq < 0.0: xeq = 0.0
-        if xeq > 1.0: xeq = 1.0
+        T = Z[1, 0]
+        R = Z[0, 0]
+        P = Z[1, 1]
+        S = Z[0, 1]
+        if (T < R) and (P < S):
+            xeq = 1.0
+        elif (T > R) and (P >= S):
+            xeq = 0.0
+        else:
+            xeq = (P - S)/(R - S - T + P) 
         a2eq = xeq*0.5
         for w in ws:
             ax.plot(x_ics, icces(x_ics, w, rho), c='0.950')
         budget = (a2max - b*a1)*R2*(1.0 - given) + a2eq*R2*given
-        ax.scatter(a1*R1, budget, c='green')
-        a = np.array([a2])
-        weq = Z[0, 0]*xeq*xeq + (Z[0, 1] + Z[1, 0])*xeq*(1.0 - xeq) + Z[1, 1]*(1.0 - xeq)*(1.0 - xeq)
+        ax.scatter(a1*R1, budget, c='green', s=2)
+        weq = R*xeq*xeq + (S + T)*xeq*(1.0 - xeq) + P*(1.0 - xeq)*(1.0 - xeq)
         ax.plot(x_ics, icces(x_ics, weq, rho), c=cm.magma(weq))
         ax.set(xticks=[], yticks=[], xlim=(0, R1*a1max), ylim=(0, R2*a2max))
         ax.set_box_aspect(1)
-axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
-for ax, given in zip(axs[::every, 0], givens[::every]):
-    ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
+axs[0, 0].set_title('b', fontsize=fslabel, weight='bold')
 
 # Fitness landscapes
 
-gridn += 1
-grid = outer_grid[gridn, 0].subgridspec(num, num, wspace=0, hspace=0)
+grid = outer_grid[1, 0].subgridspec(num, num, wspace=0, hspace=0)
 axs = grid.subplots()
 
 a2 = np.linspace(0.0, 1.0, num=npoints)
 X, Y = np.meshgrid(a2, a2)
+givens[0] = 0.9999999
 
 for row, given, g in zip(axs, givens, Q):
     for ax, rho, q in zip(row, rhos, g):
@@ -152,14 +154,15 @@ for row, given, g in zip(axs, givens, Q):
         a2maxw = (a2max - a2*given*q*b)/(1.0 + q*b*(1.0 - given))
         ax.plot(a2*npoints, a2maxw*npoints, color='orange')
         ax.set(xticks=[], yticks=[], xlim=(-0.5, npoints-0.5), ylim=(-0.5, npoints-0.5))
-axs[0, 0].set_title('b', fontsize=fslabel, weight='bold')
+for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):
+    ax.set_xlabel(round(log_es), fontsize=fstick)
+axs[0, 0].set_title('c', fontsize=fslabel, weight='bold')
 for ax, given in zip(axs[::every, 0], givens[::every]):
     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 
 # Discrete game types
 
-gridn += 1
-grid = outer_grid[gridn, 0].subgridspec(num, num, wspace=0, hspace=0)
+grid = outer_grid[1, 1].subgridspec(num, num, wspace=0, hspace=0)
 axs = grid.subplots()
 
 a2 = np.array([0.5, 0.0])
@@ -186,11 +189,9 @@ for row, given in zip(axs, givens):
         ax.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=1.0, markersize=3)
         ax.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))
         ax.set_box_aspect(1)
-for ax, given in zip(axs[::every, 0], givens[::every]):
-    ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):
     ax.set_xlabel(round(log_es), fontsize=fstick)
-axs[0, 0].set_title('c', fontsize=fslabel, weight='bold')
+axs[0, 0].set_title('d', fontsize=fslabel, weight='bold')
 
 # Bottom right: many game types
 

@@ -104,19 +104,36 @@ for ax, given in zip(axs[::every, 0], givens[::every]):
 
 # Indifference curves and budget line
 
-#gridn += 1
-#grid = outer_grid[gridn, 0].subgridspec(num, num, wspace=0, hspace=0)
-#axs = grid.subplots()
+gridn += 1
+grid = outer_grid[gridn, 0].subgridspec(num, num, wspace=0, hspace=0)
+axs = grid.subplots()
 
-#a2 = np.array([0.5, 0.0])
-#X, Y = np.meshgrid(a2, a2)
-#xeq = (fitness(0.0, 0.0) - fitness(0.5, 0.0))/(fitness(0.5, 0.5) - fitness(0.5, 0.0) - fitness(0.0, 0.5) + fitness(0.0, 0.0))
-#xeq[Ygivens == 0.0] = 1.0
-#xeq[xeq < 0.0] = 0.0
-#xeq[xeq > 1.0] = 1.0
-#a2eqs = xeq*0.5
-#x_ics = np.linspace(0.0, R1*a1max, num=npoints_ic)
-#ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
+a2 = np.array([0.5, 0.0])
+a1 = np.array([0.0, a1max/2.0, a1max])
+X, Y = np.meshgrid(a2, a2)
+x_ics = np.linspace(0.0, R1*a1max, num=npoints_ic)
+ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
+
+for row, given in zip(axs, givens):
+    for ax, rho in zip(row, rhos):
+        Z = fitness(X, Y, given, rho)
+        xeq = (Z[1, 1] - Z[0, 1])/(Z[0, 0] - Z[0, 1] - Z[1, 0] + Z[1, 1])
+        if given == 0.0: xeq = 1.0
+        if xeq < 0.0: xeq = 0.0
+        if xeq > 1.0: xeq = 1.0
+        a2eq = xeq*0.5
+        for w in ws:
+            ax.plot(x_ics, icces(x_ics, w, rho), c='0.950')
+        budget = (a2max - b*a1)*R2*(1.0 - given) + a2eq*R2*given
+        ax.scatter(a1*R1, budget, c='green')
+        a = np.array([a2])
+        weq = Z[0, 0]*xeq*xeq + (Z[0, 1] + Z[1, 0])*xeq*(1.0 - xeq) + Z[1, 1]*(1.0 - xeq)*(1.0 - xeq)
+        ax.plot(x_ics, icces(x_ics, weq, rho), c=cm.magma(weq))
+        ax.set(xticks=[], yticks=[], xlim=(0, R1*a1max), ylim=(0, R2*a2max))
+        ax.set_box_aspect(1)
+axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
+for ax, given in zip(axs[::every, 0], givens[::every]):
+    ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 
 # Fitness landscapes
 

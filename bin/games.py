@@ -65,16 +65,17 @@ fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-fig = plt.figure(figsize=(6, 18), constrained_layout=False) 
+fig = plt.figure(figsize=(6, 24), constrained_layout=False) 
 fig.supylabel("Partner's share of $\it{A}$", y=0.485, fontsize=fslabel)
 fig.supxlabel("Substitutability of $\it{A}$", x=0.525, fontsize=fslabel)
 
-outer_grid = fig.add_gridspec(3, 1, left=0.22, right=0.9, top=0.95, bottom=0.11)
+outer_grid = fig.add_gridspec(4, 1, left=0.22, right=0.9, top=0.95, bottom=0.11)
 
-# Top: indifference curves and budget line
+# Indifference curves and budget line
 
-top_grid = outer_grid[0, 0].subgridspec(num, num, wspace=0, hspace=0)
-axs = top_grid.subplots()
+gridn = 0
+grid = outer_grid[gridn, 0].subgridspec(num, num, wspace=0, hspace=0)
+axs = grid.subplots()
 
 R = R2/R1
 b = a2max/a1max
@@ -101,10 +102,27 @@ axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
 for ax, given in zip(axs[::every, 0], givens[::every]):
     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 
-# Center: fitness landscapes
+# Indifference curves and budget line
 
-center_grid = outer_grid[1, 0].subgridspec(num, num, wspace=0, hspace=0)
-axs = center_grid.subplots()
+#gridn += 1
+#grid = outer_grid[gridn, 0].subgridspec(num, num, wspace=0, hspace=0)
+#axs = grid.subplots()
+
+#a2 = np.array([0.5, 0.0])
+#X, Y = np.meshgrid(a2, a2)
+#xeq = (fitness(0.0, 0.0) - fitness(0.5, 0.0))/(fitness(0.5, 0.5) - fitness(0.5, 0.0) - fitness(0.0, 0.5) + fitness(0.0, 0.0))
+#xeq[Ygivens == 0.0] = 1.0
+#xeq[xeq < 0.0] = 0.0
+#xeq[xeq > 1.0] = 1.0
+#a2eqs = xeq*0.5
+#x_ics = np.linspace(0.0, R1*a1max, num=npoints_ic)
+#ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
+
+# Fitness landscapes
+
+gridn += 1
+grid = outer_grid[gridn, 0].subgridspec(num, num, wspace=0, hspace=0)
+axs = grid.subplots()
 
 a2 = np.linspace(0.0, 1.0, num=npoints)
 X, Y = np.meshgrid(a2, a2)
@@ -121,15 +139,16 @@ axs[0, 0].set_title('b', fontsize=fslabel, weight='bold')
 for ax, given in zip(axs[::every, 0], givens[::every]):
     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 
-# Bottom: discrete game types
+# Discrete game types
 
-bottom_grid = outer_grid[2, 0].subgridspec(num, num, wspace=0, hspace=0)
-axs = bottom_grid.subplots()
+gridn += 1
+grid = outer_grid[gridn, 0].subgridspec(num, num, wspace=0, hspace=0)
+axs = grid.subplots()
 
 a2 = np.array([0.5, 0.0])
 X, Y = np.meshgrid(a2, a2)
-xaxis = [1, 2, 3, 4]
 givens[0] = 1.0
+xaxis = [1, 2, 3, 4]
 
 for row, given in zip(axs, givens):
     for ax, rho in zip(row, rhos):

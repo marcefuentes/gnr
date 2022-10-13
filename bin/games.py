@@ -17,9 +17,8 @@ a2max = 1.0
 npoints = 128
 npoints_ic = 128
 
-n_ic = 3    # Number of indifference curves
-
-num = 3
+n_ic = 5    # Number of indifference curves
+num = 3     # Number of subplot rows and columns
 every = int(num/2)
 minlog_es = -5.0
 maxlog_es = 5.0
@@ -98,17 +97,17 @@ axs = top_grid.subplots()
 
 x_ics = np.linspace(0.0, R1*a1max, num=npoints_ic)
 a2eqs = a2max/(1.0 + Q*b)
-ws = np.linspace(0.5, 1.5, num=5)
+ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
 
 for row, given, g in zip(axs, givens, a2eqs):
     for ax, rho, a2 in zip(row, rhos, g):
         for w in ws:
             ax.plot(x_ics, icces(x_ics, w, rho), c='0.950')
-        weq = fitness1(a2, a2, given, rho)
-        ax.plot(x_ics, icces(x_ics, weq, rho), c=cm.magma(weq))
         T = b*R*(1.0 - given)
         budget = R2*a2max*(1.0 - given) + a2*R2*given - T*x_ics
-        ax.plot(x_ics, budget, c='green', alpha=0.4)
+        ax.plot(x_ics, budget, c='green')
+        weq = fitness1(a2, a2, given, rho)
+        ax.plot(x_ics, icces(x_ics, weq, rho), c=cm.magma(weq))
         ax.set(xticks=[], yticks=[], xlim=(0, R1*a1max), ylim=(0, R2*a2max))
         ax.set_box_aspect(1)
 axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
@@ -141,19 +140,18 @@ for ax, given in zip(axs[::every, 0], givens[::every]):
 bottom_grid = outer_grid[2, 0].subgridspec(num, num, wspace=0, hspace=0)
 axs = bottom_grid.subplots()
 
+a2 = np.array([0.5, 0.0])
+X, Y = np.meshgrid(a2, a2)
 xaxis = [1, 2, 3, 4]
 givens[0] = 1.0
 
 for row, given in zip(axs, givens):
     for ax, rho in zip(row, rhos):
-        #aD = a2eq(given, rho)
-        #aC = a2eq(0.0, rho)
-        aD = 0.0
-        aC = 0.5
-        T = fitness1(aC, aD, given, rho)
-        R = fitness1(aC, aC, given, rho)
-        P = fitness1(aD, aD, given, rho)
-        S = fitness1(aD, aC, given, rho)
+        Z = fitness2(X, Y, given, rho)
+        T = Z[1, 0]
+        R = Z[0, 0]
+        P = Z[1, 1]
+        S = Z[0, 1]
         yaxis = [T, R, P, S]
         if (T < R) and (P < S):
             rgb = 'orange'
@@ -166,7 +164,6 @@ for row, given in zip(axs, givens):
         ax.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=1.0, markersize=3)
         ax.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))
         ax.set_box_aspect(1)
-
 for ax, given in zip(axs[::every, 0], givens[::every]):
     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):

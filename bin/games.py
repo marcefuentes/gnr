@@ -31,21 +31,7 @@ def a2eq(given, rho):
     a2 = a2max/(1.0 + Q*b)
     return a2
 
-def fitness1(x, y, given, rho):
-    q1 = (1.0 - y)*R1
-    q2 = y*R2*(1.0 - given) + x*R2*given
-    if rho == 0.0:
-        w = q1*q2
-        w = pow(q1, alpha)*pow(q2, 1.0 - alpha) if w > 0.0 else 0.0
-    elif rho < 0.0:
-        w = q1*q2
-        w = alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho) if w > 0.0 else 0.0
-        w = pow(w, 1.0/rho) if w > 0.0 else 0.0
-    else:
-        w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
-    return w
-
-def fitness2(x, y, given, rho):
+def fitness(x, y, given, rho):
     q1 = (1.0 - y)*R1
     q2 = y*R2*(1.0 - given) + x*R2*given
     if rho == 0.0:
@@ -72,11 +58,6 @@ log_ess = np.linspace(minlog_es, maxlog_es, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
 givens = np.linspace(maxgiven, mingiven, num=num)
 givens[0] = 0.9999999
-R = R2/R1
-b = a2max/a1max
-Ts = b*R*(1.0 - givens)
-RR, TT = np.meshgrid(rhos, Ts)
-Q = R*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
 
 fslabel = 26 # Label font size
 fstick = 18 # Tick font size
@@ -95,8 +76,13 @@ outer_grid = fig.add_gridspec(3, 1, left=0.22, right=0.9, top=0.95, bottom=0.11)
 top_grid = outer_grid[0, 0].subgridspec(num, num, wspace=0, hspace=0)
 axs = top_grid.subplots()
 
-x_ics = np.linspace(0.0, R1*a1max, num=npoints_ic)
+R = R2/R1
+b = a2max/a1max
+Ts = b*R*(1.0 - givens)
+RR, TT = np.meshgrid(rhos, Ts)
+Q = R*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
 a2eqs = a2max/(1.0 + Q*b)
+x_ics = np.linspace(0.0, R1*a1max, num=npoints_ic)
 ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
 
 for row, given, g in zip(axs, givens, a2eqs):
@@ -106,8 +92,9 @@ for row, given, g in zip(axs, givens, a2eqs):
         T = b*R*(1.0 - given)
         budget = R2*a2max*(1.0 - given) + a2*R2*given - T*x_ics
         ax.plot(x_ics, budget, c='green')
-        weq = fitness1(a2, a2, given, rho)
-        ax.plot(x_ics, icces(x_ics, weq, rho), c=cm.magma(weq))
+        a = np.array([a2])
+        weq = fitness(a, a, given, rho)
+        ax.plot(x_ics, icces(x_ics, weq[0], rho), c=cm.magma(weq))
         ax.set(xticks=[], yticks=[], xlim=(0, R1*a1max), ylim=(0, R2*a2max))
         ax.set_box_aspect(1)
 axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
@@ -124,7 +111,7 @@ X, Y = np.meshgrid(a2, a2)
 
 for row, given, g in zip(axs, givens, Q):
     for ax, rho, q in zip(row, rhos, g):
-        Z = fitness2(X, Y, given, rho)
+        Z = fitness(X, Y, given, rho)
         Z_normed = Z/Z.max(axis=0)
         ax.imshow(Z_normed, cmap='Greys_r', vmin=0, vmax=1.0)
         xaxis = npoints*a2-0.5
@@ -147,7 +134,7 @@ givens[0] = 1.0
 
 for row, given in zip(axs, givens):
     for ax, rho in zip(row, rhos):
-        Z = fitness2(X, Y, given, rho)
+        Z = fitness(X, Y, given, rho)
         T = Z[1, 0]
         R = Z[0, 0]
         P = Z[1, 1]

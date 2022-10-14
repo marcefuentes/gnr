@@ -14,7 +14,6 @@ R1 = 2.0
 R2 = 2.0
 a1max = 1.0
 a2max = 1.0
-npoints = 128
 npoints_ic = 128
 
 num = 5     # Number of subplot rows and columns
@@ -28,15 +27,15 @@ maxgiven = 1.0
 def fitness(x, y, given, rho):
     q1 = (1.0 - y)*R1
     q2 = y*R2*(1.0 - given) + x*R2*given
-    if rho == 0.0:
-        w = q1*q2
-        w[w>0.0] = pow(q1[w>0.0], alpha)*pow(q2[w>0.0], 1.0 - alpha)
-    elif rho < 0.0:
-        w = q1*q2
-        w[w>0.0] = alpha*pow(q1[w>0.0], rho) + (1.0 - alpha)*pow(q2[w>0.0], rho)
-        w[w>0.0] = pow(w[w>0.0], 1.0/rho)
-    else:
-        w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
+    w = q1*q2
+    mask = (w > 0.0) & (rho == 0.0)
+    w[mask] = pow(q1[mask], alpha)*pow(q2[mask], 1.0 - alpha)
+    mask = (w > 0.0) & (rho < 0.0)
+    w[mask] = alpha*pow(q1[mask], rho[mask]) + (1.0 - alpha)*pow(q2[mask], rho[mask])
+    mask = (w > 0.0) & (rho < 0.0)
+    w[mask] = pow(w[mask], 1.0/rho[mask])
+    mask = (rho > 0.0)
+    w[mask] = pow(alpha*pow(q1[mask], rho[mask]) + (1.0 - alpha)*pow(q2[mask], rho[mask]), 1.0/rho[mask])
     return w
 
 def icces(q, w, rho):
@@ -57,6 +56,7 @@ givens = np.linspace(maxgiven, mingiven, num=num)
 givens[0] = 0.9999999
 log_ess = np.linspace(minlog_es, maxlog_es, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
+RR, GG = np.meshgrid(rhos, givens)
 
 fslabel = 26 # Label font size
 fstick = 18 # Tick font size
@@ -75,21 +75,20 @@ outer_grid = fig.add_gridspec(1, 2, left=0.15, right=0.9, top=0.86, bottom=0.176
 grid = outer_grid[0, 0].subgridspec(num, num, wspace=0, hspace=0)
 axs = grid.subplots()
 
-Ts = b*R*(1.0 - givens)
-RR, TT = np.meshgrid(rhos, Ts)
+MRT = b*R*(1.0 - givens)
+RR, TT = np.meshgrid(rhos, MRT)
 Q = R*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
-a2eqs = a2max/(1.0 + Q*b)
+a2eqss = a2max/(1.0 + Q*b)
+weqss = fitness(a2eqss, a2eqss, GG, RR)
 
-for row, given, g in zip(axs, givens, a2eqs):
-    for ax, rho, a2 in zip(row, rhos, g):
+for row, given, a2eqs, weqs in zip(axs, givens, a2eqss, weqss):
+    for ax, rho, a2eq, weq in zip(row, rhos, a2eqs, weqs):
         for w in ws:
             ax.plot(q1, icces(q1, w, rho), c='0.950')
         T = b*R*(1.0 - given)
-        budget = a2max*R2*(1.0 - given) + a2*R2*given - T*q1b
+        budget = a2max*R2*(1.0 - given) + a2eq*R2*given - T*q1b
         ax.plot(q1b, budget, c='green')
-        a = np.array([a2])
-        weq = fitness(a, a, given, rho)
-        ax.plot(q1, icces(q1, weq[0], rho), c=cm.magma(weq))
+        ax.plot(q1, icces(q1, weq, rho), c=cm.magma(weq))
         ax.set(xticks=[], yticks=[], xlim=(0, R1*a1max), ylim=(0, R2*a2max))
         ax.set_box_aspect(1)
 axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
@@ -103,29 +102,28 @@ for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):
 grid = outer_grid[0, 1].subgridspec(num, num, wspace=0, hspace=0)
 axs = grid.subplots()
 
-a2 = np.array([0.5, 0.0])
-X, Y = np.meshgrid(a2, a2)
+optimal = 0.5
+a2Ds = np.full([num, num], 0.0)
+a2Cs = np.full([num, num], optimal)
+Ts = fitness(a2Cs, a2Ds, GG, RR)
+Rs = fitness(a2Cs, a2Cs, GG, RR)
+Ps = fitness(a2Ds, a2Ds, GG, RR)
+Ss = fitness(a2Ds, a2Cs, GG, RR)
+xeqss = np.full([num, num], 0.0)
+mask = (Ts < Rs) & (Ps < Ss)
+xeqss[mask] = 1.0
+mask = (Ts > Rs) & (Ps < Ss) & (Rs - Ss - Ts + Ps != 0.0)
+xeqss[mask] = (Ps[mask] - Ss[mask])/(Rs[mask] - Ss[mask] - Ts[mask] + Ps[mask])
+a2eqss = xeqss*a2Cs[0, 0]
+weqss = 2.0*(Ts + Ss)*xeqss*(1.0 - xeqss) + Rs*xeqss*xeqss + Ps*(1.0 - xeqss)*(1.0 - xeqss)
 
-for row, given in zip(axs, givens):
-    for ax, rho in zip(row, rhos):
+for row, given, a2eqs, weqs in zip(axs, givens, a2eqss, weqss):
+    for ax, rho, a2eq, weq in zip(row, rhos, a2eqs, weqs):
         for w in ws:
             ax.plot(q1, icces(q1, w, rho), c='0.950')
-        Z = fitness(X, Y, given, rho)
-        T = Z[1, 0]
-        R = Z[0, 0]
-        P = Z[1, 1]
-        S = Z[0, 1]
-        if (T < R) and (P < S):
-            xeq = 1.0
-        elif (T > R) and (P >= S):
-            xeq = 0.0
-        else:
-            xeq = (P - S)/(R - S - T + P) 
-        a2eq = xeq*a2[0]
         T = b*R*(1.0 - given)
         budget = a2max*R2*(1.0 - given) + a2eq*R2*given - T*q1b
         ax.plot(q1b, budget, c='green', marker='o', markersize=5, linestyle='dashed')
-        weq = (T + S)*xeq*(1.0 - xeq) + R*xeq*xeq + P*(1.0 - xeq)*(1.0 - xeq)
         ax.plot(q1, icces(q1, weq, rho), c=cm.magma(weq))
         ax.set(xticks=[], yticks=[], xlim=(0, R1*a1max), ylim=(0, R2*a2max))
         ax.set_box_aspect(1)

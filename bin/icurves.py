@@ -48,9 +48,15 @@ def icces(q, w, rho):
         q2 = np.piecewise(q, [pow(w, rho) <= alpha*pow(q, rho), pow(w, rho) > alpha*pow(q, rho)], [-0.1, lambda i: pow((pow(w, rho) - alpha*pow(i, rho))/(1.0 - alpha), 1.0/rho)])
     return q2
 
+R = R2/R1
+b = a2max/a1max
+q1b = np.array([0.0, a1max*R1/2.0, a1max*R1])
+q1 = np.linspace(0.0, a1max*R1, num=npoints_ic)
+ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
+givens = np.linspace(maxgiven, mingiven, num=num)
+givens[0] = 0.9999999
 log_ess = np.linspace(minlog_es, maxlog_es, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
-givens = np.linspace(maxgiven, mingiven, num=num)
 
 fslabel = 26 # Label font size
 fstick = 18 # Tick font size
@@ -69,26 +75,21 @@ outer_grid = fig.add_gridspec(1, 2, left=0.15, right=0.9, top=0.86, bottom=0.176
 grid = outer_grid[0, 0].subgridspec(num, num, wspace=0, hspace=0)
 axs = grid.subplots()
 
-R = R2/R1
-b = a2max/a1max
-givens[0] = 0.9999999
 Ts = b*R*(1.0 - givens)
 RR, TT = np.meshgrid(rhos, Ts)
 Q = R*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
 a2eqs = a2max/(1.0 + Q*b)
-x_ics = np.linspace(0.0, R1*a1max, num=npoints_ic)
-ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
 
 for row, given, g in zip(axs, givens, a2eqs):
     for ax, rho, a2 in zip(row, rhos, g):
         for w in ws:
-            ax.plot(x_ics, icces(x_ics, w, rho), c='0.950')
+            ax.plot(q1, icces(q1, w, rho), c='0.950')
         T = b*R*(1.0 - given)
-        budget = R2*a2max*(1.0 - given) + a2*R2*given - T*x_ics
-        ax.plot(x_ics, budget, c='green')
+        budget = a2max*R2*(1.0 - given) + a2*R2*given - T*q1b
+        ax.plot(q1b, budget, c='green')
         a = np.array([a2])
         weq = fitness(a, a, given, rho)
-        ax.plot(x_ics, icces(x_ics, weq[0], rho), c=cm.magma(weq))
+        ax.plot(q1, icces(q1, weq[0], rho), c=cm.magma(weq))
         ax.set(xticks=[], yticks=[], xlim=(0, R1*a1max), ylim=(0, R2*a2max))
         ax.set_box_aspect(1)
 axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
@@ -103,14 +104,12 @@ grid = outer_grid[0, 1].subgridspec(num, num, wspace=0, hspace=0)
 axs = grid.subplots()
 
 a2 = np.array([0.5, 0.0])
-a1 = np.array([0.0, a1max/2.0, a1max])
 X, Y = np.meshgrid(a2, a2)
-x_ics = np.linspace(0.0, R1*a1max, num=npoints_ic)
-ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
-givens[0] = 0.9999999
 
 for row, given in zip(axs, givens):
     for ax, rho in zip(row, rhos):
+        for w in ws:
+            ax.plot(q1, icces(q1, w, rho), c='0.950')
         Z = fitness(X, Y, given, rho)
         T = Z[1, 0]
         R = Z[0, 0]
@@ -123,15 +122,11 @@ for row, given in zip(axs, givens):
         else:
             xeq = (P - S)/(R - S - T + P) 
         a2eq = xeq*a2[0]
-        for w in ws:
-            ax.plot(x_ics, icces(x_ics, w, rho), c='0.950')
-        budget = (a2max - b*a1)*R2*(1.0 - given) + a2eq*R2*given
-        ax.plot(a1*R1, budget, c='green', marker='o', markersize=5, linestyle='dashed')
-        a = np.array([xeq*a2[0]])
-        apartner0 = np.array([a2[0]])
-        apartner1 = np.array([a2[1]])
-        weq = fitness(apartner0, a, given, rho)*xeq + fitness(apartner1, a, given, rho)*(1.0 - xeq)
-        ax.plot(x_ics, icces(x_ics, weq, rho), c=cm.magma(weq))
+        T = b*R*(1.0 - given)
+        budget = a2max*R2*(1.0 - given) + a2eq*R2*given - T*q1b
+        ax.plot(q1b, budget, c='green', marker='o', markersize=5, linestyle='dashed')
+        weq = (T + S)*xeq*(1.0 - xeq) + R*xeq*xeq + P*(1.0 - xeq)*(1.0 - xeq)
+        ax.plot(q1, icces(q1, weq, rho), c=cm.magma(weq))
         ax.set(xticks=[], yticks=[], xlim=(0, R1*a1max), ylim=(0, R2*a2max))
         ax.set_box_aspect(1)
 axs[0, 0].set_title('b', fontsize=fslabel, weight='bold')

@@ -84,7 +84,7 @@ weqss = fitness(a2eqss, a2eqss, GG, RR)
 for row, given, a2eqs, weqs in zip(axs, givens, a2eqss, weqss):
     for ax, rho, a2eq, weq in zip(row, rhos, a2eqs, weqs):
         for w in ws:
-            ax.plot(q1, icces(q1, w, rho), c='0.950')
+            ax.plot(q1, icces(q1, w, rho), c='0.850')
         T = b*R*(1.0 - given)
         budget = a2max*R2*(1.0 - given) + a2eq*R2*given - T*q1b
         ax.plot(q1b, budget, c='green')
@@ -120,10 +120,10 @@ weqss = 2.0*(Ts + Ss)*xeqss*(1.0 - xeqss) + Rs*xeqss*xeqss + Ps*(1.0 - xeqss)*(1
 for row, given, a2eqs, weqs in zip(axs, givens, a2eqss, weqss):
     for ax, rho, a2eq, weq in zip(row, rhos, a2eqs, weqs):
         for w in ws:
-            ax.plot(q1, icces(q1, w, rho), c='0.950')
+            ax.plot(q1, icces(q1, w, rho), c='0.850')
         T = b*R*(1.0 - given)
         budget = a2max*R2*(1.0 - given) + a2eq*R2*given - T*q1b
-        ax.plot(q1b, budget, c='green', marker='o', markersize=5, linestyle='dashed')
+        ax.plot(q1b, budget, c='green', marker='o', markersize=5, linestyle='dotted')
         ax.plot(q1, icces(q1, weq, rho), c=cm.magma(weq))
         ax.set(xticks=[], yticks=[], xlim=(0, R1*a1max), ylim=(0, R2*a2max))
         ax.set_box_aspect(1)

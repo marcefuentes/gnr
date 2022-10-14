@@ -49,7 +49,7 @@ def icces(q, w, rho):
 
 R = R2/R1
 b = a2max/a1max
-q1b = np.array([0.0, a1max*R1/2.0, a1max*R1])
+q1b = np.linspace(0.0, a1max*R1, num=3)
 q1 = np.linspace(0.0, a1max*R1, num=npoints_ic)
 ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
 givens = np.linspace(maxgiven, mingiven, num=num)

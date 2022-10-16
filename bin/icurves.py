@@ -124,8 +124,6 @@ for row, given, a2eqs, weqs in zip(axs, givens, a2eqss, weqss):
         T = b*R*(1.0 - given)
         budget = a2max*R2*(1.0 - given) + a2eq*R2*given - T*q1b
         if (rho == 0) and (given == 0.75):
-            print(budget)
-            print(a2eq)
         ax.plot(q1b, budget, c='green', marker='o', markersize=5, linestyle='dotted')
         ax.plot(q1, icces(q1, weq, rho), c=cm.magma(weq))
         ax.set(xticks=[], yticks=[], xlim=(0, R1*a1max), ylim=(0, R2*a2max))

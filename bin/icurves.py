@@ -57,6 +57,12 @@ givens[0] = 0.9999999
 log_ess = np.linspace(minlog_es, maxlog_es, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
 RR, GG = np.meshgrid(rhos, givens)
+icss = []
+for rho in rhos:
+    ics = []
+    for w in ws:
+        ics.append(icces(q1, w, rho))
+    icss.append(ics)
 
 fslabel = 26 # Label font size
 fstick = 18 # Tick font size
@@ -82,9 +88,9 @@ a2eqss = a2max/(1.0 + Q*b)
 weqss = fitness(a2eqss, a2eqss, GG, RR)
 
 for row, given, a2eqs, weqs in zip(axs, givens, a2eqss, weqss):
-    for ax, rho, a2eq, weq in zip(row, rhos, a2eqs, weqs):
-        for w in ws:
-            ax.plot(q1, icces(q1, w, rho), c='0.850')
+    for ax, rho, ics, a2eq, weq in zip(row, rhos, icss, a2eqs, weqs):
+        for ic in ics:
+            ax.plot(q1, ic, c='0.850')
         T = b*R*(1.0 - given)
         budget = a2max*R2*(1.0 - given) + a2eq*R2*given - T*q1b
         ax.plot(q1b, budget, c='green')
@@ -118,9 +124,9 @@ a2eqss = xeqss*a2Cs[0, 0]
 weqss = 2.0*(Ts + Ss)*xeqss*(1.0 - xeqss) + Rs*xeqss*xeqss + Ps*(1.0 - xeqss)*(1.0 - xeqss)
 
 for row, given, a2eqs, weqs in zip(axs, givens, a2eqss, weqss):
-    for ax, rho, a2eq, weq in zip(row, rhos, a2eqs, weqs):
-        for w in ws:
-            ax.plot(q1, icces(q1, w, rho), c='0.850')
+    for ax, rho, ics, a2eq, weq in zip(row, rhos, icss, a2eqs, weqs):
+        for ic in ics:
+            ax.plot(q1, ic, c='0.850')
         T = b*R*(1.0 - given)
         budget = a2max*R2*(1.0 - given) + a2eq*R2*given - T*q1b
         if (rho == 0) and (given == 0.75):

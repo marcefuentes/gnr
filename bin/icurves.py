@@ -16,7 +16,8 @@ a1max = 1.0
 a2max = 1.0
 npoints_ic = 128
 
-num = 5     # Number of subplot rows and columns
+num = 5    # Number of subplot rows and columns
+#markersize = 10
 n_ic = 5    # Number of indifference curves
 every = int(num/2)
 minlog_es = -5.0
@@ -88,16 +89,17 @@ RR, TT = np.meshgrid(rhos, MRT)
 Q = R*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
 a2eqss = a2max/(1.0 + Q*b)
 weqss = fitness(a2eqss, a2eqss, GG, RR)
+q2eqss = a2eqss*R2
 
-for row, given, a2eqs, weqs in zip(axs, givens, a2eqss, weqss):
+for row, given, q2eqs, weqs in zip(axs, givens, q2eqss, weqss):
     budget0 = q2_budget*(1.0 - given)
-    for ax, rho, ics, a2eq, weq in zip(row, rhos, icss, a2eqs, weqs):
+    for ax, rho, ics, q2eq, weq in zip(row, rhos, icss, q2eqs, weqs):
         for ic in ics:
             ax.plot(q1_ic, ic, c='0.850')
-        budget = budget0 + a2eq*R2*given
+        budget = budget0 + q2eq*given
         ax.plot(q1_budget, budget, c='green')
-        ax.plot(q1_ic, icces(q1_ic, weq, rho), c=cm.magma(weq))
-        ax.set(xticks=[], yticks=[], xlim=(0, R1*a1max), ylim=(0, R2*a2max))
+        ax.plot(q1_ic, icces(q1_ic, weq, rho), linewidth=2, c=cm.magma(weq))
+        ax.set(xticks=[], yticks=[], xlim=(0.0, a1max*R1), ylim=(0.0, a2max*R2))
         ax.set_box_aspect(1)
 axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
 for ax, given in zip(axs[::every, 0], givens[::every]):
@@ -121,21 +123,19 @@ mask = (Ts < Rs) & (Ps < Ss)
 xeqss[mask] = 1.0
 mask = (Ts > Rs) & (Ps < Ss) & (Rs - Ss - Ts + Ps != 0.0)
 xeqss[mask] = (Ps[mask] - Ss[mask])/(Rs[mask] - Ss[mask] - Ts[mask] + Ps[mask])
-a2eqss = xeqss*a2max/2.0
-weqss = 2.0*(Ts + Ss)*xeqss*(1.0 - xeqss) + Rs*xeqss*xeqss + Ps*(1.0 - xeqss)*(1.0 - xeqss)
+q2eqss = xeqss*R2*a2max/2.0
+weqss = (Ts + Ss)*xeqss*(1.0 - xeqss) + Rs*xeqss*xeqss + Ps*(1.0 - xeqss)*(1.0 - xeqss)
 
-for row, given, a2eqs, weqs in zip(axs, givens, a2eqss, weqss):
+for row, given, xeqs, q2eqs, weqs in zip(axs, givens, xeqss, q2eqss, weqss):
     budget0 = q2_budget*(1.0 - given)
-    for ax, rho, ics, a2eq, weq in zip(row, rhos, icss, a2eqs, weqs):
+    budget5 = budget0 + (a2max/2.0)*R2*given
+    for ax, rho, ics, xeq, q2eq, weq in zip(row, rhos, icss, xeqs, q2eqs, weqs):
         for ic in ics:
             ax.plot(q1_ic, ic, c='0.850')
-        budget = budget0 + a2eq*R2*given
-        if (rho == 0) and (given == 0.75):
-            print(weq, a2eq, fitness(np.array([a2eq]), np.array([0.5]), np.array([given]), np.array([rho])))
-            print(weq, a2eq, fitness(np.array([a2eq]), np.array([0.0]), np.array([given]), np.array([rho])))
-        ax.plot(q1_budget, budget, c='green', marker='o', markersize=5, linestyle='dotted')
-        ax.plot(q1_ic, icces(q1_ic, weq, rho), c=cm.magma(weq))
-        ax.set(xticks=[], yticks=[], xlim=(0, R1*a1max), ylim=(0, R2*a2max))
+        ax.scatter(q1_budget, budget0, c='green', marker='s', alpha=1.0-xeq)
+        ax.scatter(q1_budget, budget5, c='green', marker='s', alpha=xeq)
+        ax.plot(q1_ic, icces(q1_ic, weq, rho), linewidth=2, c=cm.magma(weq))
+        ax.set(xticks=[], yticks=[], xlim=(0.0, a1max*R1), ylim=(0.0, a2max*R2))
         ax.set_box_aspect(1)
 axs[0, 0].set_title('b', fontsize=fslabel, weight='bold')
 for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):

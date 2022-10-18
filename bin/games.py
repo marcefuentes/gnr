@@ -42,13 +42,6 @@ def fitness(x, y, given, rho):
 log_ess = np.linspace(minlog_es, maxlog_es, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
 givens = np.linspace(maxgiven, mingiven, num=num)
-R = R2/R1
-b = a2max/a1max
-givens[0] = 0.9999999
-Ts = b*R*(1.0 - givens)
-RR, TT = np.meshgrid(rhos, Ts)
-Q = R*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
-
 
 fslabel = 26 # Label font size
 fstick = 18 # Tick font size
@@ -67,9 +60,14 @@ outer_grid = fig.add_gridspec(1, 2, left=0.15, right=0.9, top=0.86, bottom=0.176
 grid = outer_grid[0, 0].subgridspec(num, num, wspace=0, hspace=0)
 axs = grid.subplots()
 
+R = R2/R1
+b = a2max/a1max
+givens[0] = 0.9999999
+Ts = b*R*(1.0 - givens)
+RR, TT = np.meshgrid(rhos, Ts)
+Q = R*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
 a2 = np.linspace(0.0, a2max, num=npoints)
 X, Y = np.meshgrid(a2, a2)
-givens[0] = 0.9999999
 
 for row, given, g in zip(axs, givens, Q):
     for ax, rho, q in zip(row, rhos, g):

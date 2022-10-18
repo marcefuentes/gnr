@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include <gsl/gsl_rng.h>
 #include "sim.h"
 
@@ -52,7 +53,7 @@ struct rtype *create_recruits (int deaths, double wc)
 	return head;
 }
 
-void kill (struct rtype *recruit, struct itype *i_first, int n)
+void kill (struct rtype *recruit, struct itype *i_first, int n, int macromutation)
 {
 	struct itype *i;
 	int pick;
@@ -65,7 +66,15 @@ void kill (struct rtype *recruit, struct itype *i_first, int n)
 		} while ( (i_first + pick)->age == 0 );	// ... that is not already dead
 
 		i = i_first + pick;
-		i->a2Decided = i->a2Default = recruit->a2Default;
+		i->a2Default = recruit->a2Default;
+		if (macromutation == 0)
+		{
+			i->a2Decided = i->a2Default;
+		}
+		else
+		{
+			i->a2Decided = round(i->a2Default*2.0)/2.0;
+		}
 		i->a2SeenSum = 0.0;
 		i->ChooseGrain = recruit->ChooseGrain;
 		i->MimicGrain = recruit->MimicGrain;

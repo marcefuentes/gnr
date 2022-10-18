@@ -28,7 +28,7 @@ int	gPeriods;				// Periods recorded
 char	gFFunction;				// Fitness function
 double	ga2Min = 0.0, ga1Max, ga2Max;		// Functional tradeoff
 int	gR1, gR2;				// Resource abundance: q1 = a1*R1, q2 = a2*R2
-double	ga2Init, ga2High;
+double	ga2Init;
 double	gChooseGrainInit;			// Initial ChooseGrain
 double	gMimicGrainInit;			// Initial MimicGrain
 double	ga2MutationSize;			// For a2Default
@@ -43,8 +43,7 @@ double	gMimicCost;
 double	gGiven;					// Effect on partner: q2 = a2*R2*Given
 int	gPartnerChoice;
 int	gReciprocity;
-int	gOptimal;
-double	gMacromutation;
+int	gMacromutation;
 int	gIndirectR;
 
 char	factorName1[20], factorName2[20], factorName3[20];
@@ -63,7 +62,7 @@ double	fitness (struct itype *i, struct itype *i_last);	// gFFunction
 double	calculate_wmax (double q1, double q2);
 double	ces (double q1, double q2);				// gES, galpha
 double	quasilinear (double q1, double q2);			// galpha, gc1, gc2
-double	macromutate (double trait, double sum);			// gMacromutation
+//double	macromutate (double trait, double sum);			// gMacromutation
 double	calculate_q1 (double a2);				// ga2Max, ga1Max, gR1
 double	calculate_q2 (double a2, double a2partner);		// gR2, gGiven
 double	calculate_cost	(double choose, double mimic);		// gChooseCost, gMimicCost
@@ -328,7 +327,6 @@ void read_globals (char *filename)
 	fscanf (fp, "R1,%i\n", &gR1);
 	fscanf (fp, "R2,%i\n", &gR2);
 	fscanf (fp, "a2Init,%lf\n", &ga2Init);
-	fscanf (fp, "a2High,%lf\n", &ga2High);
 	fscanf (fp, "ChooseGrainInit,%lf\n", &gChooseGrainInit);
 	fscanf (fp, "MimicGrainInit,%lf\n", &gMimicGrainInit);
 	fscanf (fp, "a2MutationSize,%lf\n", &ga2MutationSize);
@@ -344,8 +342,7 @@ void read_globals (char *filename)
 	fscanf (fp, "Given,%lf\n", &gGiven);
 	fscanf (fp, "PartnerChoice,%i\n", &gPartnerChoice);
 	fscanf (fp, "Reciprocity,%i\n", &gReciprocity);
-	fscanf (fp, "Optimal,%i\n", &gOptimal);
-	fscanf (fp, "Macromutation,%lf\n", &gMacromutation);
+	fscanf (fp, "Macromutation,%i\n", &gMacromutation);
 	fscanf (fp, "IndirectR,%i\n", &gIndirectR);
 	fscanf (fp, "factorName1,%s\n", factorName1);
 	fscanf (fp, "fFirst1,%lf\n", &fFirst1);
@@ -367,7 +364,6 @@ void read_globals (char *filename)
 	gPeriods = pow(2.0, gPeriods);
 	ga2MutationSize = pow(2.0, ga2MutationSize);
 	gGrainMutationSize = pow(2.0, gGrainMutationSize);
-	gMacromutation = pow(2.0, gMacromutation);
 	gDeathRate = pow(2.0, gDeathRate);
 	gES = pow(2.0, gES);
 	gGroupSize = pow(2.0, gGroupSize);
@@ -406,7 +402,6 @@ void write_globals (char *filename)
 		fprintf (fp, "ES,%f,%f\n", gES, log(gES)/log(2));
 	}
 	fprintf (fp, "a2Init,%f\n", ga2Init);
-	fprintf (fp, "a2High,%f\n", ga2High);
 	fprintf (fp, "ChooseGrainInit,%f\n", gChooseGrainInit);
 	fprintf (fp, "MimicGrainInit,%f\n", gMimicGrainInit);
 	fprintf (fp, "a2MutationSize,%f,%f\n", ga2MutationSize, log(ga2MutationSize)/log(2));
@@ -424,8 +419,7 @@ void write_globals (char *filename)
 	fprintf (fp, "Given,%f\n", gGiven);
 	fprintf (fp, "PartnerChoice,%i\n", gPartnerChoice);
 	fprintf (fp, "Reciprocity,%i\n", gReciprocity);
-	fprintf (fp, "Optimal,%i\n", gOptimal);
-	fprintf (fp, "Macromutation,%f,%f\n", gMacromutation, log(gMacromutation)/log(2));
+	fprintf (fp, "Macromutation,%i\n", gMacromutation);
 	fprintf (fp, "IndirectR,%i\n", gIndirectR);
 
 	fclose (fp);
@@ -489,23 +483,13 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 						i++;
 					}
 
-					if ( gMacromutation < pow(2.0, -7) )
-					{
-						recruit->a2Default = dtnorm (i->a2Default, ga2MutationSize, ga2Min, ga2Max, rng);
-						recruit->ChooseGrain = dtnorm (i->ChooseGrain, gGrainMutationSize, ga2Min, ga2Max, rng);
-						recruit->MimicGrain =  dtnorm (i->MimicGrain, gGrainMutationSize, ga2Min, ga2Max, rng);
-					}
-					else
-					{
-						recruit->a2Default = macromutate (i->a2Default, ga2Init + ga2High);
-						recruit->ChooseGrain = macromutate (i->ChooseGrain, gChooseGrainInit - ga2Init + ga2High - 0.1);
-						recruit->MimicGrain = macromutate (i->MimicGrain, gMimicGrainInit - ga2Init + ga2High - 0.1);
-					}
-
+					recruit->a2Default = dtnorm (i->a2Default, ga2MutationSize, ga2Min, ga2Max, rng);
+					recruit->ChooseGrain = dtnorm (i->ChooseGrain, gGrainMutationSize, ga2Min, ga2Max, rng);
+					recruit->MimicGrain =  dtnorm (i->MimicGrain, gGrainMutationSize, ga2Min, ga2Max, rng);
 					recruit->cost = calculate_cost (recruit->ChooseGrain, recruit->MimicGrain);
 				}
 
-				kill (recruit_first, i_first, gN);
+				kill (recruit_first, i_first, gN, gMacromutation);
 				free_recruits (recruit_first);
 			}
 			
@@ -641,7 +625,7 @@ double calculate_q1 (double a2)
 
 double calculate_q2 (double a2, double a2partner)
 {
-	double q2 = gR2*a2*(1.0 - gGiven*(1 - gOptimal)) + gR2*a2partner*gGiven*(1 - gOptimal);
+	double q2 = gR2*a2*(1.0 - gGiven) + gR2*a2partner*gGiven;
 
 	return q2;
 }
@@ -653,7 +637,7 @@ double calculate_cost (double choose, double mimic)
 	return c;
 }
 
-double macromutate (double trait, double sum)
+/*double macromutate (double trait, double sum)
 {
 	if ( gsl_rng_uniform (rng) < gMacromutation )
 	{
@@ -661,7 +645,7 @@ double macromutate (double trait, double sum)
 	}
 
 	return trait;
-}
+}*/
 
 void update_for_stats (struct itype *i, struct itype *i_last)
 {

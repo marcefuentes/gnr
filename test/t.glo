@@ -9,7 +9,6 @@ a2Max,1.0
 R1,2
 R2,2
 a2Init,0.1
-a2High,0.8
 ChooseGrainInit,0.0625
 MimicGrainInit,0.0625
 a2MutationSize,-7
@@ -25,8 +24,7 @@ MimicCost,-12
 Given,0.875
 PartnerChoice,1
 Reciprocity,1
-Optimal,0
-Macromutation,-8
+Macromutation,0
 IndirectR,0
 factorName1,MimicCost
 fFirst1,-10

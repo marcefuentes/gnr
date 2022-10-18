@@ -16,8 +16,7 @@ a1max = 1.0
 a2max = 1.0
 npoints = 128
 
-num = 5    # Number of subplot rows and columns
-n_ic = 5    # Number of indifference curves
+num = 21    # Number of subplot rows and columns
 every = int(num/2)
 minlog_es = -5.0
 maxlog_es = 5.0
@@ -66,11 +65,11 @@ a2 = np.linspace(0.0, a2max, num=npoints)
 X, Y = np.meshgrid(a2, a2)
 
 for row, given in zip(axs, givens):
+    T = b*R*(1.0 - given)
     for ax, rho in zip(row, rhos):
         Z = fitness(X, Y, given, rho)
         Z_normed = Z/Z.max(axis=0)
         ax.imshow(Z_normed, origin='lower', cmap='Greys_r', vmin=0, vmax=1.0)
-        T = b*R*(1.0 - given)
         Q = R*pow(T*(1.0 - alpha)/alpha, 1.0/(rho - 1.0))
         a2maxw = (a2max - a2*given*Q*b)/(1.0 + Q*b*(1.0 - given))
         ax.plot(a2*npoints, a2maxw*npoints, color='orange')

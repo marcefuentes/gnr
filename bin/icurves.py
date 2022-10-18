@@ -25,18 +25,18 @@ maxlog_es = 5.0
 mingiven = 0.0
 maxgiven = 1.0
 
-def fitness(x, y, given, rho):
+def fitness(x, y):
     q1 = (1.0 - y)*R1
-    q2 = y*R2*(1.0 - given) + x*R2*given
+    q2 = y*R2*(1.0 - GG) + x*R2*GG
     w = q1*q2
-    mask = (w > 0.0) & (rho == 0.0)
+    mask = (w > 0.0) & (RR == 0.0)
     w[mask] = pow(q1[mask], alpha)*pow(q2[mask], 1.0 - alpha)
-    mask = (w > 0.0) & (rho < 0.0)
-    w[mask] = alpha*pow(q1[mask], rho[mask]) + (1.0 - alpha)*pow(q2[mask], rho[mask])
-    mask = (w > 0.0) & (rho < 0.0)
-    w[mask] = pow(w[mask], 1.0/rho[mask])
-    mask = (rho > 0.0)
-    w[mask] = pow(alpha*pow(q1[mask], rho[mask]) + (1.0 - alpha)*pow(q2[mask], rho[mask]), 1.0/rho[mask])
+    mask = (w > 0.0) & (RR < 0.0)
+    w[mask] = alpha*pow(q1[mask], RR[mask]) + (1.0 - alpha)*pow(q2[mask], RR[mask])
+    mask = (w > 0.0) & (RR < 0.0)
+    w[mask] = pow(w[mask], 1.0/RR[mask])
+    mask = (RR > 0.0)
+    w[mask] = pow(alpha*pow(q1[mask], RR[mask]) + (1.0 - alpha)*pow(q2[mask], RR[mask]), 1.0/RR[mask])
     return w
 
 def icces(q, w, rho):
@@ -84,11 +84,10 @@ outer_grid = fig.add_gridspec(1, 2, left=0.15, right=0.9, top=0.86, bottom=0.176
 grid = outer_grid[0, 0].subgridspec(num, num, wspace=0, hspace=0)
 axs = grid.subplots()
 
-MRT = b*R*(1.0 - givens)
-RR, TT = np.meshgrid(rhos, MRT)
+TT = b*R*(1.0 - GG)
 Q = R*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
 a2eqss = a2max/(1.0 + Q*b)
-weqss = fitness(a2eqss, a2eqss, GG, RR)
+weqss = fitness(a2eqss, a2eqss)
 q2eqss = a2eqss*R2
 
 for row, given, q2eqs, weqs in zip(axs, givens, q2eqss, weqss):
@@ -114,10 +113,10 @@ axs = grid.subplots()
 
 a2Ds = np.full([num, num], 0.0)
 a2Cs = np.full([num, num], a2max/2.0)
-Ts = fitness(a2Cs, a2Ds, GG, RR)
-Rs = fitness(a2Cs, a2Cs, GG, RR)
-Ps = fitness(a2Ds, a2Ds, GG, RR)
-Ss = fitness(a2Ds, a2Cs, GG, RR)
+Ts = fitness(a2Cs, a2Ds)
+Rs = fitness(a2Cs, a2Cs)
+Ps = fitness(a2Ds, a2Ds)
+Ss = fitness(a2Ds, a2Cs)
 xeqss = np.full([num, num], 0.0)
 mask = (Ts < Rs) & (Ps < Ss)
 xeqss[mask] = 1.0
@@ -132,8 +131,8 @@ for row, given, xeqs, q2eqs, weqs in zip(axs, givens, xeqss, q2eqss, weqss):
     for ax, rho, ics, xeq, q2eq, weq in zip(row, rhos, icss, xeqs, q2eqs, weqs):
         for ic in ics:
             ax.plot(q1_ic, ic, c='0.850')
-        ax.scatter(q1_budget, budget0, c='green', marker='s', alpha=1.0-xeq)
-        ax.scatter(q1_budget, budget5, c='green', marker='s', alpha=xeq)
+        ax.plot(q1_budget, budget0, c='green', linewidth=0.5, marker='o', alpha=1.0-xeq)
+        ax.plot(q1_budget, budget5, c='green', linewidth=0.5, marker='o', alpha=xeq)
         ax.plot(q1_ic, icces(q1_ic, weq, rho), linewidth=2, c=cm.magma(weq))
         ax.set(xticks=[], yticks=[], xlim=(0.0, a1max*R1), ylim=(0.0, a2max*R2))
         ax.set_box_aspect(1)

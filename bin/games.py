@@ -65,12 +65,12 @@ b = a2max/a1max
 givens[0] = 0.9999999
 Ts = b*R*(1.0 - givens)
 RR, TT = np.meshgrid(rhos, Ts)
-Q = R*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
+QQ = R*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
 a2 = np.linspace(0.0, a2max, num=npoints)
 X, Y = np.meshgrid(a2, a2)
 
-for row, given, g in zip(axs, givens, Q):
-    for ax, rho, q in zip(row, rhos, g):
+for row, given, qs in zip(axs, givens, QQ):
+    for ax, rho, q in zip(row, rhos, qs):
         Z = fitness(X, Y, given, rho)
         Z_normed = Z/Z.max(axis=0)
         ax.imshow(Z_normed, origin='lower', cmap='Greys_r', vmin=0, vmax=1.0)

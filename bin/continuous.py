@@ -66,10 +66,12 @@ nc = len(rhos)
 nr = len(givens)
 givens[0] = 0.9999999
 RR, GG = np.meshgrid(rhos, givens)
-Aeq = a2max/(1.0 + b*R*pow(b*R*(1.0 - GG)*(1.0 - alpha)/alpha, 1.0/(RR - 1.0)))
-helpeq = Aeq*R2*GG
-Feq = fitness(Aeq, Aeq)
-Zs = [Aeq, helpeq, Feq, np.ones([nr, nc])*0.1, np.ones([nr, nc])*0.1]
+TT = b*R*(1.0 - GG)
+Q = R*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
+a2eqss = a2max/(1.0 + Q*b)
+helpeqss = a2eqss*R2*GG
+weqss = fitness(a2eqss, a2eqss)
+Zs = [a2eqss, helpeqss, weqss, np.ones([nr, nc])*0.1, np.ones([nr, nc])*0.1]
 
 fslabel=36 # Label font size
 fstick=24 # Tick font size

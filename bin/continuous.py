@@ -29,10 +29,20 @@ R2 = 2.0
 a1max = 1.0
 a2max = 1.0
 
-def fitness(A, Apartner):
-    q1 = R1*(a2max - A)/b
-    q2 = R2*(A*(1.0 - Ygivens) + Apartner*Ygivens)
-    w = np.where(Xrhos == 0.0, pow(q1, alpha)*pow(q2, 1.0 - alpha), pow(alpha*pow(q1, Xrhos) + (1.0 - alpha)*pow(q2, Xrhos), 1.0/Xrhos)) 
+def fitness(x, y):
+    q1 = (1.0 - y)*R1
+    q2 = y*R2*(1.0 - GG) + x*R2*GG
+    w = q1*q2
+    mask = (w > 0.0) & (RR == 0.0)
+    w[mask] = pow(q1[mask], alpha)*pow(q2[mask], 1.0 - alpha)
+    mask = (w > 0.0) & (RR < 0.0)
+    w[mask] = alpha*pow(q1[mask], RR[mask]) + (1.0 - alpha)*pow(q2[mask], RR[mask])
+    mask = (w > 0.0) & (RR < 0.0)
+    w[mask] = pow(w[mask], 1.0/RR[mask])
+    mask = (RR > 0.0)
+    w[mask] = pow(alpha*pow(q1[mask], RR[mask]) + (1.0 - alpha)*pow(q2[mask], RR[mask]), 1.0/RR[mask])
+    return w
+
     return w
 
 dfs = []
@@ -47,17 +57,17 @@ for df in dfs:
 for df in dfts:
     df['help'] = df[traits[0]]*R2*df.Given
 
-nr = len(pd.unique(dfts[0].Given))
-nc = len(pd.unique(dfts[0].ES))
 R = R2/R1
 b = a2max/a1max
 ess = np.sort(pd.unique(dfts[0].ES))
 rhos = 1.0 - 1.0/ess
 givens = np.sort(pd.unique(dfts[0].Given))[::-1]
+nc = len(rhos)
+nr = len(givens)
 givens[0] = 0.9999999
-Xrhos, Ygivens = np.meshgrid(rhos, givens)
-Aeq = a2max/(1.0 + b*R*pow(b*R*(1.0 - Ygivens)*(1.0 - alpha)/alpha, 1.0/(Xrhos - 1.0)))
-helpeq = Aeq*R2*Ygivens 
+RR, GG = np.meshgrid(rhos, givens)
+Aeq = a2max/(1.0 + b*R*pow(b*R*(1.0 - GG)*(1.0 - alpha)/alpha, 1.0/(RR - 1.0)))
+helpeq = Aeq*R2*GG
 Feq = fitness(Aeq, Aeq)
 Zs = [Aeq, helpeq, Feq, np.ones([nr, nc])*0.1, np.ones([nr, nc])*0.1]
 

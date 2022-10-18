@@ -25,12 +25,6 @@ maxlog_es = 5.0
 mingiven = 0.0
 maxgiven = 1.0
 
-def a2eq(given, rho):
-    T = b*R*(1.0 - given)
-    Q = R*pow(T*(1.0 - alpha)/alpha, 1.0/(rho - 1.0))
-    a2 = a2max/(1.0 + Q*b)
-    return a2
-
 def fitness(x, y, given, rho):
     q1 = (1.0 - y)*R1
     q2 = y*R2*(1.0 - given) + x*R2*given

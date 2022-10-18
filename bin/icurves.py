@@ -14,7 +14,7 @@ R1 = 2.0
 R2 = 2.0
 a1max = 1.0
 a2max = 1.0
-npoints_ic = 128
+npoints = 128
 
 num = 5    # Number of subplot rows and columns
 #markersize = 10
@@ -53,7 +53,7 @@ b = a2max/a1max
 a1_budget = np.linspace(0.0, a1max, num=3)
 q2_budget = (a2max - b*a1_budget)*R2
 q1_budget = a1_budget*R1
-q1_ic = np.linspace(0.0, a1max*R1, num=npoints_ic)
+q1_ic = np.linspace(0.0, a1max*R1, num=npoints)
 ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
 givens = np.linspace(maxgiven, mingiven, num=num)
 givens[0] = 0.9999999
@@ -74,7 +74,7 @@ plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
 fig = plt.figure(figsize=(12, 6), constrained_layout=False) 
-fig.supylabel("Partner's share of $\it{A}$", y=0.520, fontsize=fslabel)
+fig.supylabel("Partner's share of $\it{A}$", x=0.05, y=0.520, fontsize=fslabel)
 fig.supxlabel("Substitutability of $\it{A}$", x=0.525, fontsize=fslabel)
 
 outer_grid = fig.add_gridspec(1, 2, left=0.15, right=0.9, top=0.86, bottom=0.176)
@@ -101,10 +101,10 @@ for row, given, q2eqs, weqs in zip(axs, givens, q2eqss, weqss):
         ax.set(xticks=[], yticks=[], xlim=(0.0, a1max*R1), ylim=(0.0, a2max*R2))
         ax.set_box_aspect(1)
 axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
-for ax, given in zip(axs[::every, 0], givens[::every]):
-    ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):
     ax.set_xlabel(round(log_es), fontsize=fstick)
+for ax, given in zip(axs[::every, 0], givens[::every]):
+    ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 
 # Indifference curves and discrete budget line
 

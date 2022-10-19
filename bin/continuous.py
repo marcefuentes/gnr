@@ -57,12 +57,12 @@ for df in dfts:
 
 R = R2/R1
 b = a2max/a1max
+givens = np.sort(pd.unique(dfts[0].Given))[::-1]
+givens[0] = 0.9999999
 ess = np.sort(pd.unique(dfts[0].ES))
 rhos = 1.0 - 1.0/ess
-givens = np.sort(pd.unique(dfts[0].Given))[::-1]
-nc = len(rhos)
 nr = len(givens)
-givens[0] = 0.9999999
+nc = len(rhos)
 RR, GG = np.meshgrid(rhos, givens)
 TT = b*R*(1.0 - GG)
 QQ = R*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))

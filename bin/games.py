@@ -24,7 +24,7 @@ mingiven = 0.0
 maxgiven = 1.0
 
 def fitness(x, y, given, rho):
-    q1 = (1.0 - y)*R1
+    q1 = (a2max - y)*R1/b
     q2 = y*R2*(1.0 - given) + x*R2*given
     if rho == 0.0:
         w = q1*q2

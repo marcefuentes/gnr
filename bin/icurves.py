@@ -26,7 +26,7 @@ mingiven = 0.0
 maxgiven = 1.0
 
 def fitness(x, y):
-    q1 = (1.0 - y)*R1
+    q1 = (a2max - y)*R1/b
     q2 = y*R2*(1.0 - GG) + x*R2*GG
     w = q1*q2
     mask = (w > 0.0) & (RR == 0.0)

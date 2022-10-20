@@ -75,8 +75,10 @@ for axrow, R2 in zip(axs, R2s):
         QQ = R*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
         a2eqss = a2max/(1.0 + QQ*b)
         #helpeqss = a2eqss*R2*GG
-        #weqss = fitness(a2eqss, a2eqss)
-        ax.imshow(a2eqss, extent=extent, cmap='magma', vmin=0, vmax=1.0)
+        weqss = fitness(a2eqss, a2eqss)
+        #ax.imshow(a2eqss, extent=extent, cmap='magma', vmin=0, vmax=1.0)
+        #ax.imshow(helpeqss, extent=extent, cmap='magma', vmin=0, vmax=1.0)
+        ax.imshow(weqss, extent=extent, cmap='magma', vmin=0, vmax=1.5)
 
 # All plots
 

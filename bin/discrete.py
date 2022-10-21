@@ -20,7 +20,7 @@ letters = [['a', 'b', 'c', 'd', 'e'],
 #traits = ['a2Seensd', 'help', 'wsd', 'ChooseGrainsd', 'MimicGrainsd']
 traits = ['a2Seenmean', 'help', 'wmean', 'ChooseGrainmean', 'MimicGrainmean']
 traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
-traitvmaxs = [0.5, 1.0, 1.0, 0.6, 0.6]
+traitvmaxs = [0.5, 1.0, 1.0, 1.0, 1.0]
 folders = ['none', 'p', 'r', 'pr', 'p8r']
 
 alpha = 0.5

@@ -24,15 +24,17 @@ mingiven = 0.0
 maxgiven = 1.0
 
 def fitness(x, y, given, rho):
+    if isinstance(x, float): x = np.array([x])
+    if isinstance(y, float): y = np.array([y])
     q1 = (a2max - y)*R1/b
     q2 = y*R2*(1.0 - given) + x*R2*given
     if rho == 0.0:
         w = q1*q2
-        if w > 0.0: w = pow(q1, alpha)*pow(q2, 1.0 - alpha)
+        w[w>0.0] = pow(q1[w>0.0], alpha)*pow(q2[w>0.0], 1.0 - alpha)
     elif rho < 0.0:
         w = q1*q2
-        if w > 0.0: w = alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho)
-        if w > 0.0: w = pow(w, 1.0/rho)
+        w[w>0.0] = alpha*pow(q1[w>0.0], rho) + (1.0 - alpha)*pow(q2[w>0.0], rho)
+        w[w>0.0] = pow(w[w>0.0], 1.0/rho)
     else:
         w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
     return w

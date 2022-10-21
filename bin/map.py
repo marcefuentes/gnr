@@ -9,7 +9,7 @@ import time
 
 start_time = time.perf_counter ()
 
-alpha = 0.75
+alpha = 0.50
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
@@ -75,6 +75,7 @@ for row, given, a2eqs in zip(axs, givens, a2eqss):
         weq = fitness(a2eq, a2eq, given, rho)
         ax.plot(a2s, w, linewidth=2, c=cm.magma(weq))
         ax.set(xticks=[], yticks=[], xlim=(0.0, a2max), ylim=(0.0, 2.0))
+        ax.set_facecolor('0.200')
         ax.set_box_aspect(1)
 axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
 for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):
@@ -104,6 +105,7 @@ for row, given in zip(axs, givens):
             w.append(fitness(a2[0], a, given, rho)*(1.0 - x) + fitness(a2[1], a, given, rho)*x)   
         ax.plot(a2, w, linewidth=2, c=cm.magma(weq))
         ax.set(xticks=[], yticks=[], xlim=(0.0, a2max), ylim=(0.0, 2.0))
+        ax.set_facecolor('0.200')
         ax.set_box_aspect(1)
 axs[0, 0].set_title('b', fontsize=fslabel, weight='bold')
 for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):

@@ -63,8 +63,11 @@ axs = grid.subplots()
 
 a2 = np.linspace(0.000, 0.5, num=npoints)
 X, Y = np.meshgrid(a2, a2)
-#mycolors = [[0.4, 0.4, 0.4, 1.0], [1.0, 0.0, 0.0, 1.0], [1.0, 165/265, 0.0, 1.0], ]
-mycolors = [[0.0, 1.0, 1.0, 1.0], [0.4, 0.4, 0.4, 1.0], [1.0, 0.0, 0.0, 1.0], [1.0, 165/265, 0.0, 1.0]]
+grey = [0.4, 0.4, 0.4, 1.0]
+red = [1.0, 0.0, 0.0, 1.0]
+orange = [1.0, 165/265, 0.0, 1.0]
+cyan = [0.0, 1.0, 1.0, 1.0]
+mycolors = [cyan, grey, red, orange]
 mycmap = ListedColormap(mycolors)
 
 for row, given in zip(axs, givens):
@@ -73,14 +76,11 @@ for row, given in zip(axs, givens):
         P = fitness(X, X, given, rho)
         T = fitness(Y, X, given, rho)
         S = fitness(X, Y, given, rho)
-        #TR = (T <= R).astype(int)
-        #PS = (P <= S).astype(int)
-        ND = ((T < R) & (P < S)).astype(int) 
-        SD = ((T > R) & (P < S)).astype(int) 
         PD = ((T > R) & (P > S)).astype(int) 
-        #Z = TR + PS + 1
-        Z = ND*0
-        Z = ND*3 + SD*2 + PD + 1
+        SD = ((T > R) & (P < S)).astype(int) 
+        ND = ((T < R) & (P < S)).astype(int) 
+        Z = PD*0
+        Z = PD*1 + SD*2 + ND*3 + 1
         Z = np.tril(Z, k=-1)
         Z = np.ma.masked_where(Z == 0.0, Z)
         Z = Z - 1

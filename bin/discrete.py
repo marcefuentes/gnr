@@ -11,7 +11,7 @@ import time
 
 start_time = time.perf_counter ()
 
-movie = False
+movie = True
 
 letters = [['a', 'b', 'c', 'd', 'e'],
             ['f', 'g', 'h', 'i', 'j'],
@@ -82,14 +82,6 @@ a2eqss = xeqss*a2max/2.0
 helpeqss = a2eqss*R2*GG 
 Zs = [a2eqss, helpeqss, weqss, np.ones([nc, nr])*0.06, np.ones([nc, nr])*0.06]
 
-givens[0] = 1.0
-minx = round(log(ess[0], 2))
-maxx = round(log(ess[-1], 2))
-miny = givens[-1]
-maxy = givens[0]
-
-xticklabels = [minx, round((minx + maxx)/2), maxx]
-yticklabels = [miny, (miny + maxy)/2, maxy]
 fslabel=36 # Label font size
 fstick=24 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
@@ -100,7 +92,29 @@ fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(
 fig.supxlabel('Substitutability of $\it{A}$', x=0.513, y=0.05, fontsize=fslabel*1.25)
 fig.supylabel('Partner\'s share of $\it{A}$', x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
 
+# All plots
+
 extent = 0, nr, 0, nc
+givens[0] = 1.0
+minx = round(log(ess[0], 2))
+maxx = round(log(ess[-1], 2))
+miny = givens[-1]
+maxy = givens[0]
+xticklabels = [minx, round((minx + maxx)/2), maxx]
+yticklabels = [miny, (miny + maxy)/2, maxy]
+
+for axrow in axs:
+    for ax in axrow:
+        ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
+for axrow in axs:
+    axrow[0].set_yticklabels(yticklabels, fontsize=fstick) 
+for ax in axs[-1]:
+    ax.set_xticklabels(xticklabels, fontsize=fstick)
+for ax, traitlabel in zip(axs[0], traitlabels):
+    ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
+for axrow, letterrow in zip(axs, letters):
+    for ax, letter in zip(axrow, letterrow):
+        ax.text(0, nr*1.035, letter, fontsize=fslabel, weight='bold')
 
 # Top row of subplots
 
@@ -117,27 +131,12 @@ for t in ts:
             df_piv = pd.pivot_table(df.loc[df.Time == t], values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)
             ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
 
-    # All plots
-
-    for axrow in axs:
-        for ax in axrow:
-            ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
-    for axrow in axs:
-        axrow[0].set_yticklabels(yticklabels, fontsize=fstick) 
-    for ax in axs[-1]:
-        ax.set_xticklabels(xticklabels, fontsize=fstick)
-    for ax, traitlabel in zip(axs[0], traitlabels):
-        ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
-    for axrow, letterrow in zip(axs, letters):
-        for ax, letter in zip(axrow, letterrow):
-            ax.text(0, nr*1.035, letter, fontsize=fslabel, weight='bold')
-    outfile = f'discrete{t}.png'
-    plt.savefig(outfile, transparent=False)
+    plt.savefig('output.png', transparent=False)
     if movie:
-        frames.append(iio.imread(outfile))
-        os.remove(outfile)
+        frames.append(iio.imread('output.png'))
+        os.remove('output.png')
 if movie:
-    iio.mimsave('discrete.gif', frames)
+    iio.mimsave('output.gif', frames)
 plt.close()
 
 end_time = time.perf_counter ()

@@ -11,7 +11,7 @@ import time
 
 start_time = time.perf_counter ()
 
-movie = True
+movie = False
 
 letters = [['a', 'b', 'c', 'd', 'e'],
             ['f', 'g', 'h', 'i', 'j'],
@@ -20,7 +20,6 @@ letters = [['a', 'b', 'c', 'd', 'e'],
             ['u', 'v', 'w', 'x', 'y'],
             ['z', 'aa', 'ab', 'ac', 'ad']]
 
-#traits = ['a2Seensd', 'help', 'wsd', 'ChooseGrainsd', 'MimicGrainsd']
 traits = ['a2Seenmean', 'help', 'wmean', 'ChooseGrainmean', 'MimicGrainmean']
 traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
 traitvmaxs = [0.5, 1.0, 1.0, 1.0, 1.0]
@@ -106,7 +105,6 @@ yticklabels = [miny, (miny + maxy)/2, maxy]
 for axrow in axs:
     for ax in axrow:
         ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
-for axrow in axs:
     axrow[0].set_yticklabels(yticklabels, fontsize=fstick) 
 for ax in axs[-1]:
     ax.set_xticklabels(xticklabels, fontsize=fstick)
@@ -116,7 +114,7 @@ for axrow, letterrow in zip(axs, letters):
     for ax, letter in zip(axrow, letterrow):
         ax.text(0, nr*1.035, letter, fontsize=fslabel, weight='bold')
 
-# Top row of subplots
+# Top row of plots
 
 for ax, Z, traitvmax in zip(axs[0], Zs, traitvmaxs):
     ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
@@ -130,7 +128,6 @@ for t in ts:
         for ax, trait, traitvmax in zip(axrow, traits, traitvmaxs):
             df_piv = pd.pivot_table(df.loc[df.Time == t], values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)
             ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
-
     plt.savefig('output.png', transparent=False)
     if movie:
         frames.append(iio.imread('output.png'))

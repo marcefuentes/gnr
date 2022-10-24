@@ -1,112 +1,130 @@
 #! /usr/bin/env python
 
-from glob import glob
-from math import log
-import os
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+from matplotlib import cm
+from matplotlib.colors import ListedColormap
 import numpy as np
-import pandas as pd
 import time
 
 start_time = time.perf_counter ()
 
-letters = [['a', 'b', 'c', 'd', 'e'],
-            ['f', 'g', 'h', 'i', 'j'],
-            ['k', 'l', 'm', 'n', 'o'],
-            ['p', 'q', 'r', 's', 't'],
-            ['u', 'v', 'w', 'x', 'y']]
-
-traits = ['a2Seenmean', 'help', 'wmean']
-traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness']
-traitvmaxs = [0.5, 1.0, 1.0]
-
+alpha = 0.50
+R1 = 2.0
+R2 = 2.0
 a1max = 1.0
 a2max = 1.0
-num = 21         # Number of pixels
-numalpha = 3    # Number of plot rows and columns
+npoints = 128
+
+num = 21    # Number of subplot rows and columns
 every = int(num/2)
 minlog_es = -5.0
 maxlog_es = 5.0
 mingiven = 0.0
 maxgiven = 1.0
 
-def fitness(x, y):
+def fitness(x, y, given, rho):
+    if isinstance(x, float): x = np.array([x])
+    if isinstance(y, float): y = np.array([y])
     q1 = (a2max - y)*R1/b
-    q2 = y*R2*(1.0 - GG) + x*R2*GG
-    w = q1*q2
-    mask = (w > 0.0) & (RR == 0.0)
-    w[mask] = pow(q1[mask], alpha)*pow(q2[mask], 1.0 - alpha)
-    mask = (w > 0.0) & (RR < 0.0)
-    w[mask] = alpha*pow(q1[mask], RR[mask]) + (1.0 - alpha)*pow(q2[mask], RR[mask])
-    mask = (w > 0.0) & (RR < 0.0)
-    w[mask] = pow(w[mask], 1.0/RR[mask])
-    mask = (RR > 0.0)
-    w[mask] = pow(alpha*pow(q1[mask], RR[mask]) + (1.0 - alpha)*pow(q2[mask], RR[mask]), 1.0/RR[mask])
+    q2 = y*R2*(1.0 - given) + x*R2*given
+    if rho == 0.0:
+        w = q1*q2
+        w[w>0.0] = pow(q1[w>0.0], alpha)*pow(q2[w>0.0], 1.0 - alpha)
+    elif rho < 0.0:
+        w = q1*q2
+        w[w>0.0] = alpha*pow(q1[w>0.0], rho) + (1.0 - alpha)*pow(q2[w>0.0], rho)
+        w[w>0.0] = pow(w[w>0.0], 1.0/rho)
+    else:
+        w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
     return w
 
 b = a2max/a1max
 givens = np.linspace(maxgiven, mingiven, num=num)
-givens[0] = 0.9999999
 log_ess = np.linspace(minlog_es, maxlog_es, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
-nr = len(givens)
-nc = len(rhos)
-RR, GG = np.meshgrid(rhos, givens)
-alphas = np.linspace(1.0/(numalpha + 1), numalpha/(numalpha + 1), num=numalpha)
-R2s = np.linspace(4.0/(numalpha + 1), numalpha*4.0/(numalpha + 1), num=numalpha)
 
-fslabel=36 # Label font size
-fstick=24 # Tick font size
+fslabel = 26 # Label font size
+fstick = 18 # Tick font size
+
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-fig, axs = plt.subplots(nrows=numalpha, ncols=numalpha, figsize=(6*numalpha, 6*numalpha))
+fig = plt.figure(figsize=(12, 12), constrained_layout=False) 
+fig.supylabel("Partner's share of $\it{A}$", x=0.04, y=0.520, fontsize=fslabel)
+fig.supxlabel("Substitutability of $\it{A}$", x=0.525, y=0.05, fontsize=fslabel)
 
-fig.supxlabel('Substitutability of $\it{A}$', x=0.513, y=0.05, fontsize=fslabel*1.25)
-fig.supylabel('Partner\'s share of $\it{A}$', x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
+outer_grid = fig.add_gridspec(1, 2, left=0.15, right=0.9, top=0.9, bottom=0.15)
 
-extent = 0, nr, 0, nc
+# Continuous game types
 
-for axrow, R2 in zip(axs, R2s):
-    for ax, alpha in zip(axrow, alphas):
-        R1 = 4.0 - R2
-        R = R2/R1
-        TT = b*R*(1.0 - GG)
-        QQ = R*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
-        a2eqss = a2max/(1.0 + QQ*b)
-        #helpeqss = a2eqss*R2*GG
-        weqss = fitness(a2eqss, a2eqss)
-        #ax.imshow(a2eqss, extent=extent, cmap='magma', vmin=0, vmax=1.0)
-        #ax.imshow(helpeqss, extent=extent, cmap='magma', vmin=0, vmax=1.0)
-        ax.imshow(weqss, extent=extent, cmap='magma', vmin=0, vmax=1.5)
+grid = outer_grid[0, 0].subgridspec(num, num, wspace=0, hspace=0)
+axs = grid.subplots()
 
-# All plots
+a2 = np.linspace(0.000, 0.5, num=npoints)
+X, Y = np.meshgrid(a2, a2)
+grey = [0.4, 0.4, 0.4, 1.0]
+red = [1.0, 0.0, 0.0, 1.0]
+orange = [1.0, 165/265, 0.0, 1.0]
+cyan = [0.0, 1.0, 1.0, 1.0]
+mycolors = [cyan, grey, red, orange]
+mycmap = ListedColormap(mycolors)
 
-for axrow in axs:
-    for ax in axrow:
-        ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
+for row, given in zip(axs, givens):
+    for ax, rho in zip(row, rhos):
+        R = fitness(Y, Y, given, rho)
+        P = fitness(X, X, given, rho)
+        T = fitness(Y, X, given, rho)
+        S = fitness(X, Y, given, rho)
+        PD = ((T > R) & (P > S)).astype(int) 
+        SD = ((T > R) & (P < S)).astype(int) 
+        ND = ((T < R) & (P < S)).astype(int) 
+        Z = PD*0
+        Z = PD*1 + SD*2 + ND*3 + 1
+        Z = np.tril(Z, k=-1)
+        Z = np.ma.masked_where(Z == 0.0, Z)
+        Z = Z - 1
+        cmap = cm.get_cmap(mycmap).copy()
+        cmap.set_bad(color='white')
+        ax.imshow(Z, origin='lower', cmap=cmap, vmin=0, vmax=3)
+        ax.set(xticks=[], yticks=[], xlim=(-0.5, npoints/2.0 - 0.5), ylim=(-0.5, npoints/2.0 - 0.5))
+axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
+for ax, given in zip(axs[::every, 0], givens[::every]):
+    ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 
-givens[0] = 1.0
-minx = round(log_ess[0], 2)
-maxx = round(log_ess[-1], 2)
-miny = givens[-1]
-maxy = givens[0]
+# Discrete game types
 
-xticklabels = [minx, round((minx + maxx)/2), maxx]
-yticklabels = [miny, (miny + maxy)/2, maxy]
-for axrow in axs:
-    axrow[0].set_yticklabels(yticklabels, fontsize=fstick) 
-for ax in axs[-1]:
-    ax.set_xticklabels(xticklabels, fontsize=fstick)
-for ax, alpha in zip(axs[-1], alphas):
-    ax.set_xlabel(round(alpha, 2), fontsize=fslabel)
-for axrow, R2 in zip(axs, R2s):
-    axrow[0].set_ylabel(round(R2, 2), fontsize=fslabel)
-for axrow, letterrow in zip(axs, letters):
-    for ax, letter in zip(axrow, letterrow):
-        ax.text(0, nr*1.035, letter, fontsize=fslabel, weight='bold')
+grid = outer_grid[0, 1].subgridspec(num, num, wspace=0, hspace=0)
+axs = grid.subplots()
 
-plt.savefig('alpha.png', transparent=False)
+a2 = np.array([a2max/2.0, 0.0])
+X, Y = np.meshgrid(a2, a2)
+xaxis = [1, 2, 3, 4]
+
+for row, given in zip(axs, givens):
+    for ax, rho in zip(row, rhos):
+        Z = fitness(X, Y, given, rho)
+        T = Z[1, 0]
+        R = Z[0, 0]
+        P = Z[1, 1]
+        S = Z[0, 1]
+        yaxis = [T, R, P, S]
+        if (T < R) and (P < S):
+            rgb = 'orange'
+        elif (T > R) and (P < S):
+            rgb = 'red'
+        elif (T > R) and (P > S) and (2.0*R > T + S):
+            rgb = 'black'
+        else:
+            rgb = 'cyan'
+        ax.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=1.0, markersize=3)
+        ax.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))
+        ax.set_box_aspect(1)
+axs[0, 0].set_title('b', fontsize=fslabel, weight='bold')
+for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):
+    ax.set_xlabel(round(log_es), fontsize=fstick)
+
+plt.savefig('games.png', dpi=100)
 plt.close()
 
 end_time = time.perf_counter ()

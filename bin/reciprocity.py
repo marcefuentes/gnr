@@ -22,7 +22,7 @@ letters = [['a', 'b', 'c', 'd', 'e'],
 
 traits = ['a2Seenmean', 'help', 'wmean', 'ChooseGrainmean', 'MimicGrainmean']
 traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
-traitvmaxs = [0.5, 1.0, 1.0, 1.0, 1.0]
+traitvmaxs = [0.5, 1.0, 1.0, 1.0, 0.25]
 folders = ['none', 'p', 'r', 'pr', 'p8r']
 
 alpha = 0.5
@@ -46,6 +46,7 @@ def fitness(x, y):
     return w
 
 r = 1.0/(1.0 - pow(1.0 - pow(2, -7), 2))
+print(r)
 R = R2/R1
 b = a2max/a1max
 givens = np.linspace(1.0, 0.0, num=21)
@@ -69,7 +70,7 @@ xeqss[mask] = (Ps[mask] - Ss[mask])/(Rs[mask] - Ss[mask] - Ts[mask] + Ps[mask])
 weqss = (Ts + Ss)*xeqss*(1.0 - xeqss) + Rs*xeqss*xeqss + Ps*(1.0 - xeqss)*(1.0 - xeqss)
 a2eqss = xeqss*a2max/2.0
 helpeqss = a2eqss*R2*GG 
-frTs = (2*Ps - Ss/r + Ps/r)/(Rs + Ps - Ss/r + Ts/r + Ps/r)
+frTs = (Ps - Ss)/(Rs*r - Ss - Ts + 2.0*Ps - Ps*r)
 mask = frTs < 0.0
 frTs[mask] = 0.0
 Zs = [a2eqss, helpeqss, weqss, np.ones([nc, nr])*0.06, frTs]
@@ -79,7 +80,7 @@ fstick=24 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-fig, axs = plt.subplots(nrows=1, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+1)))
+fig, axs = plt.subplots(nrows=1, ncols=len(traits), figsize=(6*len(traits), 6))
 
 fig.supxlabel('Substitutability of $\it{A}$', x=0.513, y=0.05, fontsize=fslabel*1.25)
 fig.supylabel('Partner\'s share of $\it{A}$', x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
@@ -103,7 +104,7 @@ axs[0].set_yticklabels(yticklabels, fontsize=fstick)
 
 for ax, Z, traitvmax in zip(axs, Zs, traitvmaxs):
     ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
-plt.savefig('alphar.png', transparent=False)
+plt.savefig('reciprocity.png', transparent=False)
 plt.close()
 
 end_time = time.perf_counter ()

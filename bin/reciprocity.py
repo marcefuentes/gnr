@@ -99,7 +99,7 @@ axs = grid.subplots()
 
 a2 = np.array([a2max/2.0, 0.0])
 X, Y = np.meshgrid(a2, a2)
-xaxis = [1, 2, 3, 4]
+r = 1.0/(1.0 - pow(1.0 - pow(2, -7), 2))
 
 for row, given in zip(axs, givens):
     for ax, rho in zip(row, rhos):
@@ -108,17 +108,10 @@ for row, given in zip(axs, givens):
         R = Z[0, 0]
         P = Z[1, 1]
         S = Z[0, 1]
-        yaxis = [T, R, P, S]
-        if (T < R) and (P < S):
-            rgb = 'orange'
-        elif (T > R) and (P < S):
-            rgb = 'red'
-        elif (T > R) and (P > S) and (2.0*R > T + S):
-            rgb = 'black'
-        else:
-            rgb = 'cyan'
-        ax.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=1.0, markersize=3)
-        ax.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))
+        frT = (2*P - S/r + P/r)/(R + P - S/r + T/r + P/r)
+        if frT < 0.0: frT = 0
+        ax.scatter(0.5, 0.5, s = frT)
+        ax.set(xticks=[], yticks=[], xlim=(0, 1), ylim=(0, 1))
         ax.set_box_aspect(1)
 axs[0, 0].set_title('b', fontsize=fslabel, weight='bold')
 for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):

@@ -46,7 +46,7 @@ def fitness(x, y):
     return w
 
 r = 1.0/(1.0 - pow(1.0 - pow(2, -7), 2))
-print(r)
+r = 1.0
 R = R2/R1
 b = a2max/a1max
 givens = np.linspace(1.0, 0.0, num=21)
@@ -58,22 +58,35 @@ nc = len(rhos)
 RR, GG = np.meshgrid(rhos, givens)
 a2Ds = np.full([nc, nr], 0.0)
 a2Cs = np.full([nc, nr], a2max/2.0)
-Ts = fitness(a2Cs, a2Ds)
-Rs = fitness(a2Cs, a2Cs)
-Ps = fitness(a2Ds, a2Ds)
-Ss = fitness(a2Ds, a2Cs)
-xeqss = np.full([nc, nr], 0.0)
-mask = (Ts < Rs) & (Ps < Ss)
-xeqss[mask] = 1.0
-mask = (Ts > Rs) & (Ps < Ss) & (Rs - Ss - Ts + Ps != 0.0)
-xeqss[mask] = (Ps[mask] - Ss[mask])/(Rs[mask] - Ss[mask] - Ts[mask] + Ps[mask])
-weqss = (Ts + Ss)*xeqss*(1.0 - xeqss) + Rs*xeqss*xeqss + Ps*(1.0 - xeqss)*(1.0 - xeqss)
-a2eqss = xeqss*a2max/2.0
-helpeqss = a2eqss*R2*GG 
-frTs = (Ps - Ss)/(Rs*r - Ss - Ts + 2.0*Ps - Ps*r)
-mask = frTs < 0.0
-frTs[mask] = 0.0
-Zs = [a2eqss, helpeqss, weqss, np.ones([nc, nr])*0.06, frTs]
+T = fitness(a2Cs, a2Ds)
+R = fitness(a2Cs, a2Cs)
+P = fitness(a2Ds, a2Ds)
+S = fitness(a2Ds, a2Cs)
+x = np.full([nc, nr], 0.0)
+t = np.full([nc, nr], 0.0)
+#mask = (T < R) & (P < S)
+#x[mask] = 1.0
+#t[mask] = 0.0
+denominator = P - T - P*r + T*r
+mask = denominator != 0.0
+x[mask] = (P[mask] - T[mask] - P[mask]*r + R[mask]*r)/denominator[mask]
+t[mask] = (T[mask] - R[mask]*r)/denominator[mask]
+mask = x < 0.0
+x[mask] = 0.0
+mask = t < 0.0
+t[mask] = 0.0
+mask = x > 1.0
+x[mask] = 1.0
+mask = t > 1.0
+t[mask] = 1.0
+y = 1.0 - x - t
+a2 = (x + t*(x + t) + t*y/r)*a2max/2.0
+helps = a2*R2*GG 
+wA = R*(x + t) + S*y
+wT = R*(x + t) + S*y/r + P*y*(r - 1.0)/r
+wB = T*x + T*t/r + P*t*(r - 1.0)/r + P*y
+w = wA*x + wT*t + wB*y 
+Zs = [a2, helps, w, np.ones([nc, nr])*0.06, t]
 
 fslabel=36 # Label font size
 fstick=24 # Tick font size

@@ -75,9 +75,9 @@ mask = (T < R) & (P < S)
 x[mask] = 1.0
 mask = (T > R) & (P < S) & (R - S - T + P != 0.0)
 x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
-w = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
 a2 = x*a2max/2.0
 helps = a2*R2*GG 
+w = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
 Zs = [a2, helps, w, np.ones([nc, nr])*0.06, np.ones([nc, nr])*0.06]
 
 fslabel=36 # Label font size

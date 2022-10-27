@@ -11,7 +11,7 @@ import time
 
 start_time = time.perf_counter ()
 
-movie = True
+movie = False
 
 letters = [['a', 'b', 'c', 'd', 'e'],
             ['f', 'g', 'h', 'i', 'j'],
@@ -56,7 +56,7 @@ for folder in folders:
 ts = dfs[0].Time.unique()
 if movie == False: ts = [ts[-1]]
 
-R = R2/R1
+Rq = R2/R1
 b = a2max/a1max
 givens = np.sort(pd.unique(dfs[0].loc[df.Time == ts[0]].Given))[::-1]
 givens[0] = 0.9999999
@@ -65,12 +65,12 @@ rhos = 1.0 - 1.0/ess
 nr = len(givens)
 nc = len(rhos)
 RR, GG = np.meshgrid(rhos, givens)
-TT = b*R*(1.0 - GG)
-QQ = R*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
-a2eqss = a2max/(1.0 + QQ*b)
-helpeqss = a2eqss*R2*GG
-weqss = fitness(a2eqss, a2eqss)
-Zs = [a2eqss, helpeqss, weqss, np.ones([nr, nc])*0.1, np.ones([nr, nc])*0.1]
+TT = b*Rq*(1.0 - GG)
+QQ = Rq*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
+a2 = a2max/(1.0 + QQ*b)
+helps = a2*R2*GG
+w = fitness(a2, a2)
+Zs = [a2, helps, w, np.ones([nr, nc])*0.1, np.ones([nr, nc])*0.1]
 
 fslabel=36 # Label font size
 fstick=24 # Tick font size

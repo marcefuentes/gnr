@@ -1,12 +1,7 @@
 #! /usr/bin/env python
 
-from glob import glob
-from math import log
-import os
-import imageio.v2 as iio
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 import time
 
 start_time = time.perf_counter ()

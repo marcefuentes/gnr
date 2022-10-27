@@ -48,22 +48,21 @@ def icces(q, w, rho):
         q2 = np.piecewise(q, [pow(w, rho) <= alpha*pow(q, rho), pow(w, rho) > alpha*pow(q, rho)], [-0.1, lambda i: pow((pow(w, rho) - alpha*pow(i, rho))/(1.0 - alpha), 1.0/rho)])
     return q2
 
-R = R2/R1
 b = a2max/a1max
 a1_budget = np.linspace(0.0, a1max, num=3)
 q2_budget = (a2max - b*a1_budget)*R2
 q1_budget = a1_budget*R1
 q1_ic = np.linspace(0.0, a1max*R1, num=npoints)
-ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
 givens = np.linspace(maxgiven, mingiven, num=num)
 givens[0] = 0.9999999
 log_ess = np.linspace(minlog_es, maxlog_es, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
 RR, GG = np.meshgrid(rhos, givens)
+wis = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
 icss = []
 for rho in rhos:
     ics = []
-    for w in ws:
+    for w in wis:
         ics.append(icces(q1_ic, w, rho))
     icss.append(ics)
 
@@ -84,15 +83,16 @@ outer_grid = fig.add_gridspec(1, 2, left=0.15, right=0.9, top=0.86, bottom=0.176
 grid = outer_grid[0, 0].subgridspec(num, num, wspace=0, hspace=0)
 axs = grid.subplots()
 
-TT = b*R*(1.0 - GG)
-Q = R*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
-a2eqss = a2max/(1.0 + Q*b)
-weqss = fitness(a2eqss, a2eqss)
-q2eqss = a2eqss*R2
+Rq = R2/R1
+TT = b*Rq*(1.0 - GG)
+Q = Rq*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
+a2ss = a2max/(1.0 + Q*b)
+wss = fitness(a2ss, a2ss)
+q2ss = a2ss*R2
 
-for row, given, q2eqs, weqs in zip(axs, givens, q2eqss, weqss):
+for row, given, q2s, ws in zip(axs, givens, q2ss, wss):
     budget0 = q2_budget*(1.0 - given)
-    for ax, rho, ics, q2eq, weq in zip(row, rhos, icss, q2eqs, weqs):
+    for ax, rho, ics, q2eq, weq in zip(row, rhos, icss, q2s, ws):
         for ic in ics:
             ax.plot(q1_ic, ic, c='0.850')
         budget = budget0 + q2eq*given
@@ -113,22 +113,22 @@ axs = grid.subplots()
 
 a2Ds = np.full([num, num], 0.0)
 a2Cs = np.full([num, num], a2max/2.0)
-Ts = fitness(a2Cs, a2Ds)
-Rs = fitness(a2Cs, a2Cs)
-Ps = fitness(a2Ds, a2Ds)
-Ss = fitness(a2Ds, a2Cs)
-xeqss = np.full([num, num], 0.0)
-mask = (Ts < Rs) & (Ps < Ss)
-xeqss[mask] = 1.0
-mask = (Ts > Rs) & (Ps < Ss) & (Rs - Ss - Ts + Ps != 0.0)
-xeqss[mask] = (Ps[mask] - Ss[mask])/(Rs[mask] - Ss[mask] - Ts[mask] + Ps[mask])
-q2eqss = xeqss*R2*a2max/2.0
-weqss = (Ts + Ss)*xeqss*(1.0 - xeqss) + Rs*xeqss*xeqss + Ps*(1.0 - xeqss)*(1.0 - xeqss)
+T = fitness(a2Cs, a2Ds)
+R = fitness(a2Cs, a2Cs)
+P = fitness(a2Ds, a2Ds)
+S = fitness(a2Ds, a2Cs)
+xss = np.full([num, num], 0.0)
+mask = (T < R) & (P < S)
+xss[mask] = 1.0
+mask = (T > R) & (P < S) & (R - S - T + P != 0.0)
+xss[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
+q2ss = xss*R2*a2max/2.0
+wss = (T + S)*xss*(1.0 - xss) + R*xss*xss + P*(1.0 - xss)*(1.0 - xss)
 
-for row, given, xeqs, q2eqs, weqs in zip(axs, givens, xeqss, q2eqss, weqss):
+for row, given, xs, q2s, ws in zip(axs, givens, xss, q2ss, wss):
     budget0 = q2_budget*(1.0 - given)
     budget5 = budget0 + (a2max/2.0)*R2*given
-    for ax, rho, ics, xeq, q2eq, weq in zip(row, rhos, icss, xeqs, q2eqs, weqs):
+    for ax, rho, ics, xeq, q2eq, weq in zip(row, rhos, icss, xs, q2s, ws):
         for ic in ics:
             ax.plot(q1_ic, ic, c='0.850')
         ax.plot(q1_budget, budget0, c='green', linewidth=0.5, marker='o', alpha=1.0-xeq)

@@ -18,12 +18,13 @@ letters = [['a', 'b', 'c', 'd', 'e'],
             ['k', 'l', 'm', 'n', 'o'],
             ['p', 'q', 'r', 's', 't'],
             ['u', 'v', 'w', 'x', 'y'],
-            ['z', 'aa', 'ab', 'ac', 'ad']]
+            ['z', 'aa', 'ab', 'ac', 'ad'],
+            ['ae', 'af', 'ag', 'ah', 'ai']]
 
 traits = ['a2Seenmean', 'help', 'wmean', 'ChooseGrainmean', 'MimicGrainmean']
 traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
 traitvmaxs = [0.5, 1.0, 1.0, 1.0, 1.0]
-folders = ['none', 'p', 'r', 'pr', 'p8r']
+folders = ['none', 'r', 'p', 'pr', 'p8r']
 
 alpha = 0.5
 R1 = 2.0
@@ -84,6 +85,7 @@ fslabel=36 # Label font size
 fstick=24 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
+frames = []
 
 fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+1)))
 
@@ -113,16 +115,18 @@ for axrow, letterrow in zip(axs, letters):
     for ax, letter in zip(axrow, letterrow):
         ax.text(0, nr*1.035, letter, fontsize=fslabel, weight='bold')
 
-# Top row of plots
-
-for ax, Z, traitvmax in zip(axs[0], Zs, traitvmaxs):
-    ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
-
-# Remaining rows of plots
-
-frames = []
-
 for t in ts:
+    # Row 0: none in theory
+    for ax, Z, traitvmax in zip(axs[0], Zs, traitvmaxs):
+        ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
+    # Row 1: none
+    df = dfs[0]
+    for ax, trait, traitvmax in zip(axs[1], traits, traitvmaxs):
+        df_piv = pd.pivot_table(df.loc[df.Time == t], values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)
+        ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
+    # Row 2: reciprocity in theory
+
+    # Remaining rows 
     for axrow, df in zip(axs[1:], dfs):
         for ax, trait, traitvmax in zip(axrow, traits, traitvmaxs):
             df_piv = pd.pivot_table(df.loc[df.Time == t], values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)

@@ -73,12 +73,12 @@ for axrow, R2 in zip(axs, R2s):
         R = R2/R1
         TT = b*R*(1.0 - GG)
         QQ = R*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
-        a2eqss = a2max/(1.0 + QQ*b)
-        #helpeqss = a2eqss*R2*GG
-        weqss = fitness(a2eqss, a2eqss)
-        #ax.imshow(a2eqss, extent=extent, cmap='magma', vmin=0, vmax=1.0)
-        #ax.imshow(helpeqss, extent=extent, cmap='magma', vmin=0, vmax=1.0)
-        ax.imshow(weqss, extent=extent, cmap='magma', vmin=0, vmax=1.5)
+        a2 = a2max/(1.0 + QQ*b)
+        #helps = a2*R2*GG
+        w = fitness(a2, a2)
+        #ax.imshow(a2, extent=extent, cmap='magma', vmin=0, vmax=1.0)
+        #ax.imshow(helps, extent=extent, cmap='magma', vmin=0, vmax=1.0)
+        ax.imshow(w, extent=extent, cmap='magma', vmin=0, vmax=1.5)
 
 # All plots
 

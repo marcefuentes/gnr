@@ -128,11 +128,11 @@ grid = outer_grid[1, 0].subgridspec(num, num, wspace=0, hspace=0)
 axs = grid.subplots()
 
 givens[0] = 0.999999
-R = R2/R1
+Rq = R2/R1
 a2s = np.linspace(0.0, a2max, num=npoints)
 RR, GG = np.meshgrid(rhos, givens)
-TT = b*R*(1.0 - GG)
-Q = R*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
+TT = b*Rq*(1.0 - GG)
+Q = Rq*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
 a2eqss = a2max/(1.0 + Q*b)
 
 for row, given, a2eqs in zip(axs, givens, a2eqss):

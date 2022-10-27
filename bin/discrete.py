@@ -81,18 +81,42 @@ helps = a2*R2*GG
 w = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
 Zs = [a2, helps, w, np.ones([nc, nr])*0.06, np.ones([nc, nr])*0.06]
 
+t = np.full([nc, nr], 0.0)
+r = 1.0/(1.0 - pow(1.0 - pow(2, -7), 2))
+denominator = P - T - P*r + T*r
+mask = P - T == 0.0
+x[mask] = 1.0
+t[mask] = 0.0
+mask = P - T != 0.0
+x[mask] = (P[mask] - T[mask] - P[mask]*r + R[mask]*r)/denominator[mask]
+t[mask] = (T[mask]*r - R[mask]*r)/denominator[mask]
+mask = x < 0.0
+x[mask] = 0.0
+mask = t < 0.0
+t[mask] = 0.0
+mask = x > 1.0
+x[mask] = 1.0
+mask = t > 1.0
+t[mask] = 1.0
+y = 1.0 - x - t
+a2 = (x + t*(x + t) + t*y/r)*a2max/2.0
+helps = a2*R2*GG 
+wA = R*(x + t) + S*y
+wT = R*(x + t) + S*y/r + P*y*(r - 1.0)/r
+wB = T*x + T*t/r + P*t*(r - 1.0)/r + P*y
+w = wA*x + wT*t + wB*y 
+ZRs = [a2, helps, w, np.ones([nc, nr])*0.06, t]
+
 fslabel=36 # Label font size
 fstick=24 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 frames = []
 
-fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+1)))
+fig, axs = plt.subplots(nrows=len(folders)+2, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+2)))
 
 fig.supxlabel('Substitutability of $\it{A}$', x=0.513, y=0.05, fontsize=fslabel*1.25)
 fig.supylabel('Partner\'s share of $\it{A}$', x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
-
-# All plots
 
 extent = 0, nr, 0, nc
 givens[0] = 1.0
@@ -125,9 +149,10 @@ for t in ts:
         df_piv = pd.pivot_table(df.loc[df.Time == t], values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)
         ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
     # Row 2: reciprocity in theory
-
+    for ax, ZR, traitvmax in zip(axs[2], ZRs, traitvmaxs):
+        ax.imshow(ZR, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
     # Remaining rows 
-    for axrow, df in zip(axs[1:], dfs):
+    for axrow, df in zip(axs[3:], dfs[1:]):
         for ax, trait, traitvmax in zip(axrow, traits, traitvmaxs):
             df_piv = pd.pivot_table(df.loc[df.Time == t], values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)
             ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)

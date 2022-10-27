@@ -56,7 +56,6 @@ for folder in folders:
 ts = dfs[0].Time.unique()
 if movie == False: ts = [ts[-1]]
 
-R = R2/R1
 b = a2max/a1max
 givens = np.sort(pd.unique(dfs[0].loc[df.Time == ts[0]].Given))[::-1]
 givens[0] = 0.9999999
@@ -67,19 +66,19 @@ nc = len(rhos)
 RR, GG = np.meshgrid(rhos, givens)
 a2Ds = np.full([nc, nr], 0.0)
 a2Cs = np.full([nc, nr], a2max/2.0)
-Ts = fitness(a2Cs, a2Ds)
-Rs = fitness(a2Cs, a2Cs)
-Ps = fitness(a2Ds, a2Ds)
-Ss = fitness(a2Ds, a2Cs)
-xeqss = np.full([nc, nr], 0.0)
-mask = (Ts < Rs) & (Ps < Ss)
-xeqss[mask] = 1.0
-mask = (Ts > Rs) & (Ps < Ss) & (Rs - Ss - Ts + Ps != 0.0)
-xeqss[mask] = (Ps[mask] - Ss[mask])/(Rs[mask] - Ss[mask] - Ts[mask] + Ps[mask])
-weqss = (Ts + Ss)*xeqss*(1.0 - xeqss) + Rs*xeqss*xeqss + Ps*(1.0 - xeqss)*(1.0 - xeqss)
-a2eqss = xeqss*a2max/2.0
-helpeqss = a2eqss*R2*GG 
-Zs = [a2eqss, helpeqss, weqss, np.ones([nc, nr])*0.06, np.ones([nc, nr])*0.06]
+T = fitness(a2Cs, a2Ds)
+R = fitness(a2Cs, a2Cs)
+P = fitness(a2Ds, a2Ds)
+S = fitness(a2Ds, a2Cs)
+x = np.full([nc, nr], 0.0)
+mask = (T < R) & (P < S)
+x[mask] = 1.0
+mask = (T > R) & (P < S) & (R - S - T + P != 0.0)
+x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
+w = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
+a2 = x*a2max/2.0
+helps = a2*R2*GG 
+Zs = [a2, helps, w, np.ones([nc, nr])*0.06, np.ones([nc, nr])*0.06]
 
 fslabel=36 # Label font size
 fstick=24 # Tick font size

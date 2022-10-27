@@ -41,7 +41,6 @@ def fitness(x, y):
     return w
 
 r = 1.0/(1.0 - pow(1.0 - pow(2, -7), 2))
-r = 1.0
 R = R2/R1
 b = a2max/a1max
 givens = np.linspace(1.0, 0.0, num=21)
@@ -59,13 +58,13 @@ P = fitness(a2Ds, a2Ds)
 S = fitness(a2Ds, a2Cs)
 x = np.full([nc, nr], 0.0)
 t = np.full([nc, nr], 0.0)
-#mask = (T < R) & (P < S)
-#x[mask] = 1.0
-#t[mask] = 0.0
 denominator = P - T - P*r + T*r
-mask = denominator != 0.0
+mask = P - T == 0.0
+x[mask] = 1.0
+t[mask] = 0.0
+mask = P - T != 0.0
 x[mask] = (P[mask] - T[mask] - P[mask]*r + R[mask]*r)/denominator[mask]
-t[mask] = (T[mask] - R[mask]*r)/denominator[mask]
+t[mask] = (T[mask]*r - R[mask]*r)/denominator[mask]
 mask = x < 0.0
 x[mask] = 0.0
 mask = t < 0.0

@@ -61,7 +61,7 @@ if movie == False: ts = [ts[-1]]
 
 b = a2max/a1max
 givens = np.sort(pd.unique(dfs[0].loc[df.Time == ts[0]].Given))[::-1]
-givens[0] = 0.9999999
+givens[0] = 0.9999
 ess = np.sort(pd.unique(dfs[0][df.Time == ts[0]].ES))
 rhos = 1.0 - 1.0/ess
 nr = len(givens)
@@ -74,6 +74,9 @@ R = fitness(a2Cs, a2Cs)
 P = fitness(a2Ds, a2Ds)
 S = fitness(a2Ds, a2Cs)
 x = np.full([nc, nr], 0.0)
+
+# No cooperation
+
 mask = (T < R) & (P < S)
 x[mask] = 1.0
 mask = (T > R) & (P < S) & (R - S - T + P != 0.0)
@@ -83,14 +86,16 @@ helps = a2*R2*GG
 w = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
 Zs = [a2, helps, w, np.zeros([nc, nr]), np.zeros([nc, nr])]
 
+# Reciprocity
+
 t = np.full([nc, nr], 0.0)
 r = 1.0/(1.0 - pow(1.0 - DeathRate, 2))
 c = -GrainCost*log(0.5)
-mask = P - T == 0.0
+mask = T - P == 0.0
 x[mask] = 1.0
 t[mask] = 0.0
 denominator = P*S + P*T - S*T + 2*P*P*r - P*P - P*P*r*r - 2*P*S*r - 2*P*T*r + 2*S*T*r + P*S*r*r + P*T*r*r - S*T*r*r
-mask = denominator > 0.0
+mask = denominator != 0.0
 x[mask] = (P[mask]*S[mask] + P[mask]*T[mask] - S[mask]*T[mask] + 2*P[mask]*P[mask]*r - P[mask]*P[mask] - P[mask]*P[mask]*r*r - P[mask]*R[mask]*r - 2*P[mask]*S[mask]*r - P[mask]*T[mask]*r + R[mask]*S[mask]*r + S[mask]*T[mask]*r - P[mask]*c*r + T[mask]*c*r + P[mask]*R[mask]*r*r + P[mask]*S[mask]*r*r - R[mask]*S[mask]*r*r - R[mask]*c*r*r + S[mask]*c*r*r)/denominator[mask]
 t[mask] = (r*(P[mask]*R[mask] - P[mask]*T[mask] - R[mask]*S[mask] + S[mask]*T[mask] - P[mask]*R[mask]*r + P[mask]*T[mask]*r + R[mask]*S[mask]*r - S[mask]*T[mask]*r + P[mask]*c*r + R[mask]*c*r - S[mask]*c*r - T[mask]*c*r))/denominator[mask]
 mask = x < 0.0
@@ -109,6 +114,8 @@ wT = (R - c)*(x + t) + (S - c)*y/r + (P - c)*y*(r - 1.0)/r
 wB = T*x + T*t/r + P*t*(r - 1.0)/r + P*y
 w = wA*x + wT*t + wB*y 
 ZRs = [a2, helps, w, np.zeros([nc, nr]), t]
+
+# Figure
 
 fslabel=36 # Label font size
 fstick=24 # Tick font size
@@ -143,18 +150,18 @@ for axrow, letterrow in zip(axs, letters):
         ax.text(0, nr*1.035, letter, fontsize=fslabel, weight='bold')
 
 for t in ts:
-    # Row 0: none in theory
+    # Row 0: no cooperation (theory)
     for ax, Z, traitvmax in zip(axs[0], Zs, traitvmaxs):
         ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
-    # Row 1: none
+    # Row 1: no cooperation (simulations)
     df = dfs[0]
     for ax, trait, traitvmax in zip(axs[1], traits, traitvmaxs):
         df_piv = pd.pivot_table(df.loc[df.Time == t], values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)
         ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
-    # Row 2: reciprocity in theory
+    # Row 2: reciprocity (theory)
     for ax, ZR, traitvmax in zip(axs[2], ZRs, traitvmaxs):
         ax.imshow(ZR, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
-    # Remaining rows 
+    # Remaining simulations 
     for axrow, df in zip(axs[3:], dfs[1:]):
         for ax, trait, traitvmax in zip(axrow, traits, traitvmaxs):
             df_piv = pd.pivot_table(df.loc[df.Time == t], values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)

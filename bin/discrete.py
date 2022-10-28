@@ -31,6 +31,8 @@ R1 = 2.0
 R2 = 2.0
 a1max = 1.0
 a2max = 1.0
+DeathRate = pow(2, -7)
+GrainCost = pow(2, -14)
 
 def fitness(x, y):
     q1 = (a2max - y)*R1/b
@@ -79,17 +81,18 @@ x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
 a2 = x*a2max/2.0
 helps = a2*R2*GG 
 w = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
-Zs = [a2, helps, w, np.ones([nc, nr])*0.06, np.ones([nc, nr])*0.06]
+Zs = [a2, helps, w, np.zeros([nc, nr]), np.zeros([nc, nr])]
 
 t = np.full([nc, nr], 0.0)
-r = 1.0/(1.0 - pow(1.0 - pow(2, -7), 2))
-denominator = P - T - P*r + T*r
+r = 1.0/(1.0 - pow(1.0 - DeathRate, 2))
+c = -GrainCost*log(0.5)
 mask = P - T == 0.0
 x[mask] = 1.0
 t[mask] = 0.0
-mask = P - T != 0.0
-x[mask] = (P[mask] - T[mask] - P[mask]*r + R[mask]*r)/denominator[mask]
-t[mask] = (T[mask]*r - R[mask]*r)/denominator[mask]
+denominator = P*S + P*T - S*T + 2*P*P*r - P*P - P*P*r*r - 2*P*S*r - 2*P*T*r + 2*S*T*r + P*S*r*r + P*T*r*r - S*T*r*r
+mask = denominator > 0.0
+x[mask] = (P[mask]*S[mask] + P[mask]*T[mask] - S[mask]*T[mask] + 2*P[mask]*P[mask]*r - P[mask]*P[mask] - P[mask]*P[mask]*r*r - P[mask]*R[mask]*r - 2*P[mask]*S[mask]*r - P[mask]*T[mask]*r + R[mask]*S[mask]*r + S[mask]*T[mask]*r - P[mask]*c*r + T[mask]*c*r + P[mask]*R[mask]*r*r + P[mask]*S[mask]*r*r - R[mask]*S[mask]*r*r - R[mask]*c*r*r + S[mask]*c*r*r)/denominator[mask]
+t[mask] = (r*(P[mask]*R[mask] - P[mask]*T[mask] - R[mask]*S[mask] + S[mask]*T[mask] - P[mask]*R[mask]*r + P[mask]*T[mask]*r + R[mask]*S[mask]*r - S[mask]*T[mask]*r + P[mask]*c*r + R[mask]*c*r - S[mask]*c*r - T[mask]*c*r))/denominator[mask]
 mask = x < 0.0
 x[mask] = 0.0
 mask = t < 0.0
@@ -105,7 +108,7 @@ wA = R*(x + t) + S*y
 wT = R*(x + t) + S*y/r + P*y*(r - 1.0)/r
 wB = T*x + T*t/r + P*t*(r - 1.0)/r + P*y
 w = wA*x + wT*t + wB*y 
-ZRs = [a2, helps, w, np.ones([nc, nr])*0.06, t]
+ZRs = [a2, helps, w, np.zeros([nc, nr]), t]
 
 fslabel=36 # Label font size
 fstick=24 # Tick font size

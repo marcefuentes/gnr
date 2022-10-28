@@ -70,7 +70,7 @@ QQ = Rq*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
 a2 = a2max/(1.0 + QQ*b)
 helps = a2*R2*GG
 w = fitness(a2, a2)
-Zs = [a2, helps, w, np.ones([nr, nc])*0.1, np.ones([nr, nc])*0.1]
+Zs = [a2, helps, w, np.zeros([nr, nc]), np.zeros([nr, nc])]
 
 fslabel=36 # Label font size
 fstick=24 # Tick font size

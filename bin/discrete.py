@@ -61,8 +61,8 @@ if movie == False: ts = [ts[-1]]
 
 b = a2max/a1max
 givens = np.sort(pd.unique(dfs[0].loc[df.Time == ts[0]].Given))[::-1]
-givens[0] = 0.9999
 ess = np.sort(pd.unique(dfs[0][df.Time == ts[0]].ES))
+givens[0] = 0.9999999
 rhos = 1.0 - 1.0/ess
 nr = len(givens)
 nc = len(rhos)
@@ -91,6 +91,7 @@ Zs = [a2, helps, w, np.zeros([nc, nr]), np.zeros([nc, nr])]
 t = np.full([nc, nr], 0.0)
 r = 1.0/(1.0 - pow(1.0 - DeathRate, 2))
 c = -GrainCost*log(0.5)
+c = 0.0
 mask = T - P == 0.0
 x[mask] = 1.0
 t[mask] = 0.0

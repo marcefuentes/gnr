@@ -31,8 +31,8 @@ R1 = 2.0
 R2 = 2.0
 a1max = 1.0
 a2max = 1.0
-DeathRate = pow(2, -7)
-GrainCost = pow(2, -14)
+#DeathRate = pow(2, -7)
+#GrainCost = pow(2, -14)
 
 def fitness(x, y):
     q1 = (a2max - y)*R1/b
@@ -88,33 +88,33 @@ Zs = [a2, helps, w, np.zeros([nc, nr]), np.zeros([nc, nr])]
 
 # Reciprocity
 
-t = np.full([nc, nr], 0.0)
-r = 1.0/(1.0 - pow(1.0 - DeathRate, 2))
-c = -GrainCost*log(0.5)
-c = 0.0
-mask = T - P == 0.0
-x[mask] = 1.0
-t[mask] = 0.0
-denominator = P*S + P*T - S*T + 2*P*P*r - P*P - P*P*r*r - 2*P*S*r - 2*P*T*r + 2*S*T*r + P*S*r*r + P*T*r*r - S*T*r*r
-mask = denominator != 0.0
-x[mask] = (P[mask]*S[mask] + P[mask]*T[mask] - S[mask]*T[mask] + 2*P[mask]*P[mask]*r - P[mask]*P[mask] - P[mask]*P[mask]*r*r - P[mask]*R[mask]*r - 2*P[mask]*S[mask]*r - P[mask]*T[mask]*r + R[mask]*S[mask]*r + S[mask]*T[mask]*r - P[mask]*c*r + T[mask]*c*r + P[mask]*R[mask]*r*r + P[mask]*S[mask]*r*r - R[mask]*S[mask]*r*r - R[mask]*c*r*r + S[mask]*c*r*r)/denominator[mask]
-t[mask] = (r*(P[mask]*R[mask] - P[mask]*T[mask] - R[mask]*S[mask] + S[mask]*T[mask] - P[mask]*R[mask]*r + P[mask]*T[mask]*r + R[mask]*S[mask]*r - S[mask]*T[mask]*r + P[mask]*c*r + R[mask]*c*r - S[mask]*c*r - T[mask]*c*r))/denominator[mask]
-mask = x < 0.0
-x[mask] = 0.0
-mask = t < 0.0
-t[mask] = 0.0
-mask = x > 1.0
-x[mask] = 1.0
-mask = t > 1.0
-t[mask] = 1.0
-y = 1.0 - x - t
-a2 = (x + t*(x + t) + t*y/r)*a2max/2.0
-helps = a2*R2*GG 
-wA = R*(x + t) + S*y
-wT = (R - c)*(x + t) + (S - c)*y/r + (P - c)*y*(r - 1.0)/r
-wB = T*x + T*t/r + P*t*(r - 1.0)/r + P*y
-w = wA*x + wT*t + wB*y 
-ZRs = [a2, helps, w, np.zeros([nc, nr]), t]
+#t = np.full([nc, nr], 0.0)
+#r = 1.0/(1.0 - pow(1.0 - DeathRate, 2))
+#c = -GrainCost*log(0.5)
+#c = 0.0
+#mask = T - P == 0.0
+#x[mask] = 1.0
+#t[mask] = 0.0
+#denominator = P*S + P*T - S*T + 2*P*P*r - P*P - P*P*r*r - 2*P*S*r - 2*P*T*r + 2*S*T*r + P*S*r*r + P*T*r*r - S*T*r*r
+#mask = denominator != 0.0
+#x[mask] = (P[mask]*S[mask] + P[mask]*T[mask] - S[mask]*T[mask] + 2*P[mask]*P[mask]*r - P[mask]*P[mask] - P[mask]*P[mask]*r*r - P[mask]*R[mask]*r - 2*P[mask]*S[mask]*r - P[mask]*T[mask]*r + R[mask]*S[mask]*r + S[mask]*T[mask]*r - P[mask]*c*r + T[mask]*c*r + P[mask]*R[mask]*r*r + P[mask]*S[mask]*r*r - R[mask]*S[mask]*r*r - R[mask]*c*r*r + S[mask]*c*r*r)/denominator[mask]
+#t[mask] = (r*(P[mask]*R[mask] - P[mask]*T[mask] - R[mask]*S[mask] + S[mask]*T[mask] - P[mask]*R[mask]*r + P[mask]*T[mask]*r + R[mask]*S[mask]*r - S[mask]*T[mask]*r + P[mask]*c*r + R[mask]*c*r - S[mask]*c*r - T[mask]*c*r))/denominator[mask]
+#mask = x < 0.0
+#x[mask] = 0.0
+#mask = t < 0.0
+#t[mask] = 0.0
+#mask = x > 1.0
+#x[mask] = 1.0
+#mask = t > 1.0
+#t[mask] = 1.0
+#y = 1.0 - x - t
+#a2 = (x + t*(x + t) + t*y/r)*a2max/2.0
+#helps = a2*R2*GG 
+#wA = R*(x + t) + S*y
+#wT = (R - c)*(x + t) + (S - c)*y/r + (P - c)*y*(r - 1.0)/r
+#wB = T*x + T*t/r + P*t*(r - 1.0)/r + P*y
+#w = wA*x + wT*t + wB*y 
+#ZRs = [a2, helps, w, np.zeros([nc, nr]), t]
 
 # Figure
 
@@ -124,7 +124,7 @@ plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 frames = []
 
-fig, axs = plt.subplots(nrows=len(folders)+2, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+2)))
+fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+1)))
 
 fig.supxlabel('Substitutability of $\it{A}$', x=0.513, y=0.05, fontsize=fslabel*1.25)
 fig.supylabel('Partner\'s share of $\it{A}$', x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
@@ -151,19 +151,11 @@ for axrow, letterrow in zip(axs, letters):
         ax.text(0, nr*1.035, letter, fontsize=fslabel, weight='bold')
 
 for t in ts:
-    # Row 0: no cooperation (theory)
+    # Row 0: theory (no cooperation)
     for ax, Z, traitvmax in zip(axs[0], Zs, traitvmaxs):
         ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
-    # Row 1: no cooperation (simulations)
-    df = dfs[0]
-    for ax, trait, traitvmax in zip(axs[1], traits, traitvmaxs):
-        df_piv = pd.pivot_table(df.loc[df.Time == t], values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)
-        ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
-    # Row 2: reciprocity (theory)
-    for ax, ZR, traitvmax in zip(axs[2], ZRs, traitvmaxs):
-        ax.imshow(ZR, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
-    # Remaining simulations 
-    for axrow, df in zip(axs[3:], dfs[1:]):
+    # Remaining rows: simulations 
+    for axrow, df in zip(axs[1:], dfs):
         for ax, trait, traitvmax in zip(axrow, traits, traitvmaxs):
             df_piv = pd.pivot_table(df.loc[df.Time == t], values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)
             ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)

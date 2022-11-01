@@ -11,7 +11,7 @@ import time
 
 start_time = time.perf_counter ()
 
-movie = False
+movie = True
 
 letters = [['a', 'b', 'c', 'd', 'e'],
             ['f', 'g', 'h', 'i', 'j'],
@@ -23,7 +23,7 @@ letters = [['a', 'b', 'c', 'd', 'e'],
 traits = ['a2Seenmean', 'help', 'wmean', 'ChooseGrainmean', 'MimicGrainmean']
 traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
 traitvmaxs = [0.5, 1.0, 1.0, 1.0, 1.0]
-folders = ['none', 'p', 'r', 'pr', 'p8r']
+folders = ['none', 'p', 'r', 'pr']
 
 alpha = 0.5
 R1 = 2.0

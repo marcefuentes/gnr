@@ -11,7 +11,7 @@ import time
 
 start_time = time.perf_counter ()
 
-movie = True
+movie = False
 
 letters = [['a', 'b', 'c', 'd', 'e'],
             ['f', 'g', 'h', 'i', 'j'],
@@ -124,7 +124,7 @@ for t in ts:
         frames.append(iio.imread('output.png'))
         os.remove('output.png')
 if movie:
-    iio.mimsave('output.gif', frames)
+    iio.mimsave('output.mp4', frames)
 plt.close()
 
 end_time = time.perf_counter ()

@@ -164,7 +164,7 @@ for t in ts:
         frames.append(iio.imread('output.png'))
         os.remove('output.png')
 if movie:
-    iio.mimsave('output.gif', frames)
+    iio.mimsave('output.mp4', frames)
 plt.close()
 
 end_time = time.perf_counter ()

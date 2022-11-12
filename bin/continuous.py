@@ -23,7 +23,7 @@ letters = [['a', 'b', 'c', 'd', 'e'],
 traits = ['a2Seenmean', 'help', 'wmean', 'ChooseGrainmean', 'MimicGrainmean']
 traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
 traitvmaxs = [0.5, 1.0, 1.0, 1.0, 1.0]
-folders = ['none', 'p', 'r', 'pr']
+folders = ['none', 'r', 'p', 'pr', 'p8r']
 
 alpha = 0.5
 R1 = 2.0
@@ -124,7 +124,7 @@ for t in ts:
         frames.append(iio.imread('output.png'))
         os.remove('output.png')
 if movie:
-    iio.mimsave('output.mp4', frames)
+    iio.mimsave('output.gif', frames)
 plt.close()
 
 end_time = time.perf_counter ()

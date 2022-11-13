@@ -171,8 +171,7 @@ void write_i (char *filename, float factor1, float factor2, int factor3, struct 
 
 void write_time_elapsed (char *filename, float time_elapsed)
 {
-	int h, m;
-	double s;
+	int h, m, s;
 	FILE *fp;
 
 	if ( (fp = fopen (filename, "a+")) == NULL )
@@ -198,7 +197,7 @@ void write_time_elapsed (char *filename, float time_elapsed)
 		fprintf (fp, "0");
 	}
 
-	fprintf (fp, "%f", s);
+	fprintf (fp, "%i", s);
 
 	fclose (fp);
 }

@@ -118,7 +118,7 @@ for row, given in zip(axs, givens):
             rgb = 'black'
         else:
             rgb = 'cyan'
-        ax.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=1.0, markersize=3)
+        ax.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=2, markersize=3)
         ax.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))
         ax.set_box_aspect(1)
 axs[0, 0].set_title('b', fontsize=fslabel, weight='bold')

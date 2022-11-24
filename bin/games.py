@@ -87,7 +87,7 @@ for row, given in zip(axs, givens):
         cmap = cm.get_cmap(mycmap).copy()
         cmap.set_bad(color='white')
         ax.imshow(Z, origin='lower', cmap=cmap, vmin=0, vmax=3)
-        ax.set(xticks=[], yticks=[], xlim=(-13, npoints), ylim=(0, npoints + 13))
+        ax.set(xticks=[], yticks=[], xlim=(-9, npoints + 5), ylim=(-5, npoints + 9))
         #ax.set(xticks=[], yticks=[])
 axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
 for ax, given in zip(axs[::every, 0], givens[::every]):
@@ -182,7 +182,7 @@ axs[0, 0].set_title('d', fontsize=fslabel, weight='bold')
 for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):
     ax.set_xlabel(round(log_es), fontsize=fstick)
 
-plt.savefig('games.png', dpi=100)
+plt.savefig('games.png', dpi=200)
 plt.close()
 
 end_time = time.perf_counter ()

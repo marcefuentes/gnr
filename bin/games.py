@@ -16,7 +16,7 @@ a1max = 1.0
 a2max = 1.0
 npoints = 128
 
-num = 21    # Number of subplot rows and columns
+num = 11    # Number of subplot rows and columns
 every = int(num/2)
 minlog_es = -5.0
 maxlog_es = 5.0

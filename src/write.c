@@ -171,7 +171,6 @@ void write_i (char *filename, float factor1, float factor2, int factor3, struct 
 
 void write_time_elapsed (char *filename, float time_elapsed)
 {
-	int h, m, s;
 	FILE *fp;
 
 	if ( (fp = fopen (filename, "a+")) == NULL )
@@ -179,25 +178,60 @@ void write_time_elapsed (char *filename, float time_elapsed)
 		file_write_error (filename);
 	}
 
-	h = time_elapsed/3600;
-	m = (time_elapsed - (3600*h))/60;
-	s = time_elapsed - 3600*h - 60*m;
+	fprintf (fp, "TimeElapsed,");
 
-	fprintf (fp, "TimeElapsed,%i:", h);
-
-	if ( m < 10 )
+	if ( time_elapsed < 10.0 )
 	{
-		fprintf (fp, "0");
+		fprintf (fp, "%f", time_elapsed);
+	}
+	else
+	{
+		int minute = 60;
+		int hour = minute*60;
+		int day = hour*24;
+
+		int s = time_elapsed;
+		int d = s/day;
+		s -= d*day;
+		int h = s/hour;
+		s -= h*hour;
+		int m = s/minute;
+		s -= m*minute;
+
+		if ( d > 0)
+		{
+			fprintf (fp, "%i-", d);
+
+			if ( h < 10 )
+			{
+				fprintf (fp, "0");
+			}
+		}
+
+		if ( d > 0 || h > 0 )
+		{
+			fprintf (fp, "%i:", h);
+
+			if ( m < 10 )
+			{
+				fprintf (fp, "0");
+			}
+		}
+		
+		if ( d > 0 || h > 0 || m > 0 )
+		{
+			fprintf (fp, "%i:", m);
+
+			if ( s < 10 )
+			{
+				fprintf (fp, "0");
+			}
+		}
+
+		fprintf (fp, "%i", (int)s);
 	}
 
-	fprintf (fp, "%i:", m);
-
-	if ( s < 10 )
-	{
-		fprintf (fp, "0");
-	}
-
-	fprintf (fp, "%i", s);
+	fprintf (fp, "\n");
 
 	fclose (fp);
 }

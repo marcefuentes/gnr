@@ -43,7 +43,7 @@ double	gMimicCost;
 double	gGiven;					// Effect on partner: q2 = a2*R2*Given
 int	gPartnerChoice;
 int	gReciprocity;
-int	gMacromutation;
+int	gDiscrete;
 int	gIndirectR;
 
 char	factorName1[20], factorName2[20], factorName3[20];
@@ -62,7 +62,7 @@ double	fitness (struct itype *i, struct itype *i_last);	// gFFunction
 double	calculate_wmax (double q1, double q2);
 double	ces (double q1, double q2);				// gES, galpha
 double	quasilinear (double q1, double q2);			// galpha, gc1, gc2
-//double	macromutate (double trait, double sum);			// gMacromutation
+//double	macromutate (double trait, double sum);			// gDiscrete
 double	calculate_q1 (double a2);				// ga2Max, ga1Max, gR1
 double	calculate_q2 (double a2, double a2partner);		// gR2, gGiven
 double	calculate_cost	(double choose, double mimic);		// gChooseCost, gMimicCost
@@ -342,7 +342,7 @@ void read_globals (char *filename)
 	fscanf (fp, "Given,%lf\n", &gGiven);
 	fscanf (fp, "PartnerChoice,%i\n", &gPartnerChoice);
 	fscanf (fp, "Reciprocity,%i\n", &gReciprocity);
-	fscanf (fp, "Macromutation,%i\n", &gMacromutation);
+	fscanf (fp, "Discrete,%i\n", &gDiscrete);
 	fscanf (fp, "IndirectR,%i\n", &gIndirectR);
 	fscanf (fp, "factorName1,%s\n", factorName1);
 	fscanf (fp, "fFirst1,%lf\n", &fFirst1);
@@ -419,7 +419,7 @@ void write_globals (char *filename)
 	fprintf (fp, "Given,%f\n", gGiven);
 	fprintf (fp, "PartnerChoice,%i\n", gPartnerChoice);
 	fprintf (fp, "Reciprocity,%i\n", gReciprocity);
-	fprintf (fp, "Macromutation,%i\n", gMacromutation);
+	fprintf (fp, "Discrete,%i\n", gDiscrete);
 	fprintf (fp, "IndirectR,%i\n", gIndirectR);
 
 	fclose (fp);
@@ -489,13 +489,13 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 					recruit->cost = calculate_cost (recruit->ChooseGrain, recruit->MimicGrain);
 				}
 
-				kill (recruit_first, i_first, gN, gMacromutation);
+				kill (recruit_first, i_first, gN, gDiscrete);
 				free_recruits (recruit_first);
 			}
 			
 			if ( gReciprocity == 1 )
 			{
-				decide_a2 (i_first, i_last, ga2Max, gIndirectR, gMacromutation);
+				decide_a2 (i_first, i_last, ga2Max, gIndirectR, gDiscrete);
 			}
 		}
 
@@ -639,7 +639,7 @@ double calculate_cost (double choose, double mimic)
 
 /*double macromutate (double trait, double sum)
 {
-	if ( gsl_rng_uniform (rng) < gMacromutation )
+	if ( gsl_rng_uniform (rng) < gDiscrete )
 	{
 		trait =  sum - trait;
 	}

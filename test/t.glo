@@ -24,7 +24,7 @@ MimicCost,-12
 Given,0.875
 PartnerChoice,1
 Reciprocity,1
-Macromutation,0
+Discrete,0
 IndirectR,0
 factorName1,MimicCost
 fFirst1,-10

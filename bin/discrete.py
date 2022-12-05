@@ -26,7 +26,7 @@ traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness', 'Sensitivity for\nch
 traitvmaxs = [1.0, 2.0, 1.5, 1.0, 1.0]
 folders = ['none', 'p', 'r', 'pr', 'p8r']
 
-alpha = 0.25
+alpha = 0.75
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
@@ -73,41 +73,24 @@ a2Ds = np.full([nc, nr], 0.0)
 a2 = a2Ds
 w = fitness(a2Ds, a2Ds)
 
-a2Ds = a2 
-a2Cs = np.full([nc, nr], a2max/2.0)
-T = fitness(a2Cs, a2Ds)
-R = fitness(a2Cs, a2Cs)
-P = fitness(a2Ds, a2Ds)
-S = fitness(a2Ds, a2Cs)
-mask = (T < R) & (P < S)
-a2[mask] = a2max/2.0
-w[mask] = R[mask]
-mask = (T > R) & (P < S) & (R - S - T + P != 0.0)
-T = T[mask]
-P = P[mask]
-R = R[mask]
-S = S[mask]
-x = (P - S)/(R - S - T + P)
-a2[mask] = x*a2max/2.0
-w[mask] = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
-
-a2Ds = a2Cs
-a2Cs = a2Cs*2.0
-T = fitness(a2Cs, a2Ds)
-R = fitness(a2Cs, a2Cs)
-P = fitness(a2Ds, a2Ds)
-S = fitness(a2Ds, a2Cs)
-mask = (T < R) & (P < S)
-a2[mask] = a2max
-w[mask] = R[mask]
-mask = (T > R) & (P < S) & (R - S - T + P != 0.0)
-T = T[mask]
-P = P[mask]
-R = R[mask]
-S = S[mask]
-x = (P - S)/(R - S - T + P)
-a2[mask] = x*a2max
-w[mask] = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
+for c in range(2):
+    a2Ds = a2Ds + a2max*c/2.0
+    a2Cs = a2Ds + a2max/2.0
+    T = fitness(a2Cs, a2Ds)
+    R = fitness(a2Cs, a2Cs)
+    P = fitness(a2Ds, a2Ds)
+    S = fitness(a2Ds, a2Cs)
+    mask = (T < R) & (P < S)
+    a2[mask] = a2max*(1.0 + c)/2.0
+    w[mask] = R[mask]
+    mask = (T > R) & (P < S) & (R - S - T + P != 0.0)
+    T = T[mask]
+    P = P[mask]
+    R = R[mask]
+    S = S[mask]
+    x = (P - S)/(R - S - T + P)
+    a2[mask] = x*a2max*(1.0 + c)/2.0
+    w[mask] = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
 
 helps = a2*R2*GG 
 Zs = [a2, helps, w, np.zeros([nc, nr]), np.zeros([nc, nr])]

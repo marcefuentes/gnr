@@ -9,7 +9,7 @@ import time
 
 start_time = time.perf_counter ()
 
-alpha = 0.50
+alpha = 0.250
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
@@ -72,14 +72,13 @@ mycmap = ListedColormap(mycolors)
 
 for row, given in zip(axs, givens):
     for ax, rho in zip(row, rhos):
+        T = fitness(Y, X, given, rho)
         R = fitness(Y, Y, given, rho)
         P = fitness(X, X, given, rho)
-        T = fitness(Y, X, given, rho)
         S = fitness(X, Y, given, rho)
         PD = ((T > R) & (P > S)).astype(int) 
         SD = ((T > R) & (P < S)).astype(int) 
         ND = ((T < R) & (P < S)).astype(int) 
-        Z = PD*0
         Z = PD*1 + SD*2 + ND*3 + 1
         Z = np.tril(Z, k=-1)
         Z = np.ma.masked_where(Z == 0.0, Z)
@@ -88,7 +87,6 @@ for row, given in zip(axs, givens):
         cmap.set_bad(color='white')
         ax.imshow(Z, origin='lower', cmap=cmap, vmin=0, vmax=3)
         ax.set(xticks=[], yticks=[], xlim=(-9, npoints + 5), ylim=(-5, npoints + 9))
-        #ax.set(xticks=[], yticks=[])
 axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
 for ax, given in zip(axs[::every, 0], givens[::every]):
     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)

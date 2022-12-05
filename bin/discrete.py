@@ -26,7 +26,7 @@ traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness', 'Sensitivity for\nch
 traitvmaxs = [1.0, 2.0, 1.5, 1.0, 1.0]
 folders = ['none', 'p', 'r', 'pr', 'p8r']
 
-alpha = 0.75
+alpha = 0.25
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
@@ -69,21 +69,26 @@ rhos = 1.0 - 1.0/ess
 nr = len(givens)
 nc = len(rhos)
 RR, GG = np.meshgrid(rhos, givens)
+a2 = np.full([nc, nr], 0.0)
 
-x = np.full([nc, nr], 0.0)
-
-a2Ds = np.full([nc, nr], 0.0)
+a2Ds = a2 
 a2Cs = np.full([nc, nr], a2max/2.0)
 T = fitness(a2Cs, a2Ds)
 R = fitness(a2Cs, a2Cs)
 P = fitness(a2Ds, a2Ds)
 S = fitness(a2Ds, a2Cs)
+w = S
 mask = (T < R) & (P < S)
-x[mask] = 1.0
+a2[mask] = a2max/2.0
+w[mask] = R[mask]
 mask = (T > R) & (P < S) & (R - S - T + P != 0.0)
-x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
-a2 = x*a2max/2.0
-w = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
+T = T[mask]
+P = P[mask]
+R = R[mask]
+S = S[mask]
+x = (P - S)/(R - S - T + P)
+a2[mask] = x*a2max/2.0
+w[mask] = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
 
 a2Ds = a2Cs
 a2Cs = a2Cs*2.0
@@ -92,13 +97,16 @@ R = fitness(a2Cs, a2Cs)
 P = fitness(a2Ds, a2Ds)
 S = fitness(a2Ds, a2Cs)
 mask = (T < R) & (P < S)
-x[mask] = 1.0
-a2[mask] = x[mask]*a2max
+a2[mask] = a2max
 w[mask] = R[mask]
 mask = (T > R) & (P < S) & (R - S - T + P != 0.0)
-x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
-a2[mask] = x[mask]*a2max
-w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
+T = T[mask]
+P = P[mask]
+R = R[mask]
+S = S[mask]
+x = (P - S)/(R - S - T + P)
+a2[mask] = x*a2max
+w[mask] = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
 
 helps = a2*R2*GG 
 Zs = [a2, helps, w, np.zeros([nc, nr]), np.zeros([nc, nr])]

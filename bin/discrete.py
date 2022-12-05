@@ -26,7 +26,7 @@ traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness', 'Sensitivity for\nch
 traitvmaxs = [1.0, 2.0, 1.5, 1.0, 1.0]
 folders = ['none', 'p', 'r', 'pr', 'p8r']
 
-alpha = 0.50
+alpha = 0.75
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
@@ -59,6 +59,8 @@ for folder in folders:
 ts = dfs[0].Time.unique()
 if movie == False: ts = [ts[-1]]
 
+# No cooperation
+
 b = a2max/a1max
 givens = np.sort(pd.unique(dfs[0].loc[df.Time == ts[0]].Given))[::-1]
 ess = np.sort(pd.unique(dfs[0][df.Time == ts[0]].ES))
@@ -67,23 +69,38 @@ rhos = 1.0 - 1.0/ess
 nr = len(givens)
 nc = len(rhos)
 RR, GG = np.meshgrid(rhos, givens)
+
+x = np.full([nc, nr], 0.0)
+
 a2Ds = np.full([nc, nr], 0.0)
 a2Cs = np.full([nc, nr], a2max/2.0)
 T = fitness(a2Cs, a2Ds)
 R = fitness(a2Cs, a2Cs)
 P = fitness(a2Ds, a2Ds)
 S = fitness(a2Ds, a2Cs)
-x = np.full([nc, nr], 0.0)
-
-# No cooperation
-
 mask = (T < R) & (P < S)
 x[mask] = 1.0
 mask = (T > R) & (P < S) & (R - S - T + P != 0.0)
 x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
 a2 = x*a2max/2.0
-helps = a2*R2*GG 
 w = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
+
+a2Ds = a2Cs
+a2Cs = a2Cs*2.0
+T = fitness(a2Cs, a2Ds)
+R = fitness(a2Cs, a2Cs)
+P = fitness(a2Ds, a2Ds)
+S = fitness(a2Ds, a2Cs)
+mask = (T < R) & (P < S)
+x[mask] = 1.0
+a2[mask] = x[mask]*a2max
+w[mask] = R[mask]
+mask = (T > R) & (P < S) & (R - S - T + P != 0.0)
+x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
+a2[mask] = x[mask]*a2max
+w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
+
+helps = a2*R2*GG 
 Zs = [a2, helps, w, np.zeros([nc, nr]), np.zeros([nc, nr])]
 
 # Reciprocity

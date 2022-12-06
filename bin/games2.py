@@ -53,7 +53,7 @@ plt.rcParams['ps.fonttype'] = 42
 
 fig = plt.figure(figsize=(12, 12), constrained_layout=False) 
 fig.supylabel("Partner's share of $\it{A}$", x=0.04, y=0.520, fontsize=fslabel)
-fig.supxlabel("Sbstitutability of $\it{A}$", x=0.525, y=0.05, fontsize=fslabel)
+fig.supxlabel("Substitutability of $\it{A}$", x=0.525, y=0.05, fontsize=fslabel)
 
 outer_grid = fig.add_gridspec(2, 2, left=0.15, right=0.9, top=0.9, bottom=0.15)
 
@@ -99,60 +99,6 @@ axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
 for ax, given in zip(axs[::every, 0], givens[::every]):
     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 
-# Discrete game types
-
-grid = outer_grid[0, 1].subgridspec(num, num, wspace=0, hspace=0)
-axs0 = grid.subplots()
-
-a2 = np.array([0.0, a2max/2.0, a2max])
-X, Y = np.meshgrid(a2, a2)
-xaxis = [1, 2, 3, 4]
-
-for row1, given in zip(axs0, givens):
-    for ax1, rho in zip(row1, rhos):
-        Z = fitness(X, Y, given, rho)
-        R = max(Z[0, 0], Z[1, 1])
-        if R == Z[1, 1]:
-            T = Z[0, 1]
-            S = Z[1, 0]
-            P = Z[0, 0]
-        else:
-            T = Z[1, 0]
-            S = Z[0, 1]
-            P = Z[1, 1]
-        yaxis = [T, R, P, S]
-        if (T < R) and (P < S):
-            rgb = 'orange'
-        elif (T > R) and (P < S):
-            rgb = 'red'
-        elif (T > R) and (P > S) and (2.0*R > T + S):
-            rgb = 'black'
-        else:
-            rgb = 'cyan'
-        ax1.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=2, markersize=3)
-        R = max(Z[1, 1], Z[2, 2])
-        if R == Z[2, 2]:
-            T = Z[1, 2]
-            S = Z[2, 1]
-            P = Z[1, 1]
-        else:
-            T = Z[2, 1]
-            S = Z[1, 2]
-            P = Z[2, 2]
-        yaxis = [T, R, P, S]
-        if (T < R) and (P < S):
-            rgb = 'orange'
-        elif (T > R) and (P < S):
-            rgb = 'red'
-        elif (T > R) and (P > S) and (2.0*R > T + S):
-            rgb = 'black'
-        else:
-            rgb = 'cyan'
-        ax1.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=2, markersize=3)
-        ax1.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))
-        ax1.set_box_aspect(1)
-axs0[0, 0].set_title('b', fontsize=fslabel, weight='bold')
-
 # Continuous
 
 grid = outer_grid[1, 0].subgridspec(num, num, wspace=0, hspace=0)
@@ -186,47 +132,66 @@ givens[0] = 1.0
 
 # Discrete
 
+grid = outer_grid[0, 1].subgridspec(num, num, wspace=0, hspace=0)
+axs0 = grid.subplots()
 grid = outer_grid[1, 1].subgridspec(num, num, wspace=0, hspace=0)
 axs1 = grid.subplots()
 
 a2 = np.linspace(0.0, a2max, num=3)
+xaxis = [1, 2, 3, 4]
 
-for row1, given in zip(axs1, givens):
-    for ax1, rho in zip(row1, rhos):
+for row0, row1, given in zip(axs0, axs1, givens):
+    for ax0, ax1, rho in zip(row0, row1, rhos):
         w = []
         T = fitness(a2[1], a2[0], given, rho)
         R = fitness(a2[1], a2[1], given, rho)
         P = fitness(a2[0], a2[0], given, rho)
         S = fitness(a2[0], a2[1], given, rho)
-        if (T < R) & (P < S):
-            T = fitness(a2[2], a2[1], given, rho)
-            R = fitness(a2[2], a2[2], given, rho)
-            P = fitness(a2[1], a2[1], given, rho)
-            S = fitness(a2[1], a2[2], given, rho)
-            if (T < R) & (P < S):
+        Su = fitness(a2[1], a2[2], given, rho)
+        if Su > R:
+        #if (T < R) & (P < S):
+            Tu = fitness(a2[2], a2[1], given, rho)
+            Ru = fitness(a2[2], a2[2], given, rho)
+            Pu = fitness(a2[1], a2[1], given, rho)
+            Su = fitness(a2[1], a2[2], given, rho)
+            if (Tu < Ru) & (Pu < Su):
                 x = 1.0
-                weq = R
-            elif (T > R) & (P < S) & (R - S - T + P != 0.0):
-                x = (P - S)/(R - S - T + P)
-                weq = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
+                weq = Ru
+                rgb = 'orange'
+            elif (Tu > Ru) & (Pu < Su) & (Ru - Su - Tu + Pu != 0.0):
+                x = (Pu - Su)/(Ru - Su - Tu + Pu)
+                weq = (Tu + Su)*x*(1.0 - x) + Ru*x*x + Pu*(1.0 - x)*(1.0 - x)
+                rgb = 'red'
             else:
                 x = 0.0
                 weq = P
+                rgb = 'black'
             for a in a2:
                 w.append(fitness(a2[1], a, given, rho)*(1.0 - x) + fitness(a2[2], a, given, rho)*x)   
         else:
-            if (T > R) & (P < S) & (R - S - T + P != 0.0):
+            if (T < R) & (P < S):
+                x = 1.0
+                weq = R
+                rgb = 'orange'
+            elif (T > R) & (P < S) & (R - S - T + P != 0.0):
                 x = (P - S)/(R - S - T + P)
                 weq = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
+                rgb = 'red'
             else:
                 x = 0.0
                 weq = P
+                rgb = 'black'
             for a in a2:
                 w.append(fitness(a2[0], a, given, rho)*(1.0 - x) + fitness(a2[1], a, given, rho)*x)   
+        yaxis = [T, R, P, S]
+        ax0.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=2, markersize=3)
+        ax0.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))
+        ax0.set_box_aspect(1)
         ax1.plot(a2, w, linewidth=2, c=cm.magma(weq/vmax))
         ax1.set(xticks=[], yticks=[], xlim=(0.0, a2max), ylim=(0.0, 2.0))
         ax1.set_facecolor('0.200')
         ax1.set_box_aspect(1)
+axs0[0, 0].set_title('b', fontsize=fslabel, weight='bold')
 axs1[0, 0].set_title('d', fontsize=fslabel, weight='bold')
 for ax1, log_es in zip(axs1[-1, ::every], log_ess[::every]):
     ax1.set_xlabel(round(log_es), fontsize=fstick)

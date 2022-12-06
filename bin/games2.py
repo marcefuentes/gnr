@@ -9,7 +9,7 @@ import time
 
 start_time = time.perf_counter ()
 
-alpha = 0.5
+alpha = 0.75
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
@@ -159,7 +159,7 @@ for row0, row1, given in zip(axs0, axs1, givens):
             x = 1.0
             weq = R
             rgb = 'orange'
-        elif (T > R) & (P < S) & (R - S - T + P != 0.0):
+        elif (T >= R) & (P < S) & (R - S - T + P != 0.0):
             x = (P - S)/(R - S - T + P)
             weq = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
             rgb = 'red'

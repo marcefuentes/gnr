@@ -53,7 +53,7 @@ plt.rcParams['ps.fonttype'] = 42
 
 fig = plt.figure(figsize=(12, 12), constrained_layout=False) 
 fig.supylabel("Partner's share of $\it{A}$", x=0.04, y=0.520, fontsize=fslabel)
-fig.supxlabel("Substitutability of $\it{A}$", x=0.525, y=0.05, fontsize=fslabel)
+fig.supxlabel("Sbstitutability of $\it{A}$", x=0.525, y=0.05, fontsize=fslabel)
 
 outer_grid = fig.add_gridspec(2, 2, left=0.15, right=0.9, top=0.9, bottom=0.15)
 
@@ -106,7 +106,6 @@ axs = grid.subplots()
 
 a2 = np.array([0.0, a2max/2.0, a2max])
 X, Y = np.meshgrid(a2, a2)
-print(X, Y)
 xaxis = [1, 2, 3, 4]
 
 for row, given in zip(axs, givens):
@@ -200,19 +199,19 @@ for row, given in zip(axs, givens):
         P = fitness(a2[0], a2[0], given, rho)
         S = fitness(a2[0], a2[1], given, rho)
         if (T < R) & (P < S):
-            Tu = fitness(a2[2], a2[1], given, rho)
-            Ru = fitness(a2[2], a2[2], given, rho)
-            Pu = fitness(a2[1], a2[1], given, rho)
-            Su = fitness(a2[1], a2[2], given, rho)
-            if (Tu < Ru) & (Pu < Su):
+            T = fitness(a2[2], a2[1], given, rho)
+            R = fitness(a2[2], a2[2], given, rho)
+            P = fitness(a2[1], a2[1], given, rho)
+            S = fitness(a2[1], a2[2], given, rho)
+            if (T < R) & (P < S):
                 x = 1.0
-                weq = Ru
-            elif (Tu > Ru) & (Pu < Su) & (Ru - Su - Tu + Pu != 0.0):
-                x = (Pu - Su)/(Ru - Su - Tu + Pu)
-                weq = (Tu + Su)*x*(1.0 - x) + Ru*x*x + Pu*(1.0 - x)*(1.0 - x)
+                weq = R
+            elif (T > R) & (P < S) & (R - S - T + P != 0.0):
+                x = (P - S)/(R - S - T + P)
+                weq = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
             else:
                 x = 0.0
-                weq = Pu
+                weq = P
             for a in a2:
                 w.append(fitness(a2[1], a, given, rho)*(1.0 - x) + fitness(a2[2], a, given, rho)*x)   
         else:

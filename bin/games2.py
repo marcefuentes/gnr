@@ -9,13 +9,18 @@ import time
 
 start_time = time.perf_counter ()
 
-alpha = 0.75
+alpha = 0.50
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
 a2max = 1.0
 npoints = 128
-vmax = 1.5
+if alpha == 0.50:
+    vmax = 1.0
+    limmatrix = a2max/2.0
+else:
+    vmax = 1.5
+    limmatrix = a2max
 
 num = 11    # Number of subplot rows and columns
 every = int(num/2)
@@ -62,13 +67,13 @@ outer_grid = fig.add_gridspec(2, 2, left=0.15, right=0.9, top=0.9, bottom=0.15)
 grid = outer_grid[0, 0].subgridspec(num, num, wspace=0, hspace=0)
 axs = grid.subplots()
 
-a2 = np.linspace(0.0, a2max, num=npoints)
+a2 = np.linspace(0.0, limmatrix, num=npoints)
 X, Y = np.meshgrid(a2, a2)
 grey = [0.4, 0.4, 0.4, 1.0]
 red = [1.0, 0.0, 0.0, 1.0]
 orange = [1.0, 165/265, 0.0, 1.0]
 cyan = [0.0, 1.0, 1.0, 1.0]
-mycolors = [cyan, grey, red, orange]
+mycolors = ['cyan', 'blue', 'red', 'orange']
 mycmap = ListedColormap(mycolors)
 
 for row, given in zip(axs, givens):
@@ -86,14 +91,15 @@ for row, given in zip(axs, givens):
         S[mask] = H
         PD = ((T > R) & (P > S)).astype(int) 
         SD = ((T >= R) & (P <= S)).astype(int) 
-        ND = ((T < R) & (P <= S)).astype(int) 
+        ND = ((T < R) & (P < S)).astype(int) 
         Z = PD*1 + SD*2 + ND*3 + 1
         Z = np.tril(Z, k=-1)
         Z = np.ma.masked_where(Z == 0.0, Z)
         Z = Z - 1
         cmap = cm.get_cmap(mycmap).copy()
-        cmap.set_bad(color='white')
+        cmap.set_bad(color='0.200')
         ax.imshow(Z, origin='lower', cmap=cmap, vmin=0, vmax=3)
+        ax.set_facecolor('0.200')
         ax.set(xticks=[], yticks=[], xlim=(-9, npoints + 5), ylim=(-5, npoints + 9))
 axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
 for ax, given in zip(axs[::every, 0], givens[::every]):
@@ -147,7 +153,13 @@ for row0, row1, given in zip(axs0, axs1, givens):
         R = fitness(a2[1], a2[1], given, rho)
         P = fitness(a2[0], a2[0], given, rho)
         S = fitness(a2[0], a2[1], given, rho)
-        P0 = P
+        if R < P:
+            H = T
+            T = S
+            S = H
+            H = R
+            R = P
+            P = H
         Su = fitness(a2[1], a2[2], given, rho)
         if Su > R:
             P0 = P
@@ -159,23 +171,24 @@ for row0, row1, given in zip(axs0, axs1, givens):
             x = 1.0
             weq = R
             rgb = 'orange'
-        elif (T >= R) & (P < S) & (R - S - T + P != 0.0):
+        elif (T >= R) & (P <= S) & (R - S - T + P != 0.0):
             x = (P - S)/(R - S - T + P)
             weq = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
             rgb = 'red'
         elif (T > R) & (P > S):
             x = 0.0
-            weq = P0
-            rgb = 'black'
+            weq = P
+            rgb = 'blue'
         else:
             x = 0.0
-            weq = P0
+            weq = P
             rgb = 'cyan'
         for a in a2:
             w.append(fitness(a2[0], a, given, rho)*(1.0 - x) + fitness(a2[1], a, given, rho)*x)   
         yaxis = [T, R, P, S]
         ax0.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=2, markersize=3)
         ax0.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))
+        ax0.set_facecolor('0.200')
         ax0.set_box_aspect(1)
         ax1.plot(a2, w, linewidth=2, c=cm.magma(weq/vmax))
         ax1.set(xticks=[], yticks=[], xlim=(0.0, a2max), ylim=(0.0, 2.0))

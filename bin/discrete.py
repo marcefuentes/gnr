@@ -26,7 +26,7 @@ traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness', 'Sensitivity for\nch
 traitvmaxs = [1.0, 2.0, 1.5, 1.0, 1.0]
 folders = ['none', 'p', 'r', 'pr', 'p8r']
 
-alpha = 0.75
+alpha = 0.25
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
@@ -85,8 +85,8 @@ for c in range(2):
     w[mask] = R[mask]
     mask = (T > R) & (P < S) & (R - S - T + P != 0.0)
     T = T[mask]
-    P = P[mask]
     R = R[mask]
+    P = P[mask]
     S = S[mask]
     x = (P - S)/(R - S - T + P)
     a2[mask] = x*a2max*(1.0 + c)/2.0

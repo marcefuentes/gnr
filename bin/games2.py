@@ -62,7 +62,7 @@ outer_grid = fig.add_gridspec(2, 2, left=0.15, right=0.9, top=0.9, bottom=0.15)
 grid = outer_grid[0, 0].subgridspec(num, num, wspace=0, hspace=0)
 axs = grid.subplots()
 
-a2 = np.linspace(0.000, a2max, num=npoints)
+a2 = np.linspace(0.0, a2max, num=npoints)
 X, Y = np.meshgrid(a2, a2)
 grey = [0.4, 0.4, 0.4, 1.0]
 red = [1.0, 0.0, 0.0, 1.0]

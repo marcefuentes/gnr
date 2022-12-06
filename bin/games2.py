@@ -85,8 +85,8 @@ for row, given in zip(axs, givens):
         T[mask] = S[mask]
         S[mask] = H
         PD = ((T > R) & (P > S)).astype(int) 
-        SD = ((T > R) & (P < S)).astype(int) 
-        ND = ((T < R) & (P < S)).astype(int) 
+        SD = ((T >= R) & (P <= S)).astype(int) 
+        ND = ((T < R) & (P <= S)).astype(int) 
         Z = PD*1 + SD*2 + ND*3 + 1
         Z = np.tril(Z, k=-1)
         Z = np.ma.masked_where(Z == 0.0, Z)

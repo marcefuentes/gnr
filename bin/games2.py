@@ -147,42 +147,32 @@ for row0, row1, given in zip(axs0, axs1, givens):
         R = fitness(a2[1], a2[1], given, rho)
         P = fitness(a2[0], a2[0], given, rho)
         S = fitness(a2[0], a2[1], given, rho)
+        P0 = P
         Su = fitness(a2[1], a2[2], given, rho)
         if Su > R:
-        #if (T < R) & (P < S):
-            Tu = fitness(a2[2], a2[1], given, rho)
-            Ru = fitness(a2[2], a2[2], given, rho)
-            Pu = fitness(a2[1], a2[1], given, rho)
-            Su = fitness(a2[1], a2[2], given, rho)
-            if (Tu < Ru) & (Pu < Su):
-                x = 1.0
-                weq = Ru
-                rgb = 'orange'
-            elif (Tu > Ru) & (Pu < Su) & (Ru - Su - Tu + Pu != 0.0):
-                x = (Pu - Su)/(Ru - Su - Tu + Pu)
-                weq = (Tu + Su)*x*(1.0 - x) + Ru*x*x + Pu*(1.0 - x)*(1.0 - x)
-                rgb = 'red'
-            else:
-                x = 0.0
-                weq = P
-                rgb = 'black'
-            for a in a2:
-                w.append(fitness(a2[1], a, given, rho)*(1.0 - x) + fitness(a2[2], a, given, rho)*x)   
+            P0 = P
+            T = fitness(a2[2], a2[1], given, rho)
+            R = fitness(a2[2], a2[2], given, rho)
+            P = fitness(a2[1], a2[1], given, rho)
+            S = Su
+        if (T < R) & (P < S):
+            x = 1.0
+            weq = R
+            rgb = 'orange'
+        elif (T > R) & (P < S) & (R - S - T + P != 0.0):
+            x = (P - S)/(R - S - T + P)
+            weq = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
+            rgb = 'red'
+        elif (T > R) & (P > S):
+            x = 0.0
+            weq = P0
+            rgb = 'black'
         else:
-            if (T < R) & (P < S):
-                x = 1.0
-                weq = R
-                rgb = 'orange'
-            elif (T > R) & (P < S) & (R - S - T + P != 0.0):
-                x = (P - S)/(R - S - T + P)
-                weq = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
-                rgb = 'red'
-            else:
-                x = 0.0
-                weq = P
-                rgb = 'black'
-            for a in a2:
-                w.append(fitness(a2[0], a, given, rho)*(1.0 - x) + fitness(a2[1], a, given, rho)*x)   
+            x = 0.0
+            weq = P0
+            rgb = 'cyan'
+        for a in a2:
+            w.append(fitness(a2[0], a, given, rho)*(1.0 - x) + fitness(a2[1], a, given, rho)*x)   
         yaxis = [T, R, P, S]
         ax0.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=2, markersize=3)
         ax0.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))

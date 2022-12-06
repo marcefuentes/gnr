@@ -102,14 +102,14 @@ for ax, given in zip(axs[::every, 0], givens[::every]):
 # Discrete game types
 
 grid = outer_grid[0, 1].subgridspec(num, num, wspace=0, hspace=0)
-axs = grid.subplots()
+axs0 = grid.subplots()
 
 a2 = np.array([0.0, a2max/2.0, a2max])
 X, Y = np.meshgrid(a2, a2)
 xaxis = [1, 2, 3, 4]
 
-for row, given in zip(axs, givens):
-    for ax, rho in zip(row, rhos):
+for row1, given in zip(axs0, givens):
+    for ax1, rho in zip(row1, rhos):
         Z = fitness(X, Y, given, rho)
         R = max(Z[0, 0], Z[1, 1])
         if R == Z[1, 1]:
@@ -129,7 +129,7 @@ for row, given in zip(axs, givens):
             rgb = 'black'
         else:
             rgb = 'cyan'
-        ax.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=2, markersize=3)
+        ax1.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=2, markersize=3)
         R = max(Z[1, 1], Z[2, 2])
         if R == Z[2, 2]:
             T = Z[1, 2]
@@ -148,10 +148,10 @@ for row, given in zip(axs, givens):
             rgb = 'black'
         else:
             rgb = 'cyan'
-        ax.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=2, markersize=3)
-        ax.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))
-        ax.set_box_aspect(1)
-axs[0, 0].set_title('b', fontsize=fslabel, weight='bold')
+        ax1.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=2, markersize=3)
+        ax1.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))
+        ax1.set_box_aspect(1)
+axs0[0, 0].set_title('b', fontsize=fslabel, weight='bold')
 
 # Continuous
 
@@ -187,12 +187,12 @@ givens[0] = 1.0
 # Discrete
 
 grid = outer_grid[1, 1].subgridspec(num, num, wspace=0, hspace=0)
-axs = grid.subplots()
+axs1 = grid.subplots()
 
 a2 = np.linspace(0.0, a2max, num=3)
 
-for row, given in zip(axs, givens):
-    for ax, rho in zip(row, rhos):
+for row1, given in zip(axs1, givens):
+    for ax1, rho in zip(row1, rhos):
         w = []
         T = fitness(a2[1], a2[0], given, rho)
         R = fitness(a2[1], a2[1], given, rho)
@@ -223,13 +223,13 @@ for row, given in zip(axs, givens):
                 weq = P
             for a in a2:
                 w.append(fitness(a2[0], a, given, rho)*(1.0 - x) + fitness(a2[1], a, given, rho)*x)   
-        ax.plot(a2, w, linewidth=2, c=cm.magma(weq/vmax))
-        ax.set(xticks=[], yticks=[], xlim=(0.0, a2max), ylim=(0.0, 2.0))
-        ax.set_facecolor('0.200')
-        ax.set_box_aspect(1)
-axs[0, 0].set_title('d', fontsize=fslabel, weight='bold')
-for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):
-    ax.set_xlabel(round(log_es), fontsize=fstick)
+        ax1.plot(a2, w, linewidth=2, c=cm.magma(weq/vmax))
+        ax1.set(xticks=[], yticks=[], xlim=(0.0, a2max), ylim=(0.0, 2.0))
+        ax1.set_facecolor('0.200')
+        ax1.set_box_aspect(1)
+axs1[0, 0].set_title('d', fontsize=fslabel, weight='bold')
+for ax1, log_es in zip(axs1[-1, ::every], log_ess[::every]):
+    ax1.set_xlabel(round(log_es), fontsize=fstick)
 
 plt.savefig('games.png', dpi=200)
 plt.close()

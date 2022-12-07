@@ -169,10 +169,8 @@ for g, alpha, alphafolder, letterrow in zip(range(3), alphas, alphafolders, lett
         xticklabels = [minx, round((minx + maxx)/2), maxx]
         yticklabels = [miny, (miny + maxy)/2, maxy]
 
-        ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
-        ax.set_yticklabels(yticklabels, fontsize=fstick) 
-        ax.set_xticklabels(xticklabels, fontsize=fstick)
-        ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
+        ax.set(xticks=[], yticks=[], xticklabels=[], yticklabels=[])
+        #ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
         ax.text(0, nr*1.035, letter, fontsize=fslabel, weight='bold')
 
         ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)

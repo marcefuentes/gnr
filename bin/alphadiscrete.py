@@ -3,6 +3,7 @@
 from glob import glob
 from math import log
 import os
+import imageio.v2 as iio
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -10,6 +11,7 @@ import time
 
 start_time = time.perf_counter ()
 
+filename = 'alphadiscrete'
 traits = ['ChooseGrainmean', 'MimicGrainmean']
 traitlabels = ['Game types', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
 folders = ['p', 'r']
@@ -19,6 +21,8 @@ alphas = [0.25, 0.50, 0.75]
 letters = [['a', 'b', 'c'],
             ['d', 'e', 'f'],
             ['g', 'h', 'i']]
+
+movie = False
 
 R1 = 2.0
 R2 = 2.0
@@ -51,7 +55,7 @@ for alphafolder in alphafolders:
 
 df = dfss[0][0]
 ts = df.Time.unique()
-t = ts[-1]
+if movie == False: ts = [ts[-1]]
 givens = np.sort(pd.unique(df.Given))[::-1]
 ess = np.sort(pd.unique(df.ES))
 
@@ -102,6 +106,7 @@ fstick=16 # Tick font size
 
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
+frames = []
 
 fig, axs = plt.subplots(nrows=len(alphas), ncols=len(traits)+1, figsize=(6*len(alphas), 6*(len(traits)+1)))
 
@@ -130,15 +135,23 @@ for axrow, letterrow in zip(axs, letters):
 
 extent = 0, nr, 0, nc
 
-for axrow, Z, dfs in zip(axs, Zs, dfss):
+for axrow, Z in zip(axs, Zs):
     axrow[0].imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=1.0)
-    for ax, df, trait in zip(axrow[1:], dfs, traits):
-        df = df.loc[df.Time == t].copy()
-        df[trait] = 1.0 - df[trait]
-        df_piv = pd.pivot_table(df, values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)
-        ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=1.0)
-
-plt.savefig('alphadiscrete.png', transparent=False)
+for t in ts:
+    for axrow, dfs in zip(axs, dfss):
+        for ax, df, trait in zip(axrow[1:], dfs, traits):
+            df = df.loc[df.Time == t].copy()
+            df[trait] = 1.0 - df[trait]
+            df_piv = pd.pivot_table(df, values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)
+            ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=1.0)
+    if movie:
+        plt.savefig('temp.png', transparent=False)
+        frames.append(iio.imread('temp.png'))
+        os.remove('temp.png')
+    else:
+        plt.savefig(filename + '.png', transparent=False)
+if movie:
+    iio.mimsave(filename + '.gif', frames)
 plt.close()
 
 end_time = time.perf_counter ()

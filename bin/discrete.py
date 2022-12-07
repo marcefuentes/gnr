@@ -11,10 +11,12 @@ import time
 
 start_time = time.perf_counter ()
 
+filename = 'output'
 traits = ['a2Seenmean', 'help', 'wmean', 'ChooseGrainmean', 'MimicGrainmean']
 traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
 traitvmaxs = [1.0, 2.0, 1.5, 1.0, 1.0]
 folders = ['none', 'p', 'r', 'pr', 'p8r']
+alpha = 0.5
 
 letters = [['a', 'b', 'c', 'd', 'e'],
             ['f', 'g', 'h', 'i', 'j'],
@@ -24,9 +26,8 @@ letters = [['a', 'b', 'c', 'd', 'e'],
             ['z', 'aa', 'ab', 'ac', 'ad'],
             ['ae', 'af', 'ag', 'ah', 'ai']]
 
-movie = False
+movie = True
 
-alpha = 0.5
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
@@ -71,6 +72,7 @@ nc = len(rhos)
 RR, GG = np.meshgrid(rhos, givens)
 a20 = np.full([nc, nr], 0.0)
 a2 = a20
+
 w = fitness(a20, a20)
 
 for c in range(2):
@@ -93,7 +95,7 @@ for c in range(2):
     w[mask] = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
 
 helps = a2*R2*GG 
-Zs = [a2, helps, w, a20, a20]
+Zs = [a2, helps, w, a2*0, a2*0]
 
 # Figure
 
@@ -108,8 +110,8 @@ fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(
 fig.supxlabel('Substitutability of $\it{A}$', x=0.513, y=0.05, fontsize=fslabel*1.25)
 fig.supylabel('Partner\'s share of $\it{A}$', x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
 
-extent = 0, nr, 0, nc
-givens[0] = 1.0
+# Plots
+
 minx = round(log(ess[0], 2))
 maxx = round(log(ess[-1], 2))
 miny = givens[-1]
@@ -117,33 +119,34 @@ maxy = givens[0]
 xticklabels = [minx, round((minx + maxx)/2), maxx]
 yticklabels = [miny, (miny + maxy)/2, maxy]
 
-for axrow in axs:
-    for ax in axrow:
-        ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
-    axrow[0].set_yticklabels(yticklabels, fontsize=fstick) 
-for ax in axs[-1]:
-    ax.set_xticklabels(xticklabels, fontsize=fstick)
-for ax, traitlabel in zip(axs[0], traitlabels):
-    ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 for axrow, letterrow in zip(axs, letters):
-    for ax, letter in zip(axrow, letterrow):
+    for ax, letter, traitlabel in zip(axrow, letterrow, traitlabels):
         ax.text(0, nr*1.035, letter, fontsize=fslabel, weight='bold')
+        ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
+        if ax.get_subplotspec().is_first_row():
+            ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
+        if ax.get_subplotspec().is_last_row():
+            ax.set_xticklabels(xticklabels, fontsize=fstick)
+        if ax.get_subplotspec().is_first_col():
+            ax.set_yticklabels(yticklabels, fontsize=fstick) 
 
+extent = 0, nr, 0, nc
+
+for ax, Z, traitvmax in zip(axs[0], Zs, traitvmaxs):
+    ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
 for t in ts:
-    # Row 0: theory (no cooperation)
-    for ax, Z, traitvmax in zip(axs[0], Zs, traitvmaxs):
-        ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
-    # Remaining rows: simulations 
     for axrow, df in zip(axs[1:], dfs):
         for ax, trait, traitvmax in zip(axrow, traits, traitvmaxs):
             df_piv = pd.pivot_table(df.loc[df.Time == t], values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)
             ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
-    plt.savefig('output.png', transparent=False)
     if movie:
-        frames.append(iio.imread('output.png'))
-        os.remove('output.png')
+        plt.savefig('temp.png', transparent=False)
+        frames.append(iio.imread('temp.png'))
+        os.remove('temp.png')
+    else:
+        plt.savefig(filename + '.png', transparent=False)
 if movie:
-    iio.mimsave('output.gif', frames)
+    iio.mimsave(filename + '.gif', frames)
 plt.close()
 
 end_time = time.perf_counter ()

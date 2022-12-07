@@ -34,7 +34,7 @@ npoints = 128
 vmax = 1.5
 limmatrix = a2max
 
-num = 21    # Number of subplot rows and columns
+num = 11    # Number of subplot rows and columns
 every = int(num/2)
 minlog_es = -5.0
 maxlog_es = 5.0
@@ -133,12 +133,12 @@ for g, alpha, alphafolder, letterrow in zip(range(3), alphas, alphafolders, lett
             yaxis = [T, R, P, S]
             ax0.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=1, markersize=2)
             ax0.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))
-            ax0.set_facecolor('0.200')
-            ax0.set_box_aspect(1)
+            #ax0.set_facecolor('0.200')
+            #ax0.set_box_aspect(1)
             ax1.plot(a2, w, linewidth=2, c=cm.magma(weq/vmax))
             ax1.set(xticks=[], yticks=[], xlim=(0.0, a2max), ylim=(0.0, 2.0))
-            ax1.set_facecolor('0.200')
-            ax1.set_box_aspect(1)
+            #ax1.set_facecolor('0.200')
+            #ax1.set_box_aspect(1)
         for ax, given in zip(axs0[::every, 0], givens[::every]):
             ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
     for ax0, given in zip(axs0[::every, 0], givens[::every]):

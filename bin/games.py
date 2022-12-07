@@ -9,14 +9,14 @@ import time
 
 start_time = time.perf_counter ()
 
-alpha = 0.750
+alpha = 0.50
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
 a2max = 1.0
 npoints = 128
 if alpha == 0.50:
-    vmax = 1.0
+    vmax = 1.2
     limmatrix = a2max/2.0
 else:
     vmax = 1.5
@@ -102,9 +102,9 @@ for row, given in zip(axs, givens):
         Z = np.ma.masked_where(Z == 0.0, Z)
         Z = Z - 1
         cmap = cm.get_cmap(mycmap).copy()
-        cmap.set_bad(color='0.200')
+        cmap.set_bad(color='white')
         ax.imshow(Z, origin='lower', cmap=cmap, vmin=0, vmax=3)
-        ax.set_facecolor('0.200')
+        #ax.set_facecolor('0.200')
         ax.set(xticks=[], yticks=[], xlim=(-9, npoints + 5), ylim=(-5, npoints + 9))
 
 axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
@@ -132,8 +132,8 @@ for row, given, a2eqs in zip(axs, givens, a2eqss):
         weq = fitness(a2eq, a2eq, given, rho)
         ax.plot(a2s, w, linewidth=2, c=cm.magma(weq/vmax))
         ax.set(xticks=[], yticks=[], xlim=(0.0, a2max), ylim=(0.0, 2.0))
-        ax.set_facecolor('0.200')
-        ax.set_box_aspect(1)
+        #ax.set_facecolor('0.200')
+        #ax.set_box_aspect(1)
 
 axs[0, 0].set_title('c', fontsize=fslabel, weight='bold')
 for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):
@@ -193,12 +193,12 @@ for row0, row1, given in zip(axs0, axs1, givens):
         yaxis = [T, R, P, S]
         ax0.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=2, markersize=3)
         ax0.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))
-        ax0.set_facecolor('0.200')
-        ax0.set_box_aspect(1)
+        #ax0.set_facecolor('0.200')
+        #ax0.set_box_aspect(1)
         ax1.plot(a2, w, linewidth=2, c=cm.magma(weq/vmax))
         ax1.set(xticks=[], yticks=[], xlim=(0.0, a2max), ylim=(0.0, 2.0))
-        ax1.set_facecolor('0.200')
-        ax1.set_box_aspect(1)
+        #ax1.set_facecolor('0.200')
+        #ax1.set_box_aspect(1)
 
 axs0[0, 0].set_title('b', fontsize=fslabel, weight='bold')
 axs1[0, 0].set_title('d', fontsize=fslabel, weight='bold')

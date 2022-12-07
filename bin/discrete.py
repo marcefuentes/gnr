@@ -11,7 +11,10 @@ import time
 
 start_time = time.perf_counter ()
 
-movie = False
+traits = ['a2Seenmean', 'help', 'wmean', 'ChooseGrainmean', 'MimicGrainmean']
+traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
+traitvmaxs = [1.0, 2.0, 1.5, 1.0, 1.0]
+folders = ['none', 'p', 'r', 'pr', 'p8r']
 
 letters = [['a', 'b', 'c', 'd', 'e'],
             ['f', 'g', 'h', 'i', 'j'],
@@ -21,12 +24,9 @@ letters = [['a', 'b', 'c', 'd', 'e'],
             ['z', 'aa', 'ab', 'ac', 'ad'],
             ['ae', 'af', 'ag', 'ah', 'ai']]
 
-traits = ['a2Seenmean', 'help', 'wmean', 'ChooseGrainmean', 'MimicGrainmean']
-traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
-traitvmaxs = [1.0, 2.0, 1.5, 1.0, 1.0]
-folders = ['none', 'p', 'r', 'pr', 'p8r']
+movie = False
 
-alpha = 0.75
+alpha = 0.5
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
@@ -46,6 +46,8 @@ def fitness(x, y):
     w[mask] = pow(alpha*pow(q1[mask], RR[mask]) + (1.0 - alpha)*pow(q2[mask], RR[mask]), 1.0/RR[mask])
     return w
 
+# Simulations
+
 dfs = []
 for folder in folders:
     df = pd.concat(map(pd.read_csv, glob(os.path.join(folder, '*.csv'))), ignore_index=True)
@@ -54,30 +56,30 @@ for folder in folders:
     df['help'] = df.a2Seenmean*R2*df.Given
     dfs.append(df)
 
-ts = dfs[0].Time.unique()
+df = dfs[0]
+ts = df.Time.unique()
 if movie == False: ts = [ts[-1]]
+givens = np.sort(pd.unique(df.Given))[::-1]
+ess = np.sort(pd.unique(df.ES))
 
-# No cooperation
+# Theory
 
 b = a2max/a1max
-givens = np.sort(pd.unique(dfs[0].loc[df.Time == ts[0]].Given))[::-1]
-givens[0] = 0.9999999
-ess = np.sort(pd.unique(dfs[0][df.Time == ts[0]].ES))
 rhos = 1.0 - 1.0/ess
 nr = len(givens)
 nc = len(rhos)
 RR, GG = np.meshgrid(rhos, givens)
-a2Ds = np.full([nc, nr], 0.0)
-a2 = a2Ds
-w = fitness(a2Ds, a2Ds)
+a20 = np.full([nc, nr], 0.0)
+a2 = a20
+w = fitness(a20, a20)
 
 for c in range(2):
-    a2Ds = a2Ds + a2max*c/2.0
-    a2Cs = a2Ds + a2max/2.0
-    T = fitness(a2Cs, a2Ds)
-    R = fitness(a2Cs, a2Cs)
-    P = fitness(a2Ds, a2Ds)
-    S = fitness(a2Ds, a2Cs)
+    a20 = a20 + a2max*c/2.0
+    a21 = a20 + a2max/2.0
+    T = fitness(a21, a20)
+    R = fitness(a21, a21)
+    P = fitness(a20, a20)
+    S = fitness(a20, a21)
     mask = (T < R) & (P < S)
     a2[mask] = a2max*(1.0 + c)/2.0
     w[mask] = R[mask]
@@ -91,7 +93,7 @@ for c in range(2):
     w[mask] = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
 
 helps = a2*R2*GG 
-Zs = [a2, helps, w, np.zeros([nc, nr]), np.zeros([nc, nr])]
+Zs = [a2, helps, w, a20, a20]
 
 # Figure
 

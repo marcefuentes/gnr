@@ -10,15 +10,15 @@ import time
 
 start_time = time.perf_counter ()
 
-letters = [['a', 'b', 'c'],
-            ['d', 'e', 'f'],
-            ['g', 'h', 'i']]
-
 traits = ['ChooseGrainmean', 'MimicGrainmean']
 traitlabels = ['Game types', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
 folders = ['p', 'r']
 alphafolders = ['alpha25', 'alpha50', 'alpha75']
 alphas = [0.25, 0.50, 0.75]
+
+letters = [['a', 'b', 'c'],
+            ['d', 'e', 'f'],
+            ['g', 'h', 'i']]
 
 R1 = 2.0
 R2 = 2.0
@@ -48,21 +48,23 @@ for alphafolder in alphafolders:
         df = pd.concat(map(pd.read_csv, glob(os.path.join(alphafolder, 'discrete', folder, '*.csv'))), ignore_index=True)
         dfs.append(df)
     dfss.append(dfs)
-ts = dfss[0][0].Time.unique()
+
+df = dfss[0][0]
+ts = df.Time.unique()
 t = ts[-1]
+givens = np.sort(pd.unique(df.Given))[::-1]
+ess = np.sort(pd.unique(df.ES))
 
 # Theory
 
 b = a2max/a1max
-givens = np.sort(pd.unique(dfss[0][0].Given))[::-1]
-ess = np.sort(pd.unique(dfss[0][0].ES))
 rhos = 1.0 - 1.0/ess
 nr = len(givens)
 nc = len(rhos)
 RR, GG = np.meshgrid(rhos, givens)
 a20 = np.full([nc, nr], 0.0)
-a21 = np.full([nc, nr], a2max/2.0)
-a22 = np.full([nc, nr], a2max)
+a21 = a20 + a2max/2.0
+a22 = a20 + a2max
 
 Zs = []
 

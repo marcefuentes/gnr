@@ -36,11 +36,13 @@ def fitness(x, y, given, rho):
     q2 = y*R2*(1.0 - given) + x*R2*given
     if rho == 0.0:
         w = q1*q2
-        w[w>0.0] = pow(q1[w>0.0], alpha)*pow(q2[w>0.0], 1.0 - alpha)
+        mask = (w > 0.0)
+        w[mask] = pow(q1[mask], alpha)*pow(q2[mask], 1.0 - alpha)
     elif rho < 0.0:
         w = q1*q2
-        w[w>0.0] = alpha*pow(q1[w>0.0], rho) + (1.0 - alpha)*pow(q2[w>0.0], rho)
-        w[w>0.0] = pow(w[w>0.0], 1.0/rho)
+        mask = (w > 0.0)
+        w[mask] = alpha*pow(q1[mask], rho) + (1.0 - alpha)*pow(q2[mask], rho)
+        w[mask] = pow(w[mask], 1.0/rho)
     else:
         w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
     return w

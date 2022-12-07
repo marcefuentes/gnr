@@ -16,9 +16,9 @@ start_time = time.perf_counter ()
 
 movie = False
 
-letters = [['a', 'b', 'c', 'd'],
-            ['e', 'f', 'g', 'h'],
-            ['i', 'j', 'k', 'l']]
+letters = [['a', 'b', 'c'],
+            ['d', 'e', 'f'],
+            ['g', 'h', 'i']]
 traits = ['ChooseGrainmean', 'MimicGrainmean']
 traitlabels = ['Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
 traitvmaxs = [1.0, 1.0]
@@ -30,11 +30,9 @@ R1 = 2.0
 R2 = 2.0
 a1max = 1.0
 a2max = 1.0
-npoints = 128
 vmax = 1.5
-limmatrix = a2max
 
-num = 11    # Number of subplot rows and columns
+num = 21    # Number of subplot rows and columns
 every = int(num/2)
 minlog_es = -5.0
 maxlog_es = 5.0
@@ -60,7 +58,7 @@ def fitness(x, y, alpha, given, rho):
         w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
     return w
 
-# No cooperation
+# Theory
 
 b = a2max/a1max
 givens = np.linspace(maxgiven, mingiven, num=num)
@@ -79,25 +77,24 @@ yellow = [1.0, 0.7, 0.1, 1.0]
 red = [1.0, 0.2, 0.2, 1.0]
 blue = [0.2, 0.0, 0.4, 1.0]
 
-fig = plt.figure(figsize=(16, 12)) 
+fig = plt.figure(figsize=(12, 12)) 
 fig.supxlabel('Substitutability of $\it{A}$', x=0.52, y=0.06, fontsize=fslabel*1.35)
 fig.supylabel('Partner\'s share of $\it{A}$', x=0.06, y=0.53, fontsize=fslabel*1.35, ha='center')
 
-outer_grid = fig.add_gridspec(nrows=len(alphas), ncols=4, left=0.15, right=0.9, top=0.9, bottom=0.15)
+outer_grid = fig.add_gridspec(nrows=len(alphas), ncols=3, left=0.15, right=0.9, top=0.9, bottom=0.15)
 
 for g, alpha, alphafolder, letterrow in zip(range(3), alphas, alphafolders, letters):
     grid = outer_grid[g, 0].subgridspec(num, num, wspace=0, hspace=0)
-    axs0 = grid.subplots()
-    grid = outer_grid[g, 1].subgridspec(num, num, wspace=0, hspace=0)
-    axs1 = grid.subplots()
+    axs = grid.subplots()
+
+    # Theory
 
     givens[0] = 1.0
     a2 = np.linspace(0.0, a2max, num=3)
     xaxis = [1, 2, 3, 4]
 
-    for row0, row1, given in zip(axs0, axs1, givens):
-        for ax0, ax1, rho in zip(row0, row1, rhos):
-            w = []
+    for row, given in zip(axs, givens):
+        for ax, rho in zip(row, rhos):
             T = fitness(a2[1], a2[0], alpha, given, rho)
             R = fitness(a2[1], a2[1], alpha, given, rho)
             P = fitness(a2[0], a2[0], alpha, given, rho)
@@ -117,45 +114,33 @@ for g, alpha, alphafolder, letterrow in zip(range(3), alphas, alphafolders, lett
                 S = Su
             if (T < R) & (P < S):
                 x = 1.0
-                weq = R
                 rgb = yellow
             elif (T >= R) & (P <= S) & (R - S - T + P != 0.0):
                 x = (P - S)/(R - S - T + P)
-                weq = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
                 rgb = red
             elif (T > R) & (P > S):
                 x = 0.0
-                weq = P
                 rgb = blue
             else:
                 x = 0.0
-                weq = P
                 rgb = 'cyan'
-            for a in a2:
-                w.append(fitness(a2[0], a, alpha, given, rho)*(1.0 - x) + fitness(a2[1], a, alpha, given, rho)*x)   
             yaxis = [T, R, P, S]
-            ax0.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=1, markersize=2)
-            ax0.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))
-            #ax0.set_facecolor('0.200')
-            #ax0.set_box_aspect(1)
-            ax1.plot(a2, w, linewidth=2, c=cm.magma(weq/vmax))
-            ax1.set(xticks=[], yticks=[], xlim=(0.0, a2max), ylim=(0.0, 2.0))
-            #ax1.set_facecolor('0.200')
-            #ax1.set_box_aspect(1)
-        for ax, given in zip(axs0[::every, 0], givens[::every]):
+            ax.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=1, markersize=2)
+            ax.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))
+        for ax, given in zip(axs[::every, 0], givens[::every]):
             ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
-    for ax0, given in zip(axs0[::every, 0], givens[::every]):
-        ax0.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
+    for ax, given in zip(axs[::every, 0], givens[::every]):
+        ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
     if g == 2:
-        for ax0, ax1, log_es in zip(axs0[-1, ::every], axs1[-1, ::every], log_ess[::every]):
-            ax0.set_xlabel(round(log_es), fontsize=fstick)
-            ax1.set_xlabel(round(log_es), fontsize=fstick)
+        for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):
+            ax.set_xlabel(round(log_es), fontsize=fstick)
 
-    axs0[0, 0].set_title(letterrow[0], fontsize=fslabel, weight='bold')
-    axs1[0, 0].set_title(letterrow[1], fontsize=fslabel, weight='bold')
+    axs[0, 0].set_title(letterrow[0], fontsize=fslabel, weight='bold')
 
-    for h, folder, trait, traitlabel, traitvmax, letter in zip(range(2), folders, traits, traitlabels, traitvmaxs, letterrow[2:]):
-        grid = outer_grid[g, h+2].subgridspec(1, 1)
+    # Simulations
+
+    for h, folder, trait, traitlabel, traitvmax, letter in zip(range(2), folders, traits, traitlabels, traitvmaxs, letterrow[1:]):
+        grid = outer_grid[g, h+1].subgridspec(1, 1)
         ax = grid.subplots()
 
         df = pd.concat(map(pd.read_csv, glob(os.path.join(alphafolder, 'discrete', folder, '*.csv'))), ignore_index=True)

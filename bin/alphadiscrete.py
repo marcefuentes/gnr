@@ -74,7 +74,10 @@ fstick=16 # Tick font size
 
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
-frames = []
+
+yellow = [1.0, 0.7, 0.1, 1.0]
+red = [1.0, 0.2, 0.2, 1.0]
+blue = [0.2, 0.0, 0.4, 1.0]
 
 fig = plt.figure(figsize=(16, 12)) 
 fig.supxlabel('Substitutability of $\it{A}$', x=0.52, y=0.06, fontsize=fslabel*1.35)
@@ -115,15 +118,15 @@ for g, alpha, alphafolder, letterrow in zip(range(3), alphas, alphafolders, lett
             if (T < R) & (P < S):
                 x = 1.0
                 weq = R
-                rgb = 'orange'
+                rgb = yellow
             elif (T >= R) & (P <= S) & (R - S - T + P != 0.0):
                 x = (P - S)/(R - S - T + P)
                 weq = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
-                rgb = 'red'
+                rgb = red
             elif (T > R) & (P > S):
                 x = 0.0
                 weq = P
-                rgb = 'blue'
+                rgb = blue
             else:
                 x = 0.0
                 weq = P

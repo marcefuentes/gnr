@@ -31,8 +31,6 @@ R1 = 2.0
 R2 = 2.0
 a1max = 1.0
 a2max = 1.0
-#DeathRate = pow(2, -7)
-#GrainCost = pow(2, -14)
 
 def fitness(x, y):
     q1 = (a2max - y)*R1/b
@@ -63,8 +61,8 @@ if movie == False: ts = [ts[-1]]
 
 b = a2max/a1max
 givens = np.sort(pd.unique(dfs[0].loc[df.Time == ts[0]].Given))[::-1]
-ess = np.sort(pd.unique(dfs[0][df.Time == ts[0]].ES))
 givens[0] = 0.9999999
+ess = np.sort(pd.unique(dfs[0][df.Time == ts[0]].ES))
 rhos = 1.0 - 1.0/ess
 nr = len(givens)
 nc = len(rhos)
@@ -94,36 +92,6 @@ for c in range(2):
 
 helps = a2*R2*GG 
 Zs = [a2, helps, w, np.zeros([nc, nr]), np.zeros([nc, nr])]
-
-# Reciprocity
-
-#t = np.full([nc, nr], 0.0)
-#r = 1.0/(1.0 - pow(1.0 - DeathRate, 2))
-#c = -GrainCost*log(0.5)
-#c = 0.0
-#mask = T - P == 0.0
-#x[mask] = 1.0
-#t[mask] = 0.0
-#denominator = P*S + P*T - S*T + 2*P*P*r - P*P - P*P*r*r - 2*P*S*r - 2*P*T*r + 2*S*T*r + P*S*r*r + P*T*r*r - S*T*r*r
-#mask = denominator != 0.0
-#x[mask] = (P[mask]*S[mask] + P[mask]*T[mask] - S[mask]*T[mask] + 2*P[mask]*P[mask]*r - P[mask]*P[mask] - P[mask]*P[mask]*r*r - P[mask]*R[mask]*r - 2*P[mask]*S[mask]*r - P[mask]*T[mask]*r + R[mask]*S[mask]*r + S[mask]*T[mask]*r - P[mask]*c*r + T[mask]*c*r + P[mask]*R[mask]*r*r + P[mask]*S[mask]*r*r - R[mask]*S[mask]*r*r - R[mask]*c*r*r + S[mask]*c*r*r)/denominator[mask]
-#t[mask] = (r*(P[mask]*R[mask] - P[mask]*T[mask] - R[mask]*S[mask] + S[mask]*T[mask] - P[mask]*R[mask]*r + P[mask]*T[mask]*r + R[mask]*S[mask]*r - S[mask]*T[mask]*r + P[mask]*c*r + R[mask]*c*r - S[mask]*c*r - T[mask]*c*r))/denominator[mask]
-#mask = x < 0.0
-#x[mask] = 0.0
-#mask = t < 0.0
-#t[mask] = 0.0
-#mask = x > 1.0
-#x[mask] = 1.0
-#mask = t > 1.0
-#t[mask] = 1.0
-#y = 1.0 - x - t
-#a2 = (x + t*(x + t) + t*y/r)*a2max/2.0
-#helps = a2*R2*GG 
-#wA = R*(x + t) + S*y
-#wT = (R - c)*(x + t) + (S - c)*y/r + (P - c)*y*(r - 1.0)/r
-#wB = T*x + T*t/r + P*t*(r - 1.0)/r + P*y
-#w = wA*x + wT*t + wB*y 
-#ZRs = [a2, helps, w, np.zeros([nc, nr]), t]
 
 # Figure
 

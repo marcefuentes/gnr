@@ -34,7 +34,7 @@ npoints = 128
 vmax = 1.5
 limmatrix = a2max
 
-num = 11    # Number of subplot rows and columns
+num = 21    # Number of subplot rows and columns
 every = int(num/2)
 minlog_es = -5.0
 maxlog_es = 5.0
@@ -69,21 +69,20 @@ rhos = 1.0 - 1.0/pow(2, log_ess)
 
 # Figure properties
 
-fslabel=36 # Label font size
-fstick=24 # Tick font size
+fslabel=24 # Label font size
+fstick=16 # Tick font size
 
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 frames = []
 
-fig = plt.figure(figsize=(12, 12)) 
-#fig.supxlabel('Substitutability of $\it{A}$', x=0.513, y=0.05, fontsize=fslabel*1.25)
-#fig.supylabel('Partner\'s share of $\it{A}$', x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
+fig = plt.figure(figsize=(16, 12)) 
+fig.supxlabel('Substitutability of $\it{A}$', x=0.52, y=0.06, fontsize=fslabel*1.35)
+fig.supylabel('Partner\'s share of $\it{A}$', x=0.06, y=0.53, fontsize=fslabel*1.35, ha='center')
 
-outer_grid = fig.add_gridspec(len(alphas), 3, left=0.15, right=0.9, top=0.9, bottom=0.15)
+outer_grid = fig.add_gridspec(nrows=len(alphas), ncols=4, left=0.15, right=0.9, top=0.9, bottom=0.15)
 
 for g, alpha, alphafolder, letterrow in zip(range(3), alphas, alphafolders, letters):
-    print(alpha)
     grid = outer_grid[g, 0].subgridspec(num, num, wspace=0, hspace=0)
     axs0 = grid.subplots()
     grid = outer_grid[g, 1].subgridspec(num, num, wspace=0, hspace=0)
@@ -132,7 +131,7 @@ for g, alpha, alphafolder, letterrow in zip(range(3), alphas, alphafolders, lett
             for a in a2:
                 w.append(fitness(a2[0], a, alpha, given, rho)*(1.0 - x) + fitness(a2[1], a, alpha, given, rho)*x)   
             yaxis = [T, R, P, S]
-            ax0.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=2, markersize=3)
+            ax0.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=1, markersize=2)
             ax0.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))
             ax0.set_facecolor('0.200')
             ax0.set_box_aspect(1)
@@ -140,16 +139,22 @@ for g, alpha, alphafolder, letterrow in zip(range(3), alphas, alphafolders, lett
             ax1.set(xticks=[], yticks=[], xlim=(0.0, a2max), ylim=(0.0, 2.0))
             ax1.set_facecolor('0.200')
             ax1.set_box_aspect(1)
+        for ax, given in zip(axs0[::every, 0], givens[::every]):
+            ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
+    for ax0, given in zip(axs0[::every, 0], givens[::every]):
+        ax0.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
+    if g == 2:
+        for ax0, ax1, log_es in zip(axs0[-1, ::every], axs1[-1, ::every], log_ess[::every]):
+            ax0.set_xlabel(round(log_es), fontsize=fstick)
+            ax1.set_xlabel(round(log_es), fontsize=fstick)
 
-    axs0[0, 0].set_title('b', fontsize=fslabel, weight='bold')
-    axs1[0, 0].set_title('d', fontsize=fslabel, weight='bold')
-    for ax1, log_es in zip(axs1[-1, ::every], log_ess[::every]):
-        ax1.set_xlabel(round(log_es), fontsize=fstick)
+    axs0[0, 0].set_title(letterrow[0], fontsize=fslabel, weight='bold')
+    axs1[0, 0].set_title(letterrow[1], fontsize=fslabel, weight='bold')
 
-    grid = outer_grid[g, 2].subgridspec(1, 2)
-    axs = grid.subplots()
+    for h, folder, trait, traitlabel, traitvmax, letter in zip(range(2), folders, traits, traitlabels, traitvmaxs, letterrow[2:]):
+        grid = outer_grid[g, h+2].subgridspec(1, 1)
+        ax = grid.subplots()
 
-    for ax, folder, trait, traitlabel, traitvmax, letter in zip(axs, folders, traits, traitlabels, traitvmaxs, letterrow):
         df = pd.concat(map(pd.read_csv, glob(os.path.join(alphafolder, 'discrete', folder, '*.csv'))), ignore_index=True)
         ts = df.Time.unique()
         t = ts[-1]
@@ -166,13 +171,13 @@ for g, alpha, alphafolder, letterrow in zip(range(3), alphas, alphafolders, lett
         maxx = round(log(sess[-1], 2))
         miny = sgivens[-1]
         maxy = sgivens[0]
-        xticklabels = [minx, round((minx + maxx)/2), maxx]
-        yticklabels = [miny, (miny + maxy)/2, maxy]
-
         ax.set(xticks=[], yticks=[], xticklabels=[], yticklabels=[])
-        #ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
+        if g == 2:
+            xticklabels = [minx, round((minx + maxx)/2), maxx]
+            ax.set_xticks([0, nc/2, nc])
+            ax.set_xticklabels(xticklabels, fontsize=fstick)
+            ax.xaxis.set_tick_params(length=0, width=0)
         ax.text(0, nr*1.035, letter, fontsize=fslabel, weight='bold')
-
         ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
 
 plt.savefig('alphadiscrete.png', transparent=False)

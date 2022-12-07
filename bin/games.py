@@ -9,7 +9,7 @@ import time
 
 start_time = time.perf_counter ()
 
-alpha = 0.50
+alpha = 0.750
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0

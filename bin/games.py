@@ -15,6 +15,12 @@ R2 = 2.0
 a1max = 1.0
 a2max = 1.0
 npoints = 128
+if alpha == 0.50:
+    vmax = 1.0
+    limmatrix = a2max/2.0
+else:
+    vmax = 1.5
+    limmatrix = a2max
 
 num = 11    # Number of subplot rows and columns
 every = int(num/2)
@@ -61,13 +67,13 @@ outer_grid = fig.add_gridspec(2, 2, left=0.15, right=0.9, top=0.9, bottom=0.15)
 grid = outer_grid[0, 0].subgridspec(num, num, wspace=0, hspace=0)
 axs = grid.subplots()
 
-a2 = np.linspace(0.000, 0.5, num=npoints)
+a2 = np.linspace(0.0, limmatrix, num=npoints)
 X, Y = np.meshgrid(a2, a2)
-grey = [0.4, 0.4, 0.4, 1.0]
-red = [1.0, 0.0, 0.0, 1.0]
-orange = [1.0, 165/265, 0.0, 1.0]
-cyan = [0.0, 1.0, 1.0, 1.0]
-mycolors = [cyan, grey, red, orange]
+#grey = [0.4, 0.4, 0.4, 1.0]
+#red = [1.0, 0.0, 0.0, 1.0]
+#orange = [1.0, 165/265, 0.0, 1.0]
+#cyan = [0.0, 1.0, 1.0, 1.0]
+mycolors = ['cyan', 'blue', 'red', 'orange']
 mycmap = ListedColormap(mycolors)
 
 for row, given in zip(axs, givens):
@@ -76,52 +82,30 @@ for row, given in zip(axs, givens):
         R = fitness(Y, Y, given, rho)
         P = fitness(X, X, given, rho)
         S = fitness(X, Y, given, rho)
+        mask = (R < P)
+        H = R[mask]
+        R[mask] = P[mask]
+        P[mask] = H
+        H = T[mask]
+        T[mask] = S[mask]
+        S[mask] = H
         PD = ((T > R) & (P > S)).astype(int) 
-        SD = ((T > R) & (P < S)).astype(int) 
+        SD = ((T >= R) & (P <= S)).astype(int) 
         ND = ((T < R) & (P < S)).astype(int) 
         Z = PD*1 + SD*2 + ND*3 + 1
         Z = np.tril(Z, k=-1)
         Z = np.ma.masked_where(Z == 0.0, Z)
         Z = Z - 1
         cmap = cm.get_cmap(mycmap).copy()
-        cmap.set_bad(color='white')
+        cmap.set_bad(color='0.200')
         ax.imshow(Z, origin='lower', cmap=cmap, vmin=0, vmax=3)
+        ax.set_facecolor('0.200')
         ax.set(xticks=[], yticks=[], xlim=(-9, npoints + 5), ylim=(-5, npoints + 9))
 axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
 for ax, given in zip(axs[::every, 0], givens[::every]):
     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 
-# Discrete game types
-
-grid = outer_grid[0, 1].subgridspec(num, num, wspace=0, hspace=0)
-axs = grid.subplots()
-
-a2 = np.array([a2max/2.0, 0.0])
-X, Y = np.meshgrid(a2, a2)
-xaxis = [1, 2, 3, 4]
-
-for row, given in zip(axs, givens):
-    for ax, rho in zip(row, rhos):
-        Z = fitness(X, Y, given, rho)
-        T = Z[1, 0]
-        R = Z[0, 0]
-        P = Z[1, 1]
-        S = Z[0, 1]
-        yaxis = [T, R, P, S]
-        if (T < R) and (P < S):
-            rgb = 'orange'
-        elif (T > R) and (P < S):
-            rgb = 'red'
-        elif (T > R) and (P > S) and (2.0*R > T + S):
-            rgb = 'black'
-        else:
-            rgb = 'cyan'
-        ax.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=2, markersize=3)
-        ax.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))
-        ax.set_box_aspect(1)
-axs[0, 0].set_title('b', fontsize=fslabel, weight='bold')
-
-# Continuous
+# Continuous fitness curves
 
 grid = outer_grid[1, 0].subgridspec(num, num, wspace=0, hspace=0)
 axs = grid.subplots()
@@ -140,7 +124,7 @@ for row, given, a2eqs in zip(axs, givens, a2eqss):
         for a2 in a2s:
             w.append(fitness(a2eq, a2, given, rho))
         weq = fitness(a2eq, a2eq, given, rho)
-        ax.plot(a2s, w, linewidth=2, c=cm.magma(weq))
+        ax.plot(a2s, w, linewidth=2, c=cm.magma(weq/vmax))
         ax.set(xticks=[], yticks=[], xlim=(0.0, a2max), ylim=(0.0, 2.0))
         ax.set_facecolor('0.200')
         ax.set_box_aspect(1)
@@ -150,35 +134,69 @@ for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):
 for ax, given in zip(axs[::every, 0], givens[::every]):
     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 
-givens[0] = 1.0
-
 # Discrete
 
+grid = outer_grid[0, 1].subgridspec(num, num, wspace=0, hspace=0)
+axs0 = grid.subplots()
 grid = outer_grid[1, 1].subgridspec(num, num, wspace=0, hspace=0)
-axs = grid.subplots()
+axs1 = grid.subplots()
 
+givens[0] = 1.0
 a2 = np.linspace(0.0, a2max, num=3)
+xaxis = [1, 2, 3, 4]
 
-for row, given in zip(axs, givens):
-    for ax, rho in zip(row, rhos):
+for row0, row1, given in zip(axs0, axs1, givens):
+    for ax0, ax1, rho in zip(row0, row1, rhos):
+        w = []
         T = fitness(a2[1], a2[0], given, rho)
         R = fitness(a2[1], a2[1], given, rho)
         P = fitness(a2[0], a2[0], given, rho)
         S = fitness(a2[0], a2[1], given, rho)
-        x = 0.0
-        if (T < R) & (P < S): x = 1.0
-        elif (T > R) & (P < S) & (R - S - T + P != 0.0): x = (P - S)/(R - S - T + P)
-        weq = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
-        w = []
+        if R < P:
+            H = T
+            T = S
+            S = H
+            H = R
+            R = P
+            P = H
+        Su = fitness(a2[1], a2[2], given, rho)
+        if Su > R:
+            T = fitness(a2[2], a2[1], given, rho)
+            R = fitness(a2[2], a2[2], given, rho)
+            P = fitness(a2[1], a2[1], given, rho)
+            S = Su
+        if (T < R) & (P < S):
+            x = 1.0
+            weq = R
+            rgb = 'orange'
+        elif (T >= R) & (P <= S) & (R - S - T + P != 0.0):
+            x = (P - S)/(R - S - T + P)
+            weq = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
+            rgb = 'red'
+        elif (T > R) & (P > S):
+            x = 0.0
+            weq = P
+            rgb = 'blue'
+        else:
+            x = 0.0
+            weq = P
+            rgb = 'cyan'
         for a in a2:
             w.append(fitness(a2[0], a, given, rho)*(1.0 - x) + fitness(a2[1], a, given, rho)*x)   
-        ax.plot(a2, w, linewidth=2, c=cm.magma(weq))
-        ax.set(xticks=[], yticks=[], xlim=(0.0, a2max), ylim=(0.0, 2.0))
-        ax.set_facecolor('0.200')
-        ax.set_box_aspect(1)
-axs[0, 0].set_title('d', fontsize=fslabel, weight='bold')
-for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):
-    ax.set_xlabel(round(log_es), fontsize=fstick)
+        yaxis = [T, R, P, S]
+        ax0.plot(xaxis, yaxis, color=rgb, marker='o', markerfacecolor='white', linewidth=2, markersize=3)
+        ax0.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))
+        ax0.set_facecolor('0.200')
+        ax0.set_box_aspect(1)
+        ax1.plot(a2, w, linewidth=2, c=cm.magma(weq/vmax))
+        ax1.set(xticks=[], yticks=[], xlim=(0.0, a2max), ylim=(0.0, 2.0))
+        ax1.set_facecolor('0.200')
+        ax1.set_box_aspect(1)
+
+axs0[0, 0].set_title('b', fontsize=fslabel, weight='bold')
+axs1[0, 0].set_title('d', fontsize=fslabel, weight='bold')
+for ax1, log_es in zip(axs1[-1, ::every], log_ess[::every]):
+    ax1.set_xlabel(round(log_es), fontsize=fstick)
 
 plt.savefig('games.png', dpi=200)
 plt.close()

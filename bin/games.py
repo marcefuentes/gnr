@@ -42,6 +42,7 @@ def fitness(x, y, given, rho):
         w = q1*q2
         mask = (w > 0.0)
         w[mask] = alpha*pow(q1[mask], rho) + (1.0 - alpha)*pow(q2[mask], rho)
+        mask = (w > 0.0)
         w[mask] = pow(w[mask], 1.0/rho)
     else:
         w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
@@ -52,13 +53,15 @@ givens = np.linspace(maxgiven, mingiven, num=num)
 log_ess = np.linspace(minlog_es, maxlog_es, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
 
+# Figure properties
+
 fslabel = 26 # Label font size
 fstick = 18 # Tick font size
 
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-fig = plt.figure(figsize=(12, 12), constrained_layout=False) 
+fig = plt.figure(figsize=(12, 12)) 
 fig.supylabel("Partner's share of $\it{A}$", x=0.04, y=0.520, fontsize=fslabel)
 fig.supxlabel("Substitutability of $\it{A}$", x=0.525, y=0.05, fontsize=fslabel)
 
@@ -103,6 +106,7 @@ for row, given in zip(axs, givens):
         ax.imshow(Z, origin='lower', cmap=cmap, vmin=0, vmax=3)
         ax.set_facecolor('0.200')
         ax.set(xticks=[], yticks=[], xlim=(-9, npoints + 5), ylim=(-5, npoints + 9))
+
 axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
 for ax, given in zip(axs[::every, 0], givens[::every]):
     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
@@ -130,6 +134,7 @@ for row, given, a2eqs in zip(axs, givens, a2eqss):
         ax.set(xticks=[], yticks=[], xlim=(0.0, a2max), ylim=(0.0, 2.0))
         ax.set_facecolor('0.200')
         ax.set_box_aspect(1)
+
 axs[0, 0].set_title('c', fontsize=fslabel, weight='bold')
 for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):
     ax.set_xlabel(round(log_es), fontsize=fstick)

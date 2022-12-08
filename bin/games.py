@@ -116,8 +116,7 @@ a2eqss = a2max/(1.0 + Q*b)
 
 for row, given, a2eqs in zip(axs, givens, a2eqss):
     for ax, rho, a2eq in zip(row, rhos, a2eqs):
-        a2eqlist = np.full((npoints), a2eq)
-        w = fitness(a2eqlist, a2s, given, rho)
+        w = fitness(a2eq, a2s, given, rho)
         weq = fitness(a2eq, a2eq, given, rho)
         ax.plot(a2s, w, linewidth=3, c=cm.magma(weq/vmax))
         ax.set(xticks=[], yticks=[], xlim=(0.0, a2max), ylim=(0.0, 2.0))

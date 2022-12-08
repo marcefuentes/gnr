@@ -140,7 +140,7 @@ xaxis = [1, 2, 3, 4]
 
 for row0, row1, given in zip(axs0, axs1, givens):
     for ax0, ax1, rho in zip(row0, row1, rhos):
-        w = []
+        a2low = np.full((3), 0.0)
         T = fitness(a2[1], a2[0], given, rho)
         R = fitness(a2[1], a2[1], given, rho)
         P = fitness(a2[0], a2[0], given, rho)
@@ -154,6 +154,7 @@ for row0, row1, given in zip(axs0, axs1, givens):
             P = H
         Su = fitness(a2[1], a2[2], given, rho)
         if Su > R:
+            a2low = a2low + a2max/2.0
             T = fitness(a2[2], a2[1], given, rho)
             R = fitness(a2[2], a2[2], given, rho)
             P = fitness(a2[1], a2[1], given, rho)
@@ -174,8 +175,9 @@ for row0, row1, given in zip(axs0, axs1, givens):
             x = 0.0
             weq = P
             rgb = 0.0
-        for a in a2:
-            w.append(fitness(a2[0], a, given, rho)*(1.0 - x) + fitness(a2[1], a, given, rho)*x)   
+        print(a2low)
+        print(a2)
+        w = fitness(a2low, a2, given, rho)*(1.0 - x) + fitness(a2low + a2max/2.0, a2, given, rho)*x   
         yaxis = [T, R, P, S]
         ax0.plot(xaxis, yaxis, c=cm.magma(rgb), marker='o', markerfacecolor='white', linewidth=3, markersize=3)
         ax0.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))

@@ -67,19 +67,25 @@ fig.supxlabel("Substitutability of $\it{A}$", x=0.525, y=0.05, fontsize=fslabel)
 
 outer_grid = fig.add_gridspec(2, 2, left=0.15, right=0.9, top=0.9, bottom=0.15)
 
-# Continuous game types
-
 grid = outer_grid[0, 0].subgridspec(num, num, wspace=0, hspace=0)
-axs = grid.subplots()
+ax0s = grid.subplots()
+grid = outer_grid[1, 0].subgridspec(num, num, wspace=0, hspace=0)
+ax1s = grid.subplots()
 
-a2 = np.linspace(0.0, limmatrix, num=npoints)
-X, Y = np.meshgrid(a2, a2)
+givens[0] = 0.999999
+Rq = R2/R1
+a2s = np.linspace(0.0, a2max, num=npoints)
+X, Y = np.meshgrid(a2s, a2s)
 Z = np.full([npoints, npoints], 0.0)
+RR, GG = np.meshgrid(rhos, givens)
+TT = b*Rq*(1.0 - GG)
+Q = Rq*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
+a2eqss = a2max/(1.0 + Q*b)
 
 extent = 0, npoints, 0, npoints
 
-for row, given in zip(axs, givens):
-    for ax, rho in zip(row, rhos):
+for row0, row1, given, a2eqs in zip(ax0s, ax1s, givens, a2eqss):
+    for ax0, ax1, rho, a2eq in zip(row0, row1, rhos, a2eqs):
         T = fitness(Y, X, given, rho)
         R = fitness(Y, Y, given, rho)
         P = fitness(X, X, given, rho)
@@ -94,40 +100,24 @@ for row, given in zip(axs, givens):
         Z[(T > R) & (P > S)] = 0.1
         Z[(T >= R) & (P <= S)] = 0.5
         Z[(T < R) & (P < S)] = 0.9
-        Z = np.tril(Z, k=-1)
+        Z[(T == R) & (P == R)] = 1.0
+        #Z = np.tril(Z, k=-1)
         Z = np.ma.masked_where(Z == 0.0, Z)
-        ax.imshow(Z, origin='lower', extent=extent, cmap='magma', vmin=0, vmax=1)
-        ax.set(xticks=[], yticks=[], xlim=(-11, npoints + 7), ylim=(-7, npoints + 11))
-
-axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
-for ax, given in zip(axs[::every, 0], givens[::every]):
-    ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
-
-# Continuous fitness curves
-
-grid = outer_grid[1, 0].subgridspec(num, num, wspace=0, hspace=0)
-axs = grid.subplots()
-
-givens[0] = 0.999999
-Rq = R2/R1
-a2s = np.linspace(0.0, a2max, num=npoints)
-RR, GG = np.meshgrid(rhos, givens)
-TT = b*Rq*(1.0 - GG)
-Q = Rq*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
-a2eqss = a2max/(1.0 + Q*b)
-
-for row, given, a2eqs in zip(axs, givens, a2eqss):
-    for ax, rho, a2eq in zip(row, rhos, a2eqs):
+        ax0.imshow(Z, origin='lower', extent=extent, cmap='magma', vmin=0, vmax=1)
+        ax0.set(xticks=[], yticks=[], xlim=(-11, npoints + 11), ylim=(-11, npoints + 11))
         w = fitness(a2eq, a2s, given, rho)
         weq = fitness(a2eq, a2eq, given, rho)
-        ax.plot(a2s, w, linewidth=3, c=cm.magma(weq/vmax))
-        ax.set(xticks=[], yticks=[], xlim=(0.0, a2max), ylim=(0.0, 2.0))
+        ax1.plot(a2s, w, linewidth=3, c=cm.magma(weq/vmax))
+        ax1.set(xticks=[], yticks=[], xlim=(0.0, a2max), ylim=(0.0, 2.0))
 
-axs[0, 0].set_title('c', fontsize=fslabel, weight='bold')
-for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):
-    ax.set_xlabel(round(log_es), fontsize=fstick)
-for ax, given in zip(axs[::every, 0], givens[::every]):
-    ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
+ax0s[0, 0].set_title('a', fontsize=fslabel, weight='bold')
+for ax0, given in zip(ax0s[::every, 0], givens[::every]):
+    ax0.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
+ax1s[0, 0].set_title('c', fontsize=fslabel, weight='bold')
+for ax1, log_es in zip(ax1s[-1, ::every], log_ess[::every]):
+    ax1.set_xlabel(round(log_es), fontsize=fstick)
+for ax1, given in zip(ax1s[::every, 0], givens[::every]):
+    ax1.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 
 # Discrete
 

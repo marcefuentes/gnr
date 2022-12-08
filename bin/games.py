@@ -76,6 +76,8 @@ a2 = np.linspace(0.0, limmatrix, num=npoints)
 X, Y = np.meshgrid(a2, a2)
 Z = np.full([npoints, npoints], 0.0)
 
+extent = 0, npoints, 0, npoints
+
 for row, given in zip(axs, givens):
     for ax, rho in zip(row, rhos):
         T = fitness(Y, X, given, rho)
@@ -94,7 +96,7 @@ for row, given in zip(axs, givens):
         Z[(T < R) & (P < S)] = 0.9
         Z = np.tril(Z, k=-1)
         Z = np.ma.masked_where(Z == 0.0, Z)
-        ax.imshow(Z, origin='lower', cmap='magma', vmin=0, vmax=1)
+        ax.imshow(Z, origin='lower', extent=extent, cmap='magma', vmin=0, vmax=1)
         ax.set(xticks=[], yticks=[], xlim=(-11, npoints + 7), ylim=(-7, npoints + 11))
 
 axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')

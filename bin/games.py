@@ -53,7 +53,7 @@ givens = np.linspace(maxgiven, mingiven, num=num)
 log_ess = np.linspace(minlog_es, maxlog_es, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
 
-# Figure properties
+# Figure
 
 fslabel = 26 # Label font size
 fstick = 18 # Tick font size
@@ -94,7 +94,6 @@ for row, given in zip(axs, givens):
         Z[(T < R) & (P < S)] = 0.9
         Z = np.tril(Z, k=-1)
         Z = np.ma.masked_where(Z == 0.0, Z)
-        #cmap.set_bad(color='white')
         ax.imshow(Z, origin='lower', cmap='magma', vmin=0, vmax=1)
         ax.set(xticks=[], yticks=[], xlim=(-11, npoints + 7), ylim=(-7, npoints + 11))
 

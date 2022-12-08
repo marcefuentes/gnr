@@ -130,15 +130,15 @@ for ax, given in zip(axs[::every, 0], givens[::every]):
 # Discrete
 
 grid = outer_grid[0, 1].subgridspec(num, num, wspace=0, hspace=0)
-axs0 = grid.subplots()
+ax0s = grid.subplots()
 grid = outer_grid[1, 1].subgridspec(num, num, wspace=0, hspace=0)
-axs1 = grid.subplots()
+ax1s = grid.subplots()
 
 givens[0] = 1.0
 a2 = np.linspace(0.0, a2max, num=3)
 xaxis = [1, 2, 3, 4]
 
-for row0, row1, given in zip(axs0, axs1, givens):
+for row0, row1, given in zip(ax0s, ax1s, givens):
     for ax0, ax1, rho in zip(row0, row1, rhos):
         a2low = a2[0]
         T = fitness(a2[1], a2[0], given, rho)
@@ -182,9 +182,9 @@ for row0, row1, given in zip(axs0, axs1, givens):
         ax1.plot(a2, w, c=cm.magma(weq/vmax), linewidth=3)
         ax1.set(xticks=[], yticks=[], xlim=(0.0, a2max), ylim=(0.0, 2.0))
 
-axs0[0, 0].set_title('b', fontsize=fslabel, weight='bold')
-axs1[0, 0].set_title('d', fontsize=fslabel, weight='bold')
-for ax1, log_es in zip(axs1[-1, ::every], log_ess[::every]):
+ax0s[0, 0].set_title('b', fontsize=fslabel, weight='bold')
+ax1s[0, 0].set_title('d', fontsize=fslabel, weight='bold')
+for ax1, log_es in zip(ax1s[-1, ::every], log_ess[::every]):
     ax1.set_xlabel(round(log_es), fontsize=fstick)
 
 plt.savefig('games.png', dpi=200)

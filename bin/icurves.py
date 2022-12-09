@@ -72,15 +72,12 @@ fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-fig = plt.figure(figsize=(12, 6), constrained_layout=False) 
+fig = plt.figure(figsize=(6, 6), constrained_layout=False) 
 fig.supylabel("Partner's share of $\it{A}$", x=0.05, y=0.520, fontsize=fslabel)
 fig.supxlabel("Substitutability of $\it{A}$", x=0.525, fontsize=fslabel)
 
-outer_grid = fig.add_gridspec(1, 2, left=0.15, right=0.9, top=0.86, bottom=0.176)
+grid = fig.add_gridspec(nrows=num, ncols=num, left=0.15, right=0.9, top=0.86, bottom=0.176, wspace=0, hspace=0)
 
-# Indifference curves and continuous budget line
-
-grid = outer_grid[0, 0].subgridspec(num, num, wspace=0, hspace=0)
 axs = grid.subplots()
 
 Rq = R2/R1
@@ -100,45 +97,10 @@ for row, given, q2s, ws in zip(axs, givens, q2ss, wss):
         ax.plot(q1_ic, icces(q1_ic, weq, rho), linewidth=2, c=cm.magma(weq))
         ax.set(xticks=[], yticks=[], xlim=(0.0, a1max*R1), ylim=(0.0, a2max*R2))
         ax.set_box_aspect(1)
-axs[0, 0].set_title('a', fontsize=fslabel, weight='bold')
 for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):
     ax.set_xlabel(round(log_es), fontsize=fstick)
 for ax, given in zip(axs[::every, 0], givens[::every]):
     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
-
-# Indifference curves and discrete budget line
-
-grid = outer_grid[0, 1].subgridspec(num, num, wspace=0, hspace=0)
-axs = grid.subplots()
-
-a2Ds = np.full([num, num], 0.0)
-a2Cs = np.full([num, num], a2max/2.0)
-T = fitness(a2Cs, a2Ds)
-R = fitness(a2Cs, a2Cs)
-P = fitness(a2Ds, a2Ds)
-S = fitness(a2Ds, a2Cs)
-xss = np.full([num, num], 0.0)
-mask = (T < R) & (P < S)
-xss[mask] = 1.0
-mask = (T > R) & (P < S) & (R - S - T + P != 0.0)
-xss[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
-q2ss = xss*R2*a2max/2.0
-wss = (T + S)*xss*(1.0 - xss) + R*xss*xss + P*(1.0 - xss)*(1.0 - xss)
-
-for row, given, xs, q2s, ws in zip(axs, givens, xss, q2ss, wss):
-    budget0 = q2_budget*(1.0 - given)
-    budget5 = budget0 + (a2max/2.0)*R2*given
-    for ax, rho, ics, xeq, q2eq, weq in zip(row, rhos, icss, xs, q2s, ws):
-        for ic in ics:
-            ax.plot(q1_ic, ic, c='0.850')
-        ax.plot(q1_budget, budget0, c='green', linewidth=0.5, marker='o', alpha=1.0-xeq)
-        ax.plot(q1_budget, budget5, c='green', linewidth=0.5, marker='o', alpha=xeq)
-        ax.plot(q1_ic, icces(q1_ic, weq, rho), linewidth=2, c=cm.magma(weq))
-        ax.set(xticks=[], yticks=[], xlim=(0.0, a1max*R1), ylim=(0.0, a2max*R2))
-        ax.set_box_aspect(1)
-axs[0, 0].set_title('b', fontsize=fslabel, weight='bold')
-for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):
-    ax.set_xlabel(round(log_es), fontsize=fstick)
 
 plt.savefig('icurves.png', dpi=100)
 plt.close()

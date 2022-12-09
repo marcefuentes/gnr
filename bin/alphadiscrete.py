@@ -117,10 +117,8 @@ fig.supylabel('Partner\'s share of $\it{A}$', x=0.06, y=0.53, fontsize=fslabel*1
 
 minx = round(log(ess[0], 2))
 maxx = round(log(ess[-1], 2))
-miny = givens[-1]
-maxy = givens[0]
 xticklabels = [minx, round((minx + maxx)/2), maxx]
-yticklabels = [miny, (miny + maxy)/2, maxy]
+yticklabels = [0.0, 0.5, 1.0]
 
 for axrow, letterrow in zip(axs, letters):
     for ax, letter, traitlabel in zip(axrow, letterrow, traitlabels):

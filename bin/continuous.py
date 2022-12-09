@@ -11,21 +11,23 @@ import time
 
 start_time = time.perf_counter ()
 
-movie = False
+filename = 'output'
+traits = ['a2Seenmean', 'help', 'wmean', 'ChooseGrainmean', 'MimicGrainmean']
+traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
+traitvmaxs = [1.0, 2.0, 1.5, 1.0, 1.0]
+folders = ['none', 'p', 'r', 'pr', 'p8r']
+alpha = 0.75
 
 letters = [['a', 'b', 'c', 'd', 'e'],
             ['f', 'g', 'h', 'i', 'j'],
             ['k', 'l', 'm', 'n', 'o'],
             ['p', 'q', 'r', 's', 't'],
             ['u', 'v', 'w', 'x', 'y'],
-            ['z', 'aa', 'ab', 'ac', 'ad']]
+            ['z', 'aa', 'ab', 'ac', 'ad'],
+            ['ae', 'af', 'ag', 'ah', 'ai']]
 
-traits = ['a2Seenmean', 'help', 'wmean', 'ChooseGrainmean', 'MimicGrainmean']
-traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
-traitvmaxs = [0.5, 1.0, 1.0, 1.0, 1.0]
-folders = ['none', 'r', 'p', 'pr', 'p8r']
+movie = False
 
-alpha = 0.5
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
@@ -45,6 +47,8 @@ def fitness(x, y):
     w[mask] = pow(alpha*pow(q1[mask], RR[mask]) + (1.0 - alpha)*pow(q2[mask], RR[mask]), 1.0/RR[mask])
     return w
 
+# Simulations
+
 dfs = []
 for folder in folders:
     df = pd.concat(map(pd.read_csv, glob(os.path.join(folder, '*.csv'))), ignore_index=True)
@@ -53,24 +57,30 @@ for folder in folders:
     df['help'] = df.a2Seenmean*R2*df.Given
     dfs.append(df)
 
-ts = dfs[0].Time.unique()
+df = dfs[0]
+ts = df.Time.unique()
 if movie == False: ts = [ts[-1]]
+givens = np.sort(pd.unique(df.Given))[::-1]
+ess = np.sort(pd.unique(df.ES))
 
-Rq = R2/R1
+# Theory
+
 b = a2max/a1max
-givens = np.sort(pd.unique(dfs[0].loc[df.Time == ts[0]].Given))[::-1]
+Rq = R2/R1
 givens[0] = 0.9999999
-ess = np.sort(pd.unique(dfs[0][df.Time == ts[0]].ES))
 rhos = 1.0 - 1.0/ess
 nr = len(givens)
 nc = len(rhos)
 RR, GG = np.meshgrid(rhos, givens)
+
 TT = b*Rq*(1.0 - GG)
 QQ = Rq*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
 a2 = a2max/(1.0 + QQ*b)
 helps = a2*R2*GG
 w = fitness(a2, a2)
 Zs = [a2, helps, w, np.zeros([nr, nc]), np.zeros([nr, nc])]
+
+# Figure
 
 fslabel=36 # Label font size
 fstick=24 # Tick font size
@@ -82,49 +92,41 @@ fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(
 fig.supxlabel('Substitutability of $\it{A}$', x=0.513, y=0.05, fontsize=fslabel*1.25)
 fig.supylabel('Partner\'s share of $\it{A}$', x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
 
-# All plots
+# Plots
 
-extent = 0, nr, 0, nc
-givens[0] = 1.0
 minx = round(log(ess[0], 2))
 maxx = round(log(ess[-1], 2))
-miny = givens[-1]
-maxy = givens[0]
 xticklabels = [minx, round((minx + maxx)/2), maxx]
-yticklabels = [miny, (miny + maxy)/2, maxy]
-
-for axrow in axs:
-    for ax in axrow:
-        ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
-    axrow[0].set_yticklabels(yticklabels, fontsize=fstick) 
-for ax in axs[-1]:
-    ax.set_xticklabels(xticklabels, fontsize=fstick)
-for ax, traitlabel in zip(axs[0], traitlabels):
-    ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
+yticklabels = [0.0, 0.5, 1.0]
 for axrow, letterrow in zip(axs, letters):
-    for ax, letter in zip(axrow, letterrow):
+    for ax, letter, traitlabel in zip(axrow, letterrow, traitlabels):
         ax.text(0, nr*1.035, letter, fontsize=fslabel, weight='bold')
+        ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
+        if ax.get_subplotspec().is_first_row():
+            ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
+        if ax.get_subplotspec().is_last_row():
+            ax.set_xticklabels(xticklabels, fontsize=fstick)
+        if ax.get_subplotspec().is_first_col():
+            ax.set_yticklabels(yticklabels, fontsize=fstick) 
 
-# Top row of plots
+extent = 0, nr, 0, nc
 
 for ax, Z, traitvmax in zip(axs[0], Zs, traitvmaxs):
     ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
-
-# Remaining rows of plots
-
-frames = []
-
 for t in ts:
     for axrow, df in zip(axs[1:], dfs):
         for ax, trait, traitvmax in zip(axrow, traits, traitvmaxs):
             df_piv = pd.pivot_table(df.loc[df.Time == t], values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)
             ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
-    plt.savefig('output.png', transparent=False)
+    frames = []
     if movie:
-        frames.append(iio.imread('output.png'))
-        os.remove('output.png')
+        plt.savefig('temp.png', transparent=False)
+        frames.append(iio.imread('temp.png'))
+        os.remove('temp.png')
+    else:
+        plt.savefig(filename + '.png', transparent=False)
 if movie:
-    iio.mimsave('output.gif', frames)
+    iio.mimsave(filename + '.gif', frames)
 plt.close()
 
 end_time = time.perf_counter ()

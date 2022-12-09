@@ -103,7 +103,6 @@ fslabel=36 # Label font size
 fstick=24 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
-frames = []
 
 fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+1)))
 
@@ -114,10 +113,8 @@ fig.supylabel('Partner\'s share of $\it{A}$', x=0.05, y=0.493, fontsize=fslabel*
 
 minx = round(log(ess[0], 2))
 maxx = round(log(ess[-1], 2))
-miny = givens[-1]
-maxy = givens[0]
 xticklabels = [minx, round((minx + maxx)/2), maxx]
-yticklabels = [miny, (miny + maxy)/2, maxy]
+yticklabels = [0.0, 0.5, 1.0]
 
 for axrow, letterrow in zip(axs, letters):
     for ax, letter, traitlabel in zip(axrow, letterrow, traitlabels):
@@ -139,6 +136,7 @@ for t in ts:
         for ax, trait, traitvmax in zip(axrow, traits, traitvmaxs):
             df_piv = pd.pivot_table(df.loc[df.Time == t], values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)
             ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
+    frames = []
     if movie:
         plt.savefig('temp.png', transparent=False)
         frames.append(iio.imread('temp.png'))

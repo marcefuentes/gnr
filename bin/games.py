@@ -14,7 +14,7 @@ start_time = time.perf_counter ()
 
 movie = True
 if movie:
-    alphas = np.linspace(0.1, 0.9, num=9)
+    alphas = np.linspace(0.1, 0.9, num=27)
     frames = []
 else:
     alphas = np.linspace(0.5, 0.5, num=1)
@@ -102,6 +102,7 @@ for alpha in alphas:
 
     Q = Rq*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
     a2eqss = a2max/(1.0 + Q*b)
+
     for row0, row1, given, a2eqs in zip(ax0s, ax1s, givens, a2eqss):
         for ax0, ax1, rho, a2eq in zip(row0, row1, rhos, a2eqs):
             T = fitness(Y, X, given, rho)

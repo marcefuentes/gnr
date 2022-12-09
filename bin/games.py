@@ -27,7 +27,6 @@ a2max = 1.0
 npoints = 128
 #vmax = 1.2
 vmax = 1.5
-limmatrix = a2max
 
 num = 11    # Number of subplot rows and columns
 every = int(num/2)

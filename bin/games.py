@@ -35,7 +35,7 @@ maxlog_es = 5.0
 mingiven = 0.0
 maxgiven = 1.0
 
-def fitness(x, y, given, rho):
+def fitness(x, y):
     if isinstance(x, float): x = np.array([x])
     if isinstance(y, float): y = np.array([y])
     q1 = (a2max - y)*R1/b
@@ -104,10 +104,10 @@ for alpha in alphas:
 
     for row0, row1, given, a2eqs in zip(ax0s, ax1s, givens, a2eqss):
         for ax0, ax1, rho, a2eq in zip(row0, row1, rhos, a2eqs):
-            T = fitness(Y, X, given, rho)
-            R = fitness(Y, Y, given, rho)
-            P = fitness(X, X, given, rho)
-            S = fitness(X, Y, given, rho)
+            T = fitness(Y, X)
+            R = fitness(Y, Y)
+            P = fitness(X, X)
+            S = fitness(X, Y)
             mask = (R < P)
             H = R[mask]
             R[mask] = P[mask]
@@ -123,8 +123,8 @@ for alpha in alphas:
             Z = np.ma.masked_where(Z == 0.0, Z)
             ax0.imshow(Z, origin='lower', extent=extent, cmap='magma', vmin=0, vmax=1)
             ax0.set(xticks=[], yticks=[], xlim=(-11, npoints + 11), ylim=(-11, npoints + 11))
-            w = fitness(a2eq, a2s, given, rho)
-            weq = fitness(a2eq, a2eq, given, rho)
+            w = fitness(a2eq, a2s)
+            weq = fitness(a2eq, a2eq)
             ax1.plot(a2s, w, linewidth=3, c=cm.magma(weq/vmax))
             ax1.set(xticks=[], yticks=[], xlim=(0.0, a2max), ylim=(0.0, 2.0))
 
@@ -149,10 +149,10 @@ for alpha in alphas:
     for row0, row1, given in zip(ax0s, ax1s, givens):
         for ax0, ax1, rho in zip(row0, row1, rhos):
             a2low = a2[0]
-            T = fitness(a2[1], a2[0], given, rho)
-            R = fitness(a2[1], a2[1], given, rho)
-            P = fitness(a2[0], a2[0], given, rho)
-            S = fitness(a2[0], a2[1], given, rho)
+            T = fitness(a2[1], a2[0])
+            R = fitness(a2[1], a2[1])
+            P = fitness(a2[0], a2[0])
+            S = fitness(a2[0], a2[1])
             if R < P:
                 H = T
                 T = S
@@ -160,12 +160,12 @@ for alpha in alphas:
                 H = R
                 R = P
                 P = H
-            Su = fitness(a2[1], a2[2], given, rho)
+            Su = fitness(a2[1], a2[2])
             if Su > R:
                 a2low = a2[1]
-                T = fitness(a2[2], a2[1], given, rho)
-                R = fitness(a2[2], a2[2], given, rho)
-                P = fitness(a2[1], a2[1], given, rho)
+                T = fitness(a2[2], a2[1])
+                R = fitness(a2[2], a2[2])
+                P = fitness(a2[1], a2[1])
                 S = Su
             if (T < R) & (P < S):
                 x = 1.0
@@ -183,7 +183,7 @@ for alpha in alphas:
                 x = 0.0
                 weq = P
                 rgb = 0.0
-            w = fitness(a2low, a2, given, rho)*(1.0 - x) + fitness(a2low + a2max/2.0, a2, given, rho)*x   
+            w = fitness(a2low, a2)*(1.0 - x) + fitness(a2low + a2max/2.0, a2)*x   
             yaxis = [T, R, P, S]
             ax0.plot(xaxis, yaxis, c=cm.magma(rgb), marker='o', markerfacecolor='white', linewidth=3, markersize=3)
             ax0.set(xticks=[], yticks=[], xlim=(0, 5), ylim=(0.0, 2.0))

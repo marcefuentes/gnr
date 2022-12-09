@@ -5,6 +5,7 @@ import os
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
+from math import log
 from matplotlib import cm
 from matplotlib.colors import ListedColormap
 import numpy as np
@@ -14,7 +15,7 @@ start_time = time.perf_counter ()
 
 movie = True
 if movie:
-    log_ess = np.linspace(-5.0, 5.0, num=3)
+    log_ess = np.linspace(-5.0, 5.0, num=11)
     frames = []
 else:
     log_ess = np.linspace(0.5, 0.5, num=1)
@@ -35,8 +36,8 @@ plt.rcParams['ps.fonttype'] = 42
 
 num = 11    # Number of subplot rows and columns
 every = int(num/2)
-minalpha = 0.0
-maxalpha = 1.0
+minalpha = 0.1
+maxalpha = 0.9
 mingiven = 0.0
 maxgiven = 1.0
 
@@ -91,7 +92,7 @@ for rho in rhos:
 
     outer_grid = fig.add_gridspec(2, 2, left=0.15, right=0.9, top=0.9, bottom=0.15)
 
-    if movie: fig.text(0.93, 0.02, f'rho = {rho}', fontsize=fstick, color='grey', ha='right')
+    if movie: fig.text(0.93, 0.02, f'log_es = {-log(1-rho)/log(2)}', fontsize=fstick, color='grey', ha='right')
 
     # Continuous
 
@@ -100,11 +101,8 @@ for rho in rhos:
     grid = outer_grid[1, 0].subgridspec(num, num, wspace=0, hspace=0)
     ax1s = grid.subplots()
 
-    mask = (AA == 0.0)
-    a2eqss[mask] = a2eqss[mask] + a2max
-    mask = (AA > 0.0) & (AA < 1.0)
-    Q[mask] = Rq*pow(TT[mask]*(1.0 - AA[mask])/AA[mask], 1.0/(rho - 1.0))
-    a2eqss[mask] = a2max/(1.0 + Q[mask]*b)
+    Q = Rq*pow(TT*(1.0 - AA)/AA, 1.0/(rho - 1.0))
+    a2eqss = a2max/(1.0 + Q*b)
 
     for row0, row1, given, a2eqs in zip(ax0s, ax1s, givens, a2eqss):
         for ax0, ax1, alpha, a2eq in zip(row0, row1, alphas, a2eqs):

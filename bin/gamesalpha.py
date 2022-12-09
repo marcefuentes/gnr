@@ -14,7 +14,7 @@ start_time = time.perf_counter ()
 
 movie = True
 if movie:
-    log_ess = np.linspace(-5.0, 5.0, num=11)
+    log_ess = np.linspace(-5.0, 5.0, num=3)
     frames = []
 else:
     log_ess = np.linspace(0.5, 0.5, num=1)
@@ -27,6 +27,11 @@ a2max = 1.0
 npoints = 128
 #vmax = 1.2
 vmax = 1.5
+
+fslabel = 26 # Label font size
+fstick = 18 # Tick font size
+plt.rcParams['pdf.fonttype'] = 42
+plt.rcParams['ps.fonttype'] = 42
 
 num = 11    # Number of subplot rows and columns
 every = int(num/2)
@@ -59,20 +64,6 @@ givens = np.linspace(maxgiven, mingiven, num=num)
 alphas = np.linspace(minalpha, maxalpha, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
 
-# Figure
-
-fslabel = 26 # Label font size
-fstick = 18 # Tick font size
-
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
-
-fig = plt.figure(figsize=(12, 12)) 
-fig.supylabel("Partner's share of $\it{A}$", x=0.04, y=0.520, fontsize=fslabel)
-fig.supxlabel("Relative Value of $\it{B}$", x=0.525, y=0.05, fontsize=fslabel)
-
-outer_grid = fig.add_gridspec(2, 2, left=0.15, right=0.9, top=0.9, bottom=0.15)
-
 # Continuous
 
 givens[0] = 0.999999
@@ -93,6 +84,12 @@ a2 = np.linspace(0.0, a2max, num=3)
 xaxis = [1, 2, 3, 4]
 
 for rho in rhos:
+
+    fig = plt.figure(figsize=(12, 12)) 
+    fig.supylabel("Partner's share of $\it{A}$", x=0.04, y=0.520, fontsize=fslabel)
+    fig.supxlabel("Relative value of $\it{B}$", x=0.525, y=0.05, fontsize=fslabel)
+
+    outer_grid = fig.add_gridspec(2, 2, left=0.15, right=0.9, top=0.9, bottom=0.15)
 
     if movie: fig.text(0.93, 0.02, f'rho = {rho}', fontsize=fstick, color='grey', ha='right')
 

@@ -12,7 +12,7 @@ import time
 
 start_time = time.perf_counter ()
 
-movie = True
+movie = False
 if movie:
     alphas = np.linspace(0.1, 0.9, num=27)
     frames = []

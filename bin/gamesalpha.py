@@ -94,6 +94,8 @@ xaxis = [1, 2, 3, 4]
 
 for rho in rhos:
 
+    if movie: fig.text(0.93, 0.02, f'rho = {rho}', fontsize=fstick, color='grey', ha='right')
+
     # Continuous
 
     grid = outer_grid[0, 0].subgridspec(num, num, wspace=0, hspace=0)
@@ -101,10 +103,10 @@ for rho in rhos:
     grid = outer_grid[1, 0].subgridspec(num, num, wspace=0, hspace=0)
     ax1s = grid.subplots()
 
+    mask = (AA == 0.0)
+    a2eqss[mask] = a2eqss[mask] + a2max
     mask = (AA > 0.0) & (AA < 1.0)
     Q[mask] = Rq*pow(TT[mask]*(1.0 - AA[mask])/AA[mask], 1.0/(rho - 1.0))
-    a2eqss[AA == 0.0] = a2max
-    mask = (AA > 0.0) & (AA < 1.0)
     a2eqss[mask] = a2max/(1.0 + Q[mask]*b)
 
     for row0, row1, given, a2eqs in zip(ax0s, ax1s, givens, a2eqss):

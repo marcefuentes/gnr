@@ -14,7 +14,7 @@ start_time = time.perf_counter ()
 
 movie = False
 if movie:
-    alphas = np.linspace(0.1, 0.9, num=27)
+    alphas = np.linspace(0.0, 1.0, num=11)
     frames = []
 else:
     alphas = np.linspace(0.5, 0.5, num=1)
@@ -82,6 +82,8 @@ X, Y = np.meshgrid(a2s, a2s)
 Z = np.full([npoints, npoints], 0.0)
 RR, GG = np.meshgrid(rhos, givens)
 TT = b*Rq*(1.0 - GG)
+Q = np.full([num, num], 0.0)
+a2eqss = np.full([num, num], 0.0)
 
 extent = 0, npoints, 0, npoints
 
@@ -92,6 +94,8 @@ xaxis = [1, 2, 3, 4]
 
 for alpha in alphas:
 
+    if movie: fig.text(0.93, 0.02, f'alpha = {alpha}', fontsize=fstick, color='grey', ha='right')
+
     # Continuous
 
     grid = outer_grid[0, 0].subgridspec(num, num, wspace=0, hspace=0)
@@ -99,8 +103,11 @@ for alpha in alphas:
     grid = outer_grid[1, 0].subgridspec(num, num, wspace=0, hspace=0)
     ax1s = grid.subplots()
 
-    Q = Rq*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
-    a2eqss = a2max/(1.0 + Q*b)
+    if alpha == 0.0:
+        a2eqss = a2eqss + a2max
+    if (alpha > 0.0) & (alpha < 1.0): 
+        Q = Rq*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
+        a2eqss = a2max/(1.0 + Q*b)
 
     for row0, row1, given, a2eqs in zip(ax0s, ax1s, givens, a2eqss):
         for ax0, ax1, rho, a2eq in zip(row0, row1, rhos, a2eqs):

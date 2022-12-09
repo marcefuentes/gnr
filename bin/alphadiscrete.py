@@ -29,7 +29,7 @@ R2 = 2.0
 a1max = 1.0
 a2max = 1.0
 
-def fitness(x, y, alpha):
+def fitness(x, y):
     q1 = (a2max - y)*R1/b
     q2 = y*R2*(1.0 - GG) + x*R2*GG
     w = q1*q2
@@ -73,14 +73,14 @@ a22 = a20 + a2max
 Zs = []
 
 for alpha in alphas:
-    T = fitness(a21, a20, alpha)
-    R = fitness(a21, a21, alpha)
-    P = fitness(a20, a20, alpha)
-    S = fitness(a20, a21, alpha)
-    Tu = fitness(a22, a21, alpha)
-    Ru = fitness(a22, a22, alpha)
-    Pu = fitness(a21, a21, alpha)
-    Su = fitness(a21, a22, alpha)
+    T = fitness(a21, a20)
+    R = fitness(a21, a21)
+    P = fitness(a20, a20)
+    S = fitness(a20, a21)
+    Tu = fitness(a22, a21)
+    Ru = fitness(a22, a22)
+    Pu = fitness(a21, a21)
+    Su = fitness(a21, a22)
     mask = (R < P)
     H = T[mask]
     T[mask] = S[mask]

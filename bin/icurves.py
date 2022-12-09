@@ -39,7 +39,7 @@ def fitness(x, y):
     w[mask] = pow(alpha*pow(q1[mask], RR[mask]) + (1.0 - alpha)*pow(q2[mask], RR[mask]), 1.0/RR[mask])
     return w
 
-def icces(q, w, rho):
+def icces(q, w):
     if rho == 0.0:
         q2 = np.piecewise(q, [q == 0.0, q > 0.0], [1000.0, lambda i: pow(w/pow(i, alpha), 1.0/(1.0 - alpha))])
     elif rho < 0.0:
@@ -63,7 +63,7 @@ icss = []
 for rho in rhos:
     ics = []
     for w in wis:
-        ics.append(icces(q1_ic, w, rho))
+        ics.append(icces(q1_ic, w))
     icss.append(ics)
 
 fslabel = 26 # Label font size
@@ -94,7 +94,7 @@ for row, given, q2s, ws in zip(axs, givens, q2ss, wss):
             ax.plot(q1_ic, ic, c='0.850')
         budget = budget0 + q2eq*given
         ax.plot(q1_budget, budget, c='green')
-        ax.plot(q1_ic, icces(q1_ic, weq, rho), linewidth=2, c=cm.magma(weq))
+        ax.plot(q1_ic, icces(q1_ic, weq), linewidth=2, c=cm.magma(weq))
         ax.set(xticks=[], yticks=[], xlim=(0.0, a1max*R1), ylim=(0.0, a2max*R2))
         #ax.set_box_aspect(1)
 for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):

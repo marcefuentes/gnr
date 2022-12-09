@@ -72,11 +72,11 @@ fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-fig = plt.figure(figsize=(6, 6), constrained_layout=False) 
-fig.supylabel("Partner's share of $\it{A}$", x=0.05, y=0.520, fontsize=fslabel)
-fig.supxlabel("Substitutability of $\it{A}$", x=0.525, fontsize=fslabel)
+fig = plt.figure(figsize=(6, 6)) 
+fig.supylabel("Partner's share of $\it{A}$", x=0.05, y=0.52, fontsize=fslabel)
+fig.supxlabel("Substitutability of $\it{A}$", x=0.555, fontsize=fslabel)
 
-grid = fig.add_gridspec(nrows=num, ncols=num, left=0.15, right=0.9, top=0.86, bottom=0.176, wspace=0, hspace=0)
+grid = fig.add_gridspec(nrows=num, ncols=num, left=0.22, right=0.9, top=0.86, bottom=0.176, wspace=0, hspace=0)
 
 axs = grid.subplots()
 
@@ -96,7 +96,7 @@ for row, given, q2s, ws in zip(axs, givens, q2ss, wss):
         ax.plot(q1_budget, budget, c='green')
         ax.plot(q1_ic, icces(q1_ic, weq, rho), linewidth=2, c=cm.magma(weq))
         ax.set(xticks=[], yticks=[], xlim=(0.0, a1max*R1), ylim=(0.0, a2max*R2))
-        ax.set_box_aspect(1)
+        #ax.set_box_aspect(1)
 for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):
     ax.set_xlabel(round(log_es), fontsize=fstick)
 for ax, given in zip(axs[::every, 0], givens[::every]):

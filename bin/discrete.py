@@ -17,6 +17,17 @@ traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness', 'Sensitivity for\nch
 traitvmaxs = [1.0, 2.0, 1.5, 1.0, 1.0]
 folders = ['none', 'p', 'r', 'pr', 'p8r']
 alpha = 0.25
+R1 = 2.0
+R2 = 2.0
+a1max = 1.0
+a2max = 1.0
+
+# Figure
+
+fslabel=36 # Label font size
+fstick=24 # Tick font size
+plt.rcParams['pdf.fonttype'] = 42
+plt.rcParams['ps.fonttype'] = 42
 
 letters = [['a', 'b', 'c', 'd', 'e'],
             ['f', 'g', 'h', 'i', 'j'],
@@ -27,11 +38,6 @@ letters = [['a', 'b', 'c', 'd', 'e'],
             ['ae', 'af', 'ag', 'ah', 'ai']]
 
 movie = False
-
-R1 = 2.0
-R2 = 2.0
-a1max = 1.0
-a2max = 1.0
 
 def fitness(x, y):
     q1 = (a2max - y)*R1/b
@@ -96,13 +102,6 @@ for c in range(2):
 
 helps = a2*R2*GG 
 Zs = [a2, helps, w, a2*0, a2*0]
-
-# Figure
-
-fslabel=36 # Label font size
-fstick=24 # Tick font size
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
 
 fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+1)))
 

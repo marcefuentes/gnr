@@ -17,6 +17,17 @@ traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness', 'Sensitivity for\nch
 traitvmaxs = [1.0, 2.0, 1.5, 1.0, 1.0]
 folders = ['none', 'p', 'r', 'pr', 'p8r']
 alpha = 0.75
+R1 = 2.0
+R2 = 2.0
+a1max = 1.0
+a2max = 1.0
+
+# Figure
+
+fslabel=36 # Label font size
+fstick=24 # Tick font size
+plt.rcParams['pdf.fonttype'] = 42
+plt.rcParams['ps.fonttype'] = 42
 
 letters = [['a', 'b', 'c', 'd', 'e'],
             ['f', 'g', 'h', 'i', 'j'],
@@ -27,11 +38,6 @@ letters = [['a', 'b', 'c', 'd', 'e'],
             ['ae', 'af', 'ag', 'ah', 'ai']]
 
 movie = False
-
-R1 = 2.0
-R2 = 2.0
-a1max = 1.0
-a2max = 1.0
 
 def fitness(x, y):
     q1 = (a2max - y)*R1/b
@@ -80,13 +86,6 @@ helps = a2*R2*GG
 w = fitness(a2, a2)
 Zs = [a2, helps, w, np.zeros([nr, nc]), np.zeros([nr, nc])]
 
-# Figure
-
-fslabel=36 # Label font size
-fstick=24 # Tick font size
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
-
 fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+1)))
 
 fig.supxlabel('Substitutability of $\it{A}$', x=0.513, y=0.05, fontsize=fslabel*1.25)
@@ -98,6 +97,7 @@ minx = round(log(ess[0], 2))
 maxx = round(log(ess[-1], 2))
 xticklabels = [minx, round((minx + maxx)/2), maxx]
 yticklabels = [0.0, 0.5, 1.0]
+
 for axrow, letterrow in zip(axs, letters):
     for ax, letter, traitlabel in zip(axrow, letterrow, traitlabels):
         ax.text(0, nr*1.035, letter, fontsize=fslabel, weight='bold')

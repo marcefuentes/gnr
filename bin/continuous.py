@@ -38,6 +38,8 @@ letters = [['a', 'b', 'c', 'd', 'e'],
             ['ae', 'af', 'ag', 'ah', 'ai']]
 
 movie = False
+if movie:
+    frames = []
 
 def fitness(x, y):
     q1 = (a2max - y)*R1/b
@@ -97,6 +99,7 @@ minx = round(log(ess[0], 2))
 maxx = round(log(ess[-1], 2))
 xticklabels = [minx, round((minx + maxx)/2), maxx]
 yticklabels = [0.0, 0.5, 1.0]
+extent = 0, nr, 0, nc
 
 for axrow, letterrow in zip(axs, letters):
     for ax, letter, traitlabel in zip(axrow, letterrow, traitlabels):
@@ -109,8 +112,6 @@ for axrow, letterrow in zip(axs, letters):
         if ax.get_subplotspec().is_first_col():
             ax.set_yticklabels(yticklabels, fontsize=fstick) 
 
-extent = 0, nr, 0, nc
-
 for ax, Z, traitvmax in zip(axs[0], Zs, traitvmaxs):
     ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
 for t in ts:
@@ -118,7 +119,6 @@ for t in ts:
         for ax, trait, traitvmax in zip(axrow, traits, traitvmaxs):
             df_piv = pd.pivot_table(df.loc[df.Time == t], values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)
             ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
-    frames = []
     if movie:
         plt.savefig('temp.png', transparent=False)
         frames.append(iio.imread('temp.png'))

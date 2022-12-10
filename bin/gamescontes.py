@@ -75,14 +75,18 @@ Rq = R2/R1
 a2x = np.linspace(0.0, a2max, num=npoints)
 a2y = np.linspace(a2max, 0.0, num=npoints)
 X, Y = np.meshgrid(a2x, a2y)
-Z = np.full([npoints, npoints], 0.0)
+Z = np.zeros([npoints, npoints])
 RR, GG = np.meshgrid(rhos, givens)
-RR, G0 = np.meshgrid(rhos, np.full(num, 0.0))
+RR, G0 = np.meshgrid(rhos, np.zeros([num]))
 TT = b*Rq*(1.0 - GG)
 T0 = b*Rq*(1.0 - G0)
 
+minx = round(log_ess[0])
+maxx = round(log_ess[-1])
+xticklabels = [minx, round((minx + maxx)/2), maxx]
+yticklabels = [0.0, 0.5, 1.0]
 extent0 = 0, num, 0, num
-extent = 0, npoints, 0, npoints
+extent = 0, npoints*num, 0, npoints*num
 
 for alpha in alphas:
 
@@ -100,7 +104,6 @@ for alpha in alphas:
     a2eqss = a2max/(1.0 + Q*b)
 
     A = np.full([npoints, npoints], alpha)
-    #A = alpha
     Zss = np.empty((0, npoints*num))
     for given in givens:
         G = np.full([npoints, npoints], given)
@@ -130,30 +133,25 @@ for alpha in alphas:
     AA = np.full([num, num], alpha)
     Mss = [[a20ss, a20ss*R2*GG, fitness(a20ss, a20ss, GG, AA, RR)], [a2eqss, a2eqss*R2*GG, fitness(a2eqss, a2eqss, GG, AA, RR)]]
 
-    minx = round(log_ess[0])
-    maxx = round(log_ess[-1])
-    xticklabels = [minx, round((minx + maxx)/2), maxx]
-    yticklabels = [0.0, 0.5, 1.0]
-
     for axrow, letterrow in zip(axs, letters):
         for ax, letter, traitlabel in zip(axrow, letterrow, traitlabels):
             if ax.get_subplotspec().is_first_row():
-                ax.set(xticks=[npoints*num, npoints*num/2, 0], yticks=[npoints*num, npoints*num/2, 0], xticklabels=[], yticklabels=yticklabels, xlim=(0, npoints*num), ylim=(npoints*num, 0))
+                ax.set(xticks=[0, npoints*num/2, npoints*num], yticks=[0, npoints*num/2, npoints*num], xticklabels=[], yticklabels=yticklabels)
                 #ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
-                ax.text(0, 1.2, letter, fontsize=fslabel, weight='bold')
+                ax.text(0, npoints*num*1.035, letter, fontsize=fslabel, weight='bold')
             else:
-                ax.set(xticks=[-0.5, num/2, num-0.5], yticks=[num-0.5, num/2, -0.5], xticklabels=[], yticklabels=[], xlim=(-0.5, num-0.5), ylim=(num-0.5, -0.5))
-                ax.text(0, 1.3, letter, fontsize=fslabel, weight='bold')
+                ax.set(xticks=[0, num/2, num], yticks=[0, num/2, num], xticklabels=[], yticklabels=[])
+                ax.text(0, num*1.035, letter, fontsize=fslabel, weight='bold')
             if ax.get_subplotspec().is_last_row():
                 ax.set_xticklabels(xticklabels, fontsize=fstick)
             if ax.get_subplotspec().is_first_col():
                 ax.set_yticklabels(yticklabels, fontsize=fstick) 
 
-    axs[0, 0].imshow(Zss, origin='lower', cmap='magma', vmin=0, vmax=1)
+    axs[0, 0].imshow(Zss, extent=extent, cmap='magma', vmin=0, vmax=1)
 
     for row, Ms in zip(axs[1:], Mss):
         for ax, M, traitvmax in zip(row, Ms, traitvmaxs):
-            ax.imshow(M, cmap='magma', vmin=0, vmax=traitvmax)
+            ax.imshow(M, extent=extent0, cmap='magma', vmin=0, vmax=traitvmax)
 
     if movie:
         plt.savefig('temp.png', transparent=False)

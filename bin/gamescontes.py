@@ -47,23 +47,23 @@ if movie:
 else:
     alphas = np.linspace(0.5, 0.5, num=1)
 
-def fitness(x, y):
+def fitness(x, y, given, alpha, rho):
     if isinstance(x, float): x = np.array([x])
     if isinstance(y, float): y = np.array([y])
+    if isinstance(given, float): given = np.array([given])
+    if isinstance(alpha, float): alpha = np.array([alpha])
+    if isinstance(rho, float): rho = np.array([rho])
     q1 = (a2max - y)*R1/b
     q2 = y*R2*(1.0 - given) + x*R2*given
-    if rho == 0.0:
-        w = q1*q2
-        mask = (w > 0.0)
-        w[mask] = pow(q1[mask], alpha)*pow(q2[mask], 1.0 - alpha)
-    elif rho < 0.0:
-        w = q1*q2
-        mask = (w > 0.0)
-        w[mask] = alpha*pow(q1[mask], rho) + (1.0 - alpha)*pow(q2[mask], rho)
-        mask = (w > 0.0)
-        w[mask] = pow(w[mask], 1.0/rho)
-    else:
-        w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
+    w = q1*q2
+    mask = (w > 0.0) & (rho == 0.0)
+    w[mask] = pow(q1[mask], alpha[mask])*pow(q2[mask], 1.0 - alpha[mask])
+    mask = (w > 0.0) & (rho < 0.0)
+    w[mask] = alpha[mask]*pow(q1[mask], rho[mask]) + (1.0 - alpha[mask])*pow(q2[mask], rho[mask])
+    mask = (w > 0.0) & (rho < 0.0)
+    w[mask] = pow(w[mask], 1.0/rho[mask])
+    mask = (rho > 0.0)
+    w[mask] = pow(alpha[mask]*pow(q1[mask], rho[mask]) + (1.0 - alpha[mask])*pow(q2[mask], rho[mask]), 1.0/rho[mask])
     return w
 
 b = a2max/a1max
@@ -94,19 +94,23 @@ for alpha in alphas:
 
     if movie: fig.text(0.93, 0.02, f'alpha = {alpha}', fontsize=fstick, color='grey', ha='right')
 
-    Q = Rq*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
-    a2eqss = a2max/(1.0 + Q*b)
     Q0 = Rq*pow(T0*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
     a20ss = a2max/(1.0 + Q0*b)
+    Q = Rq*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
+    a2eqss = a2max/(1.0 + Q*b)
 
+    A = np.full([npoints, npoints], alpha)
+    #A = alpha
     Zss = np.empty((0, npoints*num))
-    for given, a2eqs in zip(givens, a2eqss):
+    for given in givens:
+        G = np.full([npoints, npoints], given)
         Zs = np.empty((npoints, 0))
-        for rho, a2eq in zip(rhos, a2eqs):
-            T = fitness(Y, X)
-            R = fitness(Y, Y)
-            P = fitness(X, X)
-            S = fitness(X, Y)
+        for rho in rhos:
+            Rh = np.full([npoints, npoints], rho)
+            T = fitness(Y, X, G, A, Rh)
+            R = fitness(Y, Y, G, A, Rh)
+            P = fitness(X, X, G, A, Rh)
+            S = fitness(X, Y, G, A, Rh)
             mask = (R < P)
             H = R[mask]
             R[mask] = P[mask]
@@ -123,21 +127,29 @@ for alpha in alphas:
             Zs = np.append(Zs, Z, axis=1)
         Zss = np.append(Zss, Zs, axis=0)
 
-    Mss = [[a20ss, a20ss*R2*GG, fitness(a20ss, a20ss)], [a2eqss, a2eqss*R2*GG, fitness(a2eqss, a2eqss)]]
+    AA = np.full([num, num], alpha)
+    Mss = [[a20ss, a20ss*R2*GG, fitness(a20ss, a20ss, GG, AA, RR)], [a2eqss, a2eqss*R2*GG, fitness(a2eqss, a2eqss, GG, AA, RR)]]
 
-    #for axrow, letterrow in zip(axs, letters):
-    #    for ax, letter, traitlabel in zip(axrow, letterrow, traitlabels):
-            #ax.text(0, nr*1.035, letter, fontsize=fslabel, weight='bold')
-            #ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
-            #if ax.get_subplotspec().is_first_row():
-            #    ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
-            #if ax.get_subplotspec().is_last_row():
-            #    ax.set_xticklabels(xticklabels, fontsize=fstick)
-            #if ax.get_subplotspec().is_first_col():
-            #    ax.set_yticklabels(yticklabels, fontsize=fstick) 
+    minx = round(log_ess[0], 2)
+    maxx = round(log_ess[-1], 2)
+    xticklabels = [minx, round((minx + maxx)/2), maxx]
+    yticklabels = [0.0, 0.5, 1.0]
+
+    for axrow, letterrow in zip(axs, letters):
+        for ax, letter, traitlabel in zip(axrow, letterrow, traitlabels):
+            if ax.get_subplotspec().is_first_row():
+                ax.set(xticks=[], yticks=[0, npoints*num/2, npoints*num], xticklabels=[], yticklabels=yticklabels, xlim=(0, npoints*num), ylim=(npoints*num, 0))
+                ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
+                ax.text(0, npoints*num*1.035, letter, fontsize=fslabel, weight='bold')
+            else:
+                ax.set(xticks=[0, num/2, num], yticks=[0, num/2, num], xticklabels=[], yticklabels=[])
+                ax.text(0, num*1.035, letter, fontsize=fslabel, weight='bold')
+            if ax.get_subplotspec().is_last_row():
+                ax.set_xticklabels(xticklabels, fontsize=fstick)
+            if ax.get_subplotspec().is_first_col():
+                ax.set_yticklabels(yticklabels, fontsize=fstick) 
 
     axs[0, 0].imshow(Zss, origin='lower', cmap='magma', vmin=0, vmax=1)
-    axs[0, 0].set(xticks=[], yticks=[], xlim=(0, npoints*num), ylim=(npoints*num, 0))
 
     for row, Ms in zip(axs[1:], Mss):
         for ax, M, traitvmax in zip(row, Ms, traitvmaxs):

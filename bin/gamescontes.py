@@ -20,7 +20,7 @@ a2max = 1.0
 npoints = 128
 #vmax = 1.2
 vmax = 1.5
-num = 11    # Number of subplot rows and columns
+num = 21    # Number of subplot rows and columns
 every = int(num/2)
 minlog_es = -5.0
 maxlog_es = 5.0
@@ -31,16 +31,16 @@ maxgiven = 1.0
 
 traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness']
 traitvmaxs = [1.0, 2.0, 2.0]
-fslabel = 26 # Label font size
+fslabel = 32 # Label font size
 fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
 letters = [['a', 'b', 'c'],
-            ['d', 'e', 'f'],
-            ['g', 'h', 'i']]
+            ['b', 'c', 'd'],
+            ['e', 'f', 'g']]
 
-movie = False
+movie = True
 if movie:
     alphas = np.linspace(0.1, 0.9, num=11)
     frames = []
@@ -96,7 +96,8 @@ for alpha in alphas:
     fig.supylabel("Partner's share of $\it{A}$", x=0.04, y=0.520, fontsize=fslabel)
     fig.supxlabel("Substitutability of $\it{A}$", x=0.525, y=0.05, fontsize=fslabel)
 
-    if movie: fig.text(0.93, 0.02, f'alpha = {alpha}', fontsize=fstick, color='grey', ha='right')
+    if movie:
+        fig.text(0.80, 0.80, f'alpha\n{round(alpha,2)}', fontsize=fstick+4, color='grey', ha='right')
 
     Q0 = Rq*pow(T0*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
     a20ss = a2max/(1.0 + Q0*b)

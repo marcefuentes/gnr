@@ -138,7 +138,7 @@ for alpha in alphas:
     for axrow, letterrow in zip(axs, letters):
         for ax, letter, traitlabel in zip(axrow, letterrow, traitlabels):
             if ax.get_subplotspec().is_first_row():
-                ax.set(xticks=[], yticks=[0, npoints*num/2, npoints*num], xticklabels=[], yticklabels=yticklabels, xlim=(0, npoints*num), ylim=(npoints*num, 0))
+                ax.set(xticks=[npoints*num, npoints*num/2, 0], yticks=[npoints*num, npoints*num/2, 0], xticklabels=[], yticklabels=yticklabels, xlim=(0, npoints*num), ylim=(npoints*num, 0))
                 ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
                 ax.text(0, npoints*num*1.035, letter, fontsize=fslabel, weight='bold')
             else:
@@ -153,7 +153,7 @@ for alpha in alphas:
 
     for row, Ms in zip(axs[1:], Mss):
         for ax, M, traitvmax in zip(row, Ms, traitvmaxs):
-            ax.imshow(M, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
+            ax.imshow(M, cmap='magma', vmin=0, vmax=traitvmax)
 
     if movie:
         plt.savefig('temp.png', transparent=False)

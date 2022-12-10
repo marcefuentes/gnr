@@ -12,7 +12,7 @@ import time
 
 start_time = time.perf_counter ()
 
-filename = 'gameses2'
+filename = 'gamescontes'
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
@@ -29,15 +29,16 @@ maxgiven = 1.0
 
 # Figure
 
+traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness']
+traitvmaxs = [1.0, 2.0, 2.0]
 fslabel = 26 # Label font size
 fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-letters = [['a', 'b'],
-            ['c', 'd'],
-            ['e', 'f'],
-            ['g', 'h']]
+letters = [['a', 'b', 'c'],
+            ['d', 'e', 'f'],
+            ['g', 'h', 'i']]
 
 movie = False
 if movie:
@@ -67,12 +68,9 @@ def fitness(x, y):
 
 b = a2max/a1max
 givens = np.linspace(maxgiven, mingiven, num=num)
+givens[0] = 0.999999
 log_ess = np.linspace(minlog_es, maxlog_es, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
-
-# Continuous
-
-givens[0] = 0.999999
 Rq = R2/R1
 a2x = np.linspace(0.0, a2max, num=npoints)
 a2y = np.linspace(a2max, 0.0, num=npoints)
@@ -86,20 +84,15 @@ T0 = b*Rq*(1.0 - G0)
 extent0 = 0, num, 0, num
 extent = 0, npoints, 0, npoints
 
-# Discrete
-
-a2 = np.linspace(0.0, a2max, num=3)
-xaxis = [1, 2, 3, 4]
-
 for alpha in alphas:
 
-    fig, axs = plt.subplots(nrows=3, ncols=2, figsize=(12, 18))
+    fig, axs = plt.subplots(nrows=3, ncols=3, figsize=(18, 18))
+    fig.delaxes(axs[0, 1])
+    fig.delaxes(axs[0, 2])
     fig.supylabel("Partner's share of $\it{A}$", x=0.04, y=0.520, fontsize=fslabel)
     fig.supxlabel("Substitutability of $\it{A}$", x=0.525, y=0.05, fontsize=fslabel)
 
     if movie: fig.text(0.93, 0.02, f'alpha = {alpha}', fontsize=fstick, color='grey', ha='right')
-
-    # Continuous
 
     Q = Rq*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
     a2eqss = a2max/(1.0 + Q*b)
@@ -130,17 +123,25 @@ for alpha in alphas:
             Zs = np.append(Zs, Z, axis=1)
         Zss = np.append(Zss, Zs, axis=0)
 
+    Mss = [[a20ss, a20ss*R2*GG, fitness(a20ss, a20ss)], [a2eqss, a2eqss*R2*GG, fitness(a2eqss, a2eqss)]]
+
+    #for axrow, letterrow in zip(axs, letters):
+    #    for ax, letter, traitlabel in zip(axrow, letterrow, traitlabels):
+            #ax.text(0, nr*1.035, letter, fontsize=fslabel, weight='bold')
+            #ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
+            #if ax.get_subplotspec().is_first_row():
+            #    ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
+            #if ax.get_subplotspec().is_last_row():
+            #    ax.set_xticklabels(xticklabels, fontsize=fstick)
+            #if ax.get_subplotspec().is_first_col():
+            #    ax.set_yticklabels(yticklabels, fontsize=fstick) 
+
     axs[0, 0].imshow(Zss, origin='lower', cmap='magma', vmin=0, vmax=1)
     axs[0, 0].set(xticks=[], yticks=[], xlim=(0, npoints*num), ylim=(npoints*num, 0))
-    axs[1, 0].imshow(a2eqss, origin='lower', extent=extent0, cmap='magma', vmin=0, vmax=1)
-    axs[1, 0].set(xticks=[], yticks=[], xlim=(0, num), ylim=(num, 0))
-    axs[2, 0].imshow(a20ss, origin='lower', extent=extent0, cmap='magma', vmin=0, vmax=1)
-    axs[2, 0].set(xticks=[], yticks=[], xlim=(0, num), ylim=(num, 0))
 
-    # Discrete
-
-    givens[0] = 1.0
-
+    for row, Ms in zip(axs[1:], Mss):
+        for ax, M, traitvmax in zip(row, Ms, traitvmaxs):
+            ax.imshow(M, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
 
     if movie:
         plt.savefig('temp.png', transparent=False)

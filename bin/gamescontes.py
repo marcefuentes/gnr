@@ -130,8 +130,8 @@ for alpha in alphas:
     AA = np.full([num, num], alpha)
     Mss = [[a20ss, a20ss*R2*GG, fitness(a20ss, a20ss, GG, AA, RR)], [a2eqss, a2eqss*R2*GG, fitness(a2eqss, a2eqss, GG, AA, RR)]]
 
-    minx = round(log_ess[0], 2)
-    maxx = round(log_ess[-1], 2)
+    minx = round(log_ess[0])
+    maxx = round(log_ess[-1])
     xticklabels = [minx, round((minx + maxx)/2), maxx]
     yticklabels = [0.0, 0.5, 1.0]
 
@@ -139,11 +139,11 @@ for alpha in alphas:
         for ax, letter, traitlabel in zip(axrow, letterrow, traitlabels):
             if ax.get_subplotspec().is_first_row():
                 ax.set(xticks=[npoints*num, npoints*num/2, 0], yticks=[npoints*num, npoints*num/2, 0], xticklabels=[], yticklabels=yticklabels, xlim=(0, npoints*num), ylim=(npoints*num, 0))
-                ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
-                ax.text(0, npoints*num*1.035, letter, fontsize=fslabel, weight='bold')
+                #ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
+                ax.text(0, 1.2, letter, fontsize=fslabel, weight='bold')
             else:
-                ax.set(xticks=[0, num/2, num], yticks=[0, num/2, num], xticklabels=[], yticklabels=[])
-                ax.text(0, num*1.035, letter, fontsize=fslabel, weight='bold')
+                ax.set(xticks=[-0.5, num/2, num-0.5], yticks=[num-0.5, num/2, -0.5], xticklabels=[], yticklabels=[], xlim=(-0.5, num-0.5), ylim=(num-0.5, -0.5))
+                ax.text(0, 1.3, letter, fontsize=fslabel, weight='bold')
             if ax.get_subplotspec().is_last_row():
                 ax.set_xticklabels(xticklabels, fontsize=fstick)
             if ax.get_subplotspec().is_first_col():

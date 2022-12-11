@@ -18,8 +18,8 @@ minalpha = 0.4
 maxalpha = 0.6
 minlog_es = -5.0
 maxlog_es = 5.0
-mingiven = 0.0
-maxgiven = 1.0
+mingiven = 0.99
+maxgiven = 0.99
 
 num = 21    # Number of subplot rows and columns
 npoints = 128

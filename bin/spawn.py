@@ -3,11 +3,11 @@
 import numpy as np
 
 num = 21
-ess = np.linspace(-5.0, 5.0, num)
+ess = np.linspace(5.0, 5.0, 1)
 alphas = np.linspace(0.4, 0.6, num)
 c = 101
 
-for given in givens:
+for alpha in alphas:
     for es in ess:
         filename = str(c) + '.glo'
         f = open(filename, 'w')

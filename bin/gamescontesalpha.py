@@ -14,8 +14,8 @@ start_time = time.perf_counter ()
 
 movie = False
 
-minalpha = 0.1
-maxalpha = 0.9
+minalpha = 0.4
+maxalpha = 0.6
 minlog_es = -5.0
 maxlog_es = 5.0
 mingiven = 0.0
@@ -32,7 +32,7 @@ a2max = 1.0
 # Figure
 
 traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness']
-traitvmaxs = [1.0, 2.0, 2.0]
+traitvmaxs = [1.0, 2.0, 1.16]
 fslabel = 32 # Label font size
 fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42

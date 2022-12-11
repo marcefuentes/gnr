@@ -4,7 +4,7 @@ import numpy as np
 
 num = 21
 ess = np.linspace(-5.0, 5.0, num)
-givens = np.linspace(0.0, 1.0, num)
+alphas = np.linspace(0.4, 0.6, num)
 c = 101
 
 for given in givens:
@@ -30,19 +30,19 @@ for given in givens:
         f.write('DeathRate,-7\n')
         f.write('c1,0.0\n')
         f.write('c2,0.0\n')
-        f.write('alpha,0.5\n')
+        f.write('alpha,0.0\n')
         f.write('ES,0\n')
         f.write('GroupSize,2\n')
         f.write('ChooseCost,-14\n')
         f.write('MimicCost,-14\n')
-        f.write('Given,0.0\n')
+        f.write('Given,0.99\n')
         f.write('PartnerChoice,1\n')
         f.write('Reciprocity,1\n')
-        f.write('Macromutation,0\n')
+        f.write('Discrete,0\n')
         f.write('IndirectR,0\n')
-        f.write('factorName1,Given\n')
-        f.write(f'fFirst1,{given}\n')
-        f.write(f'fLast1,{given}\n')
+        f.write('factorName1,alpha\n')
+        f.write(f'fFirst1,{alpha}\n')
+        f.write(f'fLast1,{alpha}\n')
         f.write('fLevels1,1\n')
         f.write('factorName2,ES\n')
         f.write(f'fFirst2,{es}\n')

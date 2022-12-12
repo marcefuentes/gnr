@@ -18,8 +18,8 @@ minalpha = 0.4
 maxalpha = 0.6
 minlog_es = -5.0
 maxlog_es = 5.0
-mingiven = 0.0
-maxgiven = 1.0
+mingiven = 0.99
+maxgiven = 0.99
 
 num = 21    # Number of subplot rows and columns
 filename = 'gamesdiscsalpha'
@@ -57,10 +57,12 @@ def fitness(x, y):
 
 if mingiven != maxgiven:
     movie = True
+    givens = np.linspace(maxgiven, mingiven, num=num)
     frames = []
+else:
+    givens = np.array([mingiven])
 
 alphas = np.linspace(maxalpha, minalpha, num=num)
-givens = np.linspace(maxgiven, mingiven, num=num)
 log_ess = np.linspace(minlog_es, maxlog_es, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
 b = a2max/a1max
@@ -112,7 +114,7 @@ for given in reversed(givens):
     T = R = P = S = a20
     Z = np.full([num, num], 0.0)
 
-    mask = (a2optimal == w00)
+    mask = (woptimal == w00)
     T[mask] = w01[mask]
     R[mask] = w00[mask]
     P[mask] = w11[mask]
@@ -123,7 +125,7 @@ for given in reversed(givens):
     a2[mask] = a20[mask]*x + a21[mask]*(1.0 - x)
     w[mask] = (T[mask] + S[mask])*x*(1.0 - x) + R[mask]*x*x + P[mask]*(1.0 - x)*(1.0 - x)
 
-    mask = (a2optimal == w11) & (w20 > w22)
+    mask = (woptimal == w11) & (w20 > w22)
     T[mask] = w10[mask]
     R[mask] = w11[mask]
     P[mask] = w00[mask]
@@ -134,8 +136,10 @@ for given in reversed(givens):
     a2[mask] = a21[mask]*x + a20[mask]*(1.0 - x)
     w[mask] = (T[mask] + S[mask])*x*(1.0 - x) + R[mask]*x*x + P[mask]*(1.0 - x)*(1.0 - x)
 
-    mask = (a2optimal == w11) & (w20 <= w22)
+    mask = (woptimal == w11) & (w20 <= w22)
     T[mask] = w12[mask]
+    print(w12[mask])
+    print(w12[mask])
     R[mask] = w11[mask]
     P[mask] = w22[mask]
     S[mask] = w21[mask]
@@ -145,7 +149,7 @@ for given in reversed(givens):
     a2[mask] = a21[mask]*x + a22[mask]*(1.0 - x)
     w[mask] = (T[mask] + S[mask])*x*(1.0 - x) + R[mask]*x*x + P[mask]*(1.0 - x)*(1.0 - x)
 
-    mask = (a2optimal == w22)
+    mask = (woptimal == w22)
     T[mask] = w21[mask]
     R[mask] = w22[mask]
     P[mask] = w11[mask]

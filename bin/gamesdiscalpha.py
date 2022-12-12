@@ -69,14 +69,15 @@ a20 = np.full([num, num], 0.0)
 a21 = np.full([num, num], a2max/2.0)
 a22 = np.full([num, num], a2max)
 given = 0.0
-P0 = fitness(a20, a20)
-P1 = fitness(a21, a21)
-P2 = fitness(a22, a22)
+w00 = fitness(a20, a20)
+w11 = fitness(a21, a21)
+w22 = fitness(a22, a22)
 a2optimal = a20
-mask = (P1 > P0)
+mask = (w11 > w00)
 a2optimal[mask] = a21[mask]
-mask = (P2 > P1)
+mask = (w22 > w11)
 a2optimal[mask] = a22[mask]
+woptimal = fitness(a2optimal, a2optimal)
 
 minx = round(log_ess[0])
 maxx = round(log_ess[-1])
@@ -100,34 +101,66 @@ for given in reversed(givens):
 
     a20 = np.full([num, num], 0.0)
     a21 = np.full([num, num], a2max/2.0)
+    a2 = w = a20
+    w01 = fitness(a20, a21)
+    w10 = fitness(a21, a20)
+    w12 = fitness(a21, a22)
+    w21 = fitness(a22, a21)
+    w02 = fitness(a20, a22)
+    w20 = fitness(a22, a20)
 
-    T = fitness(a21, a20)
-    R = fitness(a21, a21)
-    P = fitness(a20, a20)
-    S = fitness(a20, a21)
+    T = R = P = S = a20
+    Z = np.full([num, num], 0.0)
 
-    x = (P - S)/(R - S - T + P)
-    mask = (x >= 1.0)
-    a20[mask] = a20[mask] + a2max/2.0
-    a21[mask] = a21[mask] + a2max/2.0
-
-    T = fitness(a21, a20)
-    R = fitness(a21, a21)
-    P = fitness(a20, a20)
-    S = fitness(a20, a21)
-
-    x = (P - S)/(R - S - T + P)
+    mask = (a2optimal == w00)
+    T[mask] = w01[mask]
+    R[mask] = w00[mask]
+    P[mask] = w11[mask]
+    S[mask] = w10[mask]
+    x = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     x[(x < 0.0)] = x[(x < 0.0)]*0.0
     x[(x > 1.0)] = pow(x[(x > 1.0)], 0.0)
-    a2 = a21*x
+    a2[mask] = a20[mask]*x + a21[mask]*(1.0 - x)
+    w[mask] = (T[mask] + S[mask])*x*(1.0 - x) + R[mask]*x*x + P[mask]*(1.0 - x)*(1.0 - x)
 
-    w = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
-    Z = np.full([num, num], 0.0)
+    mask = (a2optimal == w11) & (w20 > w22)
+    T[mask] = w10[mask]
+    R[mask] = w11[mask]
+    P[mask] = w00[mask]
+    S[mask] = w01[mask]
+    x = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
+    x[(x < 0.0)] = x[(x < 0.0)]*0.0
+    x[(x > 1.0)] = pow(x[(x > 1.0)], 0.0)
+    a2[mask] = a21[mask]*x + a20[mask]*(1.0 - x)
+    w[mask] = (T[mask] + S[mask])*x*(1.0 - x) + R[mask]*x*x + P[mask]*(1.0 - x)*(1.0 - x)
+
+    mask = (a2optimal == w11) & (w20 <= w22)
+    T[mask] = w12[mask]
+    R[mask] = w11[mask]
+    P[mask] = w22[mask]
+    S[mask] = w21[mask]
+    x = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
+    x[(x < 0.0)] = x[(x < 0.0)]*0.0
+    x[(x > 1.0)] = pow(x[(x > 1.0)], 0.0)
+    a2[mask] = a21[mask]*x + a22[mask]*(1.0 - x)
+    w[mask] = (T[mask] + S[mask])*x*(1.0 - x) + R[mask]*x*x + P[mask]*(1.0 - x)*(1.0 - x)
+
+    mask = (a2optimal == w22)
+    T[mask] = w21[mask]
+    R[mask] = w22[mask]
+    P[mask] = w11[mask]
+    S[mask] = w12[mask]
+    x = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
+    x[(x < 0.0)] = x[(x < 0.0)]*0.0
+    x[(x > 1.0)] = pow(x[(x > 1.0)], 0.0)
+    a2[mask] = a22[mask]*x + a21[mask]*(1.0 - x)
+    w[mask] = (T[mask] + S[mask])*x*(1.0 - x) + R[mask]*x*x + P[mask]*(1.0 - x)*(1.0 - x)
+
     Z[(T < R) & (P < S)] = 0.9
     Z[(T >= R) & (P <= S)] = 0.5
     Z[(T > R) & (P > S)] = 0.1
 
-    Mss = [[a2optimal, a2optimal*R2*given, fitness(a2optimal, a2optimal)], [a2, a2*R2*given, w]]
+    Mss = [[a2optimal, a2optimal*R2*given, woptimal], [a2, a2*R2*given, w]]
 
     for axrow, letterrow in zip(axs, letters):
         for ax, letter, traitlabel in zip(axrow, letterrow, traitlabels):

@@ -120,6 +120,7 @@ for given in reversed(givens):
     P[mask] = w11[mask]
     S[mask] = w10[mask]
     x = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
+    print(x)
     x[(x < 0.0)] = x[(x < 0.0)]*0.0
     x[(x > 1.0)] = pow(x[(x > 1.0)], 0.0)
     a2[mask] = a20[mask]*x + a21[mask]*(1.0 - x)
@@ -138,8 +139,6 @@ for given in reversed(givens):
 
     mask = (woptimal == w11) & (w20 <= w22)
     T[mask] = w12[mask]
-    print(w12[mask])
-    print(w12[mask])
     R[mask] = w11[mask]
     P[mask] = w22[mask]
     S[mask] = w21[mask]

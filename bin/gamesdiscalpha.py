@@ -120,7 +120,6 @@ for given in reversed(givens):
     P[mask] = w11[mask]
     S[mask] = w10[mask]
     x = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
-    print(x)
     x[(x < 0.0)] = x[(x < 0.0)]*0.0
     x[(x > 1.0)] = pow(x[(x > 1.0)], 0.0)
     a2[mask] = a20[mask]*x + a21[mask]*(1.0 - x)

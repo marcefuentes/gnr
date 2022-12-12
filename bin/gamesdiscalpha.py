@@ -12,14 +12,12 @@ import time
 
 start_time = time.perf_counter ()
 
-movie = False
-
 minalpha = 0.4
 maxalpha = 0.6
 minlog_es = -5.0
 maxlog_es = 5.0
-mingiven = 0.99
-maxgiven = 0.99
+mingiven = 0.0
+maxgiven = 1.0
 
 num = 21    # Number of subplot rows and columns
 filename = 'gamesdiscsalpha'
@@ -60,6 +58,7 @@ if mingiven != maxgiven:
     givens = np.linspace(maxgiven, mingiven, num=num)
     frames = []
 else:
+    movie = False 
     givens = np.array([mingiven])
 
 alphas = np.linspace(maxalpha, minalpha, num=num)
@@ -101,9 +100,10 @@ for given in reversed(givens):
     if movie:
         fig.text(0.80, 0.80, f'given\n{round(given,2)}', fontsize=fstick+4, color='grey', ha='right')
 
+    Z = np.full([num, num], 0.0)
     a20 = np.full([num, num], 0.0)
     a21 = np.full([num, num], a2max/2.0)
-    a2 = w = a20
+    a2 = w = x = a20
     w01 = fitness(a20, a21)
     w10 = fitness(a21, a20)
     w12 = fitness(a21, a22)
@@ -111,56 +111,75 @@ for given in reversed(givens):
     w02 = fitness(a20, a22)
     w20 = fitness(a22, a20)
 
-    T = R = P = S = a20
-    Z = np.full([num, num], 0.0)
-
     mask = (woptimal == w00)
-    T[mask] = w01[mask]
-    R[mask] = w00[mask]
-    P[mask] = w11[mask]
-    S[mask] = w10[mask]
-    x = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
+    T = w01
+    R = w00
+    P = w11
+    S = w10
+    x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     x[(x < 0.0)] = x[(x < 0.0)]*0.0
     x[(x > 1.0)] = pow(x[(x > 1.0)], 0.0)
-    a2[mask] = a20[mask]*x + a21[mask]*(1.0 - x)
-    w[mask] = (T[mask] + S[mask])*x*(1.0 - x) + R[mask]*x*x + P[mask]*(1.0 - x)*(1.0 - x)
+    a2[mask] = a20[mask]*x[mask] + a21[mask]*(1.0 - x[mask])
+    w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
+    Z[mask & (T < R) & (P < S)] = 0.9
+    Z[mask & (T >= R) & (P <= S)] = 0.5
+    Z[mask & (T > R) & (P > S)] = 0.1
 
     mask = (woptimal == w11) & (w20 > w22)
-    T[mask] = w10[mask]
-    R[mask] = w11[mask]
-    P[mask] = w00[mask]
-    S[mask] = w01[mask]
-    x = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
+    T = w10
+    R = w11
+    P = w00
+    S = w01
+    x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     x[(x < 0.0)] = x[(x < 0.0)]*0.0
     x[(x > 1.0)] = pow(x[(x > 1.0)], 0.0)
-    a2[mask] = a21[mask]*x + a20[mask]*(1.0 - x)
-    w[mask] = (T[mask] + S[mask])*x*(1.0 - x) + R[mask]*x*x + P[mask]*(1.0 - x)*(1.0 - x)
+    a2[mask] = a21[mask]*x[mask] + a20[mask]*(1.0 - x[mask])
+    w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
+    Z[mask & (T < R) & (P < S)] = 0.9
+    Z[mask & (T >= R) & (P <= S)] = 0.5
+    Z[mask & (T > R) & (P > S)] = 0.1
 
     mask = (woptimal == w11) & (w20 <= w22)
-    T[mask] = w12[mask]
-    R[mask] = w11[mask]
-    P[mask] = w22[mask]
-    S[mask] = w21[mask]
-    x = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
+    T = w12
+    R = w11
+    P = w22
+    S = w21
+    x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     x[(x < 0.0)] = x[(x < 0.0)]*0.0
     x[(x > 1.0)] = pow(x[(x > 1.0)], 0.0)
-    a2[mask] = a21[mask]*x + a22[mask]*(1.0 - x)
-    w[mask] = (T[mask] + S[mask])*x*(1.0 - x) + R[mask]*x*x + P[mask]*(1.0 - x)*(1.0 - x)
+    a2[mask] = a21[mask]*x[mask] + a22[mask]*(1.0 - x[mask])
+    w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
+    Z[mask & (T < R) & (P < S)] = 0.9
+    Z[mask & (T >= R) & (P <= S)] = 0.5
+    Z[mask & (T > R) & (P > S)] = 0.1
 
-    mask = (woptimal == w22)
-    T[mask] = w21[mask]
-    R[mask] = w22[mask]
-    P[mask] = w11[mask]
-    S[mask] = w12[mask]
-    x = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
+    mask = (woptimal == w22) & (w10 < w11)
+    T = w21
+    R = w22
+    P = w11
+    S = w12
+    x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     x[(x < 0.0)] = x[(x < 0.0)]*0.0
     x[(x > 1.0)] = pow(x[(x > 1.0)], 0.0)
-    a2[mask] = a22[mask]*x + a21[mask]*(1.0 - x)
-    w[mask] = (T[mask] + S[mask])*x*(1.0 - x) + R[mask]*x*x + P[mask]*(1.0 - x)*(1.0 - x)
+    a2[mask] = a22[mask]*x[mask] + a21[mask]*(1.0 - x[mask])
+    w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
+    Z[mask & (T < R) & (P < S)] = 0.9
+    Z[mask & (T >= R) & (P <= S)] = 0.5
+    Z[mask & (T > R) & (P > S)] = 0.1
 
-    Z[(T < R) & (P < S)] = 0.9
-    Z[(T >= R) & (P <= S)] = 0.5
-    Z[(T > R) & (P > S)] = 0.1
+    mask = (woptimal == w22) & (w10 >= w11)
+    T = w10
+    R = w11
+    P = w00
+    S = w01
+    x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
+    x[(x < 0.0)] = x[(x < 0.0)]*0.0
+    x[(x > 1.0)] = pow(x[(x > 1.0)], 0.0)
+    a2[mask] = a21[mask]*x[mask] + a20[mask]*(1.0 - x[mask])
+    w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
+    Z[mask & (T < R) & (P < S)] = 0.9
+    Z[mask & (T >= R) & (P <= S)] = 0.5
+    Z[mask & (T > R) & (P > S)] = 0.1
 
     Mss = [[a2optimal, a2optimal*R2*given, woptimal], [a2, a2*R2*given, w]]
 

@@ -21,7 +21,7 @@ maxlog_es = 5.0
 mingiven = 0.0
 maxgiven = 1.0
 
-num = 21    # Number of subplot rows and columns
+num = 101    # Number of subplot rows and columns
 npoints = 128
 filename = 'gamescontesalpha'
 R1 = 2.0

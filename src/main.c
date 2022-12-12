@@ -240,7 +240,7 @@ int main (int argc, char *argv[])
 
 	for ( f1 = fFirst1; f1 <= fLast1; f1 += inc1 )
 	{
-		if ( strcmp (factorName1, "ChooseGrainInit") == 0 || strcmp (factorName1, "Given") == 0 )
+		if ( strcmp (factorName1, "ChooseGrainInit") == 0 || strcmp (factorName1, "Given") == 0 || strcmp (factorName1, "alpha") == 0 )
 		{
 			*factor1 = f1;
 		}
@@ -251,7 +251,7 @@ int main (int argc, char *argv[])
 
 		for ( f2 = fFirst2; f2 <= fLast2; f2 += inc2 )
 		{
-			if ( strcmp (factorName2, "ChooseGrainInit") == 0 || strcmp (factorName2, "Given") == 0 )
+			if ( strcmp (factorName2, "ChooseGrainInit") == 0 || strcmp (factorName2, "Given") == 0 || strcmp (factorName1, "alpha") == 0 )
 			{
 				*factor2 = f2;
 			}

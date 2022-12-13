@@ -5,6 +5,7 @@ import os
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
+from math import log
 from matplotlib import cm
 from matplotlib.colors import ListedColormap
 import numpy as np
@@ -14,8 +15,8 @@ start_time = time.perf_counter ()
 
 minalpha = 0.4
 maxalpha = 0.6
-minlog_es = 1.0
-maxlog_es = 1.0
+minlog_es = -5.0
+maxlog_es = 5.0
 mingiven = 0.0
 maxgiven = 1.0
 
@@ -50,26 +51,26 @@ def fitness(x, y, given, alpha, rho):
     q2 = y*R2*(1.0 - given) + x*R2*given
     w = q1*q2
     mask = (w > 0.0) & (rho == 0.0)
-    w[mask] = pow(q1[mask], alpha[mask])*pow(q2[mask], 1.0 - alpha[mask])
+    w[mask] = pow(q1[mask], 1.0 - alpha[mask])*pow(q2[mask], alpha[mask])
     mask = (w > 0.0) & (rho < 0.0)
-    w[mask] = alpha[mask]*pow(q1[mask], rho[mask]) + (1.0 - alpha[mask])*pow(q2[mask], rho[mask])
+    w[mask] = (1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask])
     mask = (w > 0.0) & (rho < 0.0)
     w[mask] = pow(w[mask], 1.0/rho[mask])
     mask = (rho > 0.0)
-    w[mask] = pow(alpha[mask]*pow(q1[mask], rho[mask]) + (1.0 - alpha[mask])*pow(q2[mask], rho[mask]), 1.0/rho[mask])
+    w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
     return w
 
-if mingiven != maxgiven:
+if minlog_es != maxlog_es:
     movie = True
-    alphas = np.linspace(maxalpha, minalpha, num=num)
+    log_ess = np.linspace(minlog_es, maxlog_es, num=num)
     frames = []
 else:
     movie = False 
-    alphas = np.array([minalpha])
+    log_ess = np.array([minlog_es])
 
 givens = np.linspace(maxgiven, mingiven, num=num)
 givens[0] = 0.999999
-log_ess = np.linspace(minlog_es, maxlog_es, num=num)
+alphas = np.linspace(minalpha, maxalpha, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
 b = a2max/a1max
 Rq = R2/R1
@@ -77,44 +78,44 @@ a2x = np.linspace(0.0, a2max, num=npoints)
 a2y = np.linspace(a2max, 0.0, num=npoints)
 X, Y = np.meshgrid(a2x, a2y)
 Z = np.zeros([npoints, npoints])
-RR, GG = np.meshgrid(rhos, givens)
-RR, G0 = np.meshgrid(rhos, np.zeros([num]))
+AA, GG = np.meshgrid(alphas, givens)
+AA, G0 = np.meshgrid(alphas, np.zeros([num]))
 TT = b*Rq*(1.0 - GG)
 T0 = b*Rq*(1.0 - G0)
 
-minx = round(log_ess[0])
-maxx = round(log_ess[-1])
-miny = minigiven
+minx = minalpha
+maxx = maxalpha
+miny = mingiven
 maxy = maxgiven
 
-xticklabels = [minx, round((minx + maxx)/2), maxx]
+xticklabels = [minx, (minx + maxx)/2, maxx]
 yticklabels = [miny, (miny + maxy)/2, maxy]
 extent = 0, num, 0, num
 extentZ = 0, npoints*num, 0, npoints*num
 
-for alpha in alphas:
+for rho in rhos:
 
     fig, axs = plt.subplots(nrows=3, ncols=3, figsize=(18, 18))
     fig.delaxes(axs[0, 1])
     fig.delaxes(axs[0, 2])
     fig.supylabel("Partner's share of $\it{A}$", x=0.04, y=0.520, fontsize=fslabel)
-    fig.supxlabel("Substitutability of $\it{A}$", x=0.525, y=0.05, fontsize=fslabel)
+    fig.supxlabel("Value of $\it{A}$", x=0.525, y=0.05, fontsize=fslabel)
 
     if movie:
-        fig.text(0.80, 0.80, f'alpha\n{round(alpha,2)}', fontsize=fstick+4, color='grey', ha='right')
+        fig.text(0.80, 0.80, f'log(es)\n{round(-log(1.0-rho, 2), 2)}', fontsize=fstick+4, color='grey', ha='right')
 
-    Q0 = Rq*pow(T0*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
+    Q0 = Rq*pow(T0*AA/(1.0 - AA), 1.0/(rho - 1.0))
     a20ss = a2max/(1.0 + Q0*b)
-    Q = Rq*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
+    Q = Rq*pow(TT*AA/(1.0 - AA), 1.0/(rho - 1.0))
     a2eqss = a2max/(1.0 + Q*b)
 
-    A = np.full([npoints, npoints], alpha)
+    Rh = np.full([npoints, npoints], rho)
     Zss = np.empty((0, npoints*num))
     for given in givens:
         G = np.full([npoints, npoints], given)
         Zs = np.empty((npoints, 0))
-        for rho in rhos:
-            Rh = np.full([npoints, npoints], rho)
+        for alpha in alphas:
+            A = np.full([npoints, npoints], alpha)
             T = fitness(Y, X, G, A, Rh)
             R = fitness(Y, Y, G, A, Rh)
             P = fitness(X, X, G, A, Rh)
@@ -135,8 +136,8 @@ for alpha in alphas:
             Zs = np.append(Zs, Z, axis=1)
         Zss = np.append(Zss, Zs, axis=0)
 
-    AA = np.full([num, num], alpha)
-    Mss = [[a20ss, a20ss*R2*GG, fitness(a20ss, a20ss, GG, AA, RR)], [a2eqss, a2eqss*R2*GG, fitness(a2eqss, a2eqss, GG, AA, RR)]]
+    Rh = np.full([num, num], rho)
+    Mss = [[a20ss, a20ss*R2*GG, fitness(a20ss, a20ss, GG, AA, Rh)], [a2eqss, a2eqss*R2*GG, fitness(a2eqss, a2eqss, GG, AA, Rh)]]
 
     for axrow, letterrow in zip(axs, letters):
         for ax, letter, traitlabel in zip(axrow, letterrow, traitlabels):

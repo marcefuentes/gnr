@@ -12,8 +12,8 @@ import time
 
 start_time = time.perf_counter ()
 
-minalpha = 0.0
-maxalpha = 1.0
+minalpha = 0.1
+maxalpha = 0.9
 minlog_es = -5.0
 maxlog_es = 5.0
 mingiven = 0.0

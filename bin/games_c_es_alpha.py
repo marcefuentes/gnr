@@ -12,8 +12,8 @@ import time
 
 start_time = time.perf_counter ()
 
-minalpha = 0.4
-maxalpha = 0.6
+minalpha = 0.0
+maxalpha = 1.0
 minlog_es = -5.0
 maxlog_es = 5.0
 mingiven = 0.0
@@ -21,7 +21,7 @@ maxgiven = 1.0
 
 num = 21    # Number of subplot rows and columns
 npoints = 128
-filename = 'games_c_rho_alpha'
+filename = 'games_c_es_alpha'
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0

@@ -59,7 +59,7 @@ def fitness(x, y, given, alpha, rho):
     w[mask] = pow(alpha[mask]*pow(q1[mask], rho[mask]) + (1.0 - alpha[mask])*pow(q2[mask], rho[mask]), 1.0/rho[mask])
     return w
 
-if mingiven != maxgiven:
+if minalpha != maxalpha:
     movie = True
     alphas = np.linspace(maxalpha, minalpha, num=num)
     frames = []

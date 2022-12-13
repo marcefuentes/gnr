@@ -41,11 +41,6 @@ letters = [['a', 'b', 'c'],
             ['e', 'f', 'g']]
 
 def fitness(x, y, given, alpha, rho):
-    if isinstance(x, float): x = np.array([x])
-    if isinstance(y, float): y = np.array([y])
-    if isinstance(given, float): given = np.array([given])
-    if isinstance(alpha, float): alpha = np.array([alpha])
-    if isinstance(rho, float): rho = np.array([rho])
     q1 = (a2max - y)*R1/b
     q2 = y*R2*(1.0 - given) + x*R2*given
     w = q1*q2

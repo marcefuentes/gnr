@@ -4,7 +4,7 @@ import numpy as np
 
 num = 21
 ess = np.linspace(5.0, 5.0, 1)
-alphas = np.linspace(0.4, 0.6, num)
+alphas = np.linspace(0.1, 0.9, num)
 c = 101
 
 for alpha in alphas:
@@ -35,7 +35,7 @@ for alpha in alphas:
         f.write('GroupSize,2\n')
         f.write('ChooseCost,-14\n')
         f.write('MimicCost,-14\n')
-        f.write('Given,0.99\n')
+        f.write('Given,0.95\n')
         f.write('PartnerChoice,1\n')
         f.write('Reciprocity,1\n')
         f.write('Discrete,0\n')

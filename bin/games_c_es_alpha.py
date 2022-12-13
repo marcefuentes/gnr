@@ -1,12 +1,12 @@
 #! /usr/bin/env python
 
 from glob import glob
+from matplotlib import cm
+from matplotlib.colors import ListedColormap
 import os
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
-from matplotlib import cm
-from matplotlib.colors import ListedColormap
 import numpy as np
 import time
 
@@ -50,13 +50,13 @@ def fitness(x, y, given, alpha, rho):
     q2 = y*R2*(1.0 - given) + x*R2*given
     w = q1*q2
     mask = (w > 0.0) & (rho == 0.0)
-    w[mask] = pow(q1[mask], alpha[mask])*pow(q2[mask], 1.0 - alpha[mask])
+    w[mask] = pow(q1[mask], 1.0 - alpha[mask])*pow(q2[mask], alpha[mask])
     mask = (w > 0.0) & (rho < 0.0)
-    w[mask] = alpha[mask]*pow(q1[mask], rho[mask]) + (1.0 - alpha[mask])*pow(q2[mask], rho[mask])
+    w[mask] = (1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask])
     mask = (w > 0.0) & (rho < 0.0)
     w[mask] = pow(w[mask], 1.0/rho[mask])
     mask = (rho > 0.0)
-    w[mask] = pow(alpha[mask]*pow(q1[mask], rho[mask]) + (1.0 - alpha[mask])*pow(q2[mask], rho[mask]), 1.0/rho[mask])
+    w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
     return w
 
 if mingiven != maxgiven:
@@ -95,16 +95,16 @@ for given in reversed(givens):
     fig, axs = plt.subplots(nrows=3, ncols=3, figsize=(18, 18))
     fig.delaxes(axs[0, 1])
     fig.delaxes(axs[0, 2])
-    fig.supylabel("Value of $\it{B}$", x=0.04, y=0.520, fontsize=fslabel)
+    fig.supylabel("Value of $\it{A}$", x=0.04, y=0.520, fontsize=fslabel)
     fig.supxlabel("Substitutability of $\it{A}$", x=0.525, y=0.05, fontsize=fslabel)
 
     if movie:
         fig.text(0.80, 0.80, f'given\n{round(given,2)}', fontsize=fstick+4, color='grey', ha='right')
 
     TT = T0*(1.0 - given)
-    Q0 = Rq*pow(T0*(1.0 - AA)/AA, 1.0/(RR - 1.0))
+    Q0 = Rq*pow(T0*AA/(1.0 - AA), 1.0/(RR - 1.0))
     a20ss = a2max/(1.0 + Q0*b)
-    Q = Rq*pow(TT*(1.0 - AA)/AA, 1.0/(RR - 1.0))
+    Q = Rq*pow(TT*AA/(1.0 - AA), 1.0/(RR - 1.0))
     a2eqss = a2max/(1.0 + Q*b)
 
     Zss = np.empty((0, npoints*num))

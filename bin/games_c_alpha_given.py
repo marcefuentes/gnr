@@ -1,13 +1,13 @@
 #! /usr/bin/env python
 
 from glob import glob
+from math import log
+from matplotlib import cm
+from matplotlib.colors import ListedColormap
 import os
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
-from math import log
-from matplotlib import cm
-from matplotlib.colors import ListedColormap
 import numpy as np
 import time
 
@@ -15,8 +15,8 @@ start_time = time.perf_counter ()
 
 minalpha = 0.1
 maxalpha = 0.9
-minlog_es = -5.0
-maxlog_es = 5.0
+minlog_es = 1.0
+maxlog_es = 1.0
 mingiven = 0.0
 maxgiven = 1.0
 
@@ -42,11 +42,6 @@ letters = [['a', 'b', 'c'],
             ['e', 'f', 'g']]
 
 def fitness(x, y, given, alpha, rho):
-    if isinstance(x, float): x = np.array([x])
-    if isinstance(y, float): y = np.array([y])
-    if isinstance(given, float): given = np.array([given])
-    if isinstance(alpha, float): alpha = np.array([alpha])
-    if isinstance(rho, float): rho = np.array([rho])
     q1 = (a2max - y)*R1/b
     q2 = y*R2*(1.0 - given) + x*R2*given
     w = q1*q2

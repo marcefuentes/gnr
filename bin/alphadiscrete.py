@@ -11,36 +11,46 @@ import time
 
 start_time = time.perf_counter ()
 
-filename = 'alphadiscrete'
 traits = ['ChooseGrainmean', 'MimicGrainmean']
 traitlabels = ['Game types', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
 folders = ['p', 'r']
 alphafolders = ['alpha25', 'alpha50', 'alpha75']
 alphas = [0.25, 0.50, 0.75]
 
-letters = [['a', 'b', 'c'],
-            ['d', 'e', 'f'],
-            ['g', 'h', 'i']]
-
 movie = False
 
+filename = 'alphadiscrete'
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
 a2max = 1.0
+
+# Figure 
+
+fslabel=24 # Label font size
+fstick=16 # Tick font size
+plt.rcParams['pdf.fonttype'] = 42
+plt.rcParams['ps.fonttype'] = 42
+frames = []
+
+
+
+letters = [['a', 'b', 'c'],
+            ['d', 'e', 'f'],
+            ['g', 'h', 'i']]
 
 def fitness(x, y):
     q1 = (a2max - y)*R1/b
     q2 = y*R2*(1.0 - GG) + x*R2*GG
     w = q1*q2
     mask = (w > 0.0) & (RR == 0.0)
-    w[mask] = pow(q1[mask], alpha)*pow(q2[mask], 1.0 - alpha)
+    w[mask] = pow(q1[mask], 1.0 - alpha[mask])*pow(q2[mask], alpha[mask])
     mask = (w > 0.0) & (RR < 0.0)
-    w[mask] = alpha*pow(q1[mask], RR[mask]) + (1.0 - alpha)*pow(q2[mask], RR[mask])
+    w[mask] = (1.0 - alpha)*pow(q1[mask], RR[mask]) + alpha*pow(q2[mask], RR[mask])
     mask = (w > 0.0) & (RR < 0.0)
     w[mask] = pow(w[mask], 1.0/RR[mask])
     mask = (RR > 0.0)
-    w[mask] = pow(alpha*pow(q1[mask], RR[mask]) + (1.0 - alpha)*pow(q2[mask], RR[mask]), 1.0/RR[mask])
+    w[mask] = pow((1.0 - alpha)*pow(q1[mask], RR[mask]) + alpha*pow(q2[mask], RR[mask]), 1.0/RR[mask])
     return w
 
 # Simulations
@@ -99,15 +109,6 @@ for alpha in alphas:
     Z[(T > R) & (P > S)] = 0.1
     Zs.append(Z)
 
-# Figure 
-
-fslabel=24 # Label font size
-fstick=16 # Tick font size
-
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
-frames = []
-
 fig, axs = plt.subplots(nrows=len(alphas), ncols=len(traits)+1, figsize=(6*len(alphas), 6*(len(traits)+1)))
 
 fig.supxlabel('Substitutability of $\it{A}$', x=0.52, y=0.03, fontsize=fslabel*1.35)
@@ -148,9 +149,11 @@ for t in ts:
         os.remove('temp.png')
     else:
         plt.savefig(filename + '.png', transparent=False)
+
+    plt.close()
+
 if movie:
     iio.mimsave(filename + '.gif', frames)
-plt.close()
 
 end_time = time.perf_counter ()
 print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')

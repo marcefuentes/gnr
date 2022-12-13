@@ -82,7 +82,7 @@ nc = len(rhos)
 RR, GG = np.meshgrid(rhos, givens)
 
 TT = b*Rq*(1.0 - GG)
-QQ = Rq*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
+QQ = Rq*pow(TT*alpha)/(1.0 - alpha), 1.0/(RR - 1.0))
 a2 = a2max/(1.0 + QQ*b)
 helps = a2*R2*GG
 w = fitness(a2, a2)

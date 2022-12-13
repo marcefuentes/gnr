@@ -1,13 +1,13 @@
 #! /usr/bin/env python
 
 from glob import glob
+from math import log
+from matplotlib import cm
+from matplotlib.colors import ListedColormap
 import os
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
-from math import log
-from matplotlib import cm
-from matplotlib.colors import ListedColormap
 import numpy as np
 import time
 
@@ -21,14 +21,14 @@ mingiven = 0.0
 maxgiven = 1.0
 
 num = 11    # Number of subplot rows and columns
+every = int(num/2)
 npoints = 128
 filename = 'games_cd_alpha_given'
-every = int(num/2)
+vmax = 1.5
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
 a2max = 1.0
-vmax = 1.5
 
 # Figure
 
@@ -36,7 +36,6 @@ fslabel = 26 # Label font size
 fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
-
 
 def fitness(x, y):
     if isinstance(x, float): x = np.array([x])
@@ -46,15 +45,15 @@ def fitness(x, y):
     if rho == 0.0:
         w = q1*q2
         mask = (w > 0.0)
-        w[mask] = pow(q1[mask], alpha)*pow(q2[mask], 1.0 - alpha)
+        w[mask] = pow(q1[mask], 1.0 - alpha)*pow(q2[mask], alpha)
     elif rho < 0.0:
         w = q1*q2
         mask = (w > 0.0)
-        w[mask] = alpha*pow(q1[mask], rho) + (1.0 - alpha)*pow(q2[mask], rho)
+        w[mask] = (1.0 - alpha)*pow(q1[mask], rho) + alpha*pow(q2[mask], rho)
         mask = (w > 0.0)
         w[mask] = pow(w[mask], 1.0/rho)
     else:
-        w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
+        w = pow((1.0 - alpha)*pow(q1, rho) + alpha*pow(q2, rho), 1.0/rho)
     return w
 
 if minlog_es != maxlog_es:
@@ -106,7 +105,7 @@ for rho in rhos:
     grid = outer_grid[1, 0].subgridspec(num, num, wspace=0, hspace=0)
     ax1s = grid.subplots()
 
-    Q = Rq*pow(TT*(1.0 - AA)/AA, 1.0/(rho - 1.0))
+    Q = Rq*pow(TT*alpha/(1.0 - alpha), 1.0/(RR - 1.0))
     a2eqss = a2max/(1.0 + Q*b)
 
     for row0, row1, given, a2eqs in zip(ax0s, ax1s, givens, a2eqss):

@@ -1,44 +1,40 @@
 #! /usr/bin/env python
 
 from glob import glob
+from matplotlib import cm
+from matplotlib.colors import ListedColormap
 import os
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
-from matplotlib import cm
-from matplotlib.colors import ListedColormap
 import numpy as np
 import time
 
 start_time = time.perf_counter ()
 
-movie = False
-if movie:
-    alphas = np.linspace(0.1, 0.9, num=11)
-    frames = []
-else:
-    alphas = np.linspace(0.5, 0.5, num=1)
+minalpha = 0.1
+maxalpha = 0.9
+minlog_es = -5.0
+maxlog_es = 5.0
+mingiven = 0.0
+maxgiven = 1.0
 
+num = 11    # Number of subplot rows and columns
+every = int(num/2)
+npoints = 128
 filename = 'gameses'
+vmax = 1.5
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
 a2max = 1.0
-npoints = 128
-#vmax = 1.2
-vmax = 1.5
+
+# Figure
 
 fslabel = 26 # Label font size
 fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
-
-num = 11    # Number of subplot rows and columns
-every = int(num/2)
-minlog_es = -5.0
-maxlog_es = 5.0
-mingiven = 0.0
-maxgiven = 1.0
 
 def fitness(x, y):
     if isinstance(x, float): x = np.array([x])
@@ -48,16 +44,24 @@ def fitness(x, y):
     if rho == 0.0:
         w = q1*q2
         mask = (w > 0.0)
-        w[mask] = pow(q1[mask], alpha)*pow(q2[mask], 1.0 - alpha)
+        w[mask] = pow(q1[mask], 1.0 - alpha)*pow(q2[mask], alpha)
     elif rho < 0.0:
         w = q1*q2
         mask = (w > 0.0)
-        w[mask] = alpha*pow(q1[mask], rho) + (1.0 - alpha)*pow(q2[mask], rho)
+        w[mask] = (1.0 - alpha)*pow(q1[mask], rho) + alpha*pow(q2[mask], rho)
         mask = (w > 0.0)
         w[mask] = pow(w[mask], 1.0/rho)
     else:
-        w = pow(alpha*pow(q1, rho) + (1.0 - alpha)*pow(q2, rho), 1.0/rho)
+        w = pow((1.0 - alpha)*pow(q1, rho) + alpha*pow(q2, rho), 1.0/rho)
     return w
+
+if minalpha != maxalpha:
+    movie = True
+    alphas = np.linspace(0.1, 0.9, num=11)
+    frames = []
+else:
+    movie = False
+    alphas = np.array([minalpha])
 
 b = a2max/a1max
 givens = np.linspace(maxgiven, mingiven, num=num)
@@ -100,7 +104,7 @@ for alpha in alphas:
     grid = outer_grid[1, 0].subgridspec(num, num, wspace=0, hspace=0)
     ax1s = grid.subplots()
 
-    Q = Rq*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
+    Q = Rq*pow(TT*alpha/(1.0 - alpha), 1.0/(RR - 1.0))
     a2eqss = a2max/(1.0 + Q*b)
 
     for row0, row1, given, a2eqs in zip(ax0s, ax1s, givens, a2eqss):
@@ -202,9 +206,11 @@ for alpha in alphas:
         os.remove('temp.png')
     else:
         plt.savefig(filename + '.png', transparent=False)
+
+    plt.close()
+
 if movie:
     iio.mimsave(filename + '.gif', frames)
-plt.close()
 
 end_time = time.perf_counter ()
 print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')

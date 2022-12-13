@@ -1,12 +1,12 @@
 #! /usr/bin/env python
 
 from glob import glob
+from matplotlib import cm
+from matplotlib.colors import ListedColormap
 import os
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
-from matplotlib import cm
-from matplotlib.colors import ListedColormap
 import numpy as np
 import time
 
@@ -44,13 +44,13 @@ def fitness(x, y):
     q2 = y*R2*(1.0 - given) + x*R2*given
     w = q1*q2
     mask = (w > 0.0) & (RR == 0.0)
-    w[mask] = pow(q1[mask], AA[mask])*pow(q2[mask], 1.0 - AA[mask])
+    w[mask] = pow(q1[mask], 1.0 - AA[mask])*pow(q2[mask], AA[mask])
     mask = (w > 0.0) & (RR < 0.0)
-    w[mask] = AA[mask]*pow(q1[mask], RR[mask]) + (1.0 - AA[mask])*pow(q2[mask], RR[mask])
+    w[mask] = (1.0 - AA[mask])*pow(q1[mask], RR[mask]) + AA[mask]*pow(q2[mask], RR[mask])
     mask = (w > 0.0) & (RR < 0.0)
     w[mask] = pow(w[mask], 1.0/RR[mask])
     mask = (RR > 0.0)
-    w[mask] = pow(AA[mask]*pow(q1[mask], RR[mask]) + (1.0 - AA[mask])*pow(q2[mask], RR[mask]), 1.0/RR[mask])
+    w[mask] = pow((1.0 - AA[mask])*pow(q1[mask], RR[mask]) + AA[mask]*pow(q2[mask], RR[mask]), 1.0/RR[mask])
     return w
 
 if mingiven != maxgiven:

@@ -18,6 +18,8 @@ alphafolders = ['alpha25', 'alpha50', 'alpha75']
 alphas = [0.25, 0.50, 0.75]
 
 movie = False
+if movie:
+    frames = []
 
 filename = 'alphadiscrete'
 R1 = 2.0
@@ -25,15 +27,12 @@ R2 = 2.0
 a1max = 1.0
 a2max = 1.0
 
-# Figure 
+# Figure
 
 fslabel=24 # Label font size
 fstick=16 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
-frames = []
-
-
 
 letters = [['a', 'b', 'c'],
             ['d', 'e', 'f'],
@@ -76,6 +75,7 @@ rhos = 1.0 - 1.0/ess
 nr = len(givens)
 nc = len(rhos)
 RR, GG = np.meshgrid(rhos, givens)
+
 a20 = np.full([nc, nr], 0.0)
 a21 = a20 + a2max/2.0
 a22 = a20 + a2max
@@ -120,6 +120,7 @@ minx = round(log(ess[0], 2))
 maxx = round(log(ess[-1], 2))
 xticklabels = [minx, round((minx + maxx)/2), maxx]
 yticklabels = [0.0, 0.5, 1.0]
+extent = 0, nr, 0, nc
 
 for axrow, letterrow in zip(axs, letters):
     for ax, letter, traitlabel in zip(axrow, letterrow, traitlabels):
@@ -131,8 +132,6 @@ for axrow, letterrow in zip(axs, letters):
             ax.set_xticklabels(xticklabels, fontsize=fstick)
         if ax.get_subplotspec().is_first_col():
             ax.set_yticklabels(yticklabels, fontsize=fstick) 
-
-extent = 0, nr, 0, nc
 
 for axrow, Z in zip(axs, Zs):
     axrow[0].imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=1.0)

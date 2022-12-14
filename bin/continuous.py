@@ -11,12 +11,17 @@ import time
 
 start_time = time.perf_counter ()
 
-filename = 'output'
 traits = ['a2Seenmean', 'help', 'wmean', 'ChooseGrainmean', 'MimicGrainmean']
 traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
 traitvmaxs = [1.0, 2.0, 1.5, 1.0, 1.0]
 folders = ['none', 'p', 'r', 'pr', 'p8r']
 alpha = 0.5
+
+movie = False
+if movie:
+    frames = []
+
+filename = 'output'
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
@@ -37,22 +42,18 @@ letters = [['a', 'b', 'c', 'd', 'e'],
             ['z', 'aa', 'ab', 'ac', 'ad'],
             ['ae', 'af', 'ag', 'ah', 'ai']]
 
-movie = False
-if movie:
-    frames = []
-
 def fitness(x, y):
     q1 = (a2max - y)*R1/b
     q2 = y*R2*(1.0 - GG) + x*R2*GG
     w = q1*q2
     mask = (w > 0.0) & (RR == 0.0)
-    w[mask] = pow(q1[mask], alpha)*pow(q2[mask], 1.0 - alpha)
+    w[mask] = pow(q1[mask], 1.0 - alpha)*pow(q2[mask], alpha)
     mask = (w > 0.0) & (RR < 0.0)
-    w[mask] = alpha*pow(q1[mask], RR[mask]) + (1.0 - alpha)*pow(q2[mask], RR[mask])
+    w[mask] = (1.0 - alpha)*pow(q1[mask], RR[mask]) + alpha*pow(q2[mask], RR[mask])
     mask = (w > 0.0) & (RR < 0.0)
     w[mask] = pow(w[mask], 1.0/RR[mask])
     mask = (RR > 0.0)
-    w[mask] = pow(alpha*pow(q1[mask], RR[mask]) + (1.0 - alpha)*pow(q2[mask], RR[mask]), 1.0/RR[mask])
+    w[mask] = pow((1.0 - alpha)*pow(q1[mask], RR[mask]) + alpha*pow(q2[mask], RR[mask]), 1.0/RR[mask])
     return w
 
 # Simulations
@@ -82,7 +83,7 @@ nc = len(rhos)
 RR, GG = np.meshgrid(rhos, givens)
 
 TT = b*Rq*(1.0 - GG)
-QQ = Rq*pow(TT*alpha)/(1.0 - alpha), 1.0/(RR - 1.0))
+QQ = Rq*pow(TT*alpha/(1.0 - alpha), 1.0/(RR - 1.0))
 a2 = a2max/(1.0 + QQ*b)
 helps = a2*R2*GG
 w = fitness(a2, a2)

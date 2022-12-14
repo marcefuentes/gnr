@@ -84,6 +84,10 @@ xticklabels = [minx, round((minx + maxx)/2), maxx]
 yticklabels = [miny, (miny + maxy)/2, maxy]
 extent = 0, num, 0, num
 extentZ = 0, npoints*num, 0, npoints*num
+black = np.full((npoints, npoints, 4), [0.2, 0.0, 0.2, 1.0])
+cyan = np.full((npoints, npoints, 4), [0.0, 1.0, 1.0, 1.0])
+white = np.full((npoints, npoints, 4), [1.0, 1.0, 1.0, 1.0])
+green = np.full((npoints, npoints, 4), [0.0, 1.0, 0.0, 1.0])
 
 for given in reversed(givens):
 
@@ -94,7 +98,7 @@ for given in reversed(givens):
     fig.supxlabel("Substitutability of $\it{A}$", x=0.525, y=0.05, fontsize=fslabel)
 
     if movie:
-        fig.text(0.80, 0.80, f'given\n{round(given,2)}', fontsize=fstick+4, color='grey', ha='right')
+        fig.text(0.80, 0.80, f'given\n{given:4.2f}', fontsize=fstick+4, color='grey', ha='right')
 
     TT = T0*(1.0 - given)
     Q0 = Rq*pow(T0*AA/(1.0 - AA), 1.0/(RR - 1.0))
@@ -102,12 +106,13 @@ for given in reversed(givens):
     Q = Rq*pow(TT*AA/(1.0 - AA), 1.0/(RR - 1.0))
     a2eqss = a2max/(1.0 + Q*b)
 
-    Zss = np.empty((0, npoints*num))
+    Zss = np.empty((0, npoints*num, 4))
     for alpha in alphas:
         A = np.full([npoints, npoints], alpha)
-        Zs = np.empty((npoints, 0))
+        Zs = np.empty((npoints, 0, 4))
         for rho in rhos:
             Rh = np.full([npoints, npoints], rho)
+            Z = np.full((npoints, npoints, 4), [0.0, 1.0, 0.0, 1.0])
             T = fitness(Y, X, given, A, Rh)
             R = fitness(Y, Y, given, A, Rh)
             P = fitness(X, X, given, A, Rh)
@@ -119,10 +124,12 @@ for given in reversed(givens):
             H = T[mask]
             T[mask] = S[mask]
             S[mask] = H
-            Z[(T > R) & (P > S)] = 0.1
-            Z[(T >= R) & (P <= S)] = 0.5
-            Z[(T < R) & (P < S)] = 0.9
-            Z[(T == R) & (P == R)] = 1.0
+            mask = (T > R) & (P > S)
+            Z[mask] = black[mask]
+            mask = (T >= R) & (P <= S)
+            Z[mask] = cyan[mask]
+            mask = (T < R) & (P < S)
+            Z[mask] = white[mask]
             #Z = np.tril(Z, k=-1)
             Z = np.ma.masked_where(Z == 0.0, Z)
             Zs = np.append(Zs, Z, axis=1)
@@ -144,7 +151,7 @@ for given in reversed(givens):
             if ax.get_subplotspec().is_first_col():
                 ax.set_yticklabels(yticklabels, fontsize=fstick) 
 
-    axs[0, 0].imshow(Zss, extent=extentZ, cmap='magma', vmin=0, vmax=1)
+    axs[0, 0].imshow(Zss, extent=extentZ)
 
     for row, Ms in zip(axs[1:], Mss):
         for ax, M, traitvmax in zip(row, Ms, traitvmaxs):

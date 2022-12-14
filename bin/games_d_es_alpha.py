@@ -20,7 +20,7 @@ mingiven = 0.0
 maxgiven = 1.0
 
 num = 21    # Number of subplot rows and columns
-filename = 'games_d_rho_alpha'
+filename = 'games_d_es_alpha'
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
@@ -88,6 +88,10 @@ maxy = maxalpha
 xticklabels = [minx, round((minx + maxx)/2), maxx]
 yticklabels = [miny, (miny + maxy)/2, maxy]
 extent = 0, num, 0, num
+black = np.full((num, num, 4), [0.2, 0.0, 0.2, 1.0])
+cyan = np.full((num, num, 4), [0.0, 1.0, 1.0, 1.0])
+white = np.full((num, num, 4), [1.0, 1.0, 1.0, 1.0])
+green = np.full((num, num, 4), [0.0, 1.0, 0.0, 1.0])
 
 for given in reversed(givens):
 
@@ -98,9 +102,9 @@ for given in reversed(givens):
     fig.supxlabel("Substitutability of $\it{A}$", x=0.525, y=0.05, fontsize=fslabel)
 
     if movie:
-        fig.text(0.80, 0.80, f'given\n{round(given,2)}', fontsize=fstick+4, color='grey', ha='right')
+        fig.text(0.80, 0.80, f'given\n{given:4.2f}', fontsize=fstick+4, color='grey', ha='right')
 
-    Z = np.full([num, num], 0.0)
+    Z = np.full([num, num, 4], [0.0, 1.0, 0.0, 1.0])
     a20 = np.full([num, num], 0.0)
     a21 = np.full([num, num], a2max/2.0)
     a2 = np.full([num, num], 0.0)
@@ -119,16 +123,16 @@ for given in reversed(givens):
     P = w11
     S = w10
     mask = (mask0 & (T < R) & (P < S))
-    Z[mask] = 0.9
+    Z[mask] = white[mask]
     a2[mask] = a20[mask]
     w[mask] = R[mask]
     mask = (mask0 & (T >= R) & (P <= S))
-    Z[mask] = 0.5
+    Z[mask] = cyan[mask]
     x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2[mask] = a20[mask]*x[mask] + a21[mask]*(1.0 - x[mask])
     w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
     mask = (mask0 & (T > R) & (P > S))
-    Z[mask] = 0.1
+    Z[mask] = black[mask]
     a2[mask] = a21[mask]
     w[mask] = P[mask]
 
@@ -138,16 +142,16 @@ for given in reversed(givens):
     P = w00
     S = w01
     mask = (mask0 & (T < R) & (P < S))
-    Z[mask] = 0.9
+    Z[mask] = white[mask]
     a2[mask] = a21[mask]
     w[mask] = R[mask]
     mask = (mask0 & (T >= R) & (P <= S))
-    Z[mask] = 0.5
+    Z[mask] = cyan[mask]
     x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2[mask] = a21[mask]*x[mask] + a20[mask]*(1.0 - x[mask])
     w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
     mask = (mask0 & (T > R) & (P > S))
-    Z[mask] = 0.1
+    Z[mask] = black[mask]
     a2[mask] = a20[mask]
     w[mask] = P[mask]
 
@@ -157,16 +161,16 @@ for given in reversed(givens):
     P = w22
     S = w21
     mask = (mask0 & (T < R) & (P < S))
-    Z[mask] = 0.9
+    Z[mask] = white[mask]
     a2[mask] = a21[mask]
     w[mask] = R[mask]
     mask = (mask0 & (T >= R) & (P <= S))
-    Z[mask] = 0.5
+    Z[mask] = cyan[mask]
     x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2[mask] = a21[mask]*x[mask] + a22[mask]*(1.0 - x[mask])
     w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
     mask = (mask0 & (T > R) & (P > S))
-    Z[mask] = 0.1
+    Z[mask] = black[mask]
     a2[mask] = a22[mask]
     w[mask] = P[mask]
 
@@ -176,16 +180,16 @@ for given in reversed(givens):
     P = w11
     S = w12
     mask = (mask0 & (T < R) & (P < S))
-    Z[mask] = 0.9
+    Z[mask] = white[mask]
     a2[mask] = a22[mask]
     w[mask] = R[mask]
     mask = (mask0 & (T >= R) & (P <= S))
-    Z[mask] = 0.5
+    Z[mask] = cyan[mask]
     x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2[mask] = a22[mask]*x[mask] + a21[mask]*(1.0 - x[mask])
     w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
     mask = (mask0 & (T > R) & (P > S))
-    Z[mask] = 0.1
+    Z[mask] = black[mask]
     a2[mask] = a21[mask]
     w[mask] = P[mask]
 
@@ -195,16 +199,16 @@ for given in reversed(givens):
     P = w00
     S = w01
     mask = (mask0 & (T < R) & (P < S))
-    Z[mask] = 0.9
+    Z[mask] = white[mask]
     a2[mask] = a21[mask]
     w[mask] = R[mask]
     mask = (mask0 & (T >= R) & (P <= S))
-    Z[mask] = 0.5
+    Z[mask] = cyan[mask]
     x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2[mask] = a21[mask]*x[mask] + a20[mask]*(1.0 - x[mask])
     w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
     mask = (mask0 & (T > R) & (P > S))
-    Z[mask] = 0.1
+    Z[mask] = black[mask]
     a2[mask] = a20[mask]
     w[mask] = P[mask]
 
@@ -219,7 +223,7 @@ for given in reversed(givens):
             if ax.get_subplotspec().is_first_col():
                 ax.set_yticklabels(yticklabels, fontsize=fstick) 
 
-    axs[0, 0].imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=1)
+    axs[0, 0].imshow(Z, extent=extent)
 
     for row, Ms in zip(axs[1:], Mss):
         for ax, M, traitvmax in zip(row, Ms, traitvmaxs):

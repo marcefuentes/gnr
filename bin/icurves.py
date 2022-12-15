@@ -1,20 +1,20 @@
 #! /usr/bin/env python
 
-import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
 from matplotlib import cm
 from matplotlib.colors import ListedColormap
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 import numpy as np
 import time
 
 start_time = time.perf_counter ()
 
+npoints = 128
 alpha = 0.5
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
 a2max = 1.0
-npoints = 128
 
 num = 5    # Number of subplot rows and columns
 #markersize = 10
@@ -30,22 +30,22 @@ def fitness(x, y):
     q2 = y*R2*(1.0 - GG) + x*R2*GG
     w = q1*q2
     mask = (w > 0.0) & (RR == 0.0)
-    w[mask] = pow(q1[mask], alpha)*pow(q2[mask], 1.0 - alpha)
+    w[mask] = pow(q1[mask], 1.0 - alpha)*pow(q2[mask], alpha)
     mask = (w > 0.0) & (RR < 0.0)
-    w[mask] = alpha*pow(q1[mask], RR[mask]) + (1.0 - alpha)*pow(q2[mask], RR[mask])
+    w[mask] = (1.0 - alpha)*pow(q1[mask], RR[mask]) + alpha*pow(q2[mask], RR[mask])
     mask = (w > 0.0) & (RR < 0.0)
     w[mask] = pow(w[mask], 1.0/RR[mask])
     mask = (RR > 0.0)
-    w[mask] = pow(alpha*pow(q1[mask], RR[mask]) + (1.0 - alpha)*pow(q2[mask], RR[mask]), 1.0/RR[mask])
+    w[mask] = pow((1.0 - alpha)*pow(q1[mask], RR[mask]) + alpha*pow(q2[mask], RR[mask]), 1.0/RR[mask])
     return w
 
 def icces(q, w):
     if rho == 0.0:
-        q2 = np.piecewise(q, [q == 0.0, q > 0.0], [1000.0, lambda i: pow(w/pow(i, alpha), 1.0/(1.0 - alpha))])
+        q2 = np.piecewise(q, [q == 0.0, q > 0.0], [1000.0, lambda i: pow(w/pow(i, 1.0 - alpha), 1.0/alpha)])
     elif rho < 0.0:
-        q2 = np.piecewise(q, [q == 0.0, q > 0.0], [1000.0, lambda i: np.piecewise(i, [pow(w, rho) <= alpha*pow(i, rho), pow(w, rho) > alpha*pow(i, rho)], [1000.0, lambda j: pow((pow(w, rho) - alpha*pow(j, rho))/(1.0 - alpha), 1.0/rho)])])
+        q2 = np.piecewise(q, [q == 0.0, q > 0.0], [1000.0, lambda i: np.piecewise(i, [pow(w, rho) <= (1.0 - alpha)*pow(i, rho), pow(w, rho) > (1.0 - alpha)*pow(i, rho)], [1000.0, lambda j: pow((pow(w, rho) - (1.0 - alpha)*pow(j, rho))/alpha, 1.0/rho)])])
     else:
-        q2 = np.piecewise(q, [pow(w, rho) <= alpha*pow(q, rho), pow(w, rho) > alpha*pow(q, rho)], [-0.1, lambda i: pow((pow(w, rho) - alpha*pow(i, rho))/(1.0 - alpha), 1.0/rho)])
+        q2 = np.piecewise(q, [pow(w, rho) <= (1.0 - alpha)*pow(q, rho), pow(w, rho) > (1.0 - alpha)*pow(q, rho)], [-0.1, lambda i: pow((pow(w, rho) - (1.0 - alpha)*pow(i, rho))/alpha, 1.0/rho)])
     return q2
 
 b = a2max/a1max
@@ -82,7 +82,7 @@ axs = grid.subplots()
 
 Rq = R2/R1
 TT = b*Rq*(1.0 - GG)
-Q = Rq*pow(TT*(1.0 - alpha)/alpha, 1.0/(RR - 1.0))
+Q = Rq*pow(TT*alpha/(1.0 - alpha), 1.0/(RR - 1.0))
 a2ss = a2max/(1.0 + Q*b)
 wss = fitness(a2ss, a2ss)
 q2ss = a2ss*R2

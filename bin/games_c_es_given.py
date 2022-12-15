@@ -71,7 +71,6 @@ Rq = R2/R1
 a2x = np.linspace(0.0, a2max, num=npoints)
 a2y = np.linspace(a2max, 0.0, num=npoints)
 X, Y = np.meshgrid(a2x, a2y)
-Z = np.zeros([npoints, npoints])
 RR, GG = np.meshgrid(rhos, givens)
 RR, G0 = np.meshgrid(rhos, np.zeros([num]))
 TT = b*Rq*(1.0 - GG)
@@ -109,6 +108,7 @@ for alpha in alphas:
         G = np.full([npoints, npoints], given)
         Zs = np.empty((npoints, 0))
         for rho in rhos:
+            Z = np.zeros([npoints, npoints])
             Rh = np.full([npoints, npoints], rho)
             T = fitness(Y, X, G, A, Rh)
             R = fitness(Y, Y, G, A, Rh)

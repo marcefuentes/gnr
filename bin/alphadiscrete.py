@@ -43,7 +43,7 @@ def fitness(x, y):
     q2 = y*R2*(1.0 - GG) + x*R2*GG
     w = q1*q2
     mask = (w > 0.0) & (RR == 0.0)
-    w[mask] = pow(q1[mask], 1.0 - alpha[mask])*pow(q2[mask], alpha[mask])
+    w[mask] = pow(q1[mask], 1.0 - alpha)*pow(q2[mask], alpha)
     mask = (w > 0.0) & (RR < 0.0)
     w[mask] = (1.0 - alpha)*pow(q1[mask], RR[mask]) + alpha*pow(q2[mask], RR[mask])
     mask = (w > 0.0) & (RR < 0.0)
@@ -80,6 +80,11 @@ a20 = np.full([nc, nr], 0.0)
 a21 = a20 + a2max/2.0
 a22 = a20 + a2max
 
+black = [0.2, 0.0, 0.2, 1.0]
+cyan = [0.0, 1.0, 1.0, 1.0]
+white = [1.0, 1.0, 1.0, 1.0]
+green = [0.0, 1.0, 0.0, 1.0]
+
 Zs = []
 
 for alpha in alphas:
@@ -103,10 +108,10 @@ for alpha in alphas:
     R[mask] = Ru[mask]
     P[mask] = Pu[mask]
     S[mask] = Su[mask]
-    Z = np.full([nc, nr], 0.0)
-    Z[(T < R) & (P < S)] = 0.9
-    Z[(T >= R) & (P <= S)] = 0.5
-    Z[(T > R) & (P > S)] = 0.1
+    Z = np.full([nc, nr, 4], [0.0, 1.0, 0.0, 1.0])
+    Z[(T < R) & (P < S)] = white
+    Z[(T >= R) & (P <= S)] = cyan
+    Z[(T > R) & (P > S)] = black
     Zs.append(Z)
 
 fig, axs = plt.subplots(nrows=len(alphas), ncols=len(traits)+1, figsize=(6*len(alphas), 6*(len(traits)+1)))
@@ -149,7 +154,7 @@ for t in ts:
     else:
         plt.savefig(filename + '.png', transparent=False)
 
-    plt.close()
+plt.close()
 
 if movie:
     iio.mimsave(filename + '.gif', frames)

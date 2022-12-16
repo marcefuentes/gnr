@@ -16,7 +16,7 @@ a1max = 1.0
 a2max = 1.0
 npoints = 128
 
-num = 21    # Number of subplot rows and columns
+num = 21    # Number of subplot rows & columns
 every = int(num/2)
 minlog_es = -5.0
 maxlog_es = 5.0
@@ -98,11 +98,11 @@ for row, given in zip(axs, givens):
         P = Z[1, 1]
         S = Z[0, 1]
         yaxis = [T, R, P, S]
-        if (T < R) and (P < S):
+        if (T < R) & (P < S):
             rgb = 'orange'
-        elif (T > R) and (P < S):
+        elif (T > R) & (P < S):
             rgb = 'red'
-        elif (T > R) and (P > S) and (2.0*R > T + S):
+        elif (T > R) & (P > S) & (2.0*R > T + S):
             rgb = 'black'
         else:
             rgb = 'cyan'

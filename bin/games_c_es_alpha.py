@@ -19,7 +19,7 @@ maxlog_es = 5.0
 mingiven = 0.0
 maxgiven = 1.0
 
-num = 21    # Number of subplot rows and columns
+num = 21    # Number of subplot rows & columns
 npoints = 64
 filename = 'games_c_es_alpha'
 R1 = 2.0
@@ -44,11 +44,11 @@ def fitness(x, y, given, alpha, rho):
     q1 = (a2max - y)*R1/b
     q2 = y*R2*(1.0 - given) + x*R2*given
     w = q1*q2
-    mask = (w > 0.0) and (rho == 0.0)
+    mask = (w > 0.0) & (rho == 0.0)
     w[mask] = pow(q1[mask], 1.0 - alpha[mask])*pow(q2[mask], alpha[mask])
-    mask = (w > 0.0) and (rho < 0.0)
+    mask = (w > 0.0) & (rho < 0.0)
     w[mask] = (1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask])
-    mask = (w > 0.0) and (rho < 0.0)
+    mask = (w > 0.0) & (rho < 0.0)
     w[mask] = pow(w[mask], 1.0/rho[mask])
     mask = (rho > 0.0)
     w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
@@ -112,22 +112,23 @@ for given in givens:
     H = T[mask]
     T[mask] = S[mask]
     S[mask] = H
-    mask = (T > R) and (P > S)
+    mask = (T > R) & (P > S)
     Z[mask] = black[mask]
-    mask = (T >= R) and (P <= S) and (R != P)
+    mask = (T >= R) & (P <= S) & (R != P)
     Z[mask] = cyan[mask]
-    mask = ((T < R) and (P < S)) or (R == P)
+    mask = ((T < R) & (P < S)) | (R == P)
     Z[mask] = white[mask]
     #Z = np.tril(Z, k=-1)
     Z = np.ma.masked_where(Z == 0.0, Z)
 
-    TT = T0*(1.0 - given)
+    GG = given
+    TT = T0*(1.0 - GG)
     Q0 = Rq*pow(T0*AA/(1.0 - AA), 1.0/(RR - 1.0))
     a20ss = a2max/(1.0 + Q0*b)
     Q = Rq*pow(TT*AA/(1.0 - AA), 1.0/(RR - 1.0))
     a2eqss = a2max/(1.0 + Q*b)
 
-    Mss = [[a20ss, a20ss*R2*given, fitness(a20ss, a20ss, given, AA, RR)], [a2eqss, a2eqss*R2*given, fitness(a2eqss, a2eqss, given, AA, RR)]]
+    Mss = [[a20ss, a20ss*R2*GG, fitness(a20ss, a20ss, GG, AA, RR)], [a2eqss, a2eqss*R2*GG, fitness(a2eqss, a2eqss, GG, AA, RR)]]
 
     for axrow, letterrow in zip(axs, letters):
         for ax, letter, traitlabel in zip(axrow, letterrow, traitlabels):

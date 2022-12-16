@@ -16,7 +16,7 @@ a1max = 1.0
 a2max = 1.0
 npoints = 128
 
-num = 5    # Number of subplot rows and columns
+num = 5    # Number of subplot rows & columns
 #markersize = 10
 n_ic = 5    # Number of indifference curves
 every = int(num/2)
@@ -29,11 +29,11 @@ def fitness(x, y):
     q1 = (a2max - y)*R1/b
     q2 = y*R2*(1.0 - GG) + x*R2*GG
     w = q1*q2
-    mask = (w > 0.0) and (RR == 0.0)
+    mask = (w > 0.0) & (RR == 0.0)
     w[mask] = pow(q1[mask], alpha)*pow(q2[mask], 1.0 - alpha)
-    mask = (w > 0.0) and (RR < 0.0)
+    mask = (w > 0.0) & (RR < 0.0)
     w[mask] = alpha*pow(q1[mask], RR[mask]) + (1.0 - alpha)*pow(q2[mask], RR[mask])
-    mask = (w > 0.0) and (RR < 0.0)
+    mask = (w > 0.0) & (RR < 0.0)
     w[mask] = pow(w[mask], 1.0/RR[mask])
     mask = (RR > 0.0)
     w[mask] = pow(alpha*pow(q1[mask], RR[mask]) + (1.0 - alpha)*pow(q2[mask], RR[mask]), 1.0/RR[mask])
@@ -78,7 +78,7 @@ fig.supxlabel("Substitutability of $\it{A}$", x=0.525, fontsize=fslabel)
 
 outer_grid = fig.add_gridspec(1, 2, left=0.15, right=0.9, top=0.86, bottom=0.176)
 
-# Indifference curves and continuous budget line
+# Indifference curves & continuous budget line
 
 grid = outer_grid[0, 0].subgridspec(num, num, wspace=0, hspace=0)
 axs = grid.subplots()
@@ -106,7 +106,7 @@ for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):
 for ax, given in zip(axs[::every, 0], givens[::every]):
     ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 
-# Indifference curves and discrete budget line
+# Indifference curves & discrete budget line
 
 grid = outer_grid[0, 1].subgridspec(num, num, wspace=0, hspace=0)
 axs = grid.subplots()
@@ -118,9 +118,9 @@ R = fitness(a2Cs, a2Cs)
 P = fitness(a2Ds, a2Ds)
 S = fitness(a2Ds, a2Cs)
 xss = np.full([num, num], 0.0)
-mask = (T < R) and (P < S)
+mask = (T < R) & (P < S)
 xss[mask] = 1.0
-mask = (T > R) and (P < S) and (R - S - T + P != 0.0)
+mask = (T > R) & (P < S) & (R - S - T + P != 0.0)
 xss[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
 q2ss = xss*R2*a2max/2.0
 wss = (T + S)*xss*(1.0 - xss) + R*xss*xss + P*(1.0 - xss)*(1.0 - xss)

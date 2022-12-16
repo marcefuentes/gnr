@@ -20,7 +20,7 @@ maxlog_es = 5.0
 mingiven = 0.0
 maxgiven = 1.0
 
-num = 21    # Number of subplot rows and columns
+num = 21    # Number of subplot rows & columns
 npoints = 128
 filename = 'games_c_alpha_given'
 R1 = 2.0
@@ -45,11 +45,11 @@ def fitness(x, y, given, alpha, rho):
     q1 = (a2max - y)*R1/b
     q2 = y*R2*(1.0 - given) + x*R2*given
     w = q1*q2
-    mask = (w > 0.0) and (rho == 0.0)
+    mask = (w > 0.0) & (rho == 0.0)
     w[mask] = pow(q1[mask], 1.0 - alpha[mask])*pow(q2[mask], alpha[mask])
-    mask = (w > 0.0) and (rho < 0.0)
+    mask = (w > 0.0) & (rho < 0.0)
     w[mask] = (1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask])
-    mask = (w > 0.0) and (rho < 0.0)
+    mask = (w > 0.0) & (rho < 0.0)
     w[mask] = pow(w[mask], 1.0/rho[mask])
     mask = (rho > 0.0)
     w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
@@ -126,11 +126,11 @@ for rho, log_es in zip(rhos, log_ess):
             H = T[mask]
             T[mask] = S[mask]
             S[mask] = H
-            mask = (T > R) and (P > S)
+            mask = (T > R) & (P > S)
             Z[mask] = black[mask]
-            mask = (T >= R) and (P <= S)
+            mask = (T >= R) & (P <= S)
             Z[mask] = cyan[mask]
-            mask = (T < R) and (P < S)
+            mask = (T < R) & (P < S)
             Z[mask] = white[mask]
             #Z = np.tril(Z, k=-1)
             Z = np.ma.masked_where(Z == 0.0, Z)

@@ -42,11 +42,11 @@ def fitness(x, y):
     q1 = (a2max - y)*R1/b
     q2 = y*R2*(1.0 - GG) + x*R2*GG
     w = q1*q2
-    mask = (w > 0.0) and (RR == 0.0)
+    mask = (w > 0.0) & (RR == 0.0)
     w[mask] = pow(q1[mask], 1.0 - alpha)*pow(q2[mask], alpha)
-    mask = (w > 0.0) and (RR < 0.0)
+    mask = (w > 0.0) & (RR < 0.0)
     w[mask] = (1.0 - alpha)*pow(q1[mask], RR[mask]) + alpha*pow(q2[mask], RR[mask])
-    mask = (w > 0.0) and (RR < 0.0)
+    mask = (w > 0.0) & (RR < 0.0)
     w[mask] = pow(w[mask], 1.0/RR[mask])
     mask = (RR > 0.0)
     w[mask] = pow((1.0 - alpha)*pow(q1[mask], RR[mask]) + alpha*pow(q2[mask], RR[mask]), 1.0/RR[mask])
@@ -109,9 +109,9 @@ for alpha in alphas:
     P[mask] = Pu[mask]
     S[mask] = Su[mask]
     Z = np.full([nc, nr, 4], [0.0, 1.0, 0.0, 1.0])
-    Z[(T < R) and (P < S)] = white
-    Z[(T >= R) and (P <= S)] = cyan
-    Z[(T > R) and (P > S)] = black
+    Z[(T < R) & (P < S)] = white
+    Z[(T >= R) & (P <= S)] = cyan
+    Z[(T > R) & (P > S)] = black
     Zs.append(Z)
 
 fig, axs = plt.subplots(nrows=len(alphas), ncols=len(traits)+1, figsize=(6*len(alphas), 6*(len(traits)+1)))

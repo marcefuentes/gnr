@@ -16,11 +16,11 @@ minalpha = 0.1
 maxalpha = 0.9
 minlog_es = -5.0
 maxlog_es = 5.0
-mingiven = 0.95
-maxgiven = 0.95
+mingiven = 0.0
+maxgiven = 1.0
 
 num = 21    # Number of subplot rows and columns
-npoints = 129
+npoints = 64
 filename = 'games_c_es_alpha'
 R1 = 2.0
 R2 = 2.0
@@ -44,11 +44,11 @@ def fitness(x, y, given, alpha, rho):
     q1 = (a2max - y)*R1/b
     q2 = y*R2*(1.0 - given) + x*R2*given
     w = q1*q2
-    mask = (w > 0.0) & (rho == 0.0)
+    mask = (w > 0.0) and (rho == 0.0)
     w[mask] = pow(q1[mask], 1.0 - alpha[mask])*pow(q2[mask], alpha[mask])
-    mask = (w > 0.0) & (rho < 0.0)
+    mask = (w > 0.0) and (rho < 0.0)
     w[mask] = (1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask])
-    mask = (w > 0.0) & (rho < 0.0)
+    mask = (w > 0.0) and (rho < 0.0)
     w[mask] = pow(w[mask], 1.0/rho[mask])
     mask = (rho > 0.0)
     w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
@@ -56,7 +56,7 @@ def fitness(x, y, given, alpha, rho):
 
 if mingiven != maxgiven:
     movie = True
-    givens = np.linspace(maxgiven, mingiven, num=num)
+    givens = np.linspace(mingiven, maxgiven, num=num)
     frames = []
 else:
     movie = False 
@@ -65,7 +65,7 @@ else:
 b = a2max/a1max
 Rq = R2/R1
 T0 = b*Rq
-givens[0] = 0.999999
+givens[-1] = 0.999999
 alphas = np.linspace(maxalpha, minalpha, num=num)
 log_ess = np.linspace(minlog_es, maxlog_es, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
@@ -89,7 +89,7 @@ cyan = np.full((npoints*num, npoints*num, 4), [0.0, 1.0, 1.0, 1.0])
 white = np.full((npoints*num, npoints*num, 4), [1.0, 1.0, 1.0, 1.0])
 green = np.full((npoints*num, npoints*num, 4), [0.0, 1.0, 0.0, 1.0])
 
-for given in reversed(givens):
+for given in givens:
 
     fig, axs = plt.subplots(nrows=3, ncols=3, figsize=(18, 18))
     fig.delaxes(axs[0, 1])
@@ -112,11 +112,11 @@ for given in reversed(givens):
     H = T[mask]
     T[mask] = S[mask]
     S[mask] = H
-    mask = (T > R) & (P > S)
+    mask = (T > R) and (P > S)
     Z[mask] = black[mask]
-    mask = (T >= R) & (P <= S) & (R != P)
+    mask = (T >= R) and (P <= S) and (R != P)
     Z[mask] = cyan[mask]
-    mask = ((T < R) & (P < S)) | (R == P)
+    mask = ((T < R) and (P < S)) or (R == P)
     Z[mask] = white[mask]
     #Z = np.tril(Z, k=-1)
     Z = np.ma.masked_where(Z == 0.0, Z)

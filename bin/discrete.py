@@ -46,11 +46,11 @@ def fitness(x, y):
     q1 = (a2max - y)*R1/b
     q2 = y*R2*(1.0 - GG) + x*R2*GG
     w = q1*q2
-    mask = (w > 0.0) & (RR == 0.0)
+    mask = (w > 0.0) and (RR == 0.0)
     w[mask] = pow(q1[mask], 1.0 - alpha)*pow(q2[mask], alpha)
-    mask = (w > 0.0) & (RR < 0.0)
+    mask = (w > 0.0) and (RR < 0.0)
     w[mask] = (1.0 - alpha)*pow(q1[mask], RR[mask]) + alpha*pow(q2[mask], RR[mask])
-    mask = (w > 0.0) & (RR < 0.0)
+    mask = (w > 0.0) and (RR < 0.0)
     w[mask] = pow(w[mask], 1.0/RR[mask])
     mask = (RR > 0.0)
     w[mask] = pow((1.0 - alpha)*pow(q1[mask], RR[mask]) + alpha*pow(q2[mask], RR[mask]), 1.0/RR[mask])
@@ -91,10 +91,10 @@ for c in range(2):
     R = fitness(a21, a21)
     P = fitness(a20, a20)
     S = fitness(a20, a21)
-    mask = (T < R) & (P < S)
+    mask = (T < R) and (P < S)
     a2[mask] = a2max*(1.0 + c)/2.0
     w[mask] = R[mask]
-    mask = (T >= R) & (P <= S) & (R - S - T + P != 0.0)
+    mask = (T >= R) and (P <= S) and (R - S - T + P != 0.0)
     T = T[mask]
     R = R[mask]
     P = P[mask]

@@ -120,10 +120,10 @@ for alpha in alphas:
             H = T[mask]
             T[mask] = S[mask]
             S[mask] = H
-            Z[(T > R) & (P > S)] = 0.1
-            Z[(T >= R) & (P <= S)] = 0.5
-            Z[(T < R) & (P < S)] = 0.9
-            Z[(T == R) & (P == R)] = 1.0
+            Z[(T > R) and (P > S)] = 0.1
+            Z[(T >= R) and (P <= S)] = 0.5
+            Z[(T < R) and (P < S)] = 0.9
+            Z[(T == R) and (P == R)] = 1.0
             #Z = np.tril(Z, k=-1)
             Z = np.ma.masked_where(Z == 0.0, Z)
             ax0.imshow(Z, origin='lower', extent=extent, cmap='magma', vmin=0, vmax=1)
@@ -172,15 +172,15 @@ for alpha in alphas:
                 R = fitness(a2[2], a2[2])
                 P = fitness(a2[1], a2[1])
                 S = Su
-            if (T < R) & (P < S):
+            if (T < R) and (P < S):
                 x = 1.0
                 weq = R
                 rgb = 0.9
-            elif (T >= R) & (P <= S) & (R - S - T + P != 0.0):
+            elif (T >= R) and (P <= S) and (R - S - T + P != 0.0):
                 x = (P - S)/(R - S - T + P)
                 weq = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
                 rgb = 0.5
-            elif (T > R) & (P > S):
+            elif (T > R) and (P > S):
                 x = 0.0
                 weq = P
                 rgb = 0.1

@@ -212,13 +212,13 @@ class BarsAll:
         for row, (rowax, innerrow) in enumerate(zip(axs, self.innerrows)): 
             for column, (ax, innercol) in enumerate(zip(rowax, self.innercols)):
                 medians = []
-                [medians.append(d.loc[(d[module.glos['x']] == innercol) & (d[module.glos['y']] == innerrow), trait['name'] + 'median'].values[0]) for d in ds]
+                [medians.append(d.loc[(d[module.glos['x']] == innercol) and (d[module.glos['y']] == innerrow), trait['name'] + 'median'].values[0]) for d in ds]
                 dif = medians[0]/medians[1] + 0.05
                 #dif = 0.5
                 if 'Sensitivity' in trait['title']: dif = 1.0/dif
                 self.colors[1] = dif_color(dif)
                 for b, name0, name1 in zip(self.bins[::2], trait['namebins_list'][::2], trait['namebins_list'][1::2]):
-                    barheight=ds[1].loc[(ds[1][module.glos['x']] == innercol) & (ds[1][module.glos['y']] == innerrow), name0] + ds[1].loc[(ds[1][module.glos['x']] == innercol) & (ds[1][module.glos['y']] == innerrow), name1]
+                    barheight=ds[1].loc[(ds[1][module.glos['x']] == innercol) and (ds[1][module.glos['y']] == innerrow), name0] + ds[1].loc[(ds[1][module.glos['x']] == innercol) and (ds[1][module.glos['y']] == innerrow), name1]
                     ax.bar(x=b, height=barheight, align='edge', color=self.colors[1], linewidth=0, width=self.barwidth)
                     ax.set(xticks=[], yticks=[], xlim=[0, 1], ylim=[0, module.ylim])
                     ax.set_box_aspect(1)
@@ -310,7 +310,7 @@ if 'one' in module.ftype:
     glovalue_x = float(str(f"{pow(2, int(module.glovalue['x'])):.6f}")) if dfglos.loc[module.glos['x'], 'log'] else module.glovalue['x'] 
     glovalue_y = float(str(f"{pow(2, int(module.glovalue['y'])):.6f}")) if dfglos.loc[module.glos['y'], 'log'] else module.glovalue['y']
     for folder in folderlist:
-        dfs[folder] = dfs[folder].loc[(dfs[folder][module.glos['x']] == glovalue_x) & (dfs[folder][module.glos['y']] == glovalue_y)]
+        dfs[folder] = dfs[folder].loc[(dfs[folder][module.glos['x']] == glovalue_x) and (dfs[folder][module.glos['y']] == glovalue_y)]
 
 pr.prepare(dfs)
 

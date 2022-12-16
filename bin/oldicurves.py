@@ -29,11 +29,11 @@ def fitness(x, y):
     q1 = (a2max - y)*R1/b
     q2 = y*R2*(1.0 - GG) + x*R2*GG
     w = q1*q2
-    mask = (w > 0.0) & (RR == 0.0)
+    mask = (w > 0.0) and (RR == 0.0)
     w[mask] = pow(q1[mask], alpha)*pow(q2[mask], 1.0 - alpha)
-    mask = (w > 0.0) & (RR < 0.0)
+    mask = (w > 0.0) and (RR < 0.0)
     w[mask] = alpha*pow(q1[mask], RR[mask]) + (1.0 - alpha)*pow(q2[mask], RR[mask])
-    mask = (w > 0.0) & (RR < 0.0)
+    mask = (w > 0.0) and (RR < 0.0)
     w[mask] = pow(w[mask], 1.0/RR[mask])
     mask = (RR > 0.0)
     w[mask] = pow(alpha*pow(q1[mask], RR[mask]) + (1.0 - alpha)*pow(q2[mask], RR[mask]), 1.0/RR[mask])
@@ -118,9 +118,9 @@ R = fitness(a2Cs, a2Cs)
 P = fitness(a2Ds, a2Ds)
 S = fitness(a2Ds, a2Cs)
 xss = np.full([num, num], 0.0)
-mask = (T < R) & (P < S)
+mask = (T < R) and (P < S)
 xss[mask] = 1.0
-mask = (T > R) & (P < S) & (R - S - T + P != 0.0)
+mask = (T > R) and (P < S) and (R - S - T + P != 0.0)
 xss[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
 q2ss = xss*R2*a2max/2.0
 wss = (T + S)*xss*(1.0 - xss) + R*xss*xss + P*(1.0 - xss)*(1.0 - xss)

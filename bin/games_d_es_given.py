@@ -43,11 +43,11 @@ def fitness(x, y):
     q1 = (a2max - y)*R1/b
     q2 = y*R2*(1.0 - given) + x*R2*given
     w = q1*q2
-    mask = (w > 0.0) & (RR == 0.0)
+    mask = (w > 0.0) and (RR == 0.0)
     w[mask] = pow(q1[mask], 1.0 - AA[mask])*pow(q2[mask], AA[mask])
-    mask = (w > 0.0) & (RR < 0.0)
+    mask = (w > 0.0) and (RR < 0.0)
     w[mask] = (1.0 - AA[mask])*pow(q1[mask], RR[mask]) + AA[mask]*pow(q2[mask], RR[mask])
-    mask = (w > 0.0) & (RR < 0.0)
+    mask = (w > 0.0) and (RR < 0.0)
     w[mask] = pow(w[mask], 1.0/RR[mask])
     mask = (RR > 0.0)
     w[mask] = pow((1.0 - AA[mask])*pow(q1[mask], RR[mask]) + AA[mask]*pow(q2[mask], RR[mask]), 1.0/RR[mask])
@@ -123,92 +123,92 @@ for given in reversed(givens):
     R = w00
     P = w11
     S = w10
-    mask = (mask0 & (T < R) & (P < S))
+    mask = (mask0 and (T < R) and (P < S))
     Z[mask] = white[mask]
     a2[mask] = a20[mask]
     w[mask] = R[mask]
-    mask = (mask0 & (T >= R) & (P <= S))
+    mask = (mask0 and (T >= R) and (P <= S))
     Z[mask] = cyan[mask]
     x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2[mask] = a20[mask]*x[mask] + a21[mask]*(1.0 - x[mask])
     w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
-    mask = (mask0 & (T > R) & (P > S))
+    mask = (mask0 and (T > R) and (P > S))
     Z[mask] = black[mask]
     a2[mask] = a21[mask]
     w[mask] = P[mask]
 
-    mask0 = (woptimal == w11) & (w20 > w22)
+    mask0 = (woptimal == w11) and (w20 > w22)
     T = w10
     R = w11
     P = w00
     S = w01
-    mask = (mask0 & (T < R) & (P < S))
+    mask = (mask0 and (T < R) and (P < S))
     Z[mask] = white[mask]
     a2[mask] = a21[mask]
     w[mask] = R[mask]
-    mask = (mask0 & (T >= R) & (P <= S))
+    mask = (mask0 and (T >= R) and (P <= S))
     Z[mask] = cyan[mask]
     x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2[mask] = a21[mask]*x[mask] + a20[mask]*(1.0 - x[mask])
     w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
-    mask = (mask0 & (T > R) & (P > S))
+    mask = (mask0 and (T > R) and (P > S))
     Z[mask] = black[mask]
     a2[mask] = a20[mask]
     w[mask] = P[mask]
 
-    mask0 = (woptimal == w11) & (w20 <= w22)
+    mask0 = (woptimal == w11) and (w20 <= w22)
     T = w12
     R = w11
     P = w22
     S = w21
-    mask = (mask0 & (T < R) & (P < S))
+    mask = (mask0 and (T < R) and (P < S))
     Z[mask] = white[mask]
     a2[mask] = a21[mask]
     w[mask] = R[mask]
-    mask = (mask0 & (T >= R) & (P <= S))
+    mask = (mask0 and (T >= R) and (P <= S))
     Z[mask] = cyan[mask]
     x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2[mask] = a21[mask]*x[mask] + a22[mask]*(1.0 - x[mask])
     w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
-    mask = (mask0 & (T > R) & (P > S))
+    mask = (mask0 and (T > R) and (P > S))
     Z[mask] = black[mask]
     a2[mask] = a22[mask]
     w[mask] = P[mask]
 
-    mask0 = (woptimal == w22) & (w10 < w11)
+    mask0 = (woptimal == w22) and (w10 < w11)
     T = w21
     R = w22
     P = w11
     S = w12
-    mask = (mask0 & (T < R) & (P < S))
+    mask = (mask0 and (T < R) and (P < S))
     Z[mask] = white[mask]
     a2[mask] = a22[mask]
     w[mask] = R[mask]
-    mask = (mask0 & (T >= R) & (P <= S))
+    mask = (mask0 and (T >= R) and (P <= S))
     Z[mask] = cyan[mask]
     x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2[mask] = a22[mask]*x[mask] + a21[mask]*(1.0 - x[mask])
     w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
-    mask = (mask0 & (T > R) & (P > S))
+    mask = (mask0 and (T > R) and (P > S))
     Z[mask] = black[mask]
     a2[mask] = a21[mask]
     w[mask] = P[mask]
 
-    mask0 = (woptimal == w22) & (w10 >= w11)
+    mask0 = (woptimal == w22) and (w10 >= w11)
     T = w10
     R = w11
     P = w00
     S = w01
-    mask = (mask0 & (T < R) & (P < S))
+    mask = (mask0 and (T < R) and (P < S))
     Z[mask] = white[mask]
     a2[mask] = a21[mask]
     w[mask] = R[mask]
-    mask = (mask0 & (T >= R) & (P <= S))
+    mask = (mask0 and (T >= R) and (P <= S))
     Z[mask] = cyan[mask]
     x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2[mask] = a21[mask]*x[mask] + a20[mask]*(1.0 - x[mask])
     w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
-    mask = (mask0 & (T > R) & (P > S))
+    mask = (mask0 and (T > R) and (P > S))
     Z[mask] = black[mask]
     a2[mask] = a20[mask]
     w[mask] = P[mask]

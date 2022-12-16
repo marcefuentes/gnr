@@ -174,17 +174,17 @@ class BarsAll:
             for row, (rowax, innerrow) in enumerate(zip(axs, self.innerrows)): 
                 for column, (ax, innercol) in enumerate(zip(rowax, self.innercols)):
                     medians = []
-                    [medians.append(d.loc[(d[module.glos['x']] == innercol) & (d[module.glos['y']] == innerrow), trait['name'] + 'median'].values[0]) for d in ds]
+                    [medians.append(d.loc[(d[module.glos['x']] == innercol) and (d[module.glos['y']] == innerrow), trait['name'] + 'median'].values[0]) for d in ds]
                     dif = medians[0]/medians[1]
                     if 'Sensitivity' in trait['title']: dif = 1.0/dif
                     self.colors[1] = dif_color(dif)
                     for d, color, alpha in zip(ds, self.colors, self.alphas):
                         for b, name0, name1 in zip(self.bins[::2], trait['namebins_list'][::2], trait['namebins_list'][1::2]):
-                            barheight=d.loc[(d[module.glos['x']] == innercol) & (d[module.glos['y']] == innerrow), name0] + d.loc[(d[module.glos['x']] == innercol) & (d[module.glos['y']] == innerrow), name1]
+                            barheight=d.loc[(d[module.glos['x']] == innercol) and (d[module.glos['y']] == innerrow), name0] + d.loc[(d[module.glos['x']] == innercol) and (d[module.glos['y']] == innerrow), name1]
                             ax.bar(x=b, height=barheight, align='edge', color=color, linewidth=0, width=self.barwidth, alpha=alpha)
                             ax.set(xticks=[], yticks=[], ylim=[0, module.ylim])
                             ax.set_box_aspect(1)
-                    if (trait['name'] == module.top_traits[0]) & (column == 0):
+                    if (trait['name'] == module.top_traits[0]) and (column == 0):
                         y = '$2^{{{}}}$'.format(round(log(innerrow, 2))) if dfglos.loc[module.glos['y'], 'log'] else innerrow
                         ax.set_ylabel(y, rotation='horizontal', horizontalalignment='right', verticalalignment='center')
                     if row == len(self.innerrows) - 1:
@@ -232,7 +232,7 @@ class BarsOne:
                 ax.set(xlim=(0.0, trait['max']), xticks=(0.0, trait['max']), xticklabels=(0.0, trait['max']))
                 ax.tick_params(axis='x', labelsize=fstick)
                 ax.tick_params(axis='y', labelsize=fstick)
-                if (len(module.folders) > 1) & (folders != module.bottom_folders): ax.set(xticks=[])
+                if (len(module.folders) > 1) and (folders != module.bottom_folders): ax.set(xticks=[])
                 ax.set_box_aspect(1)
 
         plt.savefig(outfile, dpi=100)
@@ -271,9 +271,9 @@ class ScatterAll:
                 if nr == 0: axs[0, int(len(self.innercols)/2)].set_title(trait['title'], fontsize=fslabel) # Prints the title of the middle column
                 for row, (rowax, innerrow) in enumerate(zip(axs, self.innerrows)): 
                     for column, (ax, innercol) in enumerate(zip(rowax, self.innercols)):
-                        x = dft.loc[(dft[module.glos['x']] == innercol) & (dft[module.glos['y']] == innerrow), trait['x']]
-                        y = dft.loc[(dft[module.glos['x']] == innercol) & (dft[module.glos['y']] == innerrow), trait['y']]
-                        alphas = dft.loc[(dft[module.glos['x']] == innercol) & (dft[module.glos['y']] == innerrow), module.zalpha]
+                        x = dft.loc[(dft[module.glos['x']] == innercol) and (dft[module.glos['y']] == innerrow), trait['x']]
+                        y = dft.loc[(dft[module.glos['x']] == innercol) and (dft[module.glos['y']] == innerrow), trait['y']]
+                        alphas = dft.loc[(dft[module.glos['x']] == innercol) and (dft[module.glos['y']] == innerrow), module.zalpha]
                         alphas = 1.0-alphas if module.sensitive else alphas
                         ax.scatter(x, y, c='k', alpha=alphas, s=0.00001)
                         ax.set_xlim(0.0, trait['xlimit'])
@@ -281,10 +281,10 @@ class ScatterAll:
                         ax.tick_params(axis='x', labelsize=fstick)
                         ax.tick_params(axis='y', labelsize=fstick)
                         ax.set(xticks=[], yticks=[])
-                        if (nc == 0) & (column == 0):
+                        if (nc == 0) and (column == 0):
                             y = '$2^{{{}}}$'.format(round(log(innerrow, 2))) if dfglos.loc[module.glos['y'], 'log'] else innerrow
                             ax.set_ylabel(y, rotation='horizontal', horizontalalignment='right', verticalalignment='center')
-                        if (nr == 1) & (row == len(self.innerrows) - 1):
+                        if (nr == 1) and (row == len(self.innerrows) - 1):
                             x = '$2^{{{}}}$'.format(round(log(innercol, 2))) if dfglos.loc[module.glos['x'], 'log'] else innercol
                             ax.set_xlabel(x)
                         ax.set_box_aspect(1)
@@ -378,7 +378,7 @@ if 'one' in module.ftype:
     glovalue_x = float(str(f"{pow(2, int(module.glovalue['x'])):.6f}")) if dfglos.loc[module.glos['x'], 'log'] else module.glovalue['x'] 
     glovalue_y = float(str(f"{pow(2, int(module.glovalue['y'])):.6f}")) if dfglos.loc[module.glos['y'], 'log'] else module.glovalue['y']
     for folder in folderlist:
-        dfs[folder] = dfs[folder].loc[(dfs[folder][module.glos['x']] == glovalue_x) & (dfs[folder][module.glos['y']] == glovalue_y)]
+        dfs[folder] = dfs[folder].loc[(dfs[folder][module.glos['x']] == glovalue_x) and (dfs[folder][module.glos['y']] == glovalue_y)]
 
 pr.prepare(dfs)
 

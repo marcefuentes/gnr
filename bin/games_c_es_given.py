@@ -44,11 +44,11 @@ def fitness(x, y, given, alpha, rho):
     q1 = (a2max - y)*R1/b
     q2 = y*R2*(1.0 - given) + x*R2*given
     w = q1*q2
-    mask = (w > 0.0) & (rho == 0.0)
+    mask = (w > 0.0) and (rho == 0.0)
     w[mask] = pow(q1[mask], 1.0 - alpha[mask])*pow(q2[mask], alpha[mask])
-    mask = (w > 0.0) & (rho < 0.0)
+    mask = (w > 0.0) and (rho < 0.0)
     w[mask] = (1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask])
-    mask = (w > 0.0) & (rho < 0.0)
+    mask = (w > 0.0) and (rho < 0.0)
     w[mask] = pow(w[mask], 1.0/rho[mask])
     mask = (rho > 0.0)
     w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
@@ -125,11 +125,11 @@ for alpha in alphas:
             H = T[mask]
             T[mask] = S[mask]
             S[mask] = H
-            mask = (T > R) & (P > S)
+            mask = (T > R) and (P > S)
             Z[mask] = black[mask]
-            mask = (T >= R) & (P <= S)
+            mask = (T >= R) and (P <= S)
             Z[mask] = cyan[mask]
-            mask = (T < R) & (P < S)
+            mask = (T < R) and (P < S)
             Z[mask] = white[mask]
             #Z = np.tril(Z, k=-1)
             Z = np.ma.masked_where(Z == 0.0, Z)

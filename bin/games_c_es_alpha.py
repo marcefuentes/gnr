@@ -16,11 +16,11 @@ minalpha = 0.1
 maxalpha = 0.9
 minlog_es = -5.0
 maxlog_es = 5.0
-mingiven = 0.0
-maxgiven = 1.0
+mingiven = 0.95
+maxgiven = 0.95
 
-num = 11    # Number of subplot rows and columns
-npoints = 128
+num = 21    # Number of subplot rows and columns
+npoints = 129
 filename = 'games_c_es_alpha'
 R1 = 2.0
 R2 = 2.0
@@ -62,17 +62,18 @@ else:
     movie = False 
     givens = np.array([mingiven])
 
-alphas = np.linspace(maxalpha, minalpha, num=num)
-givens[0] = 0.999999
-log_ess = np.linspace(minlog_es, maxlog_es, num=num)
-rhos = 1.0 - 1.0/pow(2, log_ess)
 b = a2max/a1max
 Rq = R2/R1
-a2x = np.linspace(0.0, a2max, num=npoints)
-a2y = np.linspace(a2max, 0.0, num=npoints)
-X, Y = np.meshgrid(a2x, a2y)
-RR, AA = np.meshgrid(rhos, alphas)
 T0 = b*Rq
+givens[0] = 0.999999
+alphas = np.linspace(maxalpha, minalpha, num=num)
+log_ess = np.linspace(minlog_es, maxlog_es, num=num)
+rhos = 1.0 - 1.0/pow(2, log_ess)
+RR, AA = np.meshgrid(rhos, alphas)
+X, Y = np.meshgrid(np.linspace(0.0, a2max, num=npoints), np.linspace(a2max, 0.0, num=npoints))
+X = np.tile(A=X, reps=[num, num])
+Y = np.tile(A=Y, reps=[num, num])
+RRR, AAA = np.meshgrid(np.repeat(rhos, npoints), np.repeat(alphas, npoints))
 
 minx = round(log_ess[0])
 maxx = round(log_ess[-1])
@@ -83,10 +84,10 @@ xticklabels = [minx, round((minx + maxx)/2), maxx]
 yticklabels = [miny, (miny + maxy)/2, maxy]
 extent = 0, num, 0, num
 extentZ = 0, npoints*num, 0, npoints*num
-black = np.full((npoints, npoints, 4), [0.2, 0.0, 0.2, 1.0])
-cyan = np.full((npoints, npoints, 4), [0.0, 1.0, 1.0, 1.0])
-white = np.full((npoints, npoints, 4), [1.0, 1.0, 1.0, 1.0])
-green = np.full((npoints, npoints, 4), [0.0, 1.0, 0.0, 1.0])
+black = np.full((npoints*num, npoints*num, 4), [0.2, 0.0, 0.2, 1.0])
+cyan = np.full((npoints*num, npoints*num, 4), [0.0, 1.0, 1.0, 1.0])
+white = np.full((npoints*num, npoints*num, 4), [1.0, 1.0, 1.0, 1.0])
+green = np.full((npoints*num, npoints*num, 4), [0.0, 1.0, 0.0, 1.0])
 
 for given in reversed(givens):
 
@@ -99,40 +100,32 @@ for given in reversed(givens):
     if movie:
         fig.text(0.80, 0.80, f'given\n{given:4.2f}', fontsize=fstick+4, color='grey', ha='right')
 
+    Z = np.full((npoints*num, npoints*num, 4), [0.0, 1.0, 0.0, 1.0])
+    T = fitness(Y, X, given, AAA, RRR)
+    R = fitness(Y, Y, given, AAA, RRR)
+    P = fitness(X, X, given, AAA, RRR)
+    S = fitness(X, Y, given, AAA, RRR)
+    mask = (R < P)
+    H = R[mask]
+    R[mask] = P[mask]
+    P[mask] = H
+    H = T[mask]
+    T[mask] = S[mask]
+    S[mask] = H
+    mask = (T > R) & (P > S)
+    Z[mask] = black[mask]
+    mask = (T >= R) & (P <= S) & (R != P)
+    Z[mask] = cyan[mask]
+    mask = ((T < R) & (P < S)) | (R == P)
+    Z[mask] = white[mask]
+    #Z = np.tril(Z, k=-1)
+    Z = np.ma.masked_where(Z == 0.0, Z)
+
     TT = T0*(1.0 - given)
     Q0 = Rq*pow(T0*AA/(1.0 - AA), 1.0/(RR - 1.0))
     a20ss = a2max/(1.0 + Q0*b)
     Q = Rq*pow(TT*AA/(1.0 - AA), 1.0/(RR - 1.0))
     a2eqss = a2max/(1.0 + Q*b)
-
-    Zss = np.empty((0, npoints*num, 4))
-    for alpha in alphas:
-        A = np.full([npoints, npoints], alpha)
-        Zs = np.empty((npoints, 0, 4))
-        for rho in rhos:
-            Rh = np.full([npoints, npoints], rho)
-            Z = np.full((npoints, npoints, 4), [0.0, 1.0, 0.0, 1.0])
-            T = fitness(Y, X, given, A, Rh)
-            R = fitness(Y, Y, given, A, Rh)
-            P = fitness(X, X, given, A, Rh)
-            S = fitness(X, Y, given, A, Rh)
-            mask = (R < P)
-            H = R[mask]
-            R[mask] = P[mask]
-            P[mask] = H
-            H = T[mask]
-            T[mask] = S[mask]
-            S[mask] = H
-            mask = (T > R) & (P > S)
-            Z[mask] = black[mask]
-            mask = (T >= R) & (P <= S)
-            Z[mask] = cyan[mask]
-            mask = (T < R) & (P < S)
-            Z[mask] = white[mask]
-            #Z = np.tril(Z, k=-1)
-            Z = np.ma.masked_where(Z == 0.0, Z)
-            Zs = np.append(Zs, Z, axis=1)
-        Zss = np.append(Zss, Zs, axis=0)
 
     Mss = [[a20ss, a20ss*R2*given, fitness(a20ss, a20ss, given, AA, RR)], [a2eqss, a2eqss*R2*given, fitness(a2eqss, a2eqss, given, AA, RR)]]
 
@@ -150,7 +143,7 @@ for given in reversed(givens):
             if ax.get_subplotspec().is_first_col():
                 ax.set_yticklabels(yticklabels, fontsize=fstick) 
 
-    axs[0, 0].imshow(Zss, extent=extentZ)
+    axs[0, 0].imshow(Z, extent=extentZ)
 
     for row, Ms in zip(axs[1:], Mss):
         for ax, M, traitvmax in zip(row, Ms, traitvmaxs):

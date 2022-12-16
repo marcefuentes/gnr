@@ -56,7 +56,7 @@ def fitness(x, y, given, alpha, rho):
 
 if minalpha != maxalpha:
     movie = True
-    alphas = np.linspace(maxalpha, minalpha, num=num)
+    alphas = np.linspace(minalpha, maxalpha, num=num)
     frames = []
 else:
     movie = False 
@@ -106,7 +106,7 @@ for alpha in alphas:
     Q = Rq*pow(TT*alpha/(1.0 - alpha), 1.0/(RR - 1.0))
     a2eqss = a2max/(1.0 + Q*b)
 
-    A = np.full([npoints, npoints], alpha)
+    AA = np.full([npoints, npoints], alpha)
     Zss = np.empty((0, npoints*num, 4))
     for given in givens:
         G = np.full([npoints, npoints], given)
@@ -114,10 +114,10 @@ for alpha in alphas:
         for rho in rhos:
             Z = np.full([npoints, npoints, 4], [0.0, 1.0, 0.0, 1.0])
             Rh = np.full([npoints, npoints], rho)
-            T = fitness(Y, X, G, A, Rh)
-            R = fitness(Y, Y, G, A, Rh)
-            P = fitness(X, X, G, A, Rh)
-            S = fitness(X, Y, G, A, Rh)
+            T = fitness(Y, X, G, AA, Rh)
+            R = fitness(Y, Y, G, AA, Rh)
+            P = fitness(X, X, G, AA, Rh)
+            S = fitness(X, Y, G, AA, Rh)
             mask = (R < P)
             H = R[mask]
             R[mask] = P[mask]

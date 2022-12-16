@@ -15,8 +15,8 @@ start_time = time.perf_counter ()
 
 minalpha = 0.1
 maxalpha = 0.9
-minlog_es = 1.0
-maxlog_es = 1.0
+minlog_es = -5.0
+maxlog_es = 5.0
 mingiven = 0.0
 maxgiven = 1.0
 
@@ -72,7 +72,6 @@ Rq = R2/R1
 a2x = np.linspace(0.0, a2max, num=npoints)
 a2y = np.linspace(a2max, 0.0, num=npoints)
 X, Y = np.meshgrid(a2x, a2y)
-Z = np.zeros([npoints, npoints])
 AA, GG = np.meshgrid(alphas, givens)
 AA, G0 = np.meshgrid(alphas, np.zeros([num]))
 TT = b*Rq*(1.0 - GG)
@@ -92,7 +91,7 @@ cyan = np.full((npoints, npoints, 4), [0.0, 1.0, 1.0, 1.0])
 white = np.full((npoints, npoints, 4), [1.0, 1.0, 1.0, 1.0])
 green = np.full((npoints, npoints, 4), [0.0, 1.0, 0.0, 1.0])
 
-for rho in rhos:
+for rho, log_es in zip(rhos, log_ess):
 
     fig, axs = plt.subplots(nrows=3, ncols=3, figsize=(18, 18))
     fig.delaxes(axs[0, 1])
@@ -101,25 +100,25 @@ for rho in rhos:
     fig.supxlabel("Value of $\it{A}$", x=0.525, y=0.05, fontsize=fslabel)
 
     if movie:
-        fig.text(0.80, 0.80, f'log(es)\n{-log(1.0-rho, 2):4.1}', fontsize=fstick+4, color='grey', ha='right')
+        fig.text(0.80, 0.80, f'log(es)\n{log_es:4.1f}', fontsize=fstick+4, color='grey', ha='right')
 
     Q0 = Rq*pow(T0*AA/(1.0 - AA), 1.0/(rho - 1.0))
     a20ss = a2max/(1.0 + Q0*b)
     Q = Rq*pow(TT*AA/(1.0 - AA), 1.0/(rho - 1.0))
     a2eqss = a2max/(1.0 + Q*b)
 
-    Rh = np.full([npoints, npoints], rho)
+    RR = np.full([npoints, npoints], rho)
     Zss = np.empty((0, npoints*num, 4))
     for given in givens:
         G = np.full([npoints, npoints], given)
         Zs = np.empty((npoints, 0, 4))
         for alpha in alphas:
             Z = np.full([npoints, npoints, 4], [0.0, 1.0, 0.0, 1.0])
-            A = np.full([npoints, npoints], alpha)
-            T = fitness(Y, X, G, A, Rh)
-            R = fitness(Y, Y, G, A, Rh)
-            P = fitness(X, X, G, A, Rh)
-            S = fitness(X, Y, G, A, Rh)
+            Al = np.full([npoints, npoints], alpha)
+            T = fitness(Y, X, G, Al, RR)
+            R = fitness(Y, Y, G, Al, RR)
+            P = fitness(X, X, G, Al, RR)
+            S = fitness(X, Y, G, Al, RR)
             mask = (R < P)
             H = R[mask]
             R[mask] = P[mask]
@@ -138,8 +137,8 @@ for rho in rhos:
             Zs = np.append(Zs, Z, axis=1)
         Zss = np.append(Zss, Zs, axis=0)
 
-    Rh = np.full([num, num], rho)
-    Mss = [[a20ss, a20ss*R2*GG, fitness(a20ss, a20ss, GG, AA, Rh)], [a2eqss, a2eqss*R2*GG, fitness(a2eqss, a2eqss, GG, AA, Rh)]]
+    RR = np.full([num, num], rho)
+    Mss = [[a20ss, a20ss*R2*GG, fitness(a20ss, a20ss, GG, AA, RR)], [a2eqss, a2eqss*R2*GG, fitness(a2eqss, a2eqss, GG, AA, RR)]]
 
     for axrow, letterrow in zip(axs, letters):
         for ax, letter, traitlabel in zip(axrow, letterrow, traitlabels):

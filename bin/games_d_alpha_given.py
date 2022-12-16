@@ -20,7 +20,7 @@ mingiven = 0.0
 maxgiven = 1.0
 
 num = 21    # Number of subplot rows and columns
-filename = 'games_d_es_given'
+filename = 'games_d_alpha_given'
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
@@ -43,30 +43,30 @@ def fitness(x, y):
     q1 = (a2max - y)*R1/b
     q2 = y*R2*(1.0 - given) + x*R2*given
     w = q1*q2
-    mask = (w > 0.0) & (RR == 0.0)
+    mask = (w > 0.0) & (rho == 0.0)
     w[mask] = pow(q1[mask], 1.0 - AA[mask])*pow(q2[mask], AA[mask])
-    mask = (w > 0.0) & (RR < 0.0)
-    w[mask] = (1.0 - AA[mask])*pow(q1[mask], RR[mask]) + AA[mask]*pow(q2[mask], RR[mask])
-    mask = (w > 0.0) & (RR < 0.0)
-    w[mask] = pow(w[mask], 1.0/RR[mask])
+    mask = (w > 0.0) & (rho < 0.0)
+    w[mask] = (1.0 - AA[mask])*pow(q1[mask], rho[mask]) + AA[mask]*pow(q2[mask], rho[mask])
+    mask = (w > 0.0) & (rho < 0.0)
+    w[mask] = pow(w[mask], 1.0/rhoR[mask])
     mask = (RR > 0.0)
-    w[mask] = pow((1.0 - AA[mask])*pow(q1[mask], RR[mask]) + AA[mask]*pow(q2[mask], RR[mask]), 1.0/RR[mask])
+    w[mask] = pow((1.0 - AA[mask])*pow(q1[mask], rho[mask]) + AA[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
     return w
 
-if minalpha != maxalpha:
+if minlog_es != maxlog_es:
     movie = True
-    alphas = np.linspace(maxalpha, minalpha, num=num)
+    log_ess = np.linspace(minlog_es, maxlog_es, num=num)
     frames = []
 else:
     movie = False 
-    alphas = np.array([minalpha])
+    log_ess = np.array([minlog_es])
 
 givens = np.linspace(maxgiven, mingiven, num=num)
 givens[0] = 0.999999 #?
-log_ess = np.linspace(minlog_es, maxlog_es, num=num)
+alphas = np.linspace(minalpha, maxalpha, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
 b = a2max/a1max
-RR, AA = np.meshgrid(rhos, alphas)
+AA, GG = np.meshgrid(alphas, givens)
 a20 = np.full([num, num], 0.0)
 a21 = np.full([num, num], a2max/2.0)
 a22 = np.full([num, num], a2max)
@@ -81,12 +81,12 @@ mask = (w22 > w11)
 a2optimal[mask] = a22[mask]
 woptimal = fitness(a2optimal, a2optimal)
 
-minx = round(log_ess[0])
-maxx = round(log_ess[-1])
+minx = minalpha
+maxx = maxalpha
 miny = mingiven
 maxy = maxgiven
 
-xticklabels = [minx, round((minx + maxx)/2), maxx]
+xticklabels = [minx, (minx + maxx)/2, maxx]
 yticklabels = [miny, (miny + maxy)/2, maxy]
 extent = 0, num, 0, num
 black = np.full((num, num, 4), [0.2, 0.0, 0.2, 1.0])
@@ -94,16 +94,16 @@ cyan = np.full((num, num, 4), [0.0, 1.0, 1.0, 1.0])
 white = np.full((num, num, 4), [1.0, 1.0, 1.0, 1.0])
 green = np.full((num, num, 4), [0.0, 1.0, 0.0, 1.0])
 
-for given in reversed(givens):
+for rho in rhos:
 
     fig, axs = plt.subplots(nrows=3, ncols=3, figsize=(18, 18))
     fig.delaxes(axs[0, 1])
     fig.delaxes(axs[0, 2])
-    fig.supylabel("Value of $\it{B}$", x=0.04, y=0.520, fontsize=fslabel)
-    fig.supxlabel("Substitutability of $\it{A}$", x=0.525, y=0.05, fontsize=fslabel)
+    fig.supylabel("Partner's share of $\it{A}$", x=0.04, y=0.520, fontsize=fslabel)
+    fig.supxlabel("Value of $\it{A}$", x=0.525, y=0.05, fontsize=fslabel)
 
     if movie:
-        fig.text(0.80, 0.80, f'given\n{given:4.2f}', fontsize=fstick+4, color='grey', ha='right')
+        fig.text(0.80, 0.80, f'log(es)\n{-log(1.0-rho, 2):4.1}', fontsize=fstick+4, color='grey', ha='right')
 
     Z = np.full([num, num, 4], [0.0, 1.0, 0.0, 1.0])
     a20 = np.full([num, num], 0.0)

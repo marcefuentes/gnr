@@ -64,6 +64,7 @@ else:
 
 b = a2max/a1max
 Rq = R2/R1
+T0 = b*Rq
 givens[0] = 0.999999
 alphas = np.linspace(maxalpha, minalpha, num=num)
 log_ess = np.linspace(minlog_es, maxlog_es, num=num)
@@ -73,7 +74,6 @@ X, Y = np.meshgrid(np.linspace(0.0, a2max, num=npoints), np.linspace(a2max, 0.0,
 X = np.tile(A=X, reps=[num, num])
 Y = np.tile(A=Y, reps=[num, num])
 RRR, AAA = np.meshgrid(np.repeat(rhos, npoints), np.repeat(alphas, npoints))
-T0 = b*Rq
 
 minx = round(log_ess[0])
 maxx = round(log_ess[-1])

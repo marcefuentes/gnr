@@ -1,6 +1,5 @@
 #! /usr/bin/env python
 
-from glob import glob
 from matplotlib import cm
 from matplotlib.colors import ListedColormap
 import os
@@ -65,7 +64,7 @@ else:
 b = a2max/a1max
 Rq = R2/R1
 T0 = b*Rq
-givens[-1] = 0.999999
+givens[-1] = 0.9999999
 alphas = np.linspace(maxalpha, minalpha, num=num)
 log_ess = np.linspace(minlog_es, maxlog_es, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)

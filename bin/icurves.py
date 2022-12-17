@@ -73,8 +73,8 @@ plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
 fig = plt.figure(figsize=(6, 6)) 
-fig.supylabel("Partner's share of $\it{A}$", x=0.05, y=0.52, fontsize=fslabel)
-fig.supxlabel("Substitutability of $\it{A}$", x=0.555, fontsize=fslabel)
+fig.supylabel("Partner's share of $\it{B}$", x=0.05, y=0.52, fontsize=fslabel)
+fig.supxlabel("Substitutability of $\it{B}$", x=0.555, fontsize=fslabel)
 
 grid = fig.add_gridspec(nrows=num, ncols=num, left=0.22, right=0.9, top=0.86, bottom=0.176, wspace=0, hspace=0)
 

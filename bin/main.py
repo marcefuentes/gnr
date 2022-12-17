@@ -33,9 +33,9 @@ blue = 0.97
 letter = ('a', 'b', 'c', 'd', 'e', 'f')
 
 dfglos = pd.DataFrame(
-    [('ES', 'Substitutability of $\it{A}$', True, None), 
-    ('alpha', 'Substitutability of $\it{A}$', True, None, None), 
-    ('Given', 'Partner\'s share of $\it{A}$', False, None, None),
+    [('ES', 'Substitutability of $\it{B}$', True, None), 
+    ('alpha', 'Substitutability of $\it{B}$', True, None, None), 
+    ('Given', 'Partner\'s share of $\it{B}$', False, None, None),
     ('ChooseCost', 'Cost of comparing potential partners', True, None, None),
     ('MimicCost', 'Cost of comparing partner to self', True, None, None),
     ('DeathRate', 'Death rate', True, 0.005, 0.2),
@@ -54,8 +54,8 @@ dftraits = pd.DataFrame(
     ('MimicGrain12', 'Frequency of\nreciprocators', 600.0),
     ('helpmedian', 'Help', 600.0*2.00),
     ('help', 'Help', 600.0*2.00),
-    ('a2Seenmedian', 'Effort to get $\it{A}$', 600.0),
-    ('a2Seen', 'Effort to get $\it{A}$', 600.0),
+    ('a2Seenmedian', 'Effort to get $\it{B}$', 600.0),
+    ('a2Seen', 'Effort to get $\it{B}$', 600.0),
     ('a2Seen12', 'Frequency of\ndefectors', 600.0),
     ('a2Seen31', 'Frequency of\ncooperators', 600.0),
     ('a2Defaultmedian', 'Default $\it{a}$', 600.0),

@@ -28,7 +28,7 @@ a2max = 1.0
 
 # Figure
 
-traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness']
+traitlabels = ['Effort to get $\it{B}$', 'Help', 'Fitness']
 traitvmaxs = [1.0, 2.0, 1.16]
 fslabel = 32 # Label font size
 fstick = 18 # Tick font size
@@ -99,8 +99,8 @@ for rho in rhos:
     fig, axs = plt.subplots(nrows=3, ncols=3, figsize=(18, 18))
     fig.delaxes(axs[0, 1])
     fig.delaxes(axs[0, 2])
-    fig.supylabel("Partner's share of $\it{A}$", x=0.04, y=0.520, fontsize=fslabel)
-    fig.supxlabel("Value of $\it{A}$", x=0.525, y=0.05, fontsize=fslabel)
+    fig.supylabel("Partner's share of $\it{B}$", x=0.04, y=0.520, fontsize=fslabel)
+    fig.supxlabel("Value of $\it{B}$", x=0.525, y=0.05, fontsize=fslabel)
 
     if movie:
         fig.text(0.80, 0.80, f'log(es)\n{-log(1.0-rho, 2):4.1}', fontsize=fstick+4, color='grey', ha='right')

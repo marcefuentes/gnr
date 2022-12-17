@@ -95,8 +95,8 @@ for alpha in alphas:
 for given in givens:
 
     fig = plt.figure(figsize=(8, 8)) 
-    fig.supylabel("Value of $\it{A}$", x=0.05, y=0.52, fontsize=fslabel)
-    fig.supxlabel("Substitutability of $\it{A}$", x=0.555, fontsize=fslabel)
+    fig.supylabel("Value of $\it{B}$", x=0.05, y=0.52, fontsize=fslabel)
+    fig.supxlabel("Substitutability of $\it{B}$", x=0.555, fontsize=fslabel)
 
     if movie:
         fig.text(0.80, 0.90, f'given: {given:4.2f}', fontsize=fstick+4, color='grey', ha='right')
@@ -118,7 +118,7 @@ for given in givens:
                 ax.plot(q1_ic, ic, c='0.850')
             budget = budget0 + q2eq*given
             ax.plot(q1_budget, budget, c='green', alpha=0.8)
-            ax.plot(q1_ic, indifference(q1_ic, weq, alpha, rho), linewidth=4, alpha= 0.8, c=cm.magma(weq))
+            ax.plot(q1_ic, indifference(q1_ic, weq, alpha, rho), linewidth=4, alpha= 0.8, c=cm.magma(weq/1.8))
             ax.set(xticks=[], yticks=[], xlim=(0.0, a1max*R1), ylim=(0.0, a2max*R2))
     for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):
         ax.set_xlabel(round(log_es), fontsize=fstick)

@@ -28,7 +28,7 @@ a2max = 1.0
 
 # Figure
 
-traitlabels = ['Effort to get $\it{A}$', 'Help', 'Fitness']
+traitlabels = ['Effort to get $\it{B}$', 'Help', 'Fitness']
 traitvmaxs = [1.0, 2.0, 1.16]
 fslabel = 32 # Label font size
 fstick = 18 # Tick font size
@@ -99,7 +99,7 @@ for given in reversed(givens):
     fig.delaxes(axs[0, 1])
     fig.delaxes(axs[0, 2])
     fig.supylabel("Value of $\it{B}$", x=0.04, y=0.520, fontsize=fslabel)
-    fig.supxlabel("Substitutability of $\it{A}$", x=0.525, y=0.05, fontsize=fslabel)
+    fig.supxlabel("Substitutability of $\it{B}$", x=0.525, y=0.05, fontsize=fslabel)
 
     if movie:
         fig.text(0.80, 0.80, f'given\n{given:4.2f}', fontsize=fstick+4, color='grey', ha='right')

@@ -91,8 +91,8 @@ xaxis = [1, 2, 3, 4]
 for rho in rhos:
 
     fig = plt.figure(figsize=(12, 12)) 
-    fig.supylabel("Partner's share of $\it{A}$", x=0.04, y=0.520, fontsize=fslabel)
-    fig.supxlabel("Value of $\it{A}$", x=0.525, y=0.05, fontsize=fslabel)
+    fig.supylabel("Partner's share of $\it{B}$", x=0.04, y=0.520, fontsize=fslabel)
+    fig.supxlabel("Value of $\it{B}$", x=0.525, y=0.05, fontsize=fslabel)
 
     outer_grid = fig.add_gridspec(2, 2, left=0.15, right=0.9, top=0.9, bottom=0.15)
 

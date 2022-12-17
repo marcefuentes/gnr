@@ -116,8 +116,8 @@ for alpha in alphas:
 
 fig, axs = plt.subplots(nrows=len(alphas), ncols=len(traits)+1, figsize=(6*len(alphas), 6*(len(traits)+1)))
 
-fig.supxlabel('Substitutability of $\it{A}$', x=0.52, y=0.03, fontsize=fslabel*1.35)
-fig.supylabel('Partner\'s share of $\it{A}$', x=0.06, y=0.53, fontsize=fslabel*1.35, ha='center')
+fig.supxlabel('Substitutability of $\it{B}$', x=0.52, y=0.03, fontsize=fslabel*1.35)
+fig.supylabel('Partner\'s share of $\it{B}$', x=0.06, y=0.53, fontsize=fslabel*1.35, ha='center')
 
 # Plots
 

@@ -118,7 +118,7 @@ for given in givens:
     mask = ((T < R) & (P < S)) | (R == P)
     Z[mask] = white[mask]
     #Z = np.tril(Z, k=-1)
-    Z = np.ma.masked_where(Z == 0.0, Z)
+    #Z = np.ma.masked_where(Z == 0.0, Z)
 
     GG = given
     TT = T0*(1.0 - GG)

@@ -15,8 +15,8 @@ minalpha = 0.1
 maxalpha = 0.9
 minlog_es = -5.0
 maxlog_es = 5.0
-mingiven = 0.0
-maxgiven = 1.0
+mingiven = 0.95
+maxgiven = 0.95
 
 num = 21    # Number of subplot rows & columns
 npoints = 64
@@ -142,6 +142,9 @@ for given in givens:
                 ax.set_xticklabels(xticklabels, fontsize=fstick)
             if ax.get_subplotspec().is_first_col():
                 ax.set_yticklabels(yticklabels, fontsize=fstick) 
+    pos = axs[0, 0].get_position()
+    newpos = [pos.x0, pos.y0+0.1, pos.width, pos.height]
+    axs[0, 0].set_position(newpos)
 
     axs[0, 0].imshow(Z, extent=extentZ)
 

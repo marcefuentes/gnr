@@ -13,9 +13,9 @@ start_time = time.perf_counter ()
 
 traits = ['a2Seenmean', 'ChooseGrainmean', 'MimicGrainmean', 'wmean']
 traitlabels = ['Effort to get $\it{B}$', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner', 'Fitness']
-traitvmaxs = [1.0, 2.0, 1.5, 1.0, 1.0]
+traitvmaxs = [1.0, 1.0, 1.0, 1.4]
 folders = ['none', 'p', 'r', 'pr', 'p8r']
-alpha = 0.5
+given = 0.95
 
 movie = False
 if movie:
@@ -34,26 +34,26 @@ fstick=24 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-letters = [['a', 'b', 'c', 'd', 'e'],
-            ['f', 'g', 'h', 'i', 'j'],
-            ['k', 'l', 'm', 'n', 'o'],
-            ['p', 'q', 'r', 's', 't'],
-            ['u', 'v', 'w', 'x', 'y'],
-            ['z', 'aa', 'ab', 'ac', 'ad'],
-            ['ae', 'af', 'ag', 'ah', 'ai']]
+letters = [['a', 'b', 'c', 'd'],
+            ['f', 'g', 'h', 'i'],
+            ['k', 'l', 'm', 'n'],
+            ['p', 'q', 'r', 's'],
+            ['u', 'v', 'w', 'x'],
+            ['z', 'aa', 'ab', 'ac'],
+            ['ae', 'af', 'ag', 'ah']]
 
 def fitness(x, y):
     q1 = (a2max - y)*R1/b
-    q2 = y*R2*(1.0 - GG) + x*R2*GG
+    q2 = y*R2*(1.0 - given) + x*R2*given
     w = q1*q2
     mask = (w > 0.0) & (RR == 0.0)
-    w[mask] = pow(q1[mask], 1.0 - alpha)*pow(q2[mask], alpha)
+    w[mask] = pow(q1[mask], 1.0 - AA[mask])*pow(q2[mask], AA[mask])
     mask = (w > 0.0) & (RR < 0.0)
-    w[mask] = (1.0 - alpha)*pow(q1[mask], RR[mask]) + alpha*pow(q2[mask], RR[mask])
+    w[mask] = (1.0 - AA[mask])*pow(q1[mask], RR[mask]) + AA[mask]*pow(q2[mask], RR[mask])
     mask = (w > 0.0) & (RR < 0.0)
     w[mask] = pow(w[mask], 1.0/RR[mask])
     mask = (RR > 0.0)
-    w[mask] = pow((1.0 - alpha)*pow(q1[mask], RR[mask]) + alpha*pow(q2[mask], RR[mask]), 1.0/RR[mask])
+    w[mask] = pow((1.0 - AA[mask])*pow(q1[mask], RR[mask]) + AA[mask]*pow(q2[mask], RR[mask]), 1.0/RR[mask])
     return w
 
 # Simulations
@@ -69,37 +69,40 @@ for folder in folders:
 df = dfs[0]
 ts = df.Time.unique()
 if movie == False: ts = [ts[-1]]
-givens = np.sort(pd.unique(df.Given))[::-1]
+alphas = np.sort(pd.unique(df.alpha))[::-1]
 ess = np.sort(pd.unique(df.ES))
 
 # Theory
 
 b = a2max/a1max
 Rq = R2/R1
-givens[0] = 0.9999999
-rhos = 1.0 - 1.0/ess
-nr = len(givens)
-nc = len(rhos)
-RR, GG = np.meshgrid(rhos, givens)
+rhos = 1.0 - 1.0/pow(2.0, ess)
+given = 0.95
 
-TT = b*Rq*(1.0 - GG)
-QQ = Rq*pow(TT*alpha/(1.0 - alpha), 1.0/(RR - 1.0))
+nr = len(alphas)
+nc = len(rhos)
+RR, AA = np.meshgrid(rhos, alphas)
+
+TT = b*Rq*(1.0 - given)
+QQ = Rq*pow(TT*AA/(1.0 - AA), 1.0/(RR - 1.0))
 a2 = a2max/(1.0 + QQ*b)
-helps = a2*R2*GG
+#helps = a2*R2*GG
 w = fitness(a2, a2)
-Zs = [a2, helps, w, np.zeros([nr, nc]), np.zeros([nr, nc])]
+Zs = [a2, np.zeros([nr, nc]), np.zeros([nr, nc]), w]
 
 fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+1)))
 
-fig.supxlabel('Substitutability of $\it{B}$', x=0.513, y=0.05, fontsize=fslabel*1.25)
+fig.supxlabel('Value of $\it{B}$', x=0.513, y=0.05, fontsize=fslabel*1.25)
 fig.supylabel('Partner\'s share of $\it{B}$', x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
 
 # Plots
 
-minx = round(log(ess[0], 2))
-maxx = round(log(ess[-1], 2))
+#minx = round(log(ess[0], 2))
+minx = ess[0]
+#maxx = round(log(ess[-1], 2))
+maxx = ess[-1]
 xticklabels = [minx, round((minx + maxx)/2), maxx]
-yticklabels = [0.0, 0.5, 1.0]
+yticklabels = [alphas[-1], (alphas[-1] + alphas[0])/2.0, alphas[0]]
 extent = 0, nr, 0, nc
 
 for axrow, letterrow in zip(axs, letters):
@@ -118,7 +121,7 @@ for ax, Z, traitvmax in zip(axs[0], Zs, traitvmaxs):
 for t in ts:
     for axrow, df in zip(axs[1:], dfs):
         for ax, trait, traitvmax in zip(axrow, traits, traitvmaxs):
-            df_piv = pd.pivot_table(df.loc[df.Time == t], values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)
+            df_piv = pd.pivot_table(df.loc[df.Time == t], values=trait, index=['alpha'], columns=['ES']).sort_index(axis=0, ascending=False)
             ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
     if movie:
         plt.savefig('temp.png', transparent=False)

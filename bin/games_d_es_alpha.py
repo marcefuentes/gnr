@@ -71,8 +71,8 @@ mask = (w22 > w11)
 a2social[mask] = a22[mask]
 wsocial = fitness(a2social, a2social, 0.0, AA, RR)
 
-minx = round(log_ess[0])
-maxx = round(log_ess[-1])
+minx = minlog_es
+maxx = minlog_es
 miny = minalpha
 maxy = maxalpha
 
@@ -128,9 +128,9 @@ for given in givens:
     w20 = fitness(a22, a20, given, AA, RR)
 
     mask0 = (wsocial == w00)
-    T = w01
-    R = w00
-    P = w11
+    T = np.copy(w01)
+    R = np.copy(w00)
+    P = np.copy(w11)
     S = w10
     mask = (mask0 & (T < R) & (P < S))
     Z[mask] = nodilemma[mask]
@@ -147,10 +147,10 @@ for given in givens:
     w[mask] = P[mask]
 
     mask0 = (wsocial == w11) & (w20 > w22)
-    T = w10
-    R = w11
-    P = w00
-    S = w01
+    T = np.copy(w10)
+    R = np.copy(w11)
+    P = np.copy(w00)
+    S = np.copy(w01)
     mask = (mask0 & (T < R) & (P < S))
     Z[mask] = nodilemma[mask]
     a2eq[mask] = a21[mask]
@@ -166,10 +166,10 @@ for given in givens:
     w[mask] = P[mask]
 
     mask0 = (wsocial == w11) & (w20 <= w22)
-    T = w12
-    R = w11
-    P = w22
-    S = w21
+    T = np.copy(w12)
+    R = np.copy(w11)
+    P = np.copy(w22)
+    S = np.copy(w21)
     mask = (mask0 & (T < R) & (P < S))
     Z[mask] = nodilemma[mask]
     a2eq[mask] = a21[mask]
@@ -185,10 +185,10 @@ for given in givens:
     w[mask] = P[mask]
 
     mask0 = (wsocial == w22) & (w10 < w11)
-    T = w21
-    R = w22
-    P = w11
-    S = w12
+    T = np.copy(w21)
+    R = np.copy(w22)
+    P = np.copy(w11)
+    S = np.copy(w12)
     mask = (mask0 & (T < R) & (P < S))
     Z[mask] = nodilemma[mask]
     a2eq[mask] = a22[mask]
@@ -204,10 +204,10 @@ for given in givens:
     w[mask] = P[mask]
 
     mask0 = (wsocial == w22) & (w10 >= w11)
-    T = w10
-    R = w11
-    P = w00
-    S = w01
+    T = np.copy(w10)
+    R = np.copy(w11)
+    P = np.copy(w00)
+    S = np.copy(w01)
     mask = (mask0 & (T < R) & (P < S))
     Z[mask] = nodilemma[mask]
     a2eq[mask] = a21[mask]

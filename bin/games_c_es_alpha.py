@@ -68,8 +68,8 @@ X = np.tile(A=X, reps=[num, num])
 Y = np.tile(A=Y, reps=[num, num])
 RRR, AAA = np.meshgrid(np.repeat(rhos, numa2), np.repeat(alphas, numa2))
 
-minx = round(log_ess[0])
-maxx = round(log_ess[-1])
+minx = minlog_ess
+maxx = maxlog_ess
 miny = minalpha
 maxy = maxalpha
 

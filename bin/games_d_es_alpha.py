@@ -64,7 +64,7 @@ a22 = np.full([num, num], a2max)
 w00 = fitness(a20, a20, 0.0, AA, RR)
 w11 = fitness(a21, a21, 0.0, AA, RR)
 w22 = fitness(a22, a22, 0.0, AA, RR)
-a2social = a20
+a2social = np.full([num, num], 0.0)
 mask = (w11 > w00)
 a2social[mask] = a21[mask]
 mask = (w22 > w11)
@@ -117,8 +117,6 @@ for given in givens:
         text = fig.text(0.80, 0.80, f'given\n{given:4.2f}', fontsize=fstick+4, color='grey', ha='right')
 
     Z = np.full([num, num, 4], [0.0, 1.0, 0.0, 1.0])
-    a20 = np.full([num, num], 0.0)
-    a21 = np.full([num, num], a2max/2.0)
     a2eq = np.full([num, num], 0.0)
     w = np.full([num, num], 0.0)
     x = np.full([num, num], 0.0)

@@ -119,7 +119,7 @@ for given in givens:
     Z = np.full([num, num, 4], [0.0, 1.0, 0.0, 1.0])
     a20 = np.full([num, num], 0.0)
     a21 = np.full([num, num], a2max/2.0)
-    a2 = np.full([num, num], 0.0)
+    a2eq = np.full([num, num], 0.0)
     w = np.full([num, num], 0.0)
     x = np.full([num, num], 0.0)
     w01 = fitness(a20, a21, given, AA, RR)
@@ -136,16 +136,16 @@ for given in givens:
     S = w10
     mask = (mask0 & (T < R) & (P < S))
     Z[mask] = nodilemma[mask]
-    a2[mask] = a20[mask]
+    a2eq[mask] = a20[mask]
     w[mask] = R[mask]
     mask = (mask0 & (T >= R) & (P <= S) & (R != P))
     Z[mask] = snowdrift[mask]
     x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
-    a2[mask] = a20[mask]*x[mask] + a21[mask]*(1.0 - x[mask])
+    a2eq[mask] = a20[mask]*x[mask] + a21[mask]*(1.0 - x[mask])
     w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
     mask = (mask0 & (T > R) & (P > S))
     Z[mask] = prisoner[mask]
-    a2[mask] = a21[mask]
+    a2eq[mask] = a21[mask]
     w[mask] = P[mask]
 
     mask0 = (wsocial == w11) & (w20 > w22)
@@ -155,16 +155,16 @@ for given in givens:
     S = w01
     mask = (mask0 & (T < R) & (P < S))
     Z[mask] = nodilemma[mask]
-    a2[mask] = a21[mask]
+    a2eq[mask] = a21[mask]
     w[mask] = R[mask]
     mask = (mask0 & (T >= R) & (P <= S) & (R != P))
     Z[mask] = snowdrift[mask]
     x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
-    a2[mask] = a21[mask]*x[mask] + a20[mask]*(1.0 - x[mask])
+    a2eq[mask] = a21[mask]*x[mask] + a20[mask]*(1.0 - x[mask])
     w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
     mask = (mask0 & (T > R) & (P > S))
     Z[mask] = prisoner[mask]
-    a2[mask] = a20[mask]
+    a2eq[mask] = a20[mask]
     w[mask] = P[mask]
 
     mask0 = (wsocial == w11) & (w20 <= w22)
@@ -174,16 +174,16 @@ for given in givens:
     S = w21
     mask = (mask0 & (T < R) & (P < S))
     Z[mask] = nodilemma[mask]
-    a2[mask] = a21[mask]
+    a2eq[mask] = a21[mask]
     w[mask] = R[mask]
     mask = (mask0 & (T >= R) & (P <= S) & (R != P))
     Z[mask] = snowdrift[mask]
     x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
-    a2[mask] = a21[mask]*x[mask] + a22[mask]*(1.0 - x[mask])
+    a2eq[mask] = a21[mask]*x[mask] + a22[mask]*(1.0 - x[mask])
     w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
     mask = (mask0 & (T > R) & (P > S))
     Z[mask] = prisoner[mask]
-    a2[mask] = a22[mask]
+    a2eq[mask] = a22[mask]
     w[mask] = P[mask]
 
     mask0 = (wsocial == w22) & (w10 < w11)
@@ -193,16 +193,16 @@ for given in givens:
     S = w12
     mask = (mask0 & (T < R) & (P < S))
     Z[mask] = nodilemma[mask]
-    a2[mask] = a22[mask]
+    a2eq[mask] = a22[mask]
     w[mask] = R[mask]
     mask = (mask0 & (T >= R) & (P <= S) & (R != P))
     Z[mask] = snowdrift[mask]
     x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
-    a2[mask] = a22[mask]*x[mask] + a21[mask]*(1.0 - x[mask])
+    a2eq[mask] = a22[mask]*x[mask] + a21[mask]*(1.0 - x[mask])
     w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
     mask = (mask0 & (T > R) & (P > S))
     Z[mask] = prisoner[mask]
-    a2[mask] = a21[mask]
+    a2eq[mask] = a21[mask]
     w[mask] = P[mask]
 
     mask0 = (wsocial == w22) & (w10 >= w11)
@@ -212,19 +212,19 @@ for given in givens:
     S = w01
     mask = (mask0 & (T < R) & (P < S))
     Z[mask] = nodilemma[mask]
-    a2[mask] = a21[mask]
+    a2eq[mask] = a21[mask]
     w[mask] = R[mask]
     mask = (mask0 & (T >= R) & (P <= S) & (R != P))
     Z[mask] = snowdrift[mask]
     x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
-    a2[mask] = a21[mask]*x[mask] + a20[mask]*(1.0 - x[mask])
+    a2eq[mask] = a21[mask]*x[mask] + a20[mask]*(1.0 - x[mask])
     w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
     mask = (mask0 & (T > R) & (P > S))
     Z[mask] = prisoner[mask]
-    a2[mask] = a20[mask]
+    a2eq[mask] = a20[mask]
     w[mask] = P[mask]
 
-    Mss = [[a2social, a2social*R2*given, wsocial], [a2, a2*R2*given, w]]
+    Mss = [[a2social, a2social*R2*given, wsocial], [a2eq, a2eq*R2*given, w]]
 
     axs[0, 0].imshow(Z, extent=extent)
 

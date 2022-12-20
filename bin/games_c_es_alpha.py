@@ -57,7 +57,8 @@ else:
 b = a2max/a1max
 Rq = R2/R1
 MRT0 = b*Rq
-givens[-1] = 0.9999999
+if givens[-1] == 1.0:
+    givens[-1] = 0.9999999
 alphas = np.linspace(maxalpha, minalpha, num=num)
 log_ess = np.linspace(minlog_es, maxlog_es, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)

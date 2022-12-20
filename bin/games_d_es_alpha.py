@@ -35,18 +35,18 @@ letters = [['a', 'b', 'c'],
             ['b', 'c', 'd'],
             ['e', 'f', 'g']]
 
-def fitness(x, y):
+def fitness(x, y, given, alpha, rho):
     q1 = (a2max - y)*R1/b
     q2 = y*R2*(1.0 - given) + x*R2*given
     w = q1*q2
-    mask = (w > 0.0) & (RR == 0.0)
-    w[mask] = pow(q1[mask], 1.0 - AA[mask])*pow(q2[mask], AA[mask])
-    mask = (w > 0.0) & (RR < 0.0)
-    w[mask] = (1.0 - AA[mask])*pow(q1[mask], RR[mask]) + AA[mask]*pow(q2[mask], RR[mask])
-    mask = (w > 0.0) & (RR < 0.0)
-    w[mask] = pow(w[mask], 1.0/RR[mask])
-    mask = (RR > 0.0)
-    w[mask] = pow((1.0 - AA[mask])*pow(q1[mask], RR[mask]) + AA[mask]*pow(q2[mask], RR[mask]), 1.0/RR[mask])
+    mask = (w > 0.0) & (rho == 0.0)
+    w[mask] = pow(q1[mask], 1.0 - alpha[mask])*pow(q2[mask], alpha[mask])
+    mask = (w > 0.0) & (rho < 0.0)
+    w[mask] = (1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask])
+    mask = (w > 0.0) & (rho < 0.0)
+    w[mask] = pow(w[mask], 1.0/rho[mask])
+    mask = (rho > 0.0)
+    w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
     return w
 
 if mingiven != maxgiven:
@@ -65,16 +65,15 @@ RR, AA = np.meshgrid(rhos, alphas)
 a20 = np.full([num, num], 0.0)
 a21 = np.full([num, num], a2max/2.0)
 a22 = np.full([num, num], a2max)
-given = 0.0
-w00 = fitness(a20, a20)
-w11 = fitness(a21, a21)
-w22 = fitness(a22, a22)
+w00 = fitness(a20, a20, 0.0, AA, RR)
+w11 = fitness(a21, a21, 0.0, AA, RR)
+w22 = fitness(a22, a22, 0.0, AA, RR)
 a2social = a20
 mask = (w11 > w00)
 a2social[mask] = a21[mask]
 mask = (w22 > w11)
 a2social[mask] = a22[mask]
-wsocial = fitness(a2social, a2social)
+wsocial = fitness(a2social, a2social, 0.0, AA, RR)
 
 minx = round(log_ess[0])
 maxx = round(log_ess[-1])
@@ -106,12 +105,12 @@ for given in givens:
     a2 = np.full([num, num], 0.0)
     w = np.full([num, num], 0.0)
     x = np.full([num, num], 0.0)
-    w01 = fitness(a20, a21)
-    w10 = fitness(a21, a20)
-    w12 = fitness(a21, a22)
-    w21 = fitness(a22, a21)
-    w02 = fitness(a20, a22)
-    w20 = fitness(a22, a20)
+    w01 = fitness(a20, a21, given, AA, RR)
+    w10 = fitness(a21, a20, given, AA, RR)
+    w12 = fitness(a21, a22, given, AA, RR)
+    w21 = fitness(a22, a21, given, AA, RR)
+    w02 = fitness(a20, a22, given, AA, RR)
+    w20 = fitness(a22, a20, given, AA, RR)
 
     mask0 = (wsocial == w00)
     T = w01

@@ -16,7 +16,7 @@ mingiven = 0.95
 maxgiven = 0.95
 
 num = 21    # Number of subplot rows and columns
-npoints = 64
+numa2 = 64
 filename = 'games_c_es_alpha'
 R1 = 2.0
 R2 = 2.0
@@ -66,10 +66,10 @@ alphas = np.linspace(maxalpha, minalpha, num=num)
 log_ess = np.linspace(minlog_es, maxlog_es, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
 RR, AA = np.meshgrid(rhos, alphas)
-X, Y = np.meshgrid(np.linspace(0.0, a2max, num=npoints), np.linspace(a2max, 0.0, num=npoints))
+X, Y = np.meshgrid(np.linspace(0.0, a2max, num=numa2), np.linspace(a2max, 0.0, num=numa2))
 X = np.tile(A=X, reps=[num, num])
 Y = np.tile(A=Y, reps=[num, num])
-RRR, AAA = np.meshgrid(np.repeat(rhos, npoints), np.repeat(alphas, npoints))
+RRR, AAA = np.meshgrid(np.repeat(rhos, numa2), np.repeat(alphas, numa2))
 
 minx = round(log_ess[0])
 maxx = round(log_ess[-1])
@@ -79,11 +79,11 @@ maxy = maxalpha
 xticklabels = [minx, round((minx + maxx)/2), maxx]
 yticklabels = [miny, (miny + maxy)/2, maxy]
 extent = 0, num, 0, num
-extentg = 0, npoints*num, 0, npoints*num
-prisoner = np.full((npoints*num, npoints*num, 4), [0.5, 0.0, 0.0, 1.0])
-snowdrift = np.full((npoints*num, npoints*num, 4), [0.0, 1.0, 1.0, 1.0])
-nodilemma = np.full((npoints*num, npoints*num, 4), [1.0, 1.0, 1.0, 1.0])
-green = np.full((npoints*num, npoints*num, 4), [0.0, 1.0, 0.0, 1.0])
+extenta2 = 0, numa2*num, 0, numa2*num
+prisoner = np.full((numa2*num, numa2*num, 4), [0.5, 0.0, 0.0, 1.0])
+snowdrift = np.full((numa2*num, numa2*num, 4), [0.0, 1.0, 1.0, 1.0])
+nodilemma = np.full((numa2*num, numa2*num, 4), [1.0, 1.0, 1.0, 1.0])
+green = np.full((numa2*num, numa2*num, 4), [0.0, 1.0, 0.0, 1.0])
 
 for given in givens:
 
@@ -96,7 +96,7 @@ for given in givens:
     if movie:
         fig.text(0.80, 0.80, f'given\n{given:4.2f}', fontsize=fstick+4, color='grey', ha='right')
 
-    Z = np.full((npoints*num, npoints*num, 4), [0.0, 1.0, 0.0, 1.0])
+    Z = np.full((numa2*num, numa2*num, 4), [0.0, 1.0, 0.0, 1.0])
     T = fitness(Y, X, given, AAA, RRR)
     R = fitness(Y, Y, given, AAA, RRR)
     P = fitness(X, X, given, AAA, RRR)
@@ -129,9 +129,9 @@ for given in givens:
     for axrow, letterrow in zip(axs, letters):
         for ax, letter in zip(axrow, letterrow):
             if ax.get_subplotspec().is_first_row():
-                ax.set(xticks=[0, npoints*num/2, npoints*num], yticks=[0, npoints*num/2, npoints*num], xticklabels=[], yticklabels=yticklabels)
+                ax.set(xticks=[0, numa2*num/2, numa2*num], yticks=[0, numa2*num/2, numa2*num], xticklabels=[], yticklabels=yticklabels)
                 ax.set_title('Game types', pad=50.0, fontsize=fslabel)
-                ax.text(0, npoints*num*1.035, letter, fontsize=fslabel, weight='bold')
+                ax.text(0, numa2*num*1.035, letter, fontsize=fslabel, weight='bold')
                 pos = ax.get_position()
                 newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
                 ax.set_position(newpos)
@@ -146,7 +146,7 @@ for given in givens:
     for ax, traitlabel in zip(axs[1], traitlabels):
         ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
-    axs[0, 0].imshow(Z, extent=extentg)
+    axs[0, 0].imshow(Z, extent=extenta2)
 
     for row, Ms in zip(axs[1:], Mss):
         for ax, M, traitvmax in zip(row, Ms, traitvmaxs):

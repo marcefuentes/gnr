@@ -116,7 +116,7 @@ for given in givens:
     if movie:
         text = fig.text(0.80, 0.80, f'given\n{given:4.2f}', fontsize=fstick+4, color='grey', ha='right')
 
-    Z = np.full((numa2*num, numa2*num, 4), [0.0, 1.0, 0.0, 1.0])
+    Z = np.copy(green)
     T = fitness(Y, X, given, AAA, RRR)
     R = fitness(Y, Y, given, AAA, RRR)
     P = fitness(X, X, given, AAA, RRR)

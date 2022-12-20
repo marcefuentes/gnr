@@ -35,26 +35,18 @@ fstick=24 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-letters = [['a', 'b', 'c', 'd'],
-            ['f', 'g', 'h', 'i'],
-            ['k', 'l', 'm', 'n'],
-            ['p', 'q', 'r', 's'],
-            ['u', 'v', 'w', 'x'],
-            ['z', 'aa', 'ab', 'ac'],
-            ['ae', 'af', 'ag', 'ah']]
-
-def fitness(x, y):
+def fitness(x, y, given, alpha, rho):
     q1 = (a2max - y)*R1/b
     q2 = y*R2*(1.0 - given) + x*R2*given
     w = q1*q2
-    mask = (w > 0.0) & (RR == 0.0)
-    w[mask] = pow(q1[mask], 1.0 - AA[mask])*pow(q2[mask], AA[mask])
-    mask = (w > 0.0) & (RR < 0.0)
-    w[mask] = (1.0 - AA[mask])*pow(q1[mask], RR[mask]) + AA[mask]*pow(q2[mask], RR[mask])
-    mask = (w > 0.0) & (RR < 0.0)
-    w[mask] = pow(w[mask], 1.0/RR[mask])
-    mask = (RR > 0.0)
-    w[mask] = pow((1.0 - AA[mask])*pow(q1[mask], RR[mask]) + AA[mask]*pow(q2[mask], RR[mask]), 1.0/RR[mask])
+    mask = (w > 0.0) & (rho == 0.0)
+    w[mask] = pow(q1[mask], 1.0 - alpha[mask])*pow(q2[mask], alpha[mask])
+    mask = (w > 0.0) & (rho < 0.0)
+    w[mask] = (1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask])
+    mask = (w > 0.0) & (rho < 0.0)
+    w[mask] = pow(w[mask], 1.0/rho[mask])
+    mask = (rho > 0.0)
+    w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
     return w
 
 # Simulations
@@ -72,24 +64,43 @@ ts = df.Time.unique()
 if movie == False: ts = [ts[-1]]
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 ess = np.sort(pd.unique(df.ES))
+rhos = 1.0 - 1.0/pow(2.0, ess)
+nr = len(alphas)
+nc = len(rhos)
 
 # Theory
 
 b = a2max/a1max
 Rq = R2/R1
-rhos = 1.0 - 1.0/pow(2.0, ess)
-given = 0.95
+MRT0 = b*Rq
 
-nr = len(alphas)
-nc = len(rhos)
 RR, AA = np.meshgrid(rhos, alphas)
+X, Y = np.meshgrid(np.linspace(0.0, a2max, num=numa2), np.linspace(a2max, 0.0, num=numa2))
+X = np.tile(A=X, reps=[num, num])
+Y = np.tile(A=Y, reps=[num, num])
+RRR, AAA = np.meshgrid(np.repeat(rhos, numa2), np.repeat(alphas, numa2))
 
-TT = b*Rq*(1.0 - given)
-QQ = Rq*pow(TT*AA/(1.0 - AA), 1.0/(RR - 1.0))
-a2 = a2max/(1.0 + QQ*b)
-#helps = a2*R2*GG
-w = fitness(a2, a2)
-Zs = [a2, np.zeros([nr, nc]), np.zeros([nr, nc]), w]
+minx = round(log_ess[0])
+maxx = round(log_ess[-1])
+miny = minalpha
+maxy = maxalpha
+
+xticklabels = [minx, round((minx + maxx)/2), maxx]
+yticklabels = [miny, (miny + maxy)/2, maxy]
+extent = 0, num, 0, num
+extenta2 = 0, numa2*num, 0, numa2*num
+prisoner = np.full((numa2*num, numa2*num, 4), [0.5, 0.0, 0.0, 1.0])
+snowdrift = np.full((numa2*num, numa2*num, 4), [0.0, 1.0, 1.0, 1.0])
+nodilemma = np.full((numa2*num, numa2*num, 4), [1.0, 1.0, 1.0, 1.0])
+green = np.full((numa2*num, numa2*num, 4), [0.0, 1.0, 0.0, 1.0])
+
+MRT = MRT0*(1.0 - given)
+Q0 = Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
+a2socialss = a2max/(1.0 + Q0*b)
+Q = Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
+a2eqss = a2max/(1.0 + Q*b)
+
+Mss = [[a2socialss, a2socialss*R2*given, fitness(a2socialss, a2socialss, given, AA, RR)], [a2eqss, a2eqss*R2*given, fitness(a2eqss, a2eqss, given, AA, RR)]]
 
 fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+1)))
 

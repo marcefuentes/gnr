@@ -32,7 +32,7 @@ fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-letters = [['a', 'b', 'c'],
+letters = [['a'],
             ['b', 'c', 'd'],
             ['e', 'f', 'g']]
 

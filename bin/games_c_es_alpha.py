@@ -80,7 +80,7 @@ xticklabels = [minx, round((minx + maxx)/2), maxx]
 yticklabels = [miny, (miny + maxy)/2, maxy]
 extent = 0, num, 0, num
 extentZ = 0, npoints*num, 0, npoints*num
-black = np.full((npoints*num, npoints*num, 4), [0.2, 0.0, 0.2, 1.0])
+black = np.full((npoints*num, npoints*num, 4), [0.5, 0.0, 0.0, 1.0])
 cyan = np.full((npoints*num, npoints*num, 4), [0.0, 1.0, 1.0, 1.0])
 white = np.full((npoints*num, npoints*num, 4), [1.0, 1.0, 1.0, 1.0])
 green = np.full((npoints*num, npoints*num, 4), [0.0, 1.0, 0.0, 1.0])
@@ -90,8 +90,8 @@ for given in givens:
     fig, axs = plt.subplots(nrows=3, ncols=3, figsize=(18, 18))
     fig.delaxes(axs[0, 1])
     fig.delaxes(axs[0, 2])
-    fig.supylabel("Value of $\it{B}$", x=0.04, y=0.520, fontsize=fslabel)
-    fig.supxlabel("Substitutability of $\it{B}$", x=0.525, y=0.03, fontsize=fslabel)
+    fig.supylabel("Value of $\it{B}$", x=0.04, y=0.510, fontsize=fslabel)
+    fig.supxlabel("Substitutability of $\it{B}$", x=0.515, y=0.03, fontsize=fslabel)
 
     if movie:
         fig.text(0.80, 0.80, f'given\n{given:4.2f}', fontsize=fstick+4, color='grey', ha='right')

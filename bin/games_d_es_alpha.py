@@ -1,25 +1,21 @@
 #! /usr/bin/env python
 
-from glob import glob
-from matplotlib import cm
-from matplotlib.colors import ListedColormap
 import os
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
 import numpy as np
 import time
 
 start_time = time.perf_counter ()
 
-minalpha = 0.4
-maxalpha = 0.6
+minalpha = 0.1
+maxalpha = 0.9
 minlog_es = -5.0
 maxlog_es = 5.0
-mingiven = 0.0
-maxgiven = 1.0
+mingiven = 0.95
+maxgiven = 0.95
 
-num = 21    # Number of subplot rows & columns
+num = 21    # Number of subplot rows and columns
 filename = 'games_d_es_alpha'
 R1 = 2.0
 R2 = 2.0
@@ -29,7 +25,7 @@ a2max = 1.0
 # Figure
 
 traitlabels = ['Effort to get $\it{B}$', 'Help', 'Fitness']
-traitvmaxs = [1.0, 2.0, 1.16]
+traitvmaxs = [1.0, 2.0, 1.8]
 fslabel = 32 # Label font size
 fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
@@ -55,16 +51,16 @@ def fitness(x, y):
 
 if mingiven != maxgiven:
     movie = True
-    givens = np.linspace(maxgiven, mingiven, num=num)
+    givens = np.linspace(mingiven, maxgiven, num=num)
     frames = []
 else:
     movie = False 
     givens = np.array([mingiven])
 
+b = a2max/a1max
 alphas = np.linspace(maxalpha, minalpha, num=num)
 log_ess = np.linspace(minlog_es, maxlog_es, num=num)
 rhos = 1.0 - 1.0/pow(2, log_ess)
-b = a2max/a1max
 RR, AA = np.meshgrid(rhos, alphas)
 a20 = np.full([num, num], 0.0)
 a21 = np.full([num, num], a2max/2.0)
@@ -88,18 +84,18 @@ maxy = maxalpha
 xticklabels = [minx, round((minx + maxx)/2), maxx]
 yticklabels = [miny, (miny + maxy)/2, maxy]
 extent = 0, num, 0, num
-black = np.full((num, num, 4), [0.2, 0.0, 0.2, 1.0])
+black = np.full((num, num, 4), [0.5, 0.0, 0.0, 1.0])
 cyan = np.full((num, num, 4), [0.0, 1.0, 1.0, 1.0])
 white = np.full((num, num, 4), [1.0, 1.0, 1.0, 1.0])
 green = np.full((num, num, 4), [0.0, 1.0, 0.0, 1.0])
 
-for given in reversed(givens):
+for given in givens:
 
     fig, axs = plt.subplots(nrows=3, ncols=3, figsize=(18, 18))
     fig.delaxes(axs[0, 1])
     fig.delaxes(axs[0, 2])
-    fig.supylabel("Value of $\it{B}$", x=0.04, y=0.520, fontsize=fslabel)
-    fig.supxlabel("Substitutability of $\it{B}$", x=0.525, y=0.05, fontsize=fslabel)
+    fig.supylabel("Value of $\it{B}$", x=0.04, y=0.510, fontsize=fslabel)
+    fig.supxlabel("Substitutability of $\it{B}$", x=0.515, y=0.03, fontsize=fslabel)
 
     if movie:
         fig.text(0.80, 0.80, f'given\n{given:4.2f}', fontsize=fstick+4, color='grey', ha='right')
@@ -126,7 +122,7 @@ for given in reversed(givens):
     Z[mask] = white[mask]
     a2[mask] = a20[mask]
     w[mask] = R[mask]
-    mask = (mask0 & (T >= R) & (P <= S))
+    mask = (mask0 & (T >= R) & (P <= S) & (R != P))
     Z[mask] = cyan[mask]
     x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2[mask] = a20[mask]*x[mask] + a21[mask]*(1.0 - x[mask])
@@ -145,7 +141,7 @@ for given in reversed(givens):
     Z[mask] = white[mask]
     a2[mask] = a21[mask]
     w[mask] = R[mask]
-    mask = (mask0 & (T >= R) & (P <= S))
+    mask = (mask0 & (T >= R) & (P <= S) & (R != P))
     Z[mask] = cyan[mask]
     x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2[mask] = a21[mask]*x[mask] + a20[mask]*(1.0 - x[mask])
@@ -164,7 +160,7 @@ for given in reversed(givens):
     Z[mask] = white[mask]
     a2[mask] = a21[mask]
     w[mask] = R[mask]
-    mask = (mask0 & (T >= R) & (P <= S))
+    mask = (mask0 & (T >= R) & (P <= S) & (R != P))
     Z[mask] = cyan[mask]
     x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2[mask] = a21[mask]*x[mask] + a22[mask]*(1.0 - x[mask])
@@ -183,7 +179,7 @@ for given in reversed(givens):
     Z[mask] = white[mask]
     a2[mask] = a22[mask]
     w[mask] = R[mask]
-    mask = (mask0 & (T >= R) & (P <= S))
+    mask = (mask0 & (T >= R) & (P <= S) & (R != P))
     Z[mask] = cyan[mask]
     x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2[mask] = a22[mask]*x[mask] + a21[mask]*(1.0 - x[mask])
@@ -202,7 +198,7 @@ for given in reversed(givens):
     Z[mask] = white[mask]
     a2[mask] = a21[mask]
     w[mask] = R[mask]
-    mask = (mask0 & (T >= R) & (P <= S))
+    mask = (mask0 & (T >= R) & (P <= S) & (R != P))
     Z[mask] = cyan[mask]
     x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2[mask] = a21[mask]*x[mask] + a20[mask]*(1.0 - x[mask])
@@ -215,13 +211,21 @@ for given in reversed(givens):
     Mss = [[a2optimal, a2optimal*R2*given, woptimal], [a2, a2*R2*given, w]]
 
     for axrow, letterrow in zip(axs, letters):
-        for ax, letter, traitlabel in zip(axrow, letterrow, traitlabels):
+        for ax, letter in zip(axrow, letterrow):
             ax.set(xticks=[0, num/2, num], yticks=[0, num/2, num], xticklabels=[], yticklabels=[])
             ax.text(0, num*1.035, letter, fontsize=fslabel, weight='bold')
+            if ax.get_subplotspec().is_first_row():
+                ax.set_title('Game types', pad=50.0, fontsize=fslabel)
+                pos = ax.get_position()
+                newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
+                ax.set_position(newpos)
             if ax.get_subplotspec().is_last_row():
                 ax.set_xticklabels(xticklabels, fontsize=fstick)
             if ax.get_subplotspec().is_first_col():
                 ax.set_yticklabels(yticklabels, fontsize=fstick) 
+
+    for ax, traitlabel in zip(axs[1], traitlabels):
+        ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
     axs[0, 0].imshow(Z, extent=extent)
 

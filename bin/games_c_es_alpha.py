@@ -1,11 +1,8 @@
 #! /usr/bin/env python
 
-from matplotlib import cm
-from matplotlib.colors import ListedColormap
 import os
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
 import numpy as np
 import time
 

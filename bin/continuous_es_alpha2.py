@@ -13,7 +13,7 @@ start_time = time.perf_counter ()
 
 traits = ['a2Seenmean', 'ChooseGrainmean', 'MimicGrainmean', 'wmean']
 traitlabels = ['Effort to get $\it{B}$', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner', 'Fitness']
-traitvmaxs = [1.0, 1.0, 1.0, 1.4]
+traitvmaxs = [1.0, 1.0, 1.0, 1.8]
 folders = ['none', 'p', 'r', 'pr', 'p8r']
 given = 0.95
 
@@ -21,6 +21,7 @@ movie = False
 if movie:
     frames = []
 
+npoints = 64
 filename = 'output'
 R1 = 2.0
 R2 = 2.0

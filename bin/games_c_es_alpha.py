@@ -60,7 +60,7 @@ else:
 
 b = a2max/a1max
 Rq = R2/R1
-T0 = b*Rq
+MRT0 = b*Rq
 givens[-1] = 0.9999999
 alphas = np.linspace(maxalpha, minalpha, num=num)
 log_ess = np.linspace(minlog_es, maxlog_es, num=num)
@@ -79,10 +79,10 @@ maxy = maxalpha
 xticklabels = [minx, round((minx + maxx)/2), maxx]
 yticklabels = [miny, (miny + maxy)/2, maxy]
 extent = 0, num, 0, num
-extentZ = 0, npoints*num, 0, npoints*num
-black = np.full((npoints*num, npoints*num, 4), [0.5, 0.0, 0.0, 1.0])
-cyan = np.full((npoints*num, npoints*num, 4), [0.0, 1.0, 1.0, 1.0])
-white = np.full((npoints*num, npoints*num, 4), [1.0, 1.0, 1.0, 1.0])
+extentg = 0, npoints*num, 0, npoints*num
+prisoner = np.full((npoints*num, npoints*num, 4), [0.5, 0.0, 0.0, 1.0])
+snowdrift = np.full((npoints*num, npoints*num, 4), [0.0, 1.0, 1.0, 1.0])
+nodilemma = np.full((npoints*num, npoints*num, 4), [1.0, 1.0, 1.0, 1.0])
 green = np.full((npoints*num, npoints*num, 4), [0.0, 1.0, 0.0, 1.0])
 
 for given in givens:
@@ -109,22 +109,22 @@ for given in givens:
     T[mask] = S[mask]
     S[mask] = H
     mask = (T > R) & (P > S)
-    Z[mask] = black[mask]
+    Z[mask] = prisoner[mask]
     mask = (T >= R) & (P <= S) & (R != P)
-    Z[mask] = cyan[mask]
+    Z[mask] = snowdrift[mask]
     mask = ((T < R) & (P < S)) | (R == P)
-    Z[mask] = white[mask]
+    Z[mask] = nodilemma[mask]
     #Z = np.tril(Z, k=-1)
     #Z = np.ma.masked_where(Z == 0.0, Z)
 
     GG = given
-    TT = T0*(1.0 - GG)
-    Q0 = Rq*pow(T0*AA/(1.0 - AA), 1.0/(RR - 1.0))
-    a20ss = a2max/(1.0 + Q0*b)
-    Q = Rq*pow(TT*AA/(1.0 - AA), 1.0/(RR - 1.0))
+    MRT = MRT0*(1.0 - GG)
+    Q0 = Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
+    a2socialss = a2max/(1.0 + Q0*b)
+    Q = Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
     a2eqss = a2max/(1.0 + Q*b)
 
-    Mss = [[a20ss, a20ss*R2*GG, fitness(a20ss, a20ss, GG, AA, RR)], [a2eqss, a2eqss*R2*GG, fitness(a2eqss, a2eqss, GG, AA, RR)]]
+    Mss = [[a2socialss, a2socialss*R2*GG, fitness(a2socialss, a2socialss, GG, AA, RR)], [a2eqss, a2eqss*R2*GG, fitness(a2eqss, a2eqss, GG, AA, RR)]]
 
     for axrow, letterrow in zip(axs, letters):
         for ax, letter in zip(axrow, letterrow):
@@ -146,7 +146,7 @@ for given in givens:
     for ax, traitlabel in zip(axs[1], traitlabels):
         ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
-    axs[0, 0].imshow(Z, extent=extentZ)
+    axs[0, 0].imshow(Z, extent=extentg)
 
     for row, Ms in zip(axs[1:], Mss):
         for ax, M, traitvmax in zip(row, Ms, traitvmaxs):

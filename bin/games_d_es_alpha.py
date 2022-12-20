@@ -69,12 +69,12 @@ given = 0.0
 w00 = fitness(a20, a20)
 w11 = fitness(a21, a21)
 w22 = fitness(a22, a22)
-a2optimal = a20
+a2social = a20
 mask = (w11 > w00)
-a2optimal[mask] = a21[mask]
+a2social[mask] = a21[mask]
 mask = (w22 > w11)
-a2optimal[mask] = a22[mask]
-woptimal = fitness(a2optimal, a2optimal)
+a2social[mask] = a22[mask]
+wsocial = fitness(a2social, a2social)
 
 minx = round(log_ess[0])
 maxx = round(log_ess[-1])
@@ -84,9 +84,9 @@ maxy = maxalpha
 xticklabels = [minx, round((minx + maxx)/2), maxx]
 yticklabels = [miny, (miny + maxy)/2, maxy]
 extent = 0, num, 0, num
-black = np.full((num, num, 4), [0.5, 0.0, 0.0, 1.0])
-cyan = np.full((num, num, 4), [0.0, 1.0, 1.0, 1.0])
-white = np.full((num, num, 4), [1.0, 1.0, 1.0, 1.0])
+prisoner = np.full((num, num, 4), [0.5, 0.0, 0.0, 1.0])
+snowdrift = np.full((num, num, 4), [0.0, 1.0, 1.0, 1.0])
+nodilemma = np.full((num, num, 4), [1.0, 1.0, 1.0, 1.0])
 green = np.full((num, num, 4), [0.0, 1.0, 0.0, 1.0])
 
 for given in givens:
@@ -113,102 +113,102 @@ for given in givens:
     w02 = fitness(a20, a22)
     w20 = fitness(a22, a20)
 
-    mask0 = (woptimal == w00)
+    mask0 = (wsocial == w00)
     T = w01
     R = w00
     P = w11
     S = w10
     mask = (mask0 & (T < R) & (P < S))
-    Z[mask] = white[mask]
+    Z[mask] = nodilemma[mask]
     a2[mask] = a20[mask]
     w[mask] = R[mask]
     mask = (mask0 & (T >= R) & (P <= S) & (R != P))
-    Z[mask] = cyan[mask]
+    Z[mask] = snowdrift[mask]
     x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2[mask] = a20[mask]*x[mask] + a21[mask]*(1.0 - x[mask])
     w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
     mask = (mask0 & (T > R) & (P > S))
-    Z[mask] = black[mask]
+    Z[mask] = prisoner[mask]
     a2[mask] = a21[mask]
     w[mask] = P[mask]
 
-    mask0 = (woptimal == w11) & (w20 > w22)
+    mask0 = (wsocial == w11) & (w20 > w22)
     T = w10
     R = w11
     P = w00
     S = w01
     mask = (mask0 & (T < R) & (P < S))
-    Z[mask] = white[mask]
+    Z[mask] = nodilemma[mask]
     a2[mask] = a21[mask]
     w[mask] = R[mask]
     mask = (mask0 & (T >= R) & (P <= S) & (R != P))
-    Z[mask] = cyan[mask]
+    Z[mask] = snowdrift[mask]
     x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2[mask] = a21[mask]*x[mask] + a20[mask]*(1.0 - x[mask])
     w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
     mask = (mask0 & (T > R) & (P > S))
-    Z[mask] = black[mask]
+    Z[mask] = prisoner[mask]
     a2[mask] = a20[mask]
     w[mask] = P[mask]
 
-    mask0 = (woptimal == w11) & (w20 <= w22)
+    mask0 = (wsocial == w11) & (w20 <= w22)
     T = w12
     R = w11
     P = w22
     S = w21
     mask = (mask0 & (T < R) & (P < S))
-    Z[mask] = white[mask]
+    Z[mask] = nodilemma[mask]
     a2[mask] = a21[mask]
     w[mask] = R[mask]
     mask = (mask0 & (T >= R) & (P <= S) & (R != P))
-    Z[mask] = cyan[mask]
+    Z[mask] = snowdrift[mask]
     x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2[mask] = a21[mask]*x[mask] + a22[mask]*(1.0 - x[mask])
     w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
     mask = (mask0 & (T > R) & (P > S))
-    Z[mask] = black[mask]
+    Z[mask] = prisoner[mask]
     a2[mask] = a22[mask]
     w[mask] = P[mask]
 
-    mask0 = (woptimal == w22) & (w10 < w11)
+    mask0 = (wsocial == w22) & (w10 < w11)
     T = w21
     R = w22
     P = w11
     S = w12
     mask = (mask0 & (T < R) & (P < S))
-    Z[mask] = white[mask]
+    Z[mask] = nodilemma[mask]
     a2[mask] = a22[mask]
     w[mask] = R[mask]
     mask = (mask0 & (T >= R) & (P <= S) & (R != P))
-    Z[mask] = cyan[mask]
+    Z[mask] = snowdrift[mask]
     x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2[mask] = a22[mask]*x[mask] + a21[mask]*(1.0 - x[mask])
     w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
     mask = (mask0 & (T > R) & (P > S))
-    Z[mask] = black[mask]
+    Z[mask] = prisoner[mask]
     a2[mask] = a21[mask]
     w[mask] = P[mask]
 
-    mask0 = (woptimal == w22) & (w10 >= w11)
+    mask0 = (wsocial == w22) & (w10 >= w11)
     T = w10
     R = w11
     P = w00
     S = w01
     mask = (mask0 & (T < R) & (P < S))
-    Z[mask] = white[mask]
+    Z[mask] = nodilemma[mask]
     a2[mask] = a21[mask]
     w[mask] = R[mask]
     mask = (mask0 & (T >= R) & (P <= S) & (R != P))
-    Z[mask] = cyan[mask]
+    Z[mask] = snowdrift[mask]
     x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2[mask] = a21[mask]*x[mask] + a20[mask]*(1.0 - x[mask])
     w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
     mask = (mask0 & (T > R) & (P > S))
-    Z[mask] = black[mask]
+    Z[mask] = prisoner[mask]
     a2[mask] = a20[mask]
     w[mask] = P[mask]
 
-    Mss = [[a2optimal, a2optimal*R2*given, woptimal], [a2, a2*R2*given, w]]
+    Mss = [[a2social, a2social*R2*given, wsocial], [a2, a2*R2*given, w]]
 
     for axrow, letterrow in zip(axs, letters):
         for ax, letter in zip(axrow, letterrow):

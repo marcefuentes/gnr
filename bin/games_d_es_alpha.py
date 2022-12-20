@@ -12,8 +12,8 @@ minalpha = 0.1
 maxalpha = 0.9
 minlog_es = -5.0
 maxlog_es = 5.0
-mingiven = 0.95
-maxgiven = 0.95
+mingiven = 0.0
+maxgiven = 1.0
 
 num = 21    # Number of subplot rows and columns
 filename = 'games_d_es_alpha'
@@ -84,16 +84,37 @@ snowdrift = np.full((num, num, 4), [0.0, 1.0, 1.0, 1.0])
 nodilemma = np.full((num, num, 4), [1.0, 1.0, 1.0, 1.0])
 green = np.full((num, num, 4), [0.0, 1.0, 0.0, 1.0])
 
+fig, axs = plt.subplots(nrows=3, ncols=3, figsize=(18, 18))
+fig.delaxes(axs[0, 1])
+fig.delaxes(axs[0, 2])
+fig.supylabel("Value of $\it{B}$", x=0.04, y=0.510, fontsize=fslabel)
+fig.supxlabel("Substitutability of $\it{B}$", x=0.515, y=0.03, fontsize=fslabel)
+
+letter = ord('b')
+for axrow in axs:
+    for ax in axrow:
+        ax.set(xticks=[0, num/2, num], yticks=[0, num/2, num], xticklabels=[], yticklabels=[])
+        if ax.get_subplotspec().is_first_row():
+            ax.set_title('Game types', pad=50.0, fontsize=fslabel)
+            ax.text(0, num*1.035, 'a', fontsize=fslabel, weight='bold')
+            pos = ax.get_position()
+            newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
+            ax.set_position(newpos)
+        else:
+            ax.text(0, num*1.035, chr(letter), fontsize=fslabel, weight='bold')
+            letter += 1
+        if ax.get_subplotspec().is_last_row():
+            ax.set_xticklabels(xticklabels, fontsize=fstick)
+        if ax.get_subplotspec().is_first_col():
+            ax.set_yticklabels(yticklabels, fontsize=fstick) 
+
+for ax, traitlabel in zip(axs[1], traitlabels):
+    ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
+
 for given in givens:
 
-    fig, axs = plt.subplots(nrows=3, ncols=3, figsize=(18, 18))
-    fig.delaxes(axs[0, 1])
-    fig.delaxes(axs[0, 2])
-    fig.supylabel("Value of $\it{B}$", x=0.04, y=0.510, fontsize=fslabel)
-    fig.supxlabel("Substitutability of $\it{B}$", x=0.515, y=0.03, fontsize=fslabel)
-
     if movie:
-        fig.text(0.80, 0.80, f'given\n{given:4.2f}', fontsize=fstick+4, color='grey', ha='right')
+        text = fig.text(0.80, 0.80, f'given\n{given:4.2f}', fontsize=fstick+4, color='grey', ha='right')
 
     Z = np.full([num, num, 4], [0.0, 1.0, 0.0, 1.0])
     a20 = np.full([num, num], 0.0)
@@ -205,27 +226,6 @@ for given in givens:
 
     Mss = [[a2social, a2social*R2*given, wsocial], [a2, a2*R2*given, w]]
 
-    letter = ord('b')
-    for axrow in axs:
-        for ax in axrow:
-            ax.set(xticks=[0, num/2, num], yticks=[0, num/2, num], xticklabels=[], yticklabels=[])
-            if ax.get_subplotspec().is_first_row():
-                ax.set_title('Game types', pad=50.0, fontsize=fslabel)
-                ax.text(0, num*1.035, 'a', fontsize=fslabel, weight='bold')
-                pos = ax.get_position()
-                newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
-                ax.set_position(newpos)
-            else:
-                ax.text(0, num*1.035, chr(letter), fontsize=fslabel, weight='bold')
-                letter += 1
-            if ax.get_subplotspec().is_last_row():
-                ax.set_xticklabels(xticklabels, fontsize=fstick)
-            if ax.get_subplotspec().is_first_col():
-                ax.set_yticklabels(yticklabels, fontsize=fstick) 
-
-    for ax, traitlabel in zip(axs[1], traitlabels):
-        ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
-
     axs[0, 0].imshow(Z, extent=extent)
 
     for row, Ms in zip(axs[1:], Mss):
@@ -236,10 +236,11 @@ for given in givens:
         plt.savefig('temp.png', transparent=False)
         frames.append(iio.imread('temp.png'))
         os.remove('temp.png')
+        text.remove()
     else:
         plt.savefig(filename + '.png', transparent=False)
 
-    plt.close()
+plt.close()
 
 if movie:
     iio.mimsave(filename + '.gif', frames)

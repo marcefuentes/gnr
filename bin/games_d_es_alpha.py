@@ -31,10 +31,6 @@ fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-letters = [['a'],
-            ['b', 'c', 'd'],
-            ['e', 'f', 'g']]
-
 def fitness(x, y, given, alpha, rho):
     q1 = (a2max - y)*R1/b
     q2 = y*R2*(1.0 - given) + x*R2*given
@@ -209,15 +205,19 @@ for given in givens:
 
     Mss = [[a2social, a2social*R2*given, wsocial], [a2, a2*R2*given, w]]
 
-    for axrow, letterrow in zip(axs, letters):
-        for ax, letter in zip(axrow, letterrow):
+    letter = ord('b')
+    for axrow in axs:
+        for ax in axrow:
             ax.set(xticks=[0, num/2, num], yticks=[0, num/2, num], xticklabels=[], yticklabels=[])
-            ax.text(0, num*1.035, letter, fontsize=fslabel, weight='bold')
             if ax.get_subplotspec().is_first_row():
                 ax.set_title('Game types', pad=50.0, fontsize=fslabel)
+                ax.text(0, num*1.035, 'a', fontsize=fslabel, weight='bold')
                 pos = ax.get_position()
                 newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
                 ax.set_position(newpos)
+            else:
+                ax.text(0, num*1.035, chr(letter), fontsize=fslabel, weight='bold')
+                letter += 1
             if ax.get_subplotspec().is_last_row():
                 ax.set_xticklabels(xticklabels, fontsize=fstick)
             if ax.get_subplotspec().is_first_col():

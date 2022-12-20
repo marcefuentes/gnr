@@ -32,10 +32,6 @@ fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-letters = [['a'],
-            ['b', 'c', 'd'],
-            ['e', 'f', 'g']]
-
 def fitness(x, y, given, alpha, rho):
     q1 = (a2max - y)*R1/b
     q2 = y*R2*(1.0 - given) + x*R2*given
@@ -117,27 +113,29 @@ for given in givens:
     #Z = np.tril(Z, k=-1)
     #Z = np.ma.masked_where(Z == 0.0, Z)
 
-    GG = given
-    MRT = MRT0*(1.0 - GG)
+    MRT = MRT0*(1.0 - given)
     Q0 = Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
     a2socialss = a2max/(1.0 + Q0*b)
     Q = Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
     a2eqss = a2max/(1.0 + Q*b)
 
-    Mss = [[a2socialss, a2socialss*R2*GG, fitness(a2socialss, a2socialss, GG, AA, RR)], [a2eqss, a2eqss*R2*GG, fitness(a2eqss, a2eqss, GG, AA, RR)]]
+    Mss = [[a2socialss, a2socialss*R2*given, fitness(a2socialss, a2socialss, given, AA, RR)], [a2eqss, a2eqss*R2*given, fitness(a2eqss, a2eqss, given, AA, RR)]]
 
-    for axrow, letterrow in zip(axs, letters):
-        for ax, letter in zip(axrow, letterrow):
+    letter = ord('b')
+    for axrow in axs:
+        for ax in axrow:
+            ax.set(xticks=[0, num/2, num], yticks=[0, num/2, num], xticklabels=[], yticklabels=[])
             if ax.get_subplotspec().is_first_row():
                 ax.set(xticks=[0, numa2*num/2, numa2*num], yticks=[0, numa2*num/2, numa2*num], xticklabels=[], yticklabels=yticklabels)
                 ax.set_title('Game types', pad=50.0, fontsize=fslabel)
-                ax.text(0, numa2*num*1.035, letter, fontsize=fslabel, weight='bold')
+                ax.text(0, numa2*num*1.035, 'a', fontsize=fslabel, weight='bold')
                 pos = ax.get_position()
                 newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
                 ax.set_position(newpos)
             else:
                 ax.set(xticks=[0, num/2, num], yticks=[0, num/2, num], xticklabels=[], yticklabels=[])
-                ax.text(0, num*1.035, letter, fontsize=fslabel, weight='bold')
+                ax.text(0, num*1.035, chr(letter), fontsize=fslabel, weight='bold')
+                letter += 1
             if ax.get_subplotspec().is_last_row():
                 ax.set_xticklabels(xticklabels, fontsize=fstick)
             if ax.get_subplotspec().is_first_col():

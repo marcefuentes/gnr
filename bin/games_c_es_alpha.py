@@ -15,7 +15,7 @@ maxlog_es = 5.0
 mingiven = 0.95
 maxgiven = 0.95
 
-num = 21    # Number of subplot rows & columns
+num = 21    # Number of subplot rows and columns
 npoints = 64
 filename = 'games_c_es_alpha'
 R1 = 2.0
@@ -91,7 +91,7 @@ for given in givens:
     fig.delaxes(axs[0, 1])
     fig.delaxes(axs[0, 2])
     fig.supylabel("Value of $\it{B}$", x=0.04, y=0.520, fontsize=fslabel)
-    fig.supxlabel("Substitutability of $\it{B}$", x=0.525, y=0.05, fontsize=fslabel)
+    fig.supxlabel("Substitutability of $\it{B}$", x=0.525, y=0.03, fontsize=fslabel)
 
     if movie:
         fig.text(0.80, 0.80, f'given\n{given:4.2f}', fontsize=fstick+4, color='grey', ha='right')
@@ -127,11 +127,14 @@ for given in givens:
     Mss = [[a20ss, a20ss*R2*GG, fitness(a20ss, a20ss, GG, AA, RR)], [a2eqss, a2eqss*R2*GG, fitness(a2eqss, a2eqss, GG, AA, RR)]]
 
     for axrow, letterrow in zip(axs, letters):
-        for ax, letter, traitlabel in zip(axrow, letterrow, traitlabels):
+        for ax, letter in zip(axrow, letterrow):
             if ax.get_subplotspec().is_first_row():
                 ax.set(xticks=[0, npoints*num/2, npoints*num], yticks=[0, npoints*num/2, npoints*num], xticklabels=[], yticklabels=yticklabels)
-                #ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
+                ax.set_title('Game types', pad=50.0, fontsize=fslabel)
                 ax.text(0, npoints*num*1.035, letter, fontsize=fslabel, weight='bold')
+                pos = ax.get_position()
+                newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
+                ax.set_position(newpos)
             else:
                 ax.set(xticks=[0, num/2, num], yticks=[0, num/2, num], xticklabels=[], yticklabels=[])
                 ax.text(0, num*1.035, letter, fontsize=fslabel, weight='bold')
@@ -139,9 +142,9 @@ for given in givens:
                 ax.set_xticklabels(xticklabels, fontsize=fstick)
             if ax.get_subplotspec().is_first_col():
                 ax.set_yticklabels(yticklabels, fontsize=fstick) 
-    pos = axs[0, 0].get_position()
-    newpos = [pos.x0, pos.y0+0.1, pos.width, pos.height]
-    axs[0, 0].set_position(newpos)
+
+    for ax, traitlabel in zip(axs[1], traitlabels):
+        ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
     axs[0, 0].imshow(Z, extent=extentZ)
 

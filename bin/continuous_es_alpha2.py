@@ -21,7 +21,7 @@ movie = False
 if movie:
     frames = []
 
-npoints = 64
+numa2 = 64
 filename = 'output'
 R1 = 2.0
 R2 = 2.0

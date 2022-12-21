@@ -72,7 +72,7 @@ a2social[mask] = a22[mask]
 wsocial = fitness(a2social, a2social, 0.0, AA, RR)
 
 minx = minlog_es
-maxx = minlog_es
+maxx = maxlog_es
 miny = minalpha
 maxy = maxalpha
 

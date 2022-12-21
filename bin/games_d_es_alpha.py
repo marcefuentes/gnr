@@ -131,7 +131,7 @@ for given in givens:
     T = np.copy(w01)
     R = np.copy(w00)
     P = np.copy(w11)
-    S = w10
+    S = np.copy(w10)
     mask = (mask0 & (T < R) & (P < S))
     Z[mask] = nodilemma[mask]
     a2eq[mask] = a20[mask]

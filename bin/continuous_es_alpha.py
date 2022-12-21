@@ -14,12 +14,12 @@ start_time = time.perf_counter ()
 traits = ['a2Seenmean', 'ChooseGrainmean', 'MimicGrainmean', 'wmean']
 traitlabels = ['Effort to get $\it{B}$', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner', 'Fitness']
 traitvmaxs = [1.0, 1.0, 1.0, 1.8]
-folders = ['none', 'p', 'r', 'pr', 'p8r']
+folders = ['none', 'pr', 'given0']
 given = 0.95
 
 movie = False
 
-numa2 = 64
+numa2 = 128
 filename = 'output'
 R1 = 2.0
 R2 = 2.0
@@ -63,7 +63,7 @@ else:
     ts = [ts[-1]]
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 ess = np.sort(pd.unique(df.ES))
-rhos = 1.0 - 1.0/pow(2.0, ess)
+rhos = 1.0 - 1.0/ess
 nr = len(alphas)
 nc = len(rhos)
 
@@ -76,8 +76,8 @@ X = np.tile(A=X, reps=[nr, nc])
 Y = np.tile(A=Y, reps=[nr, nc])
 RRR, AAA = np.meshgrid(np.repeat(rhos, numa2), np.repeat(alphas, numa2))
 
-minx = ess[0]
-maxx = ess[-1]
+minx = int(log(ess[0], 2.0))
+maxx = int(log(ess[-1], 2.0))
 miny = alphas[-1]
 maxy = alphas[0]
 
@@ -122,8 +122,8 @@ fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(
 fig.delaxes(axs[0, 1])
 fig.delaxes(axs[0, 2])
 fig.delaxes(axs[0, 3])
-fig.supxlabel('Value of $\it{B}$', x=0.513, y=0.05, fontsize=fslabel*1.25)
-fig.supylabel('Partner\'s share of $\it{B}$', x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
+fig.supxlabel('Substitutability of $\it{B}$', x=0.513, y=0.05, fontsize=fslabel*1.25)
+fig.supylabel('Value of $\it{B}$', x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
 
 letter = ord('b')
 for axrow in axs:

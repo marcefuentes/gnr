@@ -76,7 +76,7 @@ maxx = minlog_es
 miny = minalpha
 maxy = maxalpha
 
-xticklabels = [minx, round((minx + maxx)/2), maxx]
+xticklabels = [round(minx), round((minx + maxx)/2), round(maxx)]
 yticklabels = [miny, (miny + maxy)/2, maxy]
 extent = 0, num, 0, num
 prisoner = np.full((num, num, 4), [0.5, 0.0, 0.0, 1.0])

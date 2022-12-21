@@ -68,12 +68,12 @@ X = np.tile(A=X, reps=[num, num])
 Y = np.tile(A=Y, reps=[num, num])
 RRR, AAA = np.meshgrid(np.repeat(rhos, numa2), np.repeat(alphas, numa2))
 
-minx = minlog_ess
-maxx = maxlog_ess
+minx = minlog_es
+maxx = maxlog_es
 miny = minalpha
 maxy = maxalpha
 
-xticklabels = [minx, round((minx + maxx)/2), maxx]
+xticklabels = [round(minx), round((minx + maxx)/2), round(maxx)]
 yticklabels = [miny, (miny + maxy)/2, maxy]
 extent = 0, num, 0, num
 extenta2 = 0, numa2*num, 0, numa2*num

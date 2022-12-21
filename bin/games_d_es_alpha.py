@@ -49,16 +49,16 @@ def gametypes(a2c, a2d):
     mask = (mask0 & (T < R) & (P < S))
     Z[mask] = nodilemma[mask]
     a2eq[mask] = a2c[mask]
-    w[mask] = R[mask]
+    weq[mask] = R[mask]
     mask = (mask0 & (T >= R) & (P <= S) & (R != P))
     Z[mask] = snowdrift[mask]
-    x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
-    a2eq[mask] = a2c[mask]*x[mask] + a2d[mask]*(1.0 - x[mask])
-    w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
+    xeq[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
+    a2eq[mask] = a2c[mask]*xeq[mask] + a2d[mask]*(1.0 - xeq[mask])
+    weq[mask] = (T[mask] + S[mask])*xeq[mask]*(1.0 - xeq[mask]) + R[mask]*xeq[mask]*xeq[mask] + P[mask]*(1.0 - xeq[mask])*(1.0 - xeq[mask])
     mask = (mask0 & (T > R) & (P > S))
     Z[mask] = prisoner[mask]
     a2eq[mask] = a2d[mask]
-    w[mask] = P[mask]
+    weq[mask] = P[mask]
     pass
 
 if mingiven != maxgiven:
@@ -134,8 +134,8 @@ for given in givens:
 
     Z = np.copy(green)
     a2eq = np.full([num, num], 0.0)
-    w = np.full([num, num], 0.0)
-    x = np.full([num, num], 0.0)
+    weq = np.full([num, num], 0.0)
+    xeq = np.full([num, num], 0.0)
     w01 = fitness(a20, a21, given, AA, RR)
     w10 = fitness(a21, a20, given, AA, RR)
     w12 = fitness(a21, a22, given, AA, RR)
@@ -178,7 +178,7 @@ for given in givens:
     S = np.copy(w01)
     gametypes(a21, a20)
 
-    Mss = [[a2social, a2social*R2*given, wsocial], [a2eq, a2eq*R2*given, w]]
+    Mss = [[a2social, a2social*R2*given, wsocial], [a2eq, a2eq*R2*given, weq]]
 
     axs[0, 0].imshow(Z, extent=extent)
 

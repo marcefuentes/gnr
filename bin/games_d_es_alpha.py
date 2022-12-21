@@ -45,6 +45,22 @@ def fitness(x, y, given, alpha, rho):
     w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
     return w
 
+def gametypes(a2c, a2d):
+    mask = (mask0 & (T < R) & (P < S))
+    Z[mask] = nodilemma[mask]
+    a2eq[mask] = a2c[mask]
+    w[mask] = R[mask]
+    mask = (mask0 & (T >= R) & (P <= S) & (R != P))
+    Z[mask] = snowdrift[mask]
+    x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
+    a2eq[mask] = a2c[mask]*x[mask] + a2d[mask]*(1.0 - x[mask])
+    w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
+    mask = (mask0 & (T > R) & (P > S))
+    Z[mask] = prisoner[mask]
+    a2eq[mask] = a2d[mask]
+    w[mask] = P[mask]
+    pass
+
 if mingiven != maxgiven:
     movie = True
     givens = np.linspace(mingiven, maxgiven, num=num)
@@ -132,95 +148,35 @@ for given in givens:
     R = np.copy(w00)
     P = np.copy(w11)
     S = np.copy(w10)
-    mask = (mask0 & (T < R) & (P < S))
-    Z[mask] = nodilemma[mask]
-    a2eq[mask] = a20[mask]
-    w[mask] = R[mask]
-    mask = (mask0 & (T >= R) & (P <= S) & (R != P))
-    Z[mask] = snowdrift[mask]
-    x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
-    a2eq[mask] = a20[mask]*x[mask] + a21[mask]*(1.0 - x[mask])
-    w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
-    mask = (mask0 & (T > R) & (P > S))
-    Z[mask] = prisoner[mask]
-    a2eq[mask] = a21[mask]
-    w[mask] = P[mask]
+    gametypes(a20, a21)
 
     mask0 = (wsocial == w11) & (w20 > w22)
     T = np.copy(w10)
     R = np.copy(w11)
     P = np.copy(w00)
     S = np.copy(w01)
-    mask = (mask0 & (T < R) & (P < S))
-    Z[mask] = nodilemma[mask]
-    a2eq[mask] = a21[mask]
-    w[mask] = R[mask]
-    mask = (mask0 & (T >= R) & (P <= S) & (R != P))
-    Z[mask] = snowdrift[mask]
-    x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
-    a2eq[mask] = a21[mask]*x[mask] + a20[mask]*(1.0 - x[mask])
-    w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
-    mask = (mask0 & (T > R) & (P > S))
-    Z[mask] = prisoner[mask]
-    a2eq[mask] = a20[mask]
-    w[mask] = P[mask]
+    gametypes(a21, a20)
 
     mask0 = (wsocial == w11) & (w20 <= w22)
     T = np.copy(w12)
     R = np.copy(w11)
     P = np.copy(w22)
     S = np.copy(w21)
-    mask = (mask0 & (T < R) & (P < S))
-    Z[mask] = nodilemma[mask]
-    a2eq[mask] = a21[mask]
-    w[mask] = R[mask]
-    mask = (mask0 & (T >= R) & (P <= S) & (R != P))
-    Z[mask] = snowdrift[mask]
-    x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
-    a2eq[mask] = a21[mask]*x[mask] + a22[mask]*(1.0 - x[mask])
-    w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
-    mask = (mask0 & (T > R) & (P > S))
-    Z[mask] = prisoner[mask]
-    a2eq[mask] = a22[mask]
-    w[mask] = P[mask]
+    gametypes(a21, a22)
 
     mask0 = (wsocial == w22) & (w10 < w11)
     T = np.copy(w21)
     R = np.copy(w22)
     P = np.copy(w11)
     S = np.copy(w12)
-    mask = (mask0 & (T < R) & (P < S))
-    Z[mask] = nodilemma[mask]
-    a2eq[mask] = a22[mask]
-    w[mask] = R[mask]
-    mask = (mask0 & (T >= R) & (P <= S) & (R != P))
-    Z[mask] = snowdrift[mask]
-    x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
-    a2eq[mask] = a22[mask]*x[mask] + a21[mask]*(1.0 - x[mask])
-    w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
-    mask = (mask0 & (T > R) & (P > S))
-    Z[mask] = prisoner[mask]
-    a2eq[mask] = a21[mask]
-    w[mask] = P[mask]
+    gametypes(a22, a21)
 
     mask0 = (wsocial == w22) & (w10 >= w11)
     T = np.copy(w10)
     R = np.copy(w11)
     P = np.copy(w00)
     S = np.copy(w01)
-    mask = (mask0 & (T < R) & (P < S))
-    Z[mask] = nodilemma[mask]
-    a2eq[mask] = a21[mask]
-    w[mask] = R[mask]
-    mask = (mask0 & (T >= R) & (P <= S) & (R != P))
-    Z[mask] = snowdrift[mask]
-    x[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
-    a2eq[mask] = a21[mask]*x[mask] + a20[mask]*(1.0 - x[mask])
-    w[mask] = (T[mask] + S[mask])*x[mask]*(1.0 - x[mask]) + R[mask]*x[mask]*x[mask] + P[mask]*(1.0 - x[mask])*(1.0 - x[mask])
-    mask = (mask0 & (T > R) & (P > S))
-    Z[mask] = prisoner[mask]
-    a2eq[mask] = a20[mask]
-    w[mask] = P[mask]
+    gametypes(a21, a20)
 
     Mss = [[a2social, a2social*R2*given, wsocial], [a2eq, a2eq*R2*given, w]]
 

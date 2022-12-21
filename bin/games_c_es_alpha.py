@@ -23,8 +23,6 @@ R2 = 2.0
 a1max = 1.0
 a2max = 1.0
 
-# Figure
-
 traitlabels = ['Effort to get $\it{B}$', 'Help', 'Fitness']
 traitvmaxs = [1.0, 2.0, 1.8]
 fslabel = 32 # Label font size

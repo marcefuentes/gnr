@@ -11,15 +11,12 @@ import time
 
 start_time = time.perf_counter ()
 
-traits = ['a2Seenmean', 'help', 'wmean', 'ChooseGrainmean', 'MimicGrainmean']
-traitlabels = ['Effort to get $\it{B}$', 'Help', 'Fitness', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
-traitvmaxs = [1.0, 2.0, 1.5, 1.0, 1.0]
-folders = ['none', 'p', 'r', 'pr', 'p8r']
-alpha = 0.25
+traits = ['a2Seenmean', 'ChooseGrainmean', 'MimicGrainmean', 'wmean']
+traitlabels = ['Effort to get $\it{B}$', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner', 'Fitness']
+traitvmaxs = [1.0, 1.0, 1.0, 1.8]
+folders = ['none', 'pr']
 
 movie = False
-if movie:
-    frames = []
 
 filename = 'output'
 R1 = 2.0
@@ -27,36 +24,40 @@ R2 = 2.0
 a1max = 1.0
 a2max = 1.0
 
-# Figure
-
 fslabel=36 # Label font size
 fstick=24 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-letters = [['a', 'b', 'c', 'd', 'e'],
-            ['f', 'g', 'h', 'i', 'j'],
-            ['k', 'l', 'm', 'n', 'o'],
-            ['p', 'q', 'r', 's', 't'],
-            ['u', 'v', 'w', 'x', 'y'],
-            ['z', 'aa', 'ab', 'ac', 'ad'],
-            ['ae', 'af', 'ag', 'ah', 'ai']]
-
-def fitness(x, y):
+def fitness(x, y, given, alpha, rho):
     q1 = (a2max - y)*R1/b
-    q2 = y*R2*(1.0 - GG) + x*R2*GG
+    q2 = y*R2*(1.0 - given) + x*R2*given
     w = q1*q2
-    mask = (w > 0.0) & (RR == 0.0)
-    w[mask] = pow(q1[mask], 1.0 - alpha)*pow(q2[mask], alpha)
-    mask = (w > 0.0) & (RR < 0.0)
-    w[mask] = (1.0 - alpha)*pow(q1[mask], RR[mask]) + alpha*pow(q2[mask], RR[mask])
-    mask = (w > 0.0) & (RR < 0.0)
-    w[mask] = pow(w[mask], 1.0/RR[mask])
-    mask = (RR > 0.0)
-    w[mask] = pow((1.0 - alpha)*pow(q1[mask], RR[mask]) + alpha*pow(q2[mask], RR[mask]), 1.0/RR[mask])
+    mask = (w > 0.0) & (rho == 0.0)
+    w[mask] = pow(q1[mask], 1.0 - alpha[mask])*pow(q2[mask], alpha[mask])
+    mask = (w > 0.0) & (rho < 0.0)
+    w[mask] = (1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask])
+    mask = (w > 0.0) & (rho < 0.0)
+    w[mask] = pow(w[mask], 1.0/rho[mask])
+    mask = (rho > 0.0)
+    w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
     return w
 
-# Simulations
+def gametypes(a2c, a2d):
+    mask = (mask0 & (T < R) & (P < S))
+    Z[mask] = nodilemma[mask]
+    a2eq[mask] = a2c[mask]
+    weq[mask] = R[mask]
+    mask = (mask0 & (T >= R) & (P <= S) & (R != P))
+    Z[mask] = snowdrift[mask]
+    xeq[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
+    a2eq[mask] = a2c[mask]*xeq[mask] + a2d[mask]*(1.0 - xeq[mask])
+    weq[mask] = (T[mask] + S[mask])*xeq[mask]*(1.0 - xeq[mask]) + R[mask]*xeq[mask]*xeq[mask] + P[mask]*(1.0 - xeq[mask])*(1.0 - xeq[mask])
+    mask = (mask0 & (T > R) & (P > S))
+    Z[mask] = prisoner[mask]
+    a2eq[mask] = a2d[mask]
+    weq[mask] = P[mask]
+    pass
 
 dfs = []
 for folder in folders:
@@ -68,84 +69,164 @@ for folder in folders:
 
 df = dfs[0]
 ts = df.Time.unique()
-if movie == False: ts = [ts[-1]]
+if movie:
+    frames = []
+else:
+    ts = [ts[-1]]
 givens = np.sort(pd.unique(df.Given))[::-1]
+if givens[0] > 0.9999999:
+    givens[0] = 0.9999999
 ess = np.sort(pd.unique(df.ES))
+rhos = 1.0 - 1.0/ess
+alphas = np.sort(pd.unique(df.alpha))[::-1]
+nc = len(rhos)
+minx = int(log(ess[0], 2.0))
+maxx = int(log(ess[-1], 2.0))
+xlabel = 'Substitutability of $\it{B}$'
 
-# Theory
+if len(givens) > 1:
+    nr = len(givens)
+    RR, GG = np.meshgrid(rhos, givens)
+    miny = round(givens[-1], 1)
+    maxy = round(givens[0], 1)
+    ylabel = 'Partner\'s share of $\it{B}$'
+    pivindex = 'Given'
+else:
+    nr = len(alphas)
+    GG = np.full([nc, nr], givens[0])
+if len(alphas) > 1:
+    nr = len(alphas)
+    RR, AA = np.meshgrid(rhos, alphas)
+    miny = round(alpha[-1], 1)
+    maxy = round(alpha[0], 1)
+    ylabel = 'Value of $\it{B}$'
+    pivindex = 'alpha'
+else:
+    nr = len(givens)
+    AA = np.full([nc, nr], alphas[0])
+
+xticklabels = [minx, round((minx + maxx)/2), maxx]
+yticklabels = [miny, (miny + maxy)/2, maxy]
+extent = 0, nr, 0, nc
+prisoner = np.full((nr, nc, 4), [0.5, 0.0, 0.0, 1.0])
+snowdrift = np.full((nr, nc, 4), [0.0, 1.0, 1.0, 1.0])
+nodilemma = np.full((nr, nc, 4), [1.0, 1.0, 1.0, 1.0])
+green = np.full((nr, nc, 4), [0.0, 1.0, 0.0, 1.0])
 
 b = a2max/a1max
-rhos = 1.0 - 1.0/ess
-nr = len(givens)
-nc = len(rhos)
-RR, GG = np.meshgrid(rhos, givens)
+zeros = np.zeros([nr, nc])
+a20 = np.copy(zeros)
+a21 = np.full([nr, nc], a2max/2.0)
+a22 = np.full([nr, nc], a2max)
+w00 = fitness(a20, a20, zeros, AA, RR)
+w11 = fitness(a21, a21, zeros, AA, RR)
+w22 = fitness(a22, a22, zeros, AA, RR)
+a2social = np.copy(zeros)
+mask = (w11 > w00)
+a2social[mask] = a21[mask]
+mask = (w22 > w11)
+a2social[mask] = a22[mask]
+wsocial = fitness(a2social, a2social, zeros, AA, RR)
 
-a20 = np.full([nc, nr], 0.0)
-a2 = a20
-w = fitness(a20, a20)
+Z = np.copy(green)
+a2eq = np.copy(zeros)
+weq = np.copy(zeros)
+xeq = np.copy(zeros)
+w01 = fitness(a20, a21, GG, AA, RR)
+w10 = fitness(a21, a20, GG, AA, RR)
+w12 = fitness(a21, a22, GG, AA, RR)
+w21 = fitness(a22, a21, GG, AA, RR)
+w02 = fitness(a20, a22, GG, AA, RR)
+w20 = fitness(a22, a20, GG, AA, RR)
 
-for c in range(2):
-    a20 = a20 + a2max*c/2.0
-    a21 = a20 + a2max/2.0
-    T = fitness(a21, a20)
-    R = fitness(a21, a21)
-    P = fitness(a20, a20)
-    S = fitness(a20, a21)
-    mask = (T < R) & (P < S)
-    a2[mask] = a2max*(1.0 + c)/2.0
-    w[mask] = R[mask]
-    mask = (T >= R) & (P <= S) & (R - S - T + P != 0.0)
-    T = T[mask]
-    R = R[mask]
-    P = P[mask]
-    S = S[mask]
-    x = (P - S)/(R - S - T + P)
-    a2[mask] = x*a2max*(1.0 + c)/2.0
-    w[mask] = (T + S)*x*(1.0 - x) + R*x*x + P*(1.0 - x)*(1.0 - x)
+mask0 = (wsocial == w00)
+T = np.copy(w01)
+R = np.copy(w00)
+P = np.copy(w11)
+S = np.copy(w10)
+gametypes(a20, a21)
 
-helps = a2*R2*GG 
-Zs = [a2, helps, w, a2*0, a2*0]
+mask0 = (wsocial == w11) & (w20 > w22)
+T = np.copy(w10)
+R = np.copy(w11)
+P = np.copy(w00)
+S = np.copy(w01)
+gametypes(a21, a20)
+
+mask0 = (wsocial == w11) & (w20 <= w22)
+T = np.copy(w12)
+R = np.copy(w11)
+P = np.copy(w22)
+S = np.copy(w21)
+gametypes(a21, a22)
+
+mask0 = (wsocial == w22) & (w10 < w11)
+T = np.copy(w21)
+R = np.copy(w22)
+P = np.copy(w11)
+S = np.copy(w12)
+gametypes(a22, a21)
+
+mask0 = (wsocial == w22) & (w10 >= w11)
+T = np.copy(w10)
+R = np.copy(w11)
+P = np.copy(w00)
+S = np.copy(w01)
+gametypes(a21, a20)
+
+Mss = [[a2social, a2social*R2*GG, wsocial], [a2eq, a2eq*R2*GG, weq]]
 
 fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+1)))
+fig.delaxes(axs[0, 1])
+fig.delaxes(axs[0, 2])
+fig.delaxes(axs[0, 3])
+fig.supxlabel(xlabel, x=0.513, y=0.05, fontsize=fslabel*1.25)
+fig.supylabel(ylabel, x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
 
-fig.supxlabel('Substitutability of $\it{B}$', x=0.513, y=0.05, fontsize=fslabel*1.25)
-fig.supylabel('Partner\'s share of $\it{B}$', x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
-
-# Plots
-
-minx = round(log(ess[0], 2))
-maxx = round(log(ess[-1], 2))
-xticklabels = [minx, round((minx + maxx)/2), maxx]
-yticklabels = [0.0, 0.5, 1.0]
-extent = 0, nr, 0, nc
-
-for axrow, letterrow in zip(axs, letters):
-    for ax, letter, traitlabel in zip(axrow, letterrow, traitlabels):
-        ax.text(0, nr*1.035, letter, fontsize=fslabel, weight='bold')
+letter = ord('b')
+for axrow in axs:
+    for ax in axrow:
         ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
         if ax.get_subplotspec().is_first_row():
-            ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
+            ax.set_title('Game types', pad=50.0, fontsize=fslabel)
+            ax.text(0, nr*1.035, 'a', fontsize=fslabel, weight='bold')
+            pos = ax.get_position()
+            newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
+            ax.set_position(newpos)
+        else:
+            ax.text(0, nr*1.035, chr(letter), fontsize=fslabel, weight='bold')
+            letter += 1
         if ax.get_subplotspec().is_last_row():
             ax.set_xticklabels(xticklabels, fontsize=fstick)
         if ax.get_subplotspec().is_first_col():
             ax.set_yticklabels(yticklabels, fontsize=fstick) 
+for ax, traitlabel in zip(axs[1], traitlabels):
+    ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
-for ax, Z, traitvmax in zip(axs[0], Zs, traitvmaxs):
-    ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
+axs[0, 0].imshow(Z, extent=extent)
+
 for t in ts:
+
+    if movie:
+        text = fig.text(0.80, 0.80, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')
+
     for axrow, df in zip(axs[1:], dfs):
         for ax, trait, traitvmax in zip(axrow, traits, traitvmaxs):
-            df_piv = pd.pivot_table(df.loc[df.Time == t], values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)
+            df_piv = pd.pivot_table(df.loc[df.Time == t], values=trait, index=[pivindex], columns=['ES']).sort_index(axis=0, ascending=False)
             ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
+
     if movie:
         plt.savefig('temp.png', transparent=False)
         frames.append(iio.imread('temp.png'))
         os.remove('temp.png')
+        text.remove()
     else:
         plt.savefig(filename + '.png', transparent=False)
+
+plt.close()
+
 if movie:
     iio.mimsave(filename + '.gif', frames)
-plt.close()
 
 end_time = time.perf_counter ()
 print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')

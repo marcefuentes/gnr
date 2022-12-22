@@ -105,7 +105,7 @@ else:
     nr = len(givens)
     AA = np.full([nc, nr], alphas[0])
 
-xticklabels = [minx, round((minx + maxx)/2), maxx]
+xticklabels = [round(minx), round((minx + maxx)/2), round(maxx)]
 yticklabels = [miny, (miny + maxy)/2, maxy]
 extent = 0, nr, 0, nc
 prisoner = np.full((nr, nc, 4), [0.5, 0.0, 0.0, 1.0])

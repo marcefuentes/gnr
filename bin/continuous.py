@@ -94,7 +94,7 @@ else:
     AA = np.full([nc, nr], alphas[0])
     AAA = np.full([nc*numa2, nr*numa2], alphas[0])
 
-xticklabels = [minx, round((minx + maxx)/2), maxx]
+xticklabels = [round(minx), round((minx + maxx)/2), round(maxx)]
 yticklabels = [miny, (miny + maxy)/2, maxy]
 extent = 0, nr, 0, nc
 extenta2 = 0, numa2*nr, 0, numa2*nc

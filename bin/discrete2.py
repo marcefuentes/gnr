@@ -85,21 +85,21 @@ maxx = int(log(ess[-1], 2.0))
 xlabel = 'Substitutability of $\it{B}$'
 
 if len(givens) > 1:
+    nr = len(givens)
     RR, GG = np.meshgrid(rhos, givens)
     miny = round(givens[-1], 1)
     maxy = round(givens[0], 1)
     ylabel = 'Partner\'s share of $\it{B}$'
-    nr = len(givens)
     pivindex = 'Given'
 else:
     nr = len(alphas)
     GG = np.full([nc, nr], givens[0])
 if len(alphas) > 1:
+    nr = len(alphas)
     RR, AA = np.meshgrid(rhos, alphas)
     miny = round(alpha[-1], 1)
     maxy = round(alpha[0], 1)
     ylabel = 'Value of $\it{B}$'
-    nr = len(alphas)
     pivindex = 'alpha'
 else:
     nr = len(givens)
@@ -114,7 +114,6 @@ nodilemma = np.full((nr, nc, 4), [1.0, 1.0, 1.0, 1.0])
 green = np.full((nr, nc, 4), [0.0, 1.0, 0.0, 1.0])
 
 b = a2max/a1max
-RR, AA = np.meshgrid(rhos, alphas)
 zeros = np.zeros([nr, nc])
 a20 = np.copy(zeros)
 a21 = np.full([nr, nc], a2max/2.0)
@@ -175,7 +174,7 @@ P = np.copy(w00)
 S = np.copy(w01)
 gametypes(a21, a20)
 
-Mss = [[a2social, a2social*R2*GG, wsocial], [a2eq, a2eq*R2*GG, w]]
+Mss = [[a2social, a2social*R2*GG, wsocial], [a2eq, a2eq*R2*GG, weq]]
 
 fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+1)))
 fig.delaxes(axs[0, 1])
@@ -205,7 +204,7 @@ for axrow in axs:
 for ax, traitlabel in zip(axs[1], traitlabels):
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
-axs[0, 0].imshow(Z, extent=extenta2)
+axs[0, 0].imshow(Z, extent=extent)
 
 for t in ts:
 

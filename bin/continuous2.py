@@ -70,32 +70,30 @@ maxx = int(log(ess[-1], 2.0))
 xlabel = 'Substitutability of $\it{B}$'
 
 if len(givens) > 1:
+    nr = len(givens)
     RR, GG = np.meshgrid(rhos, givens)
     RRR, GGG = np.meshgrid(np.repeat(rhos, numa2), np.repeat(givens, numa2))
     miny = round(givens[-1], 1)
     maxy = round(givens[0], 1)
     ylabel = 'Partner\'s share of $\it{B}$'
-    nr = len(givens)
     pivindex = 'Given'
 else:
     nr = len(alphas)
     GG = np.full([nc, nr], givens[0])
     GGG = np.full([nc*numa2, nr*numa2], givens[0])
 if len(alphas) > 1:
+    nr = len(alphas)
     RR, AA = np.meshgrid(rhos, alphas)
     RRR, AAA = np.meshgrid(np.repeat(rhos, numa2), np.repeat(alphas, numa2))
     miny = round(alpha[-1], 1)
     maxy = round(alpha[0], 1)
     ylabel = 'Value of $\it{B}$'
-    nr = len(alphas)
     pivindex = 'alpha'
 else:
     nr = len(givens)
     AA = np.full([nc, nr], alphas[0])
     AAA = np.full([nc*numa2, nr*numa2], alphas[0])
-X, Y = np.meshgrid(np.linspace(0.0, a2max, num=numa2), np.linspace(a2max, 0.0, num=numa2))
-X = np.tile(A=X, reps=[nr, nc])
-Y = np.tile(A=Y, reps=[nr, nc])
+
 xticklabels = [minx, round((minx + maxx)/2), maxx]
 yticklabels = [miny, (miny + maxy)/2, maxy]
 extent = 0, nr, 0, nc
@@ -108,6 +106,9 @@ b = a2max/a1max
 Rq = R2/R1
 MRT0 = b*Rq
 Z = np.full((numa2*nr, numa2*nc, 4), [0.0, 1.0, 0.0, 1.0])
+X, Y = np.meshgrid(np.linspace(0.0, a2max, num=numa2), np.linspace(a2max, 0.0, num=numa2))
+X = np.tile(A=X, reps=[nr, nc])
+Y = np.tile(A=Y, reps=[nr, nc])
 T = fitness(Y, X, GGG, AAA, RRR)
 R = fitness(Y, Y, GGG, AAA, RRR)
 P = fitness(X, X, GGG, AAA, RRR)
@@ -130,11 +131,12 @@ Z[mask] = nodilemma[mask]
 
 MRT = MRT0*(1.0 - GG)
 Q0 = Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
-a2socialss = a2max/(1.0 + Q0*b)
+a2social = a2max/(1.0 + Q0*b)
 Q = Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
-a2eqss = a2max/(1.0 + Q*b)
-
-Mss = [[a2socialss, a2socialss*R2*GG, fitness(a2socialss, a2socialss, GG, AA, RR)], [a2eqss, a2eqss*R2*GG, fitness(a2eqss, a2eqss, GG, AA, RR)]]
+a2eq = a2max/(1.0 + Q*b)
+wsocial = fitness(a2social, a2social, GG, AA, RR)
+weq = fitness(a2eq, a2eq, GG, AA, RR)
+Mss = [[a2social, a2social*R2*GG, wsocial], [a2eq, a2eq*R2*GG, weq]]
 
 fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+1)))
 fig.delaxes(axs[0, 1])
@@ -146,9 +148,8 @@ fig.supylabel(ylabel, x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
 letter = ord('b')
 for axrow in axs:
     for ax in axrow:
-        ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
         if ax.get_subplotspec().is_first_row():
-            ax.set(xticks=[0, numa2*nc/2, numa2*nc], yticks=[0, numa2*nr/2, numa2*nr], xticklabels=[], yticklabels=yticklabels)
+            ax.set(xticks=[0, numa2*nc/2, numa2*nc], yticks=[0, numa2*nr/2, numa2*nr], xticklabels=[], yticklabels=[])
             ax.set_title('Game types', pad=50.0, fontsize=fslabel)
             ax.text(0, numa2*nr*1.035, 'a', fontsize=fslabel, weight='bold')
             pos = ax.get_position()
@@ -162,7 +163,6 @@ for axrow in axs:
             ax.set_xticklabels(xticklabels, fontsize=fstick)
         if ax.get_subplotspec().is_first_col():
             ax.set_yticklabels(yticklabels, fontsize=fstick) 
-
 for ax, traitlabel in zip(axs[1], traitlabels):
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 

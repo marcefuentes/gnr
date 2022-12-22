@@ -7,7 +7,7 @@ alpha = 0.5
 
 for root, dirs, files in os.walk('.'):
     for filename in files:
-        if '.csv' in filename:
+        if '.csv' or 'frq' in filename:
             df = pd.read_csv(os.path.join(root, filename))
             newcol = [alpha]*len(df.index)
             df['alpha'] = newcol

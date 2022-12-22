@@ -15,11 +15,10 @@ traits = ['a2Seenmean', 'ChooseGrainmean', 'MimicGrainmean', 'wmean']
 traitlabels = ['Effort to get $\it{B}$', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner', 'Fitness']
 traitvmaxs = [1.0, 1.0, 1.0, 1.8]
 folders = ['none', 'pr']
-alpha = 0.5
 
 movie = False
 
-numa2 = 128
+numa2 = 32
 filename = 'output'
 R1 = 2.0
 R2 = 2.0
@@ -62,26 +61,38 @@ if movie:
 else:
     ts = [ts[-1]]
 givens = np.sort(pd.unique(df.Given))[::-1]
-givens[0] = 0.9999999
+if givens[0] > 0.9999999:
+    givens[0] = 0.9999999
 ess = np.sort(pd.unique(df.ES))
 rhos = 1.0 - 1.0/ess
-nr = len(givens)
+alphas = np.sort(pd.unique(df.alpha))[::-1]
 nc = len(rhos)
+minx = int(log(ess[0], 2.0))
+maxx = int(log(ess[-1], 2.0))
 
-b = a2max/a1max
-Rq = R2/R1
-MRT0 = b*Rq
-RR, GG = np.meshgrid(rhos, givens)
+if len(givens) > 1:
+    RR, GG = np.meshgrid(rhos, givens)
+    RRR, GGG = np.meshgrid(np.repeat(rhos, numa2), np.repeat(givens, numa2))
+    miny = round(givens[-1], 1)
+    maxy = round(givens[0], 1)
+    nr = len(givens)
+else:
+    nr = len(alphas)
+    GG = np.full([nc, nr], givens[0])
+    GGG = np.full([nc*numa2, nr*numa2], givens[0])
+if len(alphas) > 1:
+    RR, AA = np.meshgrid(rhos, alphas)
+    RRR, AAA = np.meshgrid(np.repeat(rhos, numa2), np.repeat(alphas, numa2))
+    miny = round(alpha[-1], 1)
+    maxy = round(alpha[0], 1)
+    nr = len(alphas)
+else:
+    nr = len(givens)
+    AA = np.full([nc, nr], alphas[0])
+    AAA = np.full([nc*numa2, nr*numa2], alphas[0])
 X, Y = np.meshgrid(np.linspace(0.0, a2max, num=numa2), np.linspace(a2max, 0.0, num=numa2))
 X = np.tile(A=X, reps=[nr, nc])
 Y = np.tile(A=Y, reps=[nr, nc])
-RRR, GGG = np.meshgrid(np.repeat(rhos, numa2), np.repeat(givens, numa2))
-
-minx = int(log(ess[0], 2.0))
-maxx = int(log(ess[-1], 2.0))
-miny = 0.0
-maxy = 1.0
-
 xticklabels = [minx, round((minx + maxx)/2), maxx]
 yticklabels = [miny, (miny + maxy)/2, maxy]
 extent = 0, nr, 0, nc
@@ -90,11 +101,14 @@ prisoner = np.full((numa2*nr, numa2*nc, 4), [0.5, 0.0, 0.0, 1.0])
 snowdrift = np.full((numa2*nr, numa2*nc, 4), [0.0, 1.0, 1.0, 1.0])
 nodilemma = np.full((numa2*nr, numa2*nc, 4), [1.0, 1.0, 1.0, 1.0])
 
+b = a2max/a1max
+Rq = R2/R1
+MRT0 = b*Rq
 Z = np.full((numa2*nr, numa2*nc, 4), [0.0, 1.0, 0.0, 1.0])
-T = fitness(Y, X, GGG, alpha, RRR)
-R = fitness(Y, Y, GGG, alpha, RRR)
-P = fitness(X, X, GGG, alpha, RRR)
-S = fitness(X, Y, GGG, alpha, RRR)
+T = fitness(Y, X, GGG, AAA, RRR)
+R = fitness(Y, Y, GGG, AAA, RRR)
+P = fitness(X, X, GGG, AAA, RRR)
+S = fitness(X, Y, GGG, AAA, RRR)
 mask = (R < P)
 H = R[mask]
 R[mask] = P[mask]
@@ -111,13 +125,13 @@ Z[mask] = nodilemma[mask]
 #Z = np.tril(Z, k=-1)
 #Z = np.ma.masked_where(Z == 0.0, Z)
 
-MRT = MRT0*(1.0 - given)
+MRT = MRT0*(1.0 - GG)
 Q0 = Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
 a2socialss = a2max/(1.0 + Q0*b)
 Q = Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
 a2eqss = a2max/(1.0 + Q*b)
 
-Mss = [[a2socialss, a2socialss*R2*GG, fitness(a2socialss, a2socialss, GG, alpha, RR)], [a2eqss, a2eqss*R2*GG, fitness(a2eqss, a2eqss, GG, alpha, RR)]]
+Mss = [[a2socialss, a2socialss*R2*GG, fitness(a2socialss, a2socialss, GG, AA, RR)], [a2eqss, a2eqss*R2*GG, fitness(a2eqss, a2eqss, GG, AA, RR)]]
 
 fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+1)))
 fig.delaxes(axs[0, 1])
@@ -131,14 +145,14 @@ for axrow in axs:
     for ax in axrow:
         ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
         if ax.get_subplotspec().is_first_row():
-            ax.set(xticks=[0, numa2*nr/2, numa2*nc], yticks=[0, numa2*nr/2, numa2*nc], xticklabels=[], yticklabels=yticklabels)
+            ax.set(xticks=[0, numa2*nc/2, numa2*nc], yticks=[0, numa2*nr/2, numa2*nr], xticklabels=[], yticklabels=yticklabels)
             ax.set_title('Game types', pad=50.0, fontsize=fslabel)
             ax.text(0, numa2*nr*1.035, 'a', fontsize=fslabel, weight='bold')
             pos = ax.get_position()
             newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
             ax.set_position(newpos)
         else:
-            ax.set(xticks=[0, nc/2, nr], yticks=[0, nc/2, nr], xticklabels=[], yticklabels=[])
+            ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
             ax.text(0, nr*1.035, chr(letter), fontsize=fslabel, weight='bold')
             letter += 1
         if ax.get_subplotspec().is_last_row():

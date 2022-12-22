@@ -25,8 +25,6 @@ R2 = 2.0
 a1max = 1.0
 a2max = 1.0
 
-# Figure
-
 fslabel=36 # Label font size
 fstick=24 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
@@ -69,13 +67,16 @@ alphas = np.sort(pd.unique(df.alpha))[::-1]
 nc = len(rhos)
 minx = int(log(ess[0], 2.0))
 maxx = int(log(ess[-1], 2.0))
+xlabel = 'Substitutability of $\it{B}$'
 
 if len(givens) > 1:
     RR, GG = np.meshgrid(rhos, givens)
     RRR, GGG = np.meshgrid(np.repeat(rhos, numa2), np.repeat(givens, numa2))
     miny = round(givens[-1], 1)
     maxy = round(givens[0], 1)
+    ylabel = 'Partner\'s share of $\it{B}$'
     nr = len(givens)
+    pivindex = 'Given'
 else:
     nr = len(alphas)
     GG = np.full([nc, nr], givens[0])
@@ -85,7 +86,9 @@ if len(alphas) > 1:
     RRR, AAA = np.meshgrid(np.repeat(rhos, numa2), np.repeat(alphas, numa2))
     miny = round(alpha[-1], 1)
     maxy = round(alpha[0], 1)
+    ylabel = 'Value of $\it{B}$'
     nr = len(alphas)
+    pivindex = 'alpha'
 else:
     nr = len(givens)
     AA = np.full([nc, nr], alphas[0])
@@ -137,8 +140,8 @@ fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(
 fig.delaxes(axs[0, 1])
 fig.delaxes(axs[0, 2])
 fig.delaxes(axs[0, 3])
-fig.supxlabel('Substitutability of $\it{B}$', x=0.513, y=0.05, fontsize=fslabel*1.25)
-fig.supylabel('Partner\'s share of $\it{B}$', x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
+fig.supxlabel(xlabel, x=0.513, y=0.05, fontsize=fslabel*1.25)
+fig.supylabel(ylabel, x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
 
 letter = ord('b')
 for axrow in axs:
@@ -172,7 +175,7 @@ for t in ts:
 
     for axrow, df in zip(axs[1:], dfs):
         for ax, trait, traitvmax in zip(axrow, traits, traitvmaxs):
-            df_piv = pd.pivot_table(df.loc[df.Time == t], values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)
+            df_piv = pd.pivot_table(df.loc[df.Time == t], values=trait, index=[pivindex], columns=['ES']).sort_index(axis=0, ascending=False)
             ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
 
     if movie:

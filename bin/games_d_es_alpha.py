@@ -67,56 +67,60 @@ else:
     movie = False 
     givens = np.array([mingiven])
 
-b = a2max/a1max
-alphas = np.linspace(maxalpha, minalpha, num=num)
-log_ess = np.linspace(minlog_es, maxlog_es, num=num)
+nc = num
+nr = num
+alphas = np.linspace(maxalpha, minalpha, num=nr)
+log_ess = np.linspace(minlog_es, maxlog_es, num=nc)
 rhos = 1.0 - 1.0/pow(2, log_ess)
+minx = minlog_es
+maxx = maxlog_es
+miny = minalpha
+maxy = maxalpha
+
+#ylabel = 'Partner\'s share of $\it{B}$'
+ylabel = 'Value of $\it{B}$'
+xticklabels = [round(minx), round((minx + maxx)/2), round(maxx)]
+yticklabels = [miny, (miny + maxy)/2, maxy]
+extent = 0, nr, 0, nc
+prisoner = np.full((nr, nc, 4), [0.5, 0.0, 0.0, 1.0])
+snowdrift = np.full((nr, nc, 4), [0.0, 1.0, 1.0, 1.0])
+nodilemma = np.full((nr, nc, 4), [1.0, 1.0, 1.0, 1.0])
+green = np.full((nr, nc, 4), [0.0, 1.0, 0.0, 1.0])
+
+b = a2max/a1max
 RR, AA = np.meshgrid(rhos, alphas)
-zeros = np.zeros([num, num])
+zeros = np.zeros([nr, nc])
 a20 = np.copy(zeros)
-a21 = np.full([num, num], a2max/2.0)
-a22 = np.full([num, num], a2max)
+a21 = np.full([nr, nc], a2max/2.0)
+a22 = np.full([nr, nc], a2max)
 w00 = fitness(a20, a20, 0.0, AA, RR)
 w11 = fitness(a21, a21, 0.0, AA, RR)
 w22 = fitness(a22, a22, 0.0, AA, RR)
-a2social = np.full([num, num], 0.0)
+a2social = np.full([nr, nc], 0.0)
 mask = (w11 > w00)
 a2social[mask] = a21[mask]
 mask = (w22 > w11)
 a2social[mask] = a22[mask]
 wsocial = fitness(a2social, a2social, 0.0, AA, RR)
 
-minx = minlog_es
-maxx = maxlog_es
-miny = minalpha
-maxy = maxalpha
-
-xticklabels = [round(minx), round((minx + maxx)/2), round(maxx)]
-yticklabels = [miny, (miny + maxy)/2, maxy]
-extent = 0, num, 0, num
-prisoner = np.full((num, num, 4), [0.5, 0.0, 0.0, 1.0])
-snowdrift = np.full((num, num, 4), [0.0, 1.0, 1.0, 1.0])
-nodilemma = np.full((num, num, 4), [1.0, 1.0, 1.0, 1.0])
-green = np.full((num, num, 4), [0.0, 1.0, 0.0, 1.0])
-
 fig, axs = plt.subplots(nrows=3, ncols=3, figsize=(18, 18))
 fig.delaxes(axs[0, 1])
 fig.delaxes(axs[0, 2])
-fig.supylabel("Value of $\it{B}$", x=0.04, y=0.510, fontsize=fslabel)
-fig.supxlabel("Substitutability of $\it{B}$", x=0.515, y=0.03, fontsize=fslabel)
+fig.supxlabel(xlabel, x=0.515, y=0.03, fontsize=fslabel)
+fig.supylabel(ylabel, x=0.04, y=0.510, fontsize=fslabel)
 
 letter = ord('b')
 for axrow in axs:
     for ax in axrow:
-        ax.set(xticks=[0, num/2, num], yticks=[0, num/2, num], xticklabels=[], yticklabels=[])
+        ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
         if ax.get_subplotspec().is_first_row():
             ax.set_title('Game types', pad=50.0, fontsize=fslabel)
-            ax.text(0, num*1.035, 'a', fontsize=fslabel, weight='bold')
+            ax.text(0, nr*1.035, 'a', fontsize=fslabel, weight='bold')
             pos = ax.get_position()
             newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
             ax.set_position(newpos)
         else:
-            ax.text(0, num*1.035, chr(letter), fontsize=fslabel, weight='bold')
+            ax.text(0, nr*1.035, chr(letter), fontsize=fslabel, weight='bold')
             letter += 1
         if ax.get_subplotspec().is_last_row():
             ax.set_xticklabels(xticklabels, fontsize=fstick)

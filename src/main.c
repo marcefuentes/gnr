@@ -181,7 +181,7 @@ void read_globals (char *filename)
 	fscanf (fp, "IndirectR,%i\n", &gIndirectR);
 	fscanf (fp, "alpha,%lf\n", &galpha);
 	fscanf (fp, "ES,%lf\n", &gES);
-	fscanf (fp, "given,%lf\n", &gGiven);
+	fscanf (fp, "Given,%lf\n", &gGiven);
 	
 	fclose (fp);
 
@@ -259,7 +259,7 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 			{
 				prun->alpha = galpha;
 				prun->logES = log(gES)/log(2.0);
-				prun->given = gGiven;
+				prun->Given = gGiven;
 				prun->time = t + 1;
 				prun->wmax = wmax;
 				stats_period (i_first, i_last, prun, gN, ga2Min, ga2Max, gR2);

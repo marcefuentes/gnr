@@ -21,7 +21,7 @@ void write_headers (char *filename)
 		file_write_error (filename);
 	}
 
-	fprintf (fp, "alpha,logES,given,wmax,Time");
+	fprintf (fp, "alpha,logES,Given,wmax,Time");
 
 	for ( int v = 0; v < CONTINUOUS_V; v++ )
 	{
@@ -55,7 +55,7 @@ void write_headers_frq (char *filename)
 		file_write_error (filename);
 	}
 
-	fprintf (fp, "alpha,logES,given,wmax,Time");
+	fprintf (fp, "alpha,logES,Given,wmax,Time");
 
 	for ( int v = 0; v < CONTINUOUS_V; v++ )
 	{
@@ -85,7 +85,7 @@ void write_stats (char *filename, struct ptype *p, struct ptype *p_last)
 
 	for ( ; p < p_last; p++ )
 	{
-		fprintf (fp, "%f,%f,%f,%f,%i", p->alpha, p->logES, p->given, p->wmax, p->time);
+		fprintf (fp, "%f,%f,%f,%f,%i", p->alpha, p->logES, p->Given, p->wmax, p->time);
 
 		for ( int v = 0; v < CONTINUOUS_V; v++ )
 		{
@@ -115,7 +115,7 @@ void write_stats_frq (char *filename, struct ptype *p, struct ptype *p_last)
 
 	for ( ; p < p_last; p++ )
 	{
-		fprintf (fp, "%f,%f,%f,%f,%i", p->alpha, p->logES, p->given, p->wmax, p->time);
+		fprintf (fp, "%f,%f,%f,%f,%i", p->alpha, p->logES, p->Given, p->wmax, p->time);
 
 		for ( int v = 0; v < CONTINUOUS_V; v++ )
 		{
@@ -144,12 +144,12 @@ void write_headers_i (char *filename)
 		file_write_error (filename);
 	}
 
-	fprintf (fp, "alpha,logES,given,Time,a2Default,a2Decided,a2Seen,a2SeenSum,w,ChooseGrain,MimicGrain,cost,age,chose_partner,changed_a2");
+	fprintf (fp, "alpha,logES,Given,Time,a2Default,a2Decided,a2Seen,a2SeenSum,w,ChooseGrain,MimicGrain,cost,age,chose_partner,changed_a2");
 
 	fclose (fp);
 }
 
-void write_i (char *filename, float alpha, float logES, float given, struct itype *i, struct itype *i_last)
+void write_i (char *filename, float alpha, float logES, float Given, struct itype *i, struct itype *i_last)
 {
 	double wc = 0.0;
 	FILE *fp;
@@ -161,7 +161,7 @@ void write_i (char *filename, float alpha, float logES, float given, struct ityp
 
 	for ( ; i < i_last; i++ )
 	{
-		fprintf (fp, "\n%f,%f,%f,%i,%f,%f,%f,%f,%f,%f,%f,%f,%i,%i,%i", alpha, logES, given, 1, i->a2Default, i->a2Decided, i->a2Seen, i->a2SeenSum, i->wCumulative - wc, i->ChooseGrain, i->MimicGrain, i->cost, i->age, i->chose_partner, i->changed_a2); 
+		fprintf (fp, "\n%f,%f,%f,%i,%f,%f,%f,%f,%f,%f,%f,%f,%i,%i,%i", alpha, logES, Given, 1, i->a2Default, i->a2Decided, i->a2Seen, i->a2SeenSum, i->wCumulative - wc, i->ChooseGrain, i->MimicGrain, i->cost, i->age, i->chose_partner, i->changed_a2); 
 		wc = i->wCumulative;
 	}
 

@@ -9,7 +9,7 @@
 struct ptype
 {
 	int		time;
-	double		alpha, logES, given, wmax;
+	double		alpha, logES, Given, wmax;
 	double		summean[CONTINUOUS_V], summean2[CONTINUOUS_V];
 	double		sumsd[CONTINUOUS_V], sumsd2[CONTINUOUS_V];
 	double		sumc[CONTINUOUS_V][BINS], sumc2[CONTINUOUS_V][BINS];
@@ -22,7 +22,7 @@ struct ptype
 struct pruntype
 {
 	int		time;
-	double		alpha, logES, given, wmax;
+	double		alpha, logES, Given, wmax;
 	double		mean[CONTINUOUS_V];
 	double		sd[CONTINUOUS_V];
 	double		frc[CONTINUOUS_V][BINS];
@@ -74,6 +74,6 @@ void		write_headers_i		(char *filename);
 void		write_headers_frq	(char *filename);
 void		write_stats		(char *filename, struct ptype *p, struct ptype *p_last);
 void		write_stats_frq		(char *filename, struct ptype *p, struct ptype *p_last);
-void		write_i			(char *filename, float alpha, float logES, float given, struct itype *i, struct itype *i_last);
+void		write_i			(char *filename, float alpha, float logES, float Given, struct itype *i, struct itype *i_last);
 void		write_time_elapsed	(char *filename, float time_elapsed);
 void		file_write_error	(char *filename);

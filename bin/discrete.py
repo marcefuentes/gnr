@@ -1,7 +1,6 @@
 #! /usr/bin/env python
 
 from glob import glob
-from math import log
 import os
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
@@ -76,12 +75,12 @@ else:
 givens = np.sort(pd.unique(df.Given))[::-1]
 if givens[0] > 0.9999999:
     givens[0] = 0.9999999
-ess = np.sort(pd.unique(df.ES))
-rhos = 1.0 - 1.0/ess
+logess = np.sort(pd.unique(df.logES))
+rhos = 1.0 - 1.0/pow(2.0, logess)
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 nc = len(rhos)
-minx = int(log(ess[0], 2.0))
-maxx = int(log(ess[-1], 2.0))
+minx = logess[0]
+maxx = logess[-1]
 xlabel = 'Substitutability of $\it{B}$'
 
 if len(givens) > 1:
@@ -105,7 +104,7 @@ else:
     nr = len(givens)
     AA = np.full([nc, nr], alphas[0])
 
-xticklabels = [minx, round((minx + maxx)/2), maxx]
+xticklabels = [round(minx), round((minx + maxx)/2), round(maxx)]
 yticklabels = [miny, (miny + maxy)/2, maxy]
 extent = 0, nr, 0, nc
 prisoner = np.full((nr, nc, 4), [0.5, 0.0, 0.0, 1.0])
@@ -212,7 +211,7 @@ for t in ts:
 
     for axrow, df in zip(axs[1:], dfs):
         for ax, trait, traitvmax in zip(axrow, traits, traitvmaxs):
-            df_piv = pd.pivot_table(df.loc[df.Time == t], values=trait, index=[pivindex], columns=['ES']).sort_index(axis=0, ascending=False)
+            df_piv = pd.pivot_table(df.loc[df.Time == t], values=trait, index=[pivindex], columns=['logES']).sort_index(axis=0, ascending=False)
             ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
 
     if movie:

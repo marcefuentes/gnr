@@ -1,7 +1,6 @@
 #! /usr/bin/env python
 
 from glob import glob
-from math import log
 import os
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
@@ -18,8 +17,6 @@ alphafolders = ['alpha25', 'alpha50', 'alpha75']
 alphas = [0.25, 0.50, 0.75]
 
 movie = False
-if movie:
-    frames = []
 
 filename = 'alphadiscrete'
 R1 = 2.0
@@ -27,32 +24,24 @@ R2 = 2.0
 a1max = 1.0
 a2max = 1.0
 
-# Figure
-
-fslabel=24 # Label font size
-fstick=16 # Tick font size
+fslabel=36 # Label font size
+fstick=24 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-letters = [['a', 'b', 'c'],
-            ['d', 'e', 'f'],
-            ['g', 'h', 'i']]
-
-def fitness(x, y):
+def fitness(x, y, given, alpha, rho):
     q1 = (a2max - y)*R1/b
-    q2 = y*R2*(1.0 - GG) + x*R2*GG
+    q2 = y*R2*(1.0 - given) + x*R2*given
     w = q1*q2
-    mask = (w > 0.0) & (RR == 0.0)
-    w[mask] = pow(q1[mask], 1.0 - alpha)*pow(q2[mask], alpha)
-    mask = (w > 0.0) & (RR < 0.0)
-    w[mask] = (1.0 - alpha)*pow(q1[mask], RR[mask]) + alpha*pow(q2[mask], RR[mask])
-    mask = (w > 0.0) & (RR < 0.0)
-    w[mask] = pow(w[mask], 1.0/RR[mask])
-    mask = (RR > 0.0)
-    w[mask] = pow((1.0 - alpha)*pow(q1[mask], RR[mask]) + alpha*pow(q2[mask], RR[mask]), 1.0/RR[mask])
+    mask = (w > 0.0) & (rho == 0.0)
+    w[mask] = pow(q1[mask], 1.0 - alpha[mask])*pow(q2[mask], alpha[mask])
+    mask = (w > 0.0) & (rho < 0.0)
+    w[mask] = (1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask])
+    mask = (w > 0.0) & (rho < 0.0)
+    w[mask] = pow(w[mask], 1.0/rho[mask])
+    mask = (rho > 0.0)
+    w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
     return w
-
-# Simulations
 
 dfss = []
 for alphafolder in alphafolders:
@@ -64,16 +53,26 @@ for alphafolder in alphafolders:
 
 df = dfss[0][0]
 ts = df.Time.unique()
-if movie == False: ts = [ts[-1]]
+if movie:
+    frames = []
+else:
+    ts = [ts[-1]]
 givens = np.sort(pd.unique(df.Given))[::-1]
-ess = np.sort(pd.unique(df.ES))
-
-# Theory
-
-b = a2max/a1max
-rhos = 1.0 - 1.0/ess
+if givens[0] > 0.9999999:
+    givens[0] = 0.9999999
+logess = np.sort(pd.unique(df.logES))
+rhos = 1.0 - 1.0/pow(2.0, logess)
 nr = len(givens)
 nc = len(rhos)
+minx = logess[0]
+maxx = logess[-1]
+xlabel = 'Substitutability of $\it{B}$'
+miny = givens[-1]
+maxy = givens[0]
+ylabel = 'Partner\'s share of $\it{B}$'
+pivindex = 'Given'
+
+b = a2max/a1max
 RR, GG = np.meshgrid(rhos, givens)
 
 a20 = np.full([nc, nr], 0.0)
@@ -119,12 +118,6 @@ fig, axs = plt.subplots(nrows=len(alphas), ncols=len(traits)+1, figsize=(6*len(a
 fig.supxlabel('Substitutability of $\it{B}$', x=0.52, y=0.03, fontsize=fslabel*1.35)
 fig.supylabel('Partner\'s share of $\it{B}$', x=0.06, y=0.53, fontsize=fslabel*1.35, ha='center')
 
-# Plots
-
-minx = round(log(ess[0], 2))
-maxx = round(log(ess[-1], 2))
-xticklabels = [minx, round((minx + maxx)/2), maxx]
-yticklabels = [0.0, 0.5, 1.0]
 extent = 0, nr, 0, nc
 
 for axrow, letterrow in zip(axs, letters):
@@ -145,7 +138,7 @@ for t in ts:
         for ax, df, trait in zip(axrow[1:], dfs, traits):
             df = df.loc[df.Time == t].copy()
             df[trait] = 1.0 - df[trait]
-            df_piv = pd.pivot_table(df, values=trait, index=['Given'], columns=['ES']).sort_index(axis=0, ascending=False)
+            df_piv = pd.pivot_table(df, values=trait, index=['Given'], columns=['logES']).sort_index(axis=0, ascending=False)
             ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=1.0)
     if movie:
         plt.savefig('temp.png', transparent=False)

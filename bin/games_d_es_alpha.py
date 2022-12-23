@@ -10,10 +10,10 @@ start_time = time.perf_counter ()
 
 minalpha = 0.1
 maxalpha = 0.9
-minlog_es = -5.0
-maxlog_es = 5.0
-mingiven = 0.0
-maxgiven = 1.0
+minloges = -5.0
+maxloges = 5.0
+mingiven = 0.95
+maxgiven = 0.95
 
 num = 21    # Number of subplot rows and columns
 filename = 'games_d_es_alpha'
@@ -22,8 +22,8 @@ R2 = 2.0
 a1max = 1.0
 a2max = 1.0
 
-traitlabels = ['Effort to get $\it{B}$', 'Help', 'Fitness']
-traitvmaxs = [1.0, 2.0, 1.8]
+traitlabels = ['Effort to get $\it{B}$', 'Fitness']
+traitvmaxs = [1.0, 1.8]
 fslabel = 32 # Label font size
 fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
@@ -45,16 +45,16 @@ def fitness(x, y, given, alpha, rho):
 
 def gametypes(a2c, a2d):
     mask = (mask0 & (T < R) & (P < S))
-    Z[mask] = nodilemma[mask]
+    Z[mask] = nodilemma
     a2eq[mask] = a2c[mask]
     weq[mask] = R[mask]
     mask = (mask0 & (T >= R) & (P <= S) & (R != P))
-    Z[mask] = snowdrift[mask]
+    Z[mask] = snowdrift
     xeq[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2eq[mask] = a2c[mask]*xeq[mask] + a2d[mask]*(1.0 - xeq[mask])
     weq[mask] = (T[mask] + S[mask])*xeq[mask]*(1.0 - xeq[mask]) + R[mask]*xeq[mask]*xeq[mask] + P[mask]*(1.0 - xeq[mask])*(1.0 - xeq[mask])
     mask = (mask0 & (T > R) & (P > S))
-    Z[mask] = prisoner[mask]
+    Z[mask] = prisoner
     a2eq[mask] = a2d[mask]
     weq[mask] = P[mask]
     pass
@@ -67,45 +67,45 @@ else:
     movie = False 
     givens = np.array([mingiven])
 
+b = a2max/a1max
 nc = num
 nr = num
 alphas = np.linspace(maxalpha, minalpha, num=nr)
-log_ess = np.linspace(minlog_es, maxlog_es, num=nc)
-rhos = 1.0 - 1.0/pow(2, log_ess)
-minx = minlog_es
-maxx = maxlog_es
+logess = np.linspace(minloges, maxloges, num=nc)
+rhos = 1.0 - 1.0/pow(2, logess)
+RR, AA = np.meshgrid(rhos, alphas)
+
+minx = minloges
+maxx = maxloges
+xlabel = 'Substitutability of $\it{B}$'
 miny = minalpha
 maxy = maxalpha
-
-#ylabel = 'Partner\'s share of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
+
 xticklabels = [round(minx), round((minx + maxx)/2), round(maxx)]
 yticklabels = [miny, (miny + maxy)/2, maxy]
 extent = 0, nr, 0, nc
-prisoner = np.full((nr, nc, 4), [0.5, 0.0, 0.0, 1.0])
-snowdrift = np.full((nr, nc, 4), [0.0, 1.0, 1.0, 1.0])
-nodilemma = np.full((nr, nc, 4), [1.0, 1.0, 1.0, 1.0])
-green = np.full((nr, nc, 4), [0.0, 1.0, 0.0, 1.0])
+prisoner = [0.5, 0.0, 0.0, 1.0]
+snowdrift = [0.0, 1.0, 1.0, 1.0]
+nodilemma = [1.0, 1.0, 1.0, 1.0]
+green = [0.0, 1.0, 0.0, 1.0]
 
-b = a2max/a1max
-RR, AA = np.meshgrid(rhos, alphas)
 zeros = np.zeros([nr, nc])
 a20 = np.copy(zeros)
 a21 = np.full([nr, nc], a2max/2.0)
 a22 = np.full([nr, nc], a2max)
-w00 = fitness(a20, a20, 0.0, AA, RR)
-w11 = fitness(a21, a21, 0.0, AA, RR)
-w22 = fitness(a22, a22, 0.0, AA, RR)
-a2social = np.full([nr, nc], 0.0)
+w00 = fitness(a20, a20, zeros, AA, RR)
+w11 = fitness(a21, a21, zeros, AA, RR)
+w22 = fitness(a22, a22, zeros, AA, RR)
+a2social = np.copy(zeros)
 mask = (w11 > w00)
 a2social[mask] = a21[mask]
 mask = (w22 > w11)
 a2social[mask] = a22[mask]
-wsocial = fitness(a2social, a2social, 0.0, AA, RR)
+wsocial = fitness(a2social, a2social, zeros, AA, RR)
 
-fig, axs = plt.subplots(nrows=3, ncols=3, figsize=(18, 18))
+fig, axs = plt.subplots(nrows=3, ncols=2, figsize=(12, 18))
 fig.delaxes(axs[0, 1])
-fig.delaxes(axs[0, 2])
 fig.supxlabel(xlabel, x=0.515, y=0.03, fontsize=fslabel)
 fig.supylabel(ylabel, x=0.04, y=0.510, fontsize=fslabel)
 
@@ -126,7 +126,6 @@ for axrow in axs:
             ax.set_xticklabels(xticklabels, fontsize=fstick)
         if ax.get_subplotspec().is_first_col():
             ax.set_yticklabels(yticklabels, fontsize=fstick) 
-
 for ax, traitlabel in zip(axs[1], traitlabels):
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
@@ -135,7 +134,7 @@ for given in givens:
     if movie:
         text = fig.text(0.80, 0.80, f'given\n{given:4.2f}', fontsize=fstick+4, color='grey', ha='right')
 
-    Z = np.copy(green)
+    Z = np.full([nr, nc, 4], green)
     a2eq = np.copy(zeros)
     weq = np.copy(zeros)
     xeq = np.copy(zeros)
@@ -181,7 +180,7 @@ for given in givens:
     S = np.copy(w01)
     gametypes(a21, a20)
 
-    Mss = [[a2social, a2social*R2*given, wsocial], [a2eq, a2eq*R2*given, weq]]
+    Mss = [[a2social, wsocial], [a2eq, weq]]
 
     axs[0, 0].imshow(Z, extent=extent)
 

@@ -44,16 +44,16 @@ def fitness(x, y, given, alpha, rho):
 
 def gametypes(a2c, a2d):
     mask = (mask0 & (T < R) & (P < S))
-    Z[mask] = nodilemma[mask]
+    Z[mask] = nodilemma
     a2eq[mask] = a2c[mask]
     weq[mask] = R[mask]
     mask = (mask0 & (T >= R) & (P <= S) & (R != P))
-    Z[mask] = snowdrift[mask]
+    Z[mask] = snowdrift
     xeq[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2eq[mask] = a2c[mask]*xeq[mask] + a2d[mask]*(1.0 - xeq[mask])
     weq[mask] = (T[mask] + S[mask])*xeq[mask]*(1.0 - xeq[mask]) + R[mask]*xeq[mask]*xeq[mask] + P[mask]*(1.0 - xeq[mask])*(1.0 - xeq[mask])
     mask = (mask0 & (T > R) & (P > S))
-    Z[mask] = prisoner[mask]
+    Z[mask] = prisoner
     a2eq[mask] = a2d[mask]
     weq[mask] = P[mask]
     pass
@@ -73,8 +73,8 @@ if movie:
 else:
     ts = [ts[-1]]
 givens = np.sort(pd.unique(df.Given))[::-1]
-if givens[0] > 0.9999999:
-    givens[0] = 0.9999999
+#if givens[0] > 0.9999999:
+#    givens[0] = 0.9999999
 logess = np.sort(pd.unique(df.logES))
 rhos = 1.0 - 1.0/pow(2.0, logess)
 alphas = np.sort(pd.unique(df.alpha))[::-1]
@@ -86,8 +86,8 @@ xlabel = 'Substitutability of $\it{B}$'
 if len(givens) > 1:
     nr = len(givens)
     RR, GG = np.meshgrid(rhos, givens)
-    miny = round(givens[-1], 1)
-    maxy = round(givens[0], 1)
+    miny = givens[-1]
+    maxy = givens[0]
     ylabel = 'Partner\'s share of $\it{B}$'
     pivindex = 'Given'
 else:
@@ -96,8 +96,8 @@ else:
 if len(alphas) > 1:
     nr = len(alphas)
     RR, AA = np.meshgrid(rhos, alphas)
-    miny = round(alpha[-1], 1)
-    maxy = round(alpha[0], 1)
+    miny = alpha[-1]
+    maxy = alpha[0]
     ylabel = 'Value of $\it{B}$'
     pivindex = 'alpha'
 else:
@@ -105,12 +105,12 @@ else:
     AA = np.full([nc, nr], alphas[0])
 
 xticklabels = [round(minx), round((minx + maxx)/2), round(maxx)]
-yticklabels = [miny, (miny + maxy)/2, maxy]
+yticklabels = [round(miny, 1), round((miny + maxy)/2, 1), round(maxy)]
 extent = 0, nr, 0, nc
-prisoner = np.full((nr, nc, 4), [0.5, 0.0, 0.0, 1.0])
-snowdrift = np.full((nr, nc, 4), [0.0, 1.0, 1.0, 1.0])
-nodilemma = np.full((nr, nc, 4), [1.0, 1.0, 1.0, 1.0])
-green = np.full((nr, nc, 4), [0.0, 1.0, 0.0, 1.0])
+prisoner = [0.5, 0.0, 0.0, 1.0]
+snowdrift = [0.0, 1.0, 1.0, 1.0]
+nodilemma = [1.0, 1.0, 1.0, 1.0]
+green = [0.0, 1.0, 0.0, 1.0]
 
 b = a2max/a1max
 zeros = np.zeros([nr, nc])
@@ -127,7 +127,7 @@ mask = (w22 > w11)
 a2social[mask] = a22[mask]
 wsocial = fitness(a2social, a2social, zeros, AA, RR)
 
-Z = np.copy(green)
+Z = np.full([nr, nc, 4], green)
 a2eq = np.copy(zeros)
 weq = np.copy(zeros)
 xeq = np.copy(zeros)
@@ -195,10 +195,10 @@ for axrow in axs:
         else:
             ax.text(0, nr*1.035, chr(letter), fontsize=fslabel, weight='bold')
             letter += 1
-        if ax.get_subplotspec().is_last_row():
-            ax.set_xticklabels(xticklabels, fontsize=fstick)
         if ax.get_subplotspec().is_first_col():
             ax.set_yticklabels(yticklabels, fontsize=fstick) 
+        if ax.get_subplotspec().is_last_row():
+            ax.set_xticklabels(xticklabels, fontsize=fstick)
 for ax, traitlabel in zip(axs[1], traitlabels):
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 

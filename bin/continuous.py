@@ -72,8 +72,8 @@ if len(givens) > 1:
     nr = len(givens)
     RR, GG = np.meshgrid(rhos, givens)
     RRR, GGG = np.meshgrid(np.repeat(rhos, numa2), np.repeat(givens, numa2))
-    miny = round(givens[-1], 1)
-    maxy = round(givens[0], 1)
+    miny = givens[-1]
+    maxy = givens[0]
     ylabel = 'Partner\'s share of $\it{B}$'
     pivindex = 'Given'
 else:
@@ -84,8 +84,8 @@ if len(alphas) > 1:
     nr = len(alphas)
     RR, AA = np.meshgrid(rhos, alphas)
     RRR, AAA = np.meshgrid(np.repeat(rhos, numa2), np.repeat(alphas, numa2))
-    miny = round(alpha[-1], 1)
-    maxy = round(alpha[0], 1)
+    miny = alpha[-1]
+    maxy = alpha[0]
     ylabel = 'Value of $\it{B}$'
     pivindex = 'alpha'
 else:
@@ -94,17 +94,18 @@ else:
     AAA = np.full([nc*numa2, nr*numa2], alphas[0])
 
 xticklabels = [round(minx), round((minx + maxx)/2), round(maxx)]
-yticklabels = [miny, (miny + maxy)/2, maxy]
+yticklabels = [round(miny, 1), round((miny + maxy)/2, 1), round(maxy)]
 extent = 0, nr, 0, nc
-extenta2 = 0, numa2*nr, 0, numa2*nc
-prisoner = np.full((numa2*nr, numa2*nc, 4), [0.5, 0.0, 0.0, 1.0])
-snowdrift = np.full((numa2*nr, numa2*nc, 4), [0.0, 1.0, 1.0, 1.0])
-nodilemma = np.full((numa2*nr, numa2*nc, 4), [1.0, 1.0, 1.0, 1.0])
+extenta2 = 0, nr*numa2, 0, nc*numa2
+prisoner = [0.5, 0.0, 0.0, 1.0]
+snowdrift = [0.0, 1.0, 1.0, 1.0]
+nodilemma = [1.0, 1.0, 1.0, 1.0]
+green = [0.0, 1.0, 0.0, 1.0]
 
 b = a2max/a1max
 Rq = R2/R1
 MRT0 = b*Rq
-Z = np.full((numa2*nr, numa2*nc, 4), [0.0, 1.0, 0.0, 1.0])
+Z = np.full((numa2*nr, numa2*nc, 4), green)
 X, Y = np.meshgrid(np.linspace(0.0, a2max, num=numa2), np.linspace(a2max, 0.0, num=numa2))
 X = np.tile(A=X, reps=[nr, nc])
 Y = np.tile(A=Y, reps=[nr, nc])
@@ -120,11 +121,11 @@ H = T[mask]
 T[mask] = S[mask]
 S[mask] = H
 mask = (T > R) & (P > S)
-Z[mask] = prisoner[mask]
+Z[mask] = prisoner
 mask = (T >= R) & (P <= S) & (R != P)
-Z[mask] = snowdrift[mask]
+Z[mask] = snowdrift
 mask = ((T < R) & (P < S)) | (R == P)
-Z[mask] = nodilemma[mask]
+Z[mask] = nodilemma
 #Z = np.tril(Z, k=-1)
 #Z = np.ma.masked_where(Z == 0.0, Z)
 
@@ -135,7 +136,7 @@ Q = Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
 a2eq = a2max/(1.0 + Q*b)
 wsocial = fitness(a2social, a2social, GG, AA, RR)
 weq = fitness(a2eq, a2eq, GG, AA, RR)
-Mss = [[a2social, a2social*R2*GG, wsocial], [a2eq, a2eq*R2*GG, weq]]
+Mss = [[a2social, wsocial], [a2eq, weq]]
 
 fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+1)))
 fig.delaxes(axs[0, 1])
@@ -158,10 +159,10 @@ for axrow in axs:
             ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
             ax.text(0, nr*1.035, chr(letter), fontsize=fslabel, weight='bold')
             letter += 1
-        if ax.get_subplotspec().is_last_row():
-            ax.set_xticklabels(xticklabels, fontsize=fstick)
         if ax.get_subplotspec().is_first_col():
             ax.set_yticklabels(yticklabels, fontsize=fstick) 
+        if ax.get_subplotspec().is_last_row():
+            ax.set_xticklabels(xticklabels, fontsize=fstick)
 for ax, traitlabel in zip(axs[1], traitlabels):
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 

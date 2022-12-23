@@ -4,7 +4,7 @@
 int select_bin (double ceiling, double binsize, double v);
 double stdev (double sum, double sum2, int n);
 
-void stats_period (struct itype *i, struct itype *i_last, struct pruntype *prun, int n, double amin, double amax, double r2, double given)
+void stats_period (struct itype *i, struct itype *i_last, struct pruntype *prun, int n, double amin, double amax, double r2)
 {
 	int bin[CONTINUOUS_V][BINS] = {{ 0 }};
 	int boolean[BOOLEAN_V] = { 0 };
@@ -124,6 +124,9 @@ void stats_end (struct pruntype *prun, struct pruntype *prun_last, struct ptype 
 
 	for ( prun_previous = prun; prun < prun_last; prun_previous = prun, prun++, p++ )
 	{
+		p->alpha = prun->alpha;
+		p->logES = prun->logES;
+		p->given = prun->given;
 		p->wmax = prun->wmax;
 		p->time = prun->time;
 

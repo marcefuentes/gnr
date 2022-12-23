@@ -9,7 +9,7 @@
 struct ptype
 {
 	int		time;
-	double		wmax;
+	double		alpha, logES, given, wmax;
 	double		summean[CONTINUOUS_V], summean2[CONTINUOUS_V];
 	double		sumsd[CONTINUOUS_V], sumsd2[CONTINUOUS_V];
 	double		sumc[CONTINUOUS_V][BINS], sumc2[CONTINUOUS_V][BINS];
@@ -22,7 +22,7 @@ struct ptype
 struct pruntype
 {
 	int		time;
-	double		wmax;
+	double		alpha, logES, given, wmax;
 	double		mean[CONTINUOUS_V];
 	double		sd[CONTINUOUS_V];
 	double		frc[CONTINUOUS_V][BINS];
@@ -66,14 +66,14 @@ void		choose_partner		(struct itype *i, struct itype *i_last, int groupsize);
 struct rtype	*create_recruits	(int deaths, double wc);
 void		free_recruits		(struct rtype *recruit);
 void		kill			(struct rtype *recruit, struct itype *i_first, int n, int macromutation);
-void		stats_period		(struct itype *i_first, struct itype *i_last, struct pruntype *prun, int n, double amin, double amax, double r2, double given);
+void		stats_period		(struct itype *i_first, struct itype *i_last, struct pruntype *prun, int n, double amin, double amax, double r2);
 void		stats_end		(struct pruntype *prun_first, struct pruntype *prun_last, struct ptype *p_first);
 void		stats_runs		(struct ptype *p, struct ptype *p_last, int runs);
-void		write_headers		(char *filename, char *header1, char *header2, char *header3);
-void		write_headers_i		(char *filename, char *header1, char *header2, char *header3);
-void		write_headers_frq	(char *filename, char *header1, char *header2, char *header3);
-void		write_stats		(char *filename, float factor1, float factor2, int factor3, struct ptype *p, struct ptype *p_last);
-void		write_stats_frq		(char *filename, float factor1, float factor2, int factor3, struct ptype *p, struct ptype *p_last);
-void		write_i			(char *filename, float factor1, float factor2, int factor3, struct itype *i, struct itype *i_last);
+void		write_headers		(char *filename);
+void		write_headers_i		(char *filename);
+void		write_headers_frq	(char *filename);
+void		write_stats		(char *filename, struct ptype *p, struct ptype *p_last);
+void		write_stats_frq		(char *filename, struct ptype *p, struct ptype *p_last);
+void		write_i			(char *filename, float alpha, float logES, float given, struct itype *i, struct itype *i_last);
 void		write_time_elapsed	(char *filename, float time_elapsed);
 void		file_write_error	(char *filename);

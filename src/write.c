@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "sim.h"
  
-void write_headers (char *filename, char *header1, char *header2, char *header3)
+void write_headers (char *filename)
 {
 	FILE *fp;
 
@@ -21,7 +21,7 @@ void write_headers (char *filename, char *header1, char *header2, char *header3)
 		file_write_error (filename);
 	}
 
-	fprintf (fp, "%s,%s,%s,wmax,Time", header1, header2, header3);
+	fprintf (fp, "alpha,logES,given,wmax,Time");
 
 	for ( int v = 0; v < CONTINUOUS_V; v++ )
 	{
@@ -39,7 +39,7 @@ void write_headers (char *filename, char *header1, char *header2, char *header3)
 	fclose (fp);
 }
 
-void write_headers_frq (char *filename, char *header1, char *header2, char *header3)
+void write_headers_frq (char *filename)
 {
 	FILE *fp;
 
@@ -55,7 +55,7 @@ void write_headers_frq (char *filename, char *header1, char *header2, char *head
 		file_write_error (filename);
 	}
 
-	fprintf (fp, "%s,%s,%s,wmax,Time", header1, header2, header3);
+	fprintf (fp, "alpha,logES,given,wmax,Time");
 
 	for ( int v = 0; v < CONTINUOUS_V; v++ )
 	{
@@ -74,7 +74,7 @@ void write_headers_frq (char *filename, char *header1, char *header2, char *head
 	fclose (fp);
 }
 
-void write_stats (char *filename, float factor1, float factor2, int factor3, struct ptype *p, struct ptype *p_last)
+void write_stats (char *filename, struct ptype *p, struct ptype *p_last)
 {
 	FILE *fp;
 
@@ -85,7 +85,7 @@ void write_stats (char *filename, float factor1, float factor2, int factor3, str
 
 	for ( ; p < p_last; p++ )
 	{
-		fprintf (fp, "%f,%f,%i,%f,%i", factor1, factor2, factor3, p->wmax, p->time);
+		fprintf (fp, "%f,%f,%f,%f,%i", p->alpha, p->logES, p->given, p->wmax, p->time);
 
 		for ( int v = 0; v < CONTINUOUS_V; v++ )
 		{
@@ -104,7 +104,7 @@ void write_stats (char *filename, float factor1, float factor2, int factor3, str
 	fclose (fp);
 }
 
-void write_stats_frq (char *filename, float factor1, float factor2, int factor3, struct ptype *p, struct ptype *p_last)
+void write_stats_frq (char *filename, struct ptype *p, struct ptype *p_last)
 {
 	FILE *fp;
 
@@ -115,7 +115,7 @@ void write_stats_frq (char *filename, float factor1, float factor2, int factor3,
 
 	for ( ; p < p_last; p++ )
 	{
-		fprintf (fp, "%f,%f,%i,%f,%i", factor1, factor2, factor3, p->wmax, p->time);
+		fprintf (fp, "%f,%f,%f,%f,%i", p->alpha, p->logES, p->given, p->wmax, p->time);
 
 		for ( int v = 0; v < CONTINUOUS_V; v++ )
 		{
@@ -135,7 +135,7 @@ void write_stats_frq (char *filename, float factor1, float factor2, int factor3,
 	fclose (fp);
 }
 
-void write_headers_i (char *filename, char *header1, char *header2, char *header3)
+void write_headers_i (char *filename)
 {
 	FILE *fp;
 
@@ -144,12 +144,12 @@ void write_headers_i (char *filename, char *header1, char *header2, char *header
 		file_write_error (filename);
 	}
 
-	fprintf (fp, "%s,%s,%s,Time,a2Default,a2Decided,a2Seen,a2SeenSum,w,ChooseGrain,MimicGrain,cost,age,chose_partner,changed_a2", header1, header2, header3);
+	fprintf (fp, "alpha,logES,given,Time,a2Default,a2Decided,a2Seen,a2SeenSum,w,ChooseGrain,MimicGrain,cost,age,chose_partner,changed_a2");
 
 	fclose (fp);
 }
 
-void write_i (char *filename, float factor1, float factor2, int factor3, struct itype *i, struct itype *i_last)
+void write_i (char *filename, float alpha, float logES, float given, struct itype *i, struct itype *i_last)
 {
 	double wc = 0.0;
 	FILE *fp;
@@ -161,7 +161,7 @@ void write_i (char *filename, float factor1, float factor2, int factor3, struct 
 
 	for ( ; i < i_last; i++ )
 	{
-		fprintf (fp, "\n%f,%f,%i,%i,%f,%f,%f,%f,%f,%f,%f,%f,%i,%i,%i", factor1, factor2, factor3, 1, i->a2Default, i->a2Decided, i->a2Seen, i->a2SeenSum, i->wCumulative - wc, i->ChooseGrain, i->MimicGrain, i->cost, i->age, i->chose_partner, i->changed_a2); 
+		fprintf (fp, "\n%f,%f,%f,%i,%f,%f,%f,%f,%f,%f,%f,%f,%i,%i,%i", alpha, logES, given, 1, i->a2Default, i->a2Decided, i->a2Seen, i->a2SeenSum, i->wCumulative - wc, i->ChooseGrain, i->MimicGrain, i->cost, i->age, i->chose_partner, i->changed_a2); 
 		wc = i->wCumulative;
 	}
 

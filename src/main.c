@@ -33,22 +33,17 @@ double	gMimicGrainInit;			// Initial MimicGrain
 double	ga2MutationSize;			// For a2Default
 double	gGrainMutationSize;			// For ChooseGrain and MimicGrain
 double	gDeathRate;
-double	galpha;			
-double	gES;					// Elasticity of substitution. ES = 1/(1 - rho)
-						// CES fitness function: w = (alpha*q1^rho + (1 - alpha)*q2^rho)^(1/rho)
 int	gGroupSize;				// Number of individuals that an individual can watch (including itself)
 double	gChooseCost;
 double	gMimicCost;
-double	gGiven;					// Effect on partner: q2 = a2*R2*Given
 int	gPartnerChoice;
 int	gReciprocity;
 int	gDiscrete;
 int	gIndirectR;
-
-double	alphafirst, alphalast;
-double	logESfirst, logESlast, logES;
-double	givenfirst, givenlast;
-int	alphalevels, logESlevels, givenlevels;
+double	galpha;			
+double	gES;					// Elasticity of substitution. ES = 1/(1 - rho)
+						// CES fitness function: w = (alpha*q1^rho + (1 - alpha)*q2^rho)^(1/rho)
+double	gGiven;					// Effect on partner: q2 = a2*R2*Given
 
 // Functions
 
@@ -59,8 +54,6 @@ void	start_population (struct itype *i, struct itype *i_last);
 double	fitness (struct itype *i, struct itype *i_last);	
 double	ces (double q1, double q2);				// gES, galpha
 //double	macromutate (double trait, double sum);			// gDiscrete
-double	calculate_q1 (double a2);				// ga2Max, ga1Max, gR1
-double	calculate_q2 (double a2, double a2partner);		// gR2, gGiven
 double	calculate_cost	(double choose, double mimic);		// gChooseCost, gMimicCost
 void	update_for_stats (struct itype *i, struct itype *i_last);
 
@@ -68,7 +61,6 @@ int main (int argc, char *argv[])
 {
 	struct itype	*i_first, *i_last;
 	struct ptype	*p_first, *p_last;
-	double 		alphainc, logESinc, giveninc;
 	clock_t		start = clock ();
 
 	if ( argc != 2 )
@@ -98,7 +90,14 @@ int main (int argc, char *argv[])
 	strcat (ics, ".ics");
 	strcat (frq, ".frq");
 
+	write_headers (csv);
+	write_headers_frq (frq);
 	read_globals (glo);
+	write_globals (gl2); 
+	if ( gRuns == 1 )
+	{
+		write_headers_i (ics);
+	}
 
 	rng = gsl_rng_alloc (gsl_rng_taus);
 
@@ -109,83 +108,37 @@ int main (int argc, char *argv[])
 		gsl_rng_set (rng, tv.tv_sec + tv.tv_usec);
 	}
 
-	write_globals (gl2); 
-	write_headers (csv);
-	write_headers_frq (frq);
+	p_first = calloc (gPeriods + 1, sizeof *p_first);
+	if ( p_first == NULL )
+	{
+		printf ("\nFailed calloc (periods)");
+		exit (EXIT_FAILURE);
+	}
+
+	i_first = calloc (gN, sizeof *i_first);
+	if ( i_first == NULL )
+	{
+		printf ("\nFailed calloc (individuals)");
+		exit (EXIT_FAILURE);
+	}
+
+	i_last = i_first + gN;
+
+	caso (i_first, i_last, p_first); 
 
 	if ( gRuns == 1 )
 	{
-		write_headers_i (ics);
+		write_i (ics, (float)galpha, (float)log(gES)/log(2.0), (float)gGiven, i_first, i_last);
 	}
 
-	if ( alphalevels > 1 )
-	{
-		alphainc = (double)(alphalast - alphafirst)/(alphalevels - 1);
-	}
-	else
-	{
-		alphainc = 1.0;
-	}
+	free (i_first);
 
-	if ( logESlevels > 1 )
-	{
-		logESinc = (double)(logESlast - logESfirst)/(logESlevels - 1);
-	}
-	else
-	{
-		logESinc = 1.0;
-	}
+	p_last = p_first + gPeriods + 1;
+	stats_runs (p_first, p_last, gRuns);
+	write_stats (csv, p_first, p_last); // Writes periodic data
+	write_stats_frq (frq, p_first, p_last); // Writes periodic data
 
-	if ( givenlevels > 1 )
-	{
-		giveninc = (givenlast - givenfirst)/(givenlevels - 1);
-	}
-	else
-	{
-		giveninc = 1;
-	}
-
-	for ( galpha = alphafirst; galpha <= alphalast; galpha += alphainc )
-	{
-		for ( logES = logESfirst; logES <= logESlast; logES += logESinc )
-		{
-			gES = pow(2.0, logES);
-			for ( gGiven = givenfirst; gGiven <= givenlast; gGiven += giveninc )
-			{
-				p_first = calloc (gPeriods + 1, sizeof *p_first);
-				if ( p_first == NULL )
-				{
-					printf ("\nFailed calloc (periods)");
-					exit (EXIT_FAILURE);
-				}
-
-				i_first = calloc (gN, sizeof *i_first);
-				if ( i_first == NULL )
-				{
-					printf ("\nFailed calloc (individuals)");
-					exit (EXIT_FAILURE);
-				}
-
-				i_last = i_first + gN;
-
-				caso (i_first, i_last, p_first); 
-
-				if ( gRuns == 1 )
-				{
-					write_i (ics, (float)galpha, (float)logES, (float)gGiven, i_first, i_last);
-				}
-
-				free (i_first);
-
-				p_last = p_first + gPeriods + 1;
-				stats_runs (p_first, p_last, gRuns);
-				write_stats (csv, p_first, p_last); // Writes periodic data
-				write_stats_frq (frq, p_first, p_last); // Writes periodic data
-
-				free (p_first);
-			}
-		}
-	}
+	free (p_first);
 
 	gsl_rng_free (rng);
 
@@ -226,15 +179,9 @@ void read_globals (char *filename)
 	fscanf (fp, "Reciprocity,%i\n", &gReciprocity);
 	fscanf (fp, "Discrete,%i\n", &gDiscrete);
 	fscanf (fp, "IndirectR,%i\n", &gIndirectR);
-	fscanf (fp, "alphafirst,%lf\n", &alphafirst);
-	fscanf (fp, "alphalast,%lf\n", &alphalast);
-	fscanf (fp, "alphalevels,%i\n", &alphalevels);
-	fscanf (fp, "logESfirst,%lf\n", &logESfirst);
-	fscanf (fp, "logESlast,%lf\n", &logESlast);
-	fscanf (fp, "logESlevels,%i\n", &logESlevels);
-	fscanf (fp, "givenfirst,%lf\n", &givenfirst);
-	fscanf (fp, "givenlast,%lf\n", &givenlast);
-	fscanf (fp, "givenlevels,%i\n", &givenlevels);
+	fscanf (fp, "alpha,%lf\n", &galpha);
+	fscanf (fp, "ES,%lf\n", &gES);
+	fscanf (fp, "given,%lf\n", &gGiven);
 	
 	fclose (fp);
 
@@ -247,6 +194,7 @@ void read_globals (char *filename)
 	gGroupSize = pow(2.0, gGroupSize);
 	gChooseCost = pow(2.0, gChooseCost);
 	gMimicCost = pow(2.0, gMimicCost);
+	gES = pow(2.0, gES);
 }
 
 void write_globals (char *filename)
@@ -397,8 +345,8 @@ double fitness (struct itype *i, struct itype *i_last)
 
 	for ( ; i < i_last; i++ )
 	{
-		q1 = calculate_q1 (i->a2Decided);
-		q2 = calculate_q2 (i->a2Decided, i->partner->a2Decided);
+		q1 = gR1*ga1Max*(1.0 - i->a2Decided/ga2Max);
+		q2 = gR2*i->a2Decided*(1.0 - gGiven) + gR2*i->partner->a2Decided*gGiven;
 		wC += fmax(0.0, ces(q1, q2) - i->cost);
 
 		i->wCumulative = wC;
@@ -436,20 +384,6 @@ double ces (double q1, double q2)
 	}
 
 	return w;
-}
-
-double calculate_q1 (double a2)
-{
-	double q1 = gR1*ga1Max*(1.0 - a2/ga2Max);
-	
-	return q1;
-}
-
-double calculate_q2 (double a2, double a2partner)
-{
-	double q2 = gR2*a2*(1.0 - gGiven) + gR2*a2partner*gGiven;
-
-	return q2;
 }
 
 double calculate_cost (double choose, double mimic)

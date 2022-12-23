@@ -20,12 +20,6 @@ PartnerChoice,1
 Reciprocity,1
 Discrete,0
 IndirectR,0
-alphafirst,0.5
-alphalast,0.5
-alphalevels,1
-logESfirst,0
-logESlast,0
-logESlevels,1
-givenfirst,0.875
-givenlast,0.875
-givenlevels,1
+alpha,0.5
+ES,0
+given,0.875

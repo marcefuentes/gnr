@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from math import log
+import numpy as np
 import os
 import pandas as pd
 
@@ -14,7 +14,7 @@ for root, dirs, files in os.walk('.'):
             df = pd.read_csv(os.path.join(root, filename))
             #newcolvalues = [newcolvalue]*len(df.index)
             #df[newcolname] = newcolvalues
-            df[newcolname] = log(df[oldcolname], 2.0)
+            df[newcolname] = np.log2(df[oldcolname])
             df.drop(oldcolname, axis=1, inplace=True)
             df.insert(2, newcolname, df.pop(newcolname))
             df.to_csv(os.path.join(root, filename), float_format='%.6f', index=False)

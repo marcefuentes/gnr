@@ -114,18 +114,15 @@ R = fitness(Y, Y, GGG, AAA, RRR)
 P = fitness(X, X, GGG, AAA, RRR)
 S = fitness(X, Y, GGG, AAA, RRR)
 mask = (R < P)
-H = R[mask]
-R[mask] = P[mask]
-P[mask] = H
 H = T[mask]
 T[mask] = S[mask]
 S[mask] = H
-mask = (T > R) & (P > S)
-Z[mask] = prisoner
-mask = (T >= R) & (P <= S) & (R != P)
-Z[mask] = snowdrift
-mask = ((T < R) & (P < S)) | (R == P)
-Z[mask] = nodilemma
+H = R[mask]
+R[mask] = P[mask]
+P[mask] = H
+Z[(T > R) & (P > S)] = prisoner
+Z[(T >= R) & (P <= S) & (R != P)] = snowdrift
+Z[((T < R) & (P < S)) | (R == P)] = nodilemma
 #Z = np.tril(Z, k=-1)
 #Z = np.ma.masked_where(Z == 0.0, Z)
 

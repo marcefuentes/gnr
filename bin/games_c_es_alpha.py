@@ -76,9 +76,9 @@ maxy = maxalpha
 ylabel = 'Value of $\it{B}$'
 
 xticklabels = [round(minx), round((minx + maxx)/2), round(maxx)]
-yticklabels = [miny, (miny + maxy)/2, maxy]
+yticklabels = [round(miny, 1), round((miny + maxy)/2, 1), round(maxy)]
 extent = 0, nr, 0, nc
-extenta2 = 0, numa2*nr, 0, numa2*nc
+extenta2 = 0, nr*numa2, 0, nc*numa2
 prisoner = [0.5, 0.0, 0.0, 1.0]
 snowdrift = [0.0, 1.0, 1.0, 1.0]
 nodilemma = [1.0, 1.0, 1.0, 1.0]
@@ -103,10 +103,10 @@ for axrow in axs:
             ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
             ax.text(0, nr*1.035, chr(letter), fontsize=fslabel, weight='bold')
             letter += 1
-        if ax.get_subplotspec().is_last_row():
-            ax.set_xticklabels(xticklabels, fontsize=fstick)
         if ax.get_subplotspec().is_first_col():
             ax.set_yticklabels(yticklabels, fontsize=fstick) 
+        if ax.get_subplotspec().is_last_row():
+            ax.set_xticklabels(xticklabels, fontsize=fstick)
 for ax, traitlabel in zip(axs[1], traitlabels):
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
@@ -121,18 +121,15 @@ for given in givens:
     P = fitness(X, X, given, AAA, RRR)
     S = fitness(X, Y, given, AAA, RRR)
     mask = (R < P)
-    H = R[mask]
-    R[mask] = P[mask]
-    P[mask] = H
     H = T[mask]
     T[mask] = S[mask]
     S[mask] = H
-    mask = (T > R) & (P > S)
-    Z[mask] = prisoner
-    mask = (T >= R) & (P <= S) & (R != P)
-    Z[mask] = snowdrift
-    mask = ((T < R) & (P < S)) | (R == P)
-    Z[mask] = nodilemma
+    H = R[mask]
+    R[mask] = P[mask]
+    P[mask] = H
+    Z[(T > R) & (P > S)] = prisoner
+    Z[(T >= R) & (P <= S) & (R != P)] = snowdrift
+    Z[((T < R) & (P < S)) | (R == P)] = nodilemma
     #Z = np.tril(Z, k=-1)
     #Z = np.ma.masked_where(Z == 0.0, Z)
 

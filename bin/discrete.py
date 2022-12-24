@@ -115,28 +115,29 @@ green = [0.0, 1.0, 0.0, 1.0]
 b = a2max/a1max
 zeros = np.zeros([nr, nc])
 a20 = np.copy(zeros)
-a21 = np.full([nr, nc], a2max/2.0)
-a22 = np.full([nr, nc], a2max)
-w00 = fitness(a20, a20, zeros, AA, RR)
-w11 = fitness(a21, a21, zeros, AA, RR)
-w22 = fitness(a22, a22, zeros, AA, RR)
+a21 = a20 + a2max/2.0
+a22 = a20 + a2max
+a2eq = np.copy(zeros)
 a2social = np.copy(zeros)
+weq = np.copy(zeros)
+xeq = np.copy(zeros)
+Z = np.full([nr, nc, 4], green)
+
+w00 = fitness(a20, a20, GG, AA, RR)
+w01 = fitness(a20, a21, GG, AA, RR)
+w02 = fitness(a20, a22, GG, AA, RR)
+w10 = fitness(a21, a20, GG, AA, RR)
+w11 = fitness(a21, a21, GG, AA, RR)
+w12 = fitness(a21, a22, GG, AA, RR)
+w20 = fitness(a22, a20, GG, AA, RR)
+w21 = fitness(a22, a21, GG, AA, RR)
+w22 = fitness(a22, a22, GG, AA, RR)
+
 mask = (w11 > w00)
 a2social[mask] = a21[mask]
 mask = (w22 > w11)
 a2social[mask] = a22[mask]
-wsocial = fitness(a2social, a2social, zeros, AA, RR)
-
-Z = np.full([nr, nc, 4], green)
-a2eq = np.copy(zeros)
-weq = np.copy(zeros)
-xeq = np.copy(zeros)
-w01 = fitness(a20, a21, GG, AA, RR)
-w10 = fitness(a21, a20, GG, AA, RR)
-w12 = fitness(a21, a22, GG, AA, RR)
-w21 = fitness(a22, a21, GG, AA, RR)
-w02 = fitness(a20, a22, GG, AA, RR)
-w20 = fitness(a22, a20, GG, AA, RR)
+wsocial = fitness(a2social, a2social, GG, AA, RR)
 
 mask0 = (wsocial == w00)
 T = np.copy(w01)

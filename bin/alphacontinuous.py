@@ -86,7 +86,7 @@ X = np.tile(A=X, reps=[nr, nc])
 Y = np.tile(A=Y, reps=[nr, nc])
 
 fig, axs = plt.subplots(nrows=len(alphafolders), ncols=len(traitlabels), figsize=(6*len(traitlabels), 6*len(alphafolders)))
-fig.supxlabel(xlabel, x=0.513, y=0.05, fontsize=fslabel*1.25)
+fig.supxlabel(xlabel, x=0.512, y=0.03, fontsize=fslabel*1.25)
 fig.supylabel(ylabel, x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
 
 letter = ord('a')
@@ -106,7 +106,6 @@ for axrow in axs:
         letter += 1
 
 for axrow, alpha in zip(axs, alphas):
-    Z = np.full((numa2*nr, numa2*nc, 4), green)
     AAA = np.full([nc*numa2, nr*numa2], alpha)
     T = fitness(Y, X, GGG, AAA, RRR)
     R = fitness(Y, Y, GGG, AAA, RRR)
@@ -119,6 +118,7 @@ for axrow, alpha in zip(axs, alphas):
     H = R[mask]
     R[mask] = P[mask]
     P[mask] = H
+    Z = np.full((numa2*nr, numa2*nc, 4), green)
     Z[(T > R) & (P > S)] = prisoner
     Z[(T >= R) & (P <= S) & (R != P)] = snowdrift
     Z[((T < R) & (P < S)) | (R == P)] = nodilemma

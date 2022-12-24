@@ -42,6 +42,22 @@ def fitness(x, y, given, alpha, rho):
     w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
     return w
 
+def gametypes(a2c, a2d):
+    mask = (mask0 & (T < R) & (P < S))
+    Z[mask] = nodilemma
+    a2eq[mask] = a2c[mask]
+    weq[mask] = R[mask]
+    mask = (mask0 & (T >= R) & (P <= S) & (R != P))
+    Z[mask] = snowdrift
+    xeq[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
+    a2eq[mask] = a2c[mask]*xeq[mask] + a2d[mask]*(1.0 - xeq[mask])
+    weq[mask] = (T[mask] + S[mask])*xeq[mask]*(1.0 - xeq[mask]) + R[mask]*xeq[mask]*xeq[mask] + P[mask]*(1.0 - xeq[mask])*(1.0 - xeq[mask])
+    mask = (mask0 & (T > R) & (P > S))
+    Z[mask] = prisoner
+    a2eq[mask] = a2d[mask]
+    weq[mask] = P[mask]
+    pass
+
 dfs = []
 for alphafolder in alphafolders:
     df = pd.concat(map(pd.read_csv, glob(os.path.join(alphafolder, datafolder, '*.csv'))), ignore_index=True)
@@ -79,9 +95,10 @@ nodilemma = [1.0, 1.0, 1.0, 1.0]
 green = [0.0, 1.0, 0.0, 1.0]
 
 b = a2max/a1max
+zeros = np.zeros([nr, nc])
 
 fig, axs = plt.subplots(nrows=len(alphafolders), ncols=len(traitlabels), figsize=(6*len(traitlabels), 6*len(alphafolders)))
-fig.supxlabel(xlabel, x=0.513, y=0.05, fontsize=fslabel*1.25)
+fig.supxlabel(xlabel, x=0.512, y=0.03, fontsize=fslabel*1.25)
 fig.supylabel(ylabel, x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
 
 letter = ord('a')
@@ -97,38 +114,70 @@ for axrow in axs:
             ax.set_xticklabels(xticklabels, fontsize=fstick)
         letter += 1
 
-a20 = np.full([nc, nr], 0.0)
-a21 = a20 + a2max/2.0
-a22 = a20 + a2max
+    for axrow, alpha in zip(axs, alphas):
+        AA = np.full([nc, nr], alpha)
+        a20 = np.copy(zeros)
+        a21 = a20 + a2max/2.0
+        a22 = a20 + a2max
 
-for axrow, alpha in zip(axs, alphas):
-    Z = np.full([nc, nr, 4], green)
-    AA = np.full([nc, nr], alpha)
-    T = fitness(a21, a20, GG, AA, RR)
-    R = fitness(a21, a21, GG, AA, RR)
-    P = fitness(a20, a20, GG, AA, RR)
-    S = fitness(a20, a21, GG, AA, RR)
-    Tu = fitness(a22, a21, GG, AA, RR)
-    Ru = fitness(a22, a22, GG, AA, RR)
-    Pu = fitness(a21, a21, GG, AA, RR)
-    Su = fitness(a21, a22, GG, AA, RR)
-    mask = (R < P)
-    H = T[mask]
-    T[mask] = S[mask]
-    S[mask] = H
-    H = R[mask]
-    R[mask] = P[mask]
-    P[mask] = H
-    mask = (Su > R)
-    T[mask] = Tu[mask]
-    R[mask] = Ru[mask]
-    P[mask] = Pu[mask]
-    S[mask] = Su[mask]
-    Z[(T > R) & (P > S)] = prisoner
-    Z[(T >= R) & (P <= S) & (R != P)] = snowdrift
-    Z[((T < R) & (P < S)) | (R == P)] = nodilemma
+        w00 = fitness(a20, a20, GG, AA, RR)
+        w01 = fitness(a20, a21, GG, AA, RR)
+        w02 = fitness(a20, a22, GG, AA, RR)
+        w10 = fitness(a21, a20, GG, AA, RR)
+        w11 = fitness(a21, a21, GG, AA, RR)
+        w12 = fitness(a21, a22, GG, AA, RR)
+        w20 = fitness(a22, a20, GG, AA, RR)
+        w21 = fitness(a22, a21, GG, AA, RR)
+        w22 = fitness(a22, a22, GG, AA, RR)
 
-    axrow[0].imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=1.0)
+        a2social = np.copy(zeros)
+        mask = (w11 > w00)
+        a2social[mask] = a21[mask]
+        mask = (w22 > w11)
+        a2social[mask] = a22[mask]
+        wsocial = fitness(a2social, a2social, GG, AA, RR)
+
+        a2eq = np.copy(zeros)
+        weq = np.copy(zeros)
+        xeq = np.copy(zeros)
+        Z = np.full([nc, nr, 4], green)
+
+        mask0 = (wsocial == w00)
+        T = np.copy(w01)
+        R = np.copy(w00)
+        P = np.copy(w11)
+        S = np.copy(w10)
+        gametypes(a20, a21)
+
+        mask0 = (wsocial == w11) & (w20 > w22)
+        T = np.copy(w10)
+        R = np.copy(w11)
+        P = np.copy(w00)
+        S = np.copy(w01)
+        gametypes(a21, a20)
+
+        mask0 = (wsocial == w11) & (w20 <= w22)
+        T = np.copy(w12)
+        R = np.copy(w11)
+        P = np.copy(w22)
+        S = np.copy(w21)
+        gametypes(a21, a22)
+
+        mask0 = (wsocial == w22) & (w10 < w11)
+        T = np.copy(w21)
+        R = np.copy(w22)
+        P = np.copy(w11)
+        S = np.copy(w12)
+        gametypes(a22, a21)
+
+        mask0 = (wsocial == w22) & (w10 >= w11)
+        T = np.copy(w10)
+        R = np.copy(w11)
+        P = np.copy(w00)
+        S = np.copy(w01)
+        gametypes(a21, a20)
+
+        axrow[0].imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=1.0)
 
 for t in ts:
 

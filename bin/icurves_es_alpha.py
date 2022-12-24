@@ -15,8 +15,8 @@ minalpha = 0.1
 maxalpha = 0.9
 minlog_es = -5.0
 maxlog_es = 5.0
-mingiven = 0.0
-maxgiven = 1.0
+mingiven = 0.95
+maxgiven = 0.95
 
 num = 5    # Number of subplot rows & columns
 npoints = 128
@@ -96,7 +96,7 @@ for given in givens:
 
     fig = plt.figure(figsize=(8, 8)) 
     fig.supylabel("Value of $\it{B}$", x=0.05, y=0.52, fontsize=fslabel)
-    fig.supxlabel("Substitutability of $\it{B}$", x=0.555, fontsize=fslabel)
+    fig.supxlabel("Substitutability of $\it{B}$", x=0.557, y=0.04, fontsize=fslabel)
 
     if movie:
         fig.text(0.80, 0.90, f'given: {given:4.2f}', fontsize=fstick+4, color='grey', ha='right')

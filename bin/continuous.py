@@ -94,7 +94,7 @@ else:
     AAA = np.full([nc*numa2, nr*numa2], alphas[0])
 
 xticklabels = [round(minx), round((minx + maxx)/2), round(maxx)]
-yticklabels = [round(miny, 1), round((miny + maxy)/2, 1), round(maxy)]
+yticklabels = [round(miny, 1), round((miny + maxy)/2, 1), round(maxy, 1)]
 extent = 0, nr, 0, nc
 extenta2 = 0, nr*numa2, 0, nc*numa2
 prisoner = [0.5, 0.0, 0.0, 1.0]

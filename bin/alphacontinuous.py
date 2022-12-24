@@ -14,7 +14,7 @@ traits = ['ChooseGrainmean', 'MimicGrainmean']
 traitlabels = ['Game types', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
 alphafolders = ['alpha75', 'alpha50', 'alpha25']
 alphas = [0.75, 0.50, 0.25]
-
+datafolder = 'continuous/pr'
 movie = False
 
 numa2 = 32
@@ -45,7 +45,7 @@ def fitness(x, y, given, alpha, rho):
 
 dfs = []
 for alphafolder in alphafolders:
-    df = pd.concat(map(pd.read_csv, glob(os.path.join(alphafolder, 'continuous/pr', '*.csv'))), ignore_index=True)
+    df = pd.concat(map(pd.read_csv, glob(os.path.join(alphafolder, datafolder, '*.csv'))), ignore_index=True)
     dfs.append(df)
 
 df = dfs[0]
@@ -107,27 +107,21 @@ for axrow in axs:
 
 for axrow, alpha in zip(axs, alphas):
     Z = np.full((numa2*nr, numa2*nc, 4), green)
-    AA = np.full([nc, nr], alphas[0])
     AAA = np.full([nc*numa2, nr*numa2], alpha)
     T = fitness(Y, X, GGG, AAA, RRR)
     R = fitness(Y, Y, GGG, AAA, RRR)
     P = fitness(X, X, GGG, AAA, RRR)
     S = fitness(X, Y, GGG, AAA, RRR)
     mask = (R < P)
-    H = R[mask]
-    R[mask] = P[mask]
-    P[mask] = H
     H = T[mask]
     T[mask] = S[mask]
     S[mask] = H
-    mask = (T > R) & (P > S)
-    Z[mask] = prisoner
-    mask = (T >= R) & (P <= S) & (R != P)
-    Z[mask] = snowdrift
-    mask = ((T < R) & (P < S)) | (R == P)
-    Z[mask] = nodilemma
-    #Z = np.tril(Z, k=-1)
-    #Z = np.ma.masked_where(Z == 0.0, Z)
+    H = R[mask]
+    R[mask] = P[mask]
+    P[mask] = H
+    Z[(T > R) & (P > S)] = prisoner
+    Z[(T >= R) & (P <= S) & (R != P)] = snowdrift
+    Z[((T < R) & (P < S)) | (R == P)] = nodilemma
 
     axrow[0].imshow(Z, extent=extenta2, cmap='magma', vmin=0, vmax=1.0)
 

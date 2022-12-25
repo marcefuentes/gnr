@@ -13,8 +13,8 @@ start_time = time.perf_counter ()
 
 minalpha = 0.1
 maxalpha = 0.9
-minlog_es = -5.0
-maxlog_es = 5.0
+minloges = -5.0
+maxloges = 5.0
 mingiven = 0.95
 maxgiven = 0.95
 
@@ -28,8 +28,6 @@ R1 = 2.0
 R2 = 2.0
 a1max = 1.0
 a2max = 1.0
-
-# Figure
 
 fslabel = 32 # Label font size
 fstick = 18 # Tick font size
@@ -77,8 +75,8 @@ q1_budget = a1_budget*R1
 q1_ic = np.linspace(0.0, a1max*R1, num=npoints)
 givens[-1] = 0.9999999
 alphas = np.linspace(maxalpha, minalpha, num=num)
-log_ess = np.linspace(minlog_es, maxlog_es, num=num)
-rhos = 1.0 - 1.0/pow(2, log_ess)
+logess = np.linspace(minloges, maxloges, num=num)
+rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
 wis = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
 
@@ -120,8 +118,8 @@ for given in givens:
             ax.plot(q1_budget, budget, c='green', alpha=0.8)
             ax.plot(q1_ic, indifference(q1_ic, weq, alpha, rho), linewidth=4, alpha= 0.8, c=cm.magma(weq/1.8))
             ax.set(xticks=[], yticks=[], xlim=(0.0, a1max*R1), ylim=(0.0, a2max*R2))
-    for ax, log_es in zip(axs[-1, ::every], log_ess[::every]):
-        ax.set_xlabel(round(log_es), fontsize=fstick)
+    for ax, loges in zip(axs[-1, ::every], logess[::every]):
+        ax.set_xlabel(round(loges), fontsize=fstick)
     for ax, alpha in zip(axs[::every, 0], alphas[::every]):
         ax.set_ylabel(f'{alpha:1.2f}', rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 

@@ -14,8 +14,8 @@ minalpha = 0.1
 maxalpha = 0.9
 minloges = -5.0
 maxloges = 5.0
-mingiven = 0.95
-maxgiven = 0.95
+mingiven = 0.0
+maxgiven = 1.0
 
 num = 21    # Number of subplot rows and columns
 numa2 = 64
@@ -109,6 +109,9 @@ for given in givens:
             a2eq = a2max/(1.0 + Q*b)
             weq = fitness(np.array([a2eq]), np.array([a2eq]), np.array([given]), np.array([alpha]), np.array([rho]))
             w = fitness(np.full(numa2, a2eq), np.full(numa2, a2), np.full(numa2, given), np.full(numa2, alpha), np.full(numa2, rho))
+            #a2m = (a2max - a2*given*Q*b)/(1.0 + Q*b*(1.0 - given))
+            #a2m[a2m < 0.0] = 0.0
+            #a2m[a2m > a2max] = a2max
             ax.plot(a2, w, linewidth=4, c=cm.magma(weq/vmax))
 
     if movie:

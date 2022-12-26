@@ -25,7 +25,6 @@ a1max = 1.0
 a2max = 1.0
 
 traitlabels = ['Effort to get $\it{B}$', 'Fitness']
-traitvmaxs = [1.0, 1.8]
 fslabel = 32 # Label font size
 fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
@@ -76,6 +75,8 @@ miny = minalpha
 maxy = maxalpha
 ylabel = 'Value of $\it{B}$'
 
+traitvmaxs = [a2max, fitness(np.array([a2max]), np.array([a2max]), np.array([mingiven]), np.array([maxalpha]), np.array([rhos[-1]]))]
+#traitvmaxs = [1.0, 1.8]
 xticklabels = [round(minx), round((minx + maxx)/2), round(maxx)]
 yticklabels = [round(miny, 1), round((miny + maxy)/2, 1), round(maxy)]
 extent = 0, nr, 0, nc

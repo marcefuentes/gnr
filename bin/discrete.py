@@ -1,7 +1,6 @@
 #! /usr/bin/env python
 
 from glob import glob
-from math import log
 import os
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
@@ -45,16 +44,16 @@ def fitness(x, y, given, alpha, rho):
 
 def gametypes(a2c, a2d):
     mask = (mask0 & (T < R) & (P < S))
-    Z[mask] = nodilemma[mask]
+    Z[mask] = nodilemma
     a2eq[mask] = a2c[mask]
     weq[mask] = R[mask]
     mask = (mask0 & (T >= R) & (P <= S) & (R != P))
-    Z[mask] = snowdrift[mask]
+    Z[mask] = snowdrift
     xeq[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2eq[mask] = a2c[mask]*xeq[mask] + a2d[mask]*(1.0 - xeq[mask])
     weq[mask] = (T[mask] + S[mask])*xeq[mask]*(1.0 - xeq[mask]) + R[mask]*xeq[mask]*xeq[mask] + P[mask]*(1.0 - xeq[mask])*(1.0 - xeq[mask])
     mask = (mask0 & (T > R) & (P > S))
-    Z[mask] = prisoner[mask]
+    Z[mask] = prisoner
     a2eq[mask] = a2d[mask]
     weq[mask] = P[mask]
     pass
@@ -74,21 +73,21 @@ if movie:
 else:
     ts = [ts[-1]]
 givens = np.sort(pd.unique(df.Given))[::-1]
-if givens[0] > 0.9999999:
-    givens[0] = 0.9999999
-ess = np.sort(pd.unique(df.ES))
-rhos = 1.0 - 1.0/ess
+#if givens[0] > 0.9999999:
+#    givens[0] = 0.9999999
+logess = np.sort(pd.unique(df.logES))
+rhos = 1.0 - 1.0/pow(2.0, logess)
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 nc = len(rhos)
-minx = int(log(ess[0], 2.0))
-maxx = int(log(ess[-1], 2.0))
+minx = logess[0]
+maxx = logess[-1]
 xlabel = 'Substitutability of $\it{B}$'
 
 if len(givens) > 1:
     nr = len(givens)
     RR, GG = np.meshgrid(rhos, givens)
-    miny = round(givens[-1], 1)
-    maxy = round(givens[0], 1)
+    miny = givens[-1]
+    maxy = givens[0]
     ylabel = 'Partner\'s share of $\it{B}$'
     pivindex = 'Given'
 else:
@@ -97,47 +96,48 @@ else:
 if len(alphas) > 1:
     nr = len(alphas)
     RR, AA = np.meshgrid(rhos, alphas)
-    miny = round(alpha[-1], 1)
-    maxy = round(alpha[0], 1)
+    miny = alpha[-1]
+    maxy = alpha[0]
     ylabel = 'Value of $\it{B}$'
     pivindex = 'alpha'
 else:
     nr = len(givens)
     AA = np.full([nc, nr], alphas[0])
 
-xticklabels = [minx, round((minx + maxx)/2), maxx]
-yticklabels = [miny, (miny + maxy)/2, maxy]
+xticklabels = [round(minx), round((minx + maxx)/2), round(maxx)]
+yticklabels = [round(miny, 1), round((miny + maxy)/2, 1), round(maxy, 1)]
 extent = 0, nr, 0, nc
-prisoner = np.full((nr, nc, 4), [0.5, 0.0, 0.0, 1.0])
-snowdrift = np.full((nr, nc, 4), [0.0, 1.0, 1.0, 1.0])
-nodilemma = np.full((nr, nc, 4), [1.0, 1.0, 1.0, 1.0])
-green = np.full((nr, nc, 4), [0.0, 1.0, 0.0, 1.0])
+prisoner = [0.5, 0.0, 0.0, 1.0]
+snowdrift = [0.0, 1.0, 1.0, 1.0]
+nodilemma = [1.0, 1.0, 1.0, 1.0]
+green = [0.0, 1.0, 0.0, 1.0]
 
 b = a2max/a1max
 zeros = np.zeros([nr, nc])
 a20 = np.copy(zeros)
-a21 = np.full([nr, nc], a2max/2.0)
-a22 = np.full([nr, nc], a2max)
-w00 = fitness(a20, a20, zeros, AA, RR)
-w11 = fitness(a21, a21, zeros, AA, RR)
-w22 = fitness(a22, a22, zeros, AA, RR)
+a21 = a20 + a2max/2.0
+a22 = a20 + a2max
+a2eq = np.copy(zeros)
 a2social = np.copy(zeros)
+weq = np.copy(zeros)
+xeq = np.copy(zeros)
+Z = np.full([nr, nc, 4], green)
+
+w00 = fitness(a20, a20, GG, AA, RR)
+w01 = fitness(a20, a21, GG, AA, RR)
+w02 = fitness(a20, a22, GG, AA, RR)
+w10 = fitness(a21, a20, GG, AA, RR)
+w11 = fitness(a21, a21, GG, AA, RR)
+w12 = fitness(a21, a22, GG, AA, RR)
+w20 = fitness(a22, a20, GG, AA, RR)
+w21 = fitness(a22, a21, GG, AA, RR)
+w22 = fitness(a22, a22, GG, AA, RR)
+
 mask = (w11 > w00)
 a2social[mask] = a21[mask]
 mask = (w22 > w11)
 a2social[mask] = a22[mask]
-wsocial = fitness(a2social, a2social, zeros, AA, RR)
-
-Z = np.copy(green)
-a2eq = np.copy(zeros)
-weq = np.copy(zeros)
-xeq = np.copy(zeros)
-w01 = fitness(a20, a21, GG, AA, RR)
-w10 = fitness(a21, a20, GG, AA, RR)
-w12 = fitness(a21, a22, GG, AA, RR)
-w21 = fitness(a22, a21, GG, AA, RR)
-w02 = fitness(a20, a22, GG, AA, RR)
-w20 = fitness(a22, a20, GG, AA, RR)
+wsocial = fitness(a2social, a2social, GG, AA, RR)
 
 mask0 = (wsocial == w00)
 T = np.copy(w01)
@@ -196,10 +196,10 @@ for axrow in axs:
         else:
             ax.text(0, nr*1.035, chr(letter), fontsize=fslabel, weight='bold')
             letter += 1
-        if ax.get_subplotspec().is_last_row():
-            ax.set_xticklabels(xticklabels, fontsize=fstick)
         if ax.get_subplotspec().is_first_col():
             ax.set_yticklabels(yticklabels, fontsize=fstick) 
+        if ax.get_subplotspec().is_last_row():
+            ax.set_xticklabels(xticklabels, fontsize=fstick)
 for ax, traitlabel in zip(axs[1], traitlabels):
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
@@ -212,7 +212,7 @@ for t in ts:
 
     for axrow, df in zip(axs[1:], dfs):
         for ax, trait, traitvmax in zip(axrow, traits, traitvmaxs):
-            df_piv = pd.pivot_table(df.loc[df.Time == t], values=trait, index=[pivindex], columns=['ES']).sort_index(axis=0, ascending=False)
+            df_piv = pd.pivot_table(df.loc[df.Time == t], values=trait, index=[pivindex], columns=['logES']).sort_index(axis=0, ascending=False)
             ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
 
     if movie:

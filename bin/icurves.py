@@ -22,6 +22,7 @@ num = 5    # Number of subplot rows & columns
 npoints = 128
 n_ic = 5    # Number of indifference curves
 ngiven = 21
+vmax = 1.8
 
 filename = 'icurves_es_alpha'
 R1 = 2.0
@@ -130,7 +131,7 @@ for given in givens:
                 ax.plot(q1_ic, ic, c='0.850')
             budget = budget0 + q2eq*given
             ax.plot(q1_budget, budget, c='green', alpha=0.8)
-            ax.plot(q1_ic, indifference(q1_ic, weq, alpha, rho), linewidth=4, alpha= 0.8, c=cm.magma(weq/1.8))
+            ax.plot(q1_ic, indifference(q1_ic, weq, alpha, rho), linewidth=4, alpha= 0.8, c=cm.magma(weq/vmax))
 
     if movie:
         plt.savefig('temp.png', transparent=False)

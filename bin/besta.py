@@ -20,14 +20,13 @@ maxgiven = 1.0
 
 num = 11    # Number of subplot rows & columns
 npoints = 128
-filename = 'landscape'
 vmax = 1.5
+
+filename = 'landscape'
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
 a2max = 1.0
-
-# Figure
 
 fslabel = 26 # Label font size
 fstick = 18 # Tick font size

@@ -17,6 +17,7 @@ maxgiven = 0.95
 
 num = 21    # Number of subplot rows and columns
 numa2 = 64
+ngiven = 21
 filename = 'games_c_es_alpha'
 R1 = 2.0
 R2 = 2.0
@@ -46,7 +47,7 @@ def fitness(x, y, given, alpha, rho):
 
 if mingiven != maxgiven:
     movie = True
-    givens = np.linspace(mingiven, maxgiven, num=num)
+    givens = np.linspace(mingiven, maxgiven, num=ngiven)
     frames = []
 else:
     movie = False 
@@ -113,7 +114,7 @@ for ax, traitlabel in zip(axs[1], traitlabels):
 for given in givens:
 
     if movie:
-        text = fig.text(0.80, 0.80, f'given\n{given:4.2f}', fontsize=fstick+4, color='grey', ha='right')
+        text = fig.text(0.80, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
 
     Z = np.full([nr*numa2, nc*numa2, 4], green)
     T = fitness(Y, X, given, AAA, RRR)

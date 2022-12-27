@@ -23,8 +23,8 @@ R2 = 2.0
 a1max = 1.0
 a2max = 1.0
 
-fslabel=36 # Label font size
-fstick=24 # Tick font size
+fslabel = 32 # Label font size
+fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -70,8 +70,6 @@ if movie:
 else:
     ts = [ts[-1]]
 givens = np.sort(pd.unique(df.Given))[::-1]
-#if givens[0] > 0.9999999:
-#    givens[0] = 0.9999999
 logess = np.sort(pd.unique(df.logES))
 rhos = 1.0 - 1.0/pow(2.0, logess)
 nc = len(rhos)
@@ -86,6 +84,7 @@ pivindex = 'Given'
 
 RR, GG = np.meshgrid(rhos, givens)
 
+traitvmaxs = [a2max, a2max]
 xticklabels = [round(minx), round((minx + maxx)/2), round(maxx)]
 yticklabels = [round(miny, 1), round((miny + maxy)/2, 1), round(maxy, 1)]
 extent = 0, nr, 0, nc
@@ -177,19 +176,19 @@ for axrow in axs:
         S = np.copy(w01)
         gametypes(a21, a20)
 
-        axrow[0].imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=1.0)
+        axrow[0].imshow(Z, extent=extent)
 
 for t in ts:
 
     if movie:
-        text = fig.text(0.80, 0.80, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')
+        text = fig.text(0.90, 0.90, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')
 
     for axrow, df in zip(axs, dfs):
-        for ax, trait in zip(axrow[1:], traits):
+        for ax, trait, traitvmax in zip(axrow[1:], traits, traitvmaxs):
             df = df.loc[df.Time == t].copy()
             df[trait] = 1.0 - df[trait]
             df_piv = pd.pivot_table(df, values=trait, index=[pivindex], columns=['logES']).sort_index(axis=0, ascending=False)
-            ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=1.0)
+            ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
 
     if movie:
         plt.savefig('temp.png', transparent=False)

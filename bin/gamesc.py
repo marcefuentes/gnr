@@ -8,6 +8,7 @@ import time
 
 start_time = time.perf_counter ()
 
+traitlabels = ['Effort to get $\it{B}$', 'Fitness']
 minalpha = 0.1
 maxalpha = 0.9
 minloges = -5.0
@@ -18,13 +19,12 @@ maxgiven = 0.95
 num = 21    # Number of subplot rows and columns
 numa2 = 64
 ngiven = 21
-filename = 'games_c_es_alpha'
+filename = 'gamesc'
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
 a2max = 1.0
 
-traitlabels = ['Effort to get $\it{B}$', 'Fitness']
 fslabel = 32 # Label font size
 fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
@@ -52,9 +52,9 @@ else:
     movie = False 
     givens = np.array([mingiven])
 
-b = a2max/a1max
 nc = num
 nr = num
+b = a2max/a1max
 Rq = R2/R1
 MRT0 = b*Rq
 if givens[-1] > 0.9999999:
@@ -75,10 +75,9 @@ miny = minalpha
 maxy = maxalpha
 ylabel = 'Value of $\it{B}$'
 
-traitvmaxs = [a2max, fitness(np.array([a2max]), np.array([a2max]), np.array([mingiven]), np.array([maxalpha]), np.array([rhos[-1]]))]
-#traitvmaxs = [1.0, 1.8]
+traitvmaxs = [a2max, fitness(np.array([a2max]), np.array([a2max]), np.array([0.0]), np.array([0.9]), np.array([5.0]))]
 xticklabels = [round(minx), round((minx + maxx)/2), round(maxx)]
-yticklabels = [round(miny, 1), round((miny + maxy)/2, 1), round(maxy)]
+yticklabels = [round(miny, 1), round((miny + maxy)/2, 1), round(maxy, 1)]
 extent = 0, nr, 0, nc
 extenta2 = 0, nr*numa2, 0, nc*numa2
 prisoner = [0.5, 0.0, 0.0, 1.0]
@@ -115,7 +114,7 @@ for ax, traitlabel in zip(axs[1], traitlabels):
 for given in givens:
 
     if movie:
-        text = fig.text(0.80, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
+        text = fig.text(0.90, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
 
     Z = np.full([nr*numa2, nc*numa2, 4], green)
     T = fitness(Y, X, given, AAA, RRR)

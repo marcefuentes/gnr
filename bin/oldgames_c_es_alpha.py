@@ -97,7 +97,7 @@ for given in reversed(givens):
     fig.supxlabel("Substitutability of $\it{B}$", x=0.525, y=0.05, fontsize=fslabel)
 
     if movie:
-        fig.text(0.80, 0.80, f'given\n{given:4.2f}', fontsize=fstick+4, color='grey', ha='right')
+        fig.text(0.90, 0.90, f'given\n{given:4.2f}', fontsize=fstick+4, color='grey', ha='right')
 
     TT = T0*(1.0 - given)
     Q0 = Rq*pow(T0*AA/(1.0 - AA), 1.0/(RR - 1.0))

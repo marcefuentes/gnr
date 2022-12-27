@@ -12,7 +12,6 @@ start_time = time.perf_counter ()
 
 traits = ['a2Seenmean', 'ChooseGrainmean', 'MimicGrainmean', 'wmean']
 traitlabels = ['Effort to get $\it{B}$', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner', 'Fitness']
-traitvmaxs = [1.0, 1.0, 1.0, 1.8]
 folders = ['none', 'pr']
 
 movie = False
@@ -23,8 +22,8 @@ R2 = 2.0
 a1max = 1.0
 a2max = 1.0
 
-fslabel=36 # Label font size
-fstick=24 # Tick font size
+fslabel = 32 # Label font size
+fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -73,8 +72,6 @@ if movie:
 else:
     ts = [ts[-1]]
 givens = np.sort(pd.unique(df.Given))[::-1]
-#if givens[0] > 0.9999999:
-#    givens[0] = 0.9999999
 logess = np.sort(pd.unique(df.logES))
 rhos = 1.0 - 1.0/pow(2.0, logess)
 alphas = np.sort(pd.unique(df.alpha))[::-1]
@@ -104,6 +101,7 @@ else:
     nr = len(givens)
     AA = np.full([nc, nr], alphas[0])
 
+traitvmaxs = [a2max, a2max, a2max, fitness(np.array([a2max]), np.array([a2max]), np.array([0.0]), np.array([0.9]), np.array([5.0]))]
 xticklabels = [round(minx), round((minx + maxx)/2), round(maxx)]
 yticklabels = [round(miny, 1), round((miny + maxy)/2, 1), round(maxy, 1)]
 extent = 0, nr, 0, nc
@@ -174,7 +172,7 @@ P = np.copy(w00)
 S = np.copy(w01)
 gametypes(a21, a20)
 
-Mss = [[a2social, a2social*R2*GG, wsocial], [a2eq, a2eq*R2*GG, weq]]
+Mss = [[a2social, wsocial], [a2eq, weq]]
 
 fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+1)))
 fig.delaxes(axs[0, 1])
@@ -208,7 +206,7 @@ axs[0, 0].imshow(Z, extent=extent)
 for t in ts:
 
     if movie:
-        text = fig.text(0.80, 0.80, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')
+        text = fig.text(0.90, 0.90, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')
 
     for axrow, df in zip(axs[1:], dfs):
         for ax, trait, traitvmax in zip(axrow, traits, traitvmaxs):

@@ -12,20 +12,19 @@ start_time = time.perf_counter ()
 
 traits = ['a2Seenmean', 'ChooseGrainmean', 'MimicGrainmean', 'wmean']
 traitlabels = ['Effort to get $\it{B}$', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner', 'Fitness']
-traitvmaxs = [1.0, 1.0, 1.0, 1.8]
 folders = ['none', 'pr']
 
 movie = False
 
-numa2 = 32
+numa2 = 64
 filename = 'output'
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
 a2max = 1.0
 
-fslabel=36 # Label font size
-fstick=24 # Tick font size
+fslabel = 32 # Label font size
+fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -93,8 +92,9 @@ else:
     AA = np.full([nc, nr], alphas[0])
     AAA = np.full([nc*numa2, nr*numa2], alphas[0])
 
+traitvmaxs = [a2max, a2max, a2max, fitness(np.array([a2max]), np.array([a2max]), np.array([0.0]), np.array([0.9]), np.array([5.0]))]
+xticklabels = [round(minx), round((minx + maxx)/2), round(maxx)]
 yticklabels = [round(miny, 1), round((miny + maxy)/2, 1), round(maxy, 1)]
-yticklabels = [miny, (miny + maxy)/2, maxy]
 extent = 0, nr, 0, nc
 extenta2 = 0, nr*numa2, 0, nc*numa2
 prisoner = [0.5, 0.0, 0.0, 1.0]
@@ -168,7 +168,7 @@ axs[0, 0].imshow(Z, extent=extenta2)
 for t in ts:
 
     if movie:
-        text = fig.text(0.80, 0.80, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')
+        text = fig.text(0.90, 0.90, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')
 
     for axrow, df in zip(axs[1:], dfs):
         for ax, trait, traitvmax in zip(axrow, traits, traitvmaxs):

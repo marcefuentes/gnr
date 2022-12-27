@@ -5,7 +5,6 @@ from matplotlib.colors import ListedColormap
 import os
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
 import numpy as np
 import time
 
@@ -19,12 +18,11 @@ mingiven = 0.95
 maxgiven = 0.95
 
 num = 5    # Number of subplot rows & columns
-npoints = 128
+numa2 = 128
 n_ic = 5    # Number of indifference curves
 ngiven = 21
-vmax = 1.8
+filename = 'icurves'
 
-filename = 'icurves_es_alpha'
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
@@ -68,25 +66,27 @@ else:
     movie = False 
     givens = np.array([mingiven])
 
-Rq = R2/R1
-b = a2max/a1max
 nc = num
 nr = num
-a1_budget = np.linspace(0.0, a1max, num=3)
-q2_budget = (a2max - b*a1_budget)*R2
-q1_budget = a1_budget*R1
-q1_ic = np.linspace(0.0, a1max*R1, num=npoints)
-if givens[-1] == 0.9999999:
+b = a2max/a1max
+Rq = R2/R1
+MRT0 = b*Rq
+if givens[-1] > 0.9999999:
     givens[-1] = 0.9999999
 alphas = np.linspace(maxalpha, minalpha, num=nr)
 logess = np.linspace(minloges, maxloges, num=nc)
 rhos = 1.0 - 1.0/pow(2, logess)
+a1_budget = np.linspace(0.0, a1max, num=3)
+q2_budget = (a2max - b*a1_budget)*R2
+q1_budget = a1_budget*R1
+q1_ic = np.linspace(0.0, a1max*R1, num=numa2)
 RR, AA = np.meshgrid(rhos, alphas)
 wis = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
 
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 
+traitvmax = fitness(np.array([a2max]), np.array([a2max]), np.array([0.0]), np.array([0.9]), np.array([5.0]))
 icsss = []
 for alpha in alphas:
     icss = []
@@ -98,7 +98,7 @@ for alpha in alphas:
     icsss.append(icss)
 
 fig = plt.figure(figsize=(8, 8))
-fig.supxlabel(xlabel, x=0.555, y=0.03, fontsize=fslabel)
+fig.supxlabel(xlabel, x=0.56, y=0.03, fontsize=fslabel)
 fig.supylabel(ylabel, x=0.05, y=0.52, fontsize=fslabel)
 grid = fig.add_gridspec(nrows=nr, ncols=nc, left=0.22, right=0.9, top=0.86, bottom=0.176, wspace=0, hspace=0)
 axs = grid.subplots()
@@ -114,10 +114,10 @@ for ax, alpha in zip(axs[::every, 0], alphas[::every]):
 for given in givens:
 
     if movie:
-        text = fig.text(0.80, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
+        text = fig.text(0.90, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
 
-    T = b*Rq*(1.0 - given)
-    Q = Rq*pow(T*AA/(1.0 - AA), 1.0/(RR - 1.0))
+    MRT = MRT0*(1.0 - given)
+    Q = Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
     a2ss = a2max/(1.0 + Q*b)
     wss = fitness(a2ss, a2ss, given, AA, RR)
     q2ss = a2ss*R2
@@ -131,7 +131,7 @@ for given in givens:
                 ax.plot(q1_ic, ic, c='0.850')
             budget = budget0 + q2eq*given
             ax.plot(q1_budget, budget, c='green', alpha=0.8)
-            ax.plot(q1_ic, indifference(q1_ic, weq, alpha, rho), linewidth=4, alpha= 0.8, c=cm.magma(weq/vmax))
+            ax.plot(q1_ic, indifference(q1_ic, weq, alpha, rho), linewidth=4, alpha= 0.8, c=cm.magma(weq/traitvmax))
 
     if movie:
         plt.savefig('temp.png', transparent=False)

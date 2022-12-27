@@ -121,7 +121,7 @@ for ax, alpha in zip(axs[::every, 0], alphas[::every]):
 for given in givens:
 
     if movie:
-        text = fig.text(0.80, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
+        text = fig.text(0.90, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
 
     Z = np.full([nr, nc, 4], green)
     Tf = np.copy(zeros)

@@ -8,6 +8,7 @@ import time
 
 start_time = time.perf_counter ()
 
+traitlabels = ['Effort to get $\it{B}$', 'Fitness']
 minalpha = 0.1
 maxalpha = 0.9
 minloges = -5.0
@@ -16,14 +17,13 @@ mingiven = 0.95
 maxgiven = 0.95
 
 num = 21    # Number of subplot rows and columns
-filename = 'games_d_es_alpha'
+ngiven = 21
+filename = 'gamesd'
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
 a2max = 1.0
 
-traitlabels = ['Effort to get $\it{B}$', 'Fitness']
-traitvmaxs = [1.0, 1.8]
 fslabel = 32 # Label font size
 fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
@@ -61,15 +61,15 @@ def gametypes(a2c, a2d):
 
 if mingiven != maxgiven:
     movie = True
-    givens = np.linspace(mingiven, maxgiven, num=num)
+    givens = np.linspace(mingiven, maxgiven, num=ngiven)
     frames = []
 else:
     movie = False 
     givens = np.array([mingiven])
 
-b = a2max/a1max
 nc = num
 nr = num
+b = a2max/a1max
 alphas = np.linspace(maxalpha, minalpha, num=nr)
 logess = np.linspace(minloges, maxloges, num=nc)
 rhos = 1.0 - 1.0/pow(2, logess)
@@ -82,8 +82,9 @@ miny = minalpha
 maxy = maxalpha
 ylabel = 'Value of $\it{B}$'
 
+traitvmaxs = [a2max, fitness(np.array([a2max]), np.array([a2max]), np.array([0.0]), np.array([0.9]), np.array([5.0]))]
 xticklabels = [round(minx), round((minx + maxx)/2), round(maxx)]
-yticklabels = [miny, (miny + maxy)/2, maxy]
+yticklabels = [round(miny, 1), round((miny + maxy)/2, 1), round(maxy, 1)]
 extent = 0, nr, 0, nc
 prisoner = [0.5, 0.0, 0.0, 1.0]
 snowdrift = [0.0, 1.0, 1.0, 1.0]
@@ -132,7 +133,7 @@ for ax, traitlabel in zip(axs[1], traitlabels):
 for given in givens:
 
     if movie:
-        text = fig.text(0.80, 0.80, f'given\n{given:4.2f}', fontsize=fstick+4, color='grey', ha='right')
+        text = fig.text(0.90, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
 
     Z = np.full([nr, nc, 4], green)
     a2eq = np.copy(zeros)

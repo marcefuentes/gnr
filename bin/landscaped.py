@@ -51,7 +51,7 @@ def gametypes(a2c, a2d):
     Z[mask] = nodilemma
     a2eq[mask] = a2c[mask]
     weq[mask] = R[mask]
-    mask = (mask0 & (T >= R) & (P <= S) & (R != P))
+    mask = (mask0 & (T >= R) & (P <= S))
     Z[mask] = snowdrift
     xeq[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2eq[mask] = a2c[mask]*xeq[mask] + a2d[mask]*(1.0 - xeq[mask])

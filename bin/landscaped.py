@@ -17,9 +17,9 @@ mingiven = 0.95
 maxgiven = 0.95
 
 num = 21    # Number of subplot rows and columns
-numa2 = 64
+numa2 = 3
 ngiven = 21
-filename = 'landscapec'
+filename = 'landscaped'
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
@@ -46,6 +46,22 @@ def fitness(x, y, given, alpha, rho):
     w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
     return w
 
+def gametypes(a2c, a2d):
+    mask = (mask0 & (T < R) & (P < S))
+    Z[mask] = nodilemma
+    a2eq[mask] = a2c[mask]
+    weq[mask] = R[mask]
+    mask = (mask0 & (T >= R) & (P <= S) & (R != P))
+    Z[mask] = snowdrift
+    xeq[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
+    a2eq[mask] = a2c[mask]*xeq[mask] + a2d[mask]*(1.0 - xeq[mask])
+    weq[mask] = (T[mask] + S[mask])*xeq[mask]*(1.0 - xeq[mask]) + R[mask]*xeq[mask]*xeq[mask] + P[mask]*(1.0 - xeq[mask])*(1.0 - xeq[mask])
+    mask = (mask0 & (T > R) & (P > S))
+    Z[mask] = prisoner
+    a2eq[mask] = a2d[mask]
+    weq[mask] = P[mask]
+    pass
+
 if mingiven != maxgiven:
     movie = True
     givens = np.linspace(mingiven, maxgiven, num=ngiven)
@@ -57,19 +73,34 @@ else:
 nc = num
 nr = num
 b = a2max/a1max
-Rq = R2/R1
-MRT0 = b*Rq
-if givens[-1] > 0.9999999:
-    givens[-1] = 0.9999999
 alphas = np.linspace(maxalpha, minalpha, num=nr)
 logess = np.linspace(minloges, maxloges, num=nc)
 rhos = 1.0 - 1.0/pow(2, logess)
 a2 = np.linspace(0.0, a2max, num=numa2)
+RR, AA = np.meshgrid(rhos, alphas)
 
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 
 traitvmax = fitness(np.array([a2max]), np.array([a2max]), np.array([0.0]), np.array([0.9]), np.array([5.0]))
+prisoner = [0.5, 0.0, 0.0, 1.0]
+snowdrift = [0.0, 1.0, 1.0, 1.0]
+nodilemma = [1.0, 1.0, 1.0, 1.0]
+green = [0.0, 1.0, 0.0, 1.0]
+
+zeros = np.zeros([nr, nc])
+a20 = np.copy(zeros)
+a21 = np.full([nr, nc], a2max/2.0)
+a22 = np.full([nr, nc], a2max)
+w00 = fitness(a20, a20, zeros, AA, RR)
+w11 = fitness(a21, a21, zeros, AA, RR)
+w22 = fitness(a22, a22, zeros, AA, RR)
+a2social = np.copy(zeros)
+mask = (w11 > w00)
+a2social[mask] = a21[mask]
+mask = (w22 > w11)
+a2social[mask] = a22[mask]
+wsocial = fitness(a2social, a2social, zeros, AA, RR)
 
 fig = plt.figure(figsize=(8, 8))
 fig.supxlabel(xlabel, x=0.56, y=0.03, fontsize=fslabel)
@@ -90,21 +121,58 @@ for given in givens:
     if movie:
         text = fig.text(0.90, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
 
-    MRT = MRT0*(1.0 - given)
+    Z = np.full([nr, nc, 4], green)
+    a2eq = np.copy(zeros)
+    weq = np.copy(zeros)
+    xeq = np.copy(zeros)
+    w01 = fitness(a20, a21, given, AA, RR)
+    w10 = fitness(a21, a20, given, AA, RR)
+    w12 = fitness(a21, a22, given, AA, RR)
+    w21 = fitness(a22, a21, given, AA, RR)
+    w02 = fitness(a20, a22, given, AA, RR)
+    w20 = fitness(a22, a20, given, AA, RR)
 
-    for rowax, alpha in zip(axs, alphas):
-        base = MRT*alpha/(1.0 - alpha)
-        for ax, rho in zip(rowax, rhos):
+    mask0 = (wsocial == w00)
+    T = np.copy(w01)
+    R = np.copy(w00)
+    P = np.copy(w11)
+    S = np.copy(w10)
+    gametypes(a20, a21)
+
+    mask0 = (wsocial == w11) & (w20 > w22)
+    T = np.copy(w10)
+    R = np.copy(w11)
+    P = np.copy(w00)
+    S = np.copy(w01)
+    gametypes(a21, a20)
+
+    mask0 = (wsocial == w11) & (w20 <= w22)
+    T = np.copy(w12)
+    R = np.copy(w11)
+    P = np.copy(w22)
+    S = np.copy(w21)
+    gametypes(a21, a22)
+
+    mask0 = (wsocial == w22) & (w10 < w11)
+    T = np.copy(w21)
+    R = np.copy(w22)
+    P = np.copy(w11)
+    S = np.copy(w12)
+    gametypes(a22, a21)
+
+    mask0 = (wsocial == w22) & (w10 >= w11)
+    T = np.copy(w10)
+    R = np.copy(w11)
+    P = np.copy(w00)
+    S = np.copy(w01)
+    gametypes(a21, a20)
+
+    for rowax, alpha, rowa2eq, rowweq in zip(axs, alphas, a2eq, weq):
+        for ax, rho, cola2eq, colweq in zip(rowax, rhos, rowa2eq, rowweq):
             for line in ax.get_lines():
                 line.remove()
-            Q = Rq*pow(base, 1.0/(rho - 1.0))
-            a2eq = a2max/(1.0 + Q*b)
-            weq = fitness(np.array([a2eq]), np.array([a2eq]), np.array([given]), np.array([alpha]), np.array([rho]))
-            w = fitness(np.full(numa2, a2eq), a2, np.full(numa2, given), np.full(numa2, alpha), np.full(numa2, rho))
-            #a2m = (a2max - a2*given*Q*b)/(1.0 + Q*b*(1.0 - given)) # Optimal a2 given partner's a2
-            #a2m[a2m < 0.0] = 0.0
-            #a2m[a2m > a2max] = a2max
-            ax.plot(a2, w, linewidth=4, c=cm.magma(weq/traitvmax))
+            w = fitness(np.full(numa2, cola2eq), a2, np.full(numa2, given), np.full(numa2, alpha), np.full(numa2, rho))
+            ax.plot(a2, w, linewidth=4, c=cm.magma(colweq/traitvmax))
 
     if movie:
         plt.savefig('temp.png', transparent=False)

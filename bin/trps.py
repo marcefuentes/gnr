@@ -17,8 +17,8 @@ maxgiven = 0.95
 
 num = 21    # Number of subplot rows and columns
 ngiven = 21
-
 filename = 'trps'
+
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
@@ -73,9 +73,9 @@ else:
     movie = False 
     givens = np.array([mingiven])
 
-b = a2max/a1max
 nc = num
 nr = num
+b = a2max/a1max
 alphas = np.linspace(maxalpha, minalpha, num=nr)
 logess = np.linspace(minloges, maxloges, num=nc)
 rhos = 1.0 - 1.0/pow(2, logess)
@@ -105,7 +105,7 @@ wsocial = fitness(a2social, a2social, zeros, AA, RR)
 xaxis = [1, 2, 3, 4]
 
 fig = plt.figure(figsize=(8, 8))
-fig.supxlabel(xlabel, x=0.555, y=0.03, fontsize=fslabel)
+fig.supxlabel(xlabel, x=0.56, y=0.03, fontsize=fslabel)
 fig.supylabel(ylabel, x=0.05, y=0.52, fontsize=fslabel)
 grid = fig.add_gridspec(nrows=nr, ncols=nc, left=0.22, right=0.9, top=0.86, bottom=0.176, wspace=0, hspace=0)
 axs = grid.subplots()

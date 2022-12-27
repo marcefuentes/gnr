@@ -85,7 +85,7 @@ ylabel = 'Value of $\it{B}$'
 traitvmax = fitness(np.array([a2max]), np.array([a2max]), np.array([0.0]), np.array([0.9]), np.array([5.0]))
 prisoner = [0.5, 0.0, 0.0, 1.0]
 snowdrift = [0.0, 1.0, 1.0, 1.0]
-nodilemma = [1.0, 1.0, 1.0, 1.0]
+nodilemma = [1.0, 1.0, 0.0, 1.0]
 green = [0.0, 1.0, 0.0, 1.0]
 
 zeros = np.zeros([nr, nc])

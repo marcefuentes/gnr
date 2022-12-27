@@ -83,8 +83,8 @@ if len(alphas) > 1:
     nr = len(alphas)
     RR, AA = np.meshgrid(rhos, alphas)
     RRR, AAA = np.meshgrid(np.repeat(rhos, numa2), np.repeat(alphas, numa2))
-    miny = alpha[-1]
-    maxy = alpha[0]
+    miny = alphas[-1]
+    maxy = alphas[0]
     ylabel = 'Value of $\it{B}$'
     pivindex = 'alpha'
 else:
@@ -92,6 +92,8 @@ else:
     AA = np.full([nc, nr], alphas[0])
     AAA = np.full([nc*numa2, nr*numa2], alphas[0])
 
+b = a2max/a1max
+Rq = R2/R1
 traitvmaxs = [a2max, a2max, a2max, fitness(np.array([a2max]), np.array([a2max]), np.array([0.0]), np.array([0.9]), np.array([5.0]))]
 xticklabels = [round(minx), round((minx + maxx)/2), round(maxx)]
 yticklabels = [round(miny, 1), round((miny + maxy)/2, 1), round(maxy, 1)]
@@ -102,8 +104,6 @@ snowdrift = [0.0, 1.0, 1.0, 1.0]
 nodilemma = [1.0, 1.0, 1.0, 1.0]
 green = [0.0, 1.0, 0.0, 1.0]
 
-b = a2max/a1max
-Rq = R2/R1
 MRT0 = b*Rq
 Z = np.full((numa2*nr, numa2*nc, 4), green)
 X, Y = np.meshgrid(np.linspace(0.0, a2max, num=numa2), np.linspace(a2max, 0.0, num=numa2))
@@ -139,7 +139,7 @@ fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(
 fig.delaxes(axs[0, 1])
 fig.delaxes(axs[0, 2])
 fig.delaxes(axs[0, 3])
-fig.supxlabel(xlabel, x=0.513, y=0.05, fontsize=fslabel*1.25)
+fig.supxlabel(xlabel, x=0.513, y=0.03, fontsize=fslabel*1.25)
 fig.supylabel(ylabel, x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
 
 letter = ord('b')

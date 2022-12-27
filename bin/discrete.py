@@ -93,14 +93,15 @@ else:
 if len(alphas) > 1:
     nr = len(alphas)
     RR, AA = np.meshgrid(rhos, alphas)
-    miny = alpha[-1]
-    maxy = alpha[0]
+    miny = alphas[-1]
+    maxy = alphas[0]
     ylabel = 'Value of $\it{B}$'
     pivindex = 'alpha'
 else:
     nr = len(givens)
     AA = np.full([nc, nr], alphas[0])
 
+b = a2max/a1max
 traitvmaxs = [a2max, a2max, a2max, fitness(np.array([a2max]), np.array([a2max]), np.array([0.0]), np.array([0.9]), np.array([5.0]))]
 xticklabels = [round(minx), round((minx + maxx)/2), round(maxx)]
 yticklabels = [round(miny, 1), round((miny + maxy)/2, 1), round(maxy, 1)]
@@ -110,7 +111,6 @@ snowdrift = [0.0, 1.0, 1.0, 1.0]
 nodilemma = [1.0, 1.0, 1.0, 1.0]
 green = [0.0, 1.0, 0.0, 1.0]
 
-b = a2max/a1max
 zeros = np.zeros([nr, nc])
 a20 = np.copy(zeros)
 a21 = a20 + a2max/2.0
@@ -178,7 +178,7 @@ fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(
 fig.delaxes(axs[0, 1])
 fig.delaxes(axs[0, 2])
 fig.delaxes(axs[0, 3])
-fig.supxlabel(xlabel, x=0.513, y=0.05, fontsize=fslabel*1.25)
+fig.supxlabel(xlabel, x=0.513, y=0.03, fontsize=fslabel*1.25)
 fig.supylabel(ylabel, x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
 
 letter = ord('b')

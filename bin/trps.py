@@ -8,12 +8,12 @@ import time
 
 start_time = time.perf_counter ()
 
-minalpha = 0.1
-maxalpha = 0.9
-minloges = -5.0
-maxloges = 5.0
-mingiven = 0.95
-maxgiven = 0.95
+alphamin = 0.1
+alphamax = 0.9
+logesmin = -5.0
+logesmax = 5.0
+givenmin = 0.95
+givenmax = 0.95
 
 num = 21    # Number of subplot rows and columns
 ngiven = 21
@@ -65,19 +65,19 @@ def gametypes(a2c, a2d):
     weq[mask] = P[mask]
     pass
 
-if mingiven != maxgiven:
+if givenmin != givenmax:
     movie = True
-    givens = np.linspace(mingiven, maxgiven, num=ngiven)
+    givens = np.linspace(givenmin, givenmax, num=ngiven)
     frames = []
 else:
     movie = False 
-    givens = np.array([mingiven])
+    givens = np.array([givenmin])
 
 nc = num
 nr = num
 b = a2max/a1max
-alphas = np.linspace(maxalpha, minalpha, num=nr)
-logess = np.linspace(minloges, maxloges, num=nc)
+alphas = np.linspace(alphamax, alphamin, num=nr)
+logess = np.linspace(logesmin, logesmax, num=nc)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
 

@@ -9,12 +9,12 @@ import time
 start_time = time.perf_counter ()
 
 traitlabels = ['Effort to get $\it{B}$', 'Fitness']
-minalpha = 0.1
-maxalpha = 0.9
-minloges = -5.0
-maxloges = 5.0
-mingiven = 0.95
-maxgiven = 0.95
+alphamin = 0.1
+alphamax = 0.9
+logesmin = -5.0
+logesmax = 5.0
+givenmin = 0.95
+givenmax = 0.95
 
 num = 21    # Number of subplot rows and columns
 numa2 = 64
@@ -44,13 +44,13 @@ def fitness(x, y, given, alpha, rho):
     w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
     return w
 
-if mingiven != maxgiven:
+if givenmin != givenmax:
     movie = True
-    givens = np.linspace(mingiven, maxgiven, num=ngiven)
+    givens = np.linspace(givenmin, givenmax, num=ngiven)
     frames = []
 else:
     movie = False 
-    givens = np.array([mingiven])
+    givens = np.array([givenmin])
 
 nc = num
 nr = num
@@ -59,8 +59,8 @@ Rq = R2/R1
 MRT0 = b*Rq
 if givens[-1] > 0.9999999:
     givens[-1] = 0.9999999
-alphas = np.linspace(maxalpha, minalpha, num=nr)
-logess = np.linspace(minloges, maxloges, num=nc)
+alphas = np.linspace(alphamax, alphamin, num=nr)
+logess = np.linspace(logesmin, logesmax, num=nc)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
 X, Y = np.meshgrid(np.linspace(0.0, a2max, num=numa2), np.linspace(a2max, 0.0, num=numa2))
@@ -68,16 +68,16 @@ X = np.tile(A=X, reps=[nr, nc])
 Y = np.tile(A=Y, reps=[nr, nc])
 RRR, AAA = np.meshgrid(np.repeat(rhos, numa2), np.repeat(alphas, numa2))
 
-minx = minloges
-maxx = maxloges
+xmin = logesmin
+xmax = logesmax
 xlabel = 'Substitutability of $\it{B}$'
-miny = minalpha
-maxy = maxalpha
+ymin = alphamin
+ymax = alphamax
 ylabel = 'Value of $\it{B}$'
 
 traitvmaxs = [a2max, fitness(np.array([a2max]), np.array([a2max]), np.array([0.0]), np.array([0.9]), np.array([5.0]))]
-xticklabels = [round(minx), round((minx + maxx)/2), round(maxx)]
-yticklabels = [round(miny, 1), round((miny + maxy)/2, 1), round(maxy, 1)]
+xticklabels = [round(xmin), round((xmin + xmax)/2), round(xmax)]
+yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
 extent = 0, nr, 0, nc
 extenta2 = 0, nr*numa2, 0, nc*numa2
 prisoner = [0.5, 0.0, 0.0, 1.0]

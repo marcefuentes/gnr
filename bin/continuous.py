@@ -63,16 +63,16 @@ logess = np.sort(pd.unique(df.logES))
 rhos = 1.0 - 1.0/pow(2.0, logess)
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 nc = len(rhos)
-minx = logess[0]
-maxx = logess[-1]
+xmin = logess[0]
+xmax = logess[-1]
 xlabel = 'Substitutability of $\it{B}$'
 
 if len(givens) > 1:
     nr = len(givens)
     RR, GG = np.meshgrid(rhos, givens)
     RRR, GGG = np.meshgrid(np.repeat(rhos, numa2), np.repeat(givens, numa2))
-    miny = givens[-1]
-    maxy = givens[0]
+    ymin = givens[-1]
+    ymax = givens[0]
     ylabel = 'Partner\'s share of $\it{B}$'
     pivindex = 'Given'
 else:
@@ -83,8 +83,8 @@ if len(alphas) > 1:
     nr = len(alphas)
     RR, AA = np.meshgrid(rhos, alphas)
     RRR, AAA = np.meshgrid(np.repeat(rhos, numa2), np.repeat(alphas, numa2))
-    miny = alphas[-1]
-    maxy = alphas[0]
+    ymin = alphas[-1]
+    ymax = alphas[0]
     ylabel = 'Value of $\it{B}$'
     pivindex = 'alpha'
 else:
@@ -95,8 +95,8 @@ else:
 b = a2max/a1max
 Rq = R2/R1
 traitvmaxs = [a2max, a2max, a2max, fitness(np.array([a2max]), np.array([a2max]), np.array([0.0]), np.array([0.9]), np.array([5.0]))]
-xticklabels = [round(minx), round((minx + maxx)/2), round(maxx)]
-yticklabels = [round(miny, 1), round((miny + maxy)/2, 1), round(maxy, 1)]
+xticklabels = [round(xmin), round((xmin + xmax)/2), round(xmax)]
+yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
 extent = 0, nr, 0, nc
 extenta2 = 0, nr*numa2, 0, nc*numa2
 prisoner = [0.5, 0.0, 0.0, 1.0]

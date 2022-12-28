@@ -9,12 +9,12 @@ import time
 
 start_time = time.perf_counter ()
 
-minalpha = 0.1
-maxalpha = 0.9
-minloges = -5.0
-maxloges = 5.0
-mingiven = 0.95
-maxgiven = 0.95
+alphamin = 0.1
+alphamax = 0.9
+logesmin = -5.0
+logesmax = 5.0
+givenmin = 0.95
+givenmax = 0.95
 
 num = 21    # Number of subplot rows and columns
 numa2 = 64
@@ -46,13 +46,13 @@ def fitness(x, y, given, alpha, rho):
     w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
     return w
 
-if mingiven != maxgiven:
+if givenmin != givenmax:
     movie = True
-    givens = np.linspace(mingiven, maxgiven, num=ngiven)
+    givens = np.linspace(givenmin, givenmax, num=ngiven)
     frames = []
 else:
     movie = False 
-    givens = np.array([mingiven])
+    givens = np.array([givenmin])
 
 nc = num
 nr = num
@@ -61,8 +61,8 @@ Rq = R2/R1
 MRT0 = b*Rq
 if givens[-1] > 0.9999999:
     givens[-1] = 0.9999999
-alphas = np.linspace(maxalpha, minalpha, num=nr)
-logess = np.linspace(minloges, maxloges, num=nc)
+alphas = np.linspace(alphamax, alphamin, num=nr)
+logess = np.linspace(logesmin, logesmax, num=nc)
 rhos = 1.0 - 1.0/pow(2, logess)
 a2 = np.linspace(0.0, a2max, num=numa2)
 

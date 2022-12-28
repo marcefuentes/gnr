@@ -13,10 +13,10 @@ alphamin = 0.1
 alphamax = 0.9
 logesmin = -5.0
 logesmax = 5.0
-givenmin = 0.95
-givenmax = 0.95
-a2low = 0.2
-a2high = 0.8
+givenmin = 0.00
+givenmax = 1.00
+a2low = 0.1
+a2high = 0.7
 
 num = 21    # Number of subplot rows and columns
 ngiven = 21

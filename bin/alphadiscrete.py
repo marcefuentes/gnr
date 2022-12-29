@@ -113,70 +113,70 @@ for axrow in axs:
             ax.set_xticklabels(xticklabels, fontsize=fstick)
         letter += 1
 
-    for axrow, alpha in zip(axs, alphas):
-        AA = np.full([nc, nr], alpha)
-        a20 = np.copy(zeros)
-        a21 = a20 + a2max/2.0
-        a22 = a20 + a2max
+for axrow, alpha in zip(axs, alphas):
+    AA = np.full([nc, nr], alpha)
+    a20 = np.copy(zeros)
+    a21 = a20 + a2max/2.0
+    a22 = a20 + a2max
 
-        w00 = fitness(a20, a20, GG, AA, RR)
-        w01 = fitness(a20, a21, GG, AA, RR)
-        w02 = fitness(a20, a22, GG, AA, RR)
-        w10 = fitness(a21, a20, GG, AA, RR)
-        w11 = fitness(a21, a21, GG, AA, RR)
-        w12 = fitness(a21, a22, GG, AA, RR)
-        w20 = fitness(a22, a20, GG, AA, RR)
-        w21 = fitness(a22, a21, GG, AA, RR)
-        w22 = fitness(a22, a22, GG, AA, RR)
+    w00 = fitness(a20, a20, GG, AA, RR)
+    w01 = fitness(a20, a21, GG, AA, RR)
+    w02 = fitness(a20, a22, GG, AA, RR)
+    w10 = fitness(a21, a20, GG, AA, RR)
+    w11 = fitness(a21, a21, GG, AA, RR)
+    w12 = fitness(a21, a22, GG, AA, RR)
+    w20 = fitness(a22, a20, GG, AA, RR)
+    w21 = fitness(a22, a21, GG, AA, RR)
+    w22 = fitness(a22, a22, GG, AA, RR)
 
-        a2social = np.copy(zeros)
-        mask = (w11 > w00)
-        a2social[mask] = a21[mask]
-        mask = (w22 > w11)
-        a2social[mask] = a22[mask]
-        wsocial = fitness(a2social, a2social, GG, AA, RR)
+    a2social = np.copy(zeros)
+    mask = (w11 > w00)
+    a2social[mask] = a21[mask]
+    mask = (w22 > w11)
+    a2social[mask] = a22[mask]
+    wsocial = fitness(a2social, a2social, GG, AA, RR)
 
-        a2eq = np.copy(zeros)
-        weq = np.copy(zeros)
-        xeq = np.copy(zeros)
-        Z = np.full([nc, nr, 4], green)
+    a2eq = np.copy(zeros)
+    weq = np.copy(zeros)
+    xeq = np.copy(zeros)
+    Z = np.full([nc, nr, 4], green)
 
-        mask0 = (wsocial == w00)
-        T = np.copy(w01)
-        R = np.copy(w00)
-        P = np.copy(w11)
-        S = np.copy(w10)
-        gametypes(a20, a21)
+    mask0 = (wsocial == w00)
+    T = np.copy(w01)
+    R = np.copy(w00)
+    P = np.copy(w11)
+    S = np.copy(w10)
+    gametypes(a20, a21)
 
-        mask0 = (wsocial == w11) & (w20 > w22)
-        T = np.copy(w10)
-        R = np.copy(w11)
-        P = np.copy(w00)
-        S = np.copy(w01)
-        gametypes(a21, a20)
+    mask0 = (wsocial == w11) & (w20 > w22)
+    T = np.copy(w10)
+    R = np.copy(w11)
+    P = np.copy(w00)
+    S = np.copy(w01)
+    gametypes(a21, a20)
 
-        mask0 = (wsocial == w11) & (w20 <= w22)
-        T = np.copy(w12)
-        R = np.copy(w11)
-        P = np.copy(w22)
-        S = np.copy(w21)
-        gametypes(a21, a22)
+    mask0 = (wsocial == w11) & (w20 <= w22)
+    T = np.copy(w12)
+    R = np.copy(w11)
+    P = np.copy(w22)
+    S = np.copy(w21)
+    gametypes(a21, a22)
 
-        mask0 = (wsocial == w22) & (w10 < w11)
-        T = np.copy(w21)
-        R = np.copy(w22)
-        P = np.copy(w11)
-        S = np.copy(w12)
-        gametypes(a22, a21)
+    mask0 = (wsocial == w22) & (w10 < w11)
+    T = np.copy(w21)
+    R = np.copy(w22)
+    P = np.copy(w11)
+    S = np.copy(w12)
+    gametypes(a22, a21)
 
-        mask0 = (wsocial == w22) & (w10 >= w11)
-        T = np.copy(w10)
-        R = np.copy(w11)
-        P = np.copy(w00)
-        S = np.copy(w01)
-        gametypes(a21, a20)
+    mask0 = (wsocial == w22) & (w10 >= w11)
+    T = np.copy(w10)
+    R = np.copy(w11)
+    P = np.copy(w00)
+    S = np.copy(w01)
+    gametypes(a21, a20)
 
-        axrow[0].imshow(Z, extent=extent)
+    axrow[0].imshow(Z, extent=extent)
 
 for t in ts:
 

@@ -12,7 +12,7 @@ start_time = time.perf_counter ()
 
 traits = ['a2Seenmean', 'ChooseGrainmean', 'MimicGrainmean', 'wmean']
 traitlabels = ['Effort to get $\it{B}$', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner', 'Fitness']
-folders = ['none', 'pr']
+folders = ['none', 'p', 'r', 'pr', 'p8r']
 
 movie = False
 

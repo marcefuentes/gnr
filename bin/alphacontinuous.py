@@ -14,7 +14,8 @@ traits = ['ChooseGrainmean', 'MimicGrainmean']
 traitlabels = ['Game types', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
 alphafolders = ['alpha75', 'alpha50', 'alpha25']
 alphas = [0.75, 0.50, 0.25]
-datafolder = 'continuous/pr'
+datafolderp = 'continuous/p'
+datafolderr = 'continuous/r'
 movie = False
 
 numa2 = 32
@@ -43,12 +44,15 @@ def fitness(x, y, given, alpha, rho):
     w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
     return w
 
-dfs = []
+dfps = []
+dfrs = []
 for alphafolder in alphafolders:
-    df = pd.concat(map(pd.read_csv, glob(os.path.join(alphafolder, datafolder, '*.csv'))), ignore_index=True)
-    dfs.append(df)
+    dfp = pd.concat(map(pd.read_csv, glob(os.path.join(alphafolder, datafolderp, '*.csv'))), ignore_index=True)
+    dfr = pd.concat(map(pd.read_csv, glob(os.path.join(alphafolder, datafolderr, '*.csv'))), ignore_index=True)
+    dfps.append(dfp)
+    dfrs.append(dfr)
 
-df = dfs[0]
+df = dfps[0]
 ts = df.Time.unique()
 if movie:
     frames = []
@@ -131,12 +135,15 @@ for t in ts:
     if movie:
         text = fig.text(0.90, 0.90, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')
 
-    for axrow, df in zip(axs, dfs):
-        for ax, trait, traitvmax in zip(axrow[1:], traits, traitvmaxs):
-            df = df.loc[df.Time == t].copy()
-            df[trait] = 1.0 - df[trait]
-            df_piv = pd.pivot_table(df, values=trait, index=[pivindex], columns=['logES']).sort_index(axis=0, ascending=False)
-            ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
+    for axrow, dfp, dfr in zip(axs, dfps, dfrs):
+        df = dfp.loc[dfp.Time == t].copy()
+        df[traits[0]] = 1.0 - df[traits[0]]
+        df_piv = pd.pivot_table(df, values=traits[0], index=[pivindex], columns=['logES']).sort_index(axis=0, ascending=False)
+        axrow[1].imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmaxs[0])
+        df = dfr.loc[dfr.Time == t].copy()
+        df[traits[1]] = 1.0 - df[traits[1]]
+        df_piv = pd.pivot_table(df, values=traits[1], index=[pivindex], columns=['logES']).sort_index(axis=0, ascending=False)
+        axrow[2].imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmaxs[1])
 
     if movie:
         plt.savefig('temp.png', transparent=False)

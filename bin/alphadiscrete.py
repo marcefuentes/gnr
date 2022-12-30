@@ -25,7 +25,7 @@ a1max = 1.0
 a2max = 1.0
 
 fslabel = 32 # Label font size
-fstick = 18 # Tick font size
+fstick = 24 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 

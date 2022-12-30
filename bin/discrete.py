@@ -12,7 +12,7 @@ start_time = time.perf_counter ()
 
 traits = ['a2Seenmean', 'ChooseGrainmean', 'MimicGrainmean', 'wmean']
 traitlabels = ['Effort to get $\it{B}$', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner', 'Fitness']
-folders = ['none', 'p', 'r', 'pr', 'p8r']
+folders = ['none', 'p', 'r', 'pr', 'p8r', 'given0']
 
 movie = False
 
@@ -23,7 +23,7 @@ a1max = 1.0
 a2max = 1.0
 
 fslabel = 32 # Label font size
-fstick = 18 # Tick font size
+fstick = 24 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -178,8 +178,8 @@ fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(
 fig.delaxes(axs[0, 1])
 fig.delaxes(axs[0, 2])
 fig.delaxes(axs[0, 3])
-fig.supxlabel(xlabel, x=0.513, y=0.03, fontsize=fslabel*1.25)
-fig.supylabel(ylabel, x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
+fig.supxlabel(xlabel, x=0.513, y=0.06, fontsize=fslabel*1.5)
+fig.supylabel(ylabel, x=0.05, y=0.493, fontsize=fslabel*1.5, ha='center')
 
 letter = ord('b')
 for axrow in axs:

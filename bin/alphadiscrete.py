@@ -94,7 +94,7 @@ traitvmaxs = [a2max, a2max]
 xticklabels = [round(xmin), round((xmin + xmax)/2), round(xmax)]
 yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
 extent = 0, nc, 0, nr
-extenta2 = 0, nc, 0, nr*numa2
+extenta2 = 0, nc, 0, numa2*nr
 prisoner = [0.5, 0.0, 0.0, 1.0]
 snowdrift = [0.0, 1.0, 1.0, 1.0]
 nodilemma = [1.0, 1.0, 1.0, 1.0]
@@ -179,7 +179,7 @@ for axrow, alpha in zip(axs, alphas):
     S = np.copy(w12)
     gametypes(a22, a21, Z1)
 
-    Z = np.full([nr*numa2, nc, 4], green)
+    Z = np.full([numa2*nr, nc, 4], green)
     Z[::2,:] = Z1
     Z[1::2,:] = Z0
 

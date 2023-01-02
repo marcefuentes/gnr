@@ -19,6 +19,7 @@ datafolderr = 'discrete/r'
 movie = False
 
 filename = 'discrete'
+numa2 = 2
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
@@ -43,7 +44,7 @@ def fitness(x, y, given, alpha, rho):
     w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
     return w
 
-def gametypes(a2c, a2d):
+def gametypes(a2c, a2d, Z):
     mask = (mask0 & (T < R) & (P < S))
     Z[mask] = nodilemma
     a2eq[mask] = a2c[mask]
@@ -78,6 +79,7 @@ logess = np.sort(pd.unique(df.logES))
 rhos = 1.0 - 1.0/pow(2.0, logess)
 nc = len(rhos)
 nr = len(givens)
+b = a2max/a1max
 xmin = logess[0]
 xmax = logess[-1]
 ymin = givens[-1]
@@ -92,12 +94,12 @@ traitvmaxs = [a2max, a2max]
 xticklabels = [round(xmin), round((xmin + xmax)/2), round(xmax)]
 yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
 extent = 0, nc, 0, nr
+extenta2 = 0, nc, 0, nr*numa2
 prisoner = [0.5, 0.0, 0.0, 1.0]
 snowdrift = [0.0, 1.0, 1.0, 1.0]
 nodilemma = [1.0, 1.0, 1.0, 1.0]
 green = [0.0, 1.0, 0.0, 1.0]
 
-b = a2max/a1max
 zeros = np.zeros([nr, nc])
 
 fig, axs = plt.subplots(nrows=len(alphafolders), ncols=len(traitlabels), figsize=(6*len(traitlabels), 6*len(alphafolders)))
@@ -107,12 +109,15 @@ fig.supylabel(ylabel, x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
 letter = ord('a')
 for axrow in axs:
     for ax, traitlabel in zip(axrow, traitlabels):
-        ax.text(0, nr*1.035, chr(letter), fontsize=fslabel, weight='bold')
-        ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
         if ax.get_subplotspec().is_first_row():
             ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
         if ax.get_subplotspec().is_first_col():
+            ax.set(xticks=[0, nc/2, nc], yticks=[0, numa2*nr/2, numa2*nr], xticklabels=[], yticklabels=[])
             ax.set_yticklabels(yticklabels, fontsize=fstick) 
+            ax.text(0, numa2*nr*1.035, 'a', fontsize=fslabel, weight='bold')
+        else:
+            ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
+            ax.text(0, nr*1.035, chr(letter), fontsize=fslabel, weight='bold')
         if ax.get_subplotspec().is_last_row():
             ax.set_xticklabels(xticklabels, fontsize=fstick)
         letter += 1
@@ -143,44 +148,42 @@ for axrow, alpha in zip(axs, alphas):
     a2eq = np.copy(zeros)
     weq = np.copy(zeros)
     xeq = np.copy(zeros)
-    Z = np.full([nc, nr, 4], green)
+    Z0 = np.full([nr, nc, 4], green)
+    Z1 = np.full([nr, nc, 4], green)
 
-    mask0 = (wsocial == w00)
+    mask0 = (w00 > w11)
     T = np.copy(w01)
     R = np.copy(w00)
     P = np.copy(w11)
     S = np.copy(w10)
-    gametypes(a20, a21)
+    gametypes(a20, a21, Z0)
 
-    mask0 = (wsocial == w11) & (w20 > w22)
+    mask0 = (w00 < w11)
     T = np.copy(w10)
     R = np.copy(w11)
     P = np.copy(w00)
     S = np.copy(w01)
-    gametypes(a21, a20)
+    gametypes(a21, a20, Z0)
 
-    mask0 = (wsocial == w11) & (w20 <= w22)
+    mask0 = (w11 > w22)
     T = np.copy(w12)
     R = np.copy(w11)
     P = np.copy(w22)
     S = np.copy(w21)
-    gametypes(a21, a22)
+    gametypes(a21, a22, Z1)
 
-    mask0 = (wsocial == w22) & (w10 < w11)
+    mask0 = (w11 < w22)
     T = np.copy(w21)
     R = np.copy(w22)
     P = np.copy(w11)
     S = np.copy(w12)
-    gametypes(a22, a21)
+    gametypes(a22, a21, Z1)
 
-    mask0 = (wsocial == w22) & (w10 >= w11)
-    T = np.copy(w10)
-    R = np.copy(w11)
-    P = np.copy(w00)
-    S = np.copy(w01)
-    gametypes(a21, a20)
+    Z = np.full([nr*numa2, nc, 4], green)
+    Z[::2,:] = Z1
+    Z[1::2,:] = Z0
 
-    axrow[0].imshow(Z, extent=extent)
+    axrow[0].imshow(Z, extent=extenta2, aspect=1.0/numa2)
 
 for t in ts:
 

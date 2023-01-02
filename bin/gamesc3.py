@@ -63,10 +63,9 @@ alphas = np.linspace(alphamax, alphamin, num=nr)
 logess = np.linspace(logesmin, logesmax, num=nc)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
-X, Y = np.meshgrid(np.linspace(0.0, a2max, num=numa2), np.linspace(a2max, 0.0, num=numa2))
-X = np.tile(A=X, reps=[nr, nc])
-Y = np.tile(A=Y, reps=[nr, nc])
-RRR, AAA = np.meshgrid(np.repeat(rhos, numa2), np.repeat(alphas, numa2))
+a2 = np.linspace(0.0, a2max, num=numa2)
+a2 = np.tile(a2, nr)
+RRR, AAA = np.meshgrid(rhos, np.repeat(alphas, numa2))
 
 xmin = logesmin
 xmax = logesmax
@@ -79,7 +78,7 @@ traitvmaxs = [a2max, fitness(np.array([a2max]), np.array([a2max]), np.array([0.0
 xticklabels = [round(xmin), round((xmin + xmax)/2), round(xmax)]
 yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
 extent = 0, nc, 0, nr
-extenta2 = 0, nc*numa2, 0, nr*numa2
+extenta2 = 0, nc, 0, nr*numa2
 prisoner = [0.5, 0.0, 0.0, 1.0]
 snowdrift = [0.0, 1.0, 1.0, 1.0]
 nodilemma = [1.0, 1.0, 1.0, 1.0]
@@ -116,7 +115,7 @@ for given in givens:
     if movie:
         text = fig.text(0.90, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
 
-    Z = np.full([nr*numa2, nc*numa2, 4], green)
+    Z = np.full([nr*numa2, nc, 4], green)
     T = fitness(Y, X, given, AAA, RRR)
     R = fitness(Y, Y, given, AAA, RRR)
     P = fitness(X, X, given, AAA, RRR)
@@ -131,8 +130,6 @@ for given in givens:
     Z[(T > R) & (P > S)] = prisoner
     Z[(T >= R) & (P <= S) & (R != P)] = snowdrift
     Z[((T < R) & (P < S)) | (R == P)] = nodilemma
-    #Z = np.tril(Z, k=-1)
-    #Z = np.ma.masked_where(Z == 0.0, Z)
 
     MRT = MRT0*(1.0 - given)
     Q0 = Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))

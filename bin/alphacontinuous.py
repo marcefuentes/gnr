@@ -101,7 +101,7 @@ for axrow in axs:
             ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
         if ax.get_subplotspec().is_first_col():
             ax.text(0, nr*numa2*1.035, chr(letter), fontsize=fslabel, weight='bold')
-            ax.set(xticks=[0, numa2*nc/2, numa2*nc], yticks=[0, numa2*nr/2, numa2*nr], xticklabels=[]) 
+            ax.set(xticks=[0, nc*numa2/2, nc*numa2], yticks=[0, nr*numa2/2, nr*numa2], xticklabels=[]) 
             ax.set_yticklabels(yticklabels, fontsize=fstick) 
         else:
             ax.text(0, nr*1.035, chr(letter), fontsize=fslabel, weight='bold')
@@ -111,7 +111,7 @@ for axrow in axs:
         letter += 1
 
 for axrow, alpha in zip(axs, alphas):
-    AAA = np.full([nc*numa2, nr*numa2], alpha)
+    AAA = np.full([nr*numa2, nc*numa2], alpha)
     T = fitness(Y, X, GGG, AAA, RRR)
     R = fitness(Y, Y, GGG, AAA, RRR)
     P = fitness(X, X, GGG, AAA, RRR)
@@ -123,7 +123,7 @@ for axrow, alpha in zip(axs, alphas):
     H = R[mask]
     R[mask] = P[mask]
     P[mask] = H
-    Z = np.full((numa2*nr, numa2*nc, 4), green)
+    Z = np.full((nr*numa2, nc*numa2, 4), green)
     Z[(T > R) & (P > S)] = prisoner
     Z[(T >= R) & (P <= S) & (R != P)] = snowdrift
     Z[((T < R) & (P < S)) | (R == P)] = nodilemma

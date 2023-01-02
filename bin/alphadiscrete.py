@@ -94,7 +94,7 @@ traitvmaxs = [a2max, a2max]
 xticklabels = [round(xmin), round((xmin + xmax)/2), round(xmax)]
 yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
 extent = 0, nc, 0, nr
-extenta2 = 0, nc, 0, numa2*nr
+extenta2 = 0, nc, 0, nr*numa2
 prisoner = [0.5, 0.0, 0.0, 1.0]
 snowdrift = [0.0, 1.0, 1.0, 1.0]
 nodilemma = [1.0, 1.0, 1.0, 1.0]
@@ -112,9 +112,9 @@ for axrow in axs:
         if ax.get_subplotspec().is_first_row():
             ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
         if ax.get_subplotspec().is_first_col():
-            ax.set(xticks=[0, nc/2, nc], yticks=[0, numa2*nr/2, numa2*nr], xticklabels=[], yticklabels=[])
+            ax.set(xticks=[0, nc/2, nc], yticks=[0, nr*numa2/2, nr*numa2], xticklabels=[], yticklabels=[])
             ax.set_yticklabels(yticklabels, fontsize=fstick) 
-            ax.text(0, numa2*nr*1.035, 'a', fontsize=fslabel, weight='bold')
+            ax.text(0, nr*numa2*1.035, 'a', fontsize=fslabel, weight='bold')
         else:
             ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
             ax.text(0, nr*1.035, chr(letter), fontsize=fslabel, weight='bold')
@@ -123,7 +123,7 @@ for axrow in axs:
         letter += 1
 
 for axrow, alpha in zip(axs, alphas):
-    AA = np.full([nc, nr], alpha)
+    AA = np.full([nr, nc], alpha)
     a20 = np.copy(zeros)
     a21 = a20 + a2max/2.0
     a22 = a20 + a2max
@@ -179,7 +179,7 @@ for axrow, alpha in zip(axs, alphas):
     S = np.copy(w12)
     gametypes(a22, a21, Z1)
 
-    Z = np.full([numa2*nr, nc, 4], green)
+    Z = np.full([nr*numa2, nc, 4], green)
     Z[::2,:] = Z1
     Z[1::2,:] = Z0
 

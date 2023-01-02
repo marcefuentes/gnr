@@ -90,7 +90,7 @@ if len(givens) > 1:
     pivindex = 'Given'
 else:
     nr = len(alphas)
-    GG = np.full([nc, nr], givens[0])
+    GG = np.full([nr, nc], givens[0])
 if len(alphas) > 1:
     nr = len(alphas)
     RR, AA = np.meshgrid(rhos, alphas)
@@ -100,14 +100,14 @@ if len(alphas) > 1:
     pivindex = 'alpha'
 else:
     nr = len(givens)
-    AA = np.full([nc, nr], alphas[0])
+    AA = np.full([nr, nc], alphas[0])
 
 b = a2max/a1max
 traitvmaxs = [a2max, a2max, a2max, fitness(np.array([a2max]), np.array([a2max]), np.array([0.0]), np.array([0.9]), np.array([5.0]))]
 xticklabels = [round(xmin), round((xmin + xmax)/2), round(xmax)]
 yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
 extent = 0, nc, 0, nr
-extenta2 = 0, nc, 0, numa2*nr
+extenta2 = 0, nc, 0, nr*numa2
 prisoner = [0.5, 0.0, 0.0, 1.0]
 snowdrift = [0.0, 1.0, 1.0, 1.0]
 nodilemma = [1.0, 1.0, 1.0, 1.0]
@@ -161,7 +161,7 @@ P = np.copy(w11)
 S = np.copy(w12)
 gametypes(a22, a21, Z1)
 
-Z = np.full([numa2*nr, nc, 4], green)
+Z = np.full([nr*numa2, nc, 4], green)
 Z[::2,:] = Z1
 Z[1::2,:] = Z0
 
@@ -176,9 +176,9 @@ letter = ord('b')
 for axrow in axs:
     for ax in axrow:
         if ax.get_subplotspec().is_first_row():
-            ax.set(xticks=[0, nc/2, nc], yticks=[0, numa2*nr/2, numa2*nr], xticklabels=[], yticklabels=[])
+            ax.set(xticks=[0, nc/2, nc], yticks=[0, nr*numa2/2, nr*numa2], xticklabels=[], yticklabels=[])
             ax.set_title('Game types', pad=50.0, fontsize=fslabel)
-            ax.text(0, numa2*nr*1.035, 'a', fontsize=fslabel, weight='bold')
+            ax.text(0, nr*numa2*1.035, 'a', fontsize=fslabel, weight='bold')
             pos = ax.get_position()
             newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
             ax.set_position(newpos)

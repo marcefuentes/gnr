@@ -17,7 +17,7 @@ givenmin = 0.95
 givenmax = 0.95
 
 num = 21    # Number of subplot rows and columns
-numa2 = 64
+numa2 = 16
 ngiven = 21
 filename = 'gamesc'
 R1 = 2.0

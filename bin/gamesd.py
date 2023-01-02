@@ -116,9 +116,9 @@ letter = ord('b')
 for axrow in axs:
     for ax in axrow:
         if ax.get_subplotspec().is_first_row():
-            ax.set(xticks=[0, nc/2, nc], yticks=[0, numa2*nr/2, numa2*nr], xticklabels=[], yticklabels=[])
+            ax.set(xticks=[0, nc/2, nc], yticks=[0, nr*numa2/2, nr*numa2], xticklabels=[], yticklabels=[])
             ax.set_title('Game types', pad=50.0, fontsize=fslabel)
-            ax.text(0, numa2*nr*1.035, 'a', fontsize=fslabel, weight='bold')
+            ax.text(0, nr*numa2*1.035, 'a', fontsize=fslabel, weight='bold')
             pos = ax.get_position()
             newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
             ax.set_position(newpos)

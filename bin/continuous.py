@@ -77,8 +77,8 @@ if len(givens) > 1:
     pivindex = 'Given'
 else:
     nr = len(alphas)
-    GG = np.full([nc, nr], givens[0])
-    GGG = np.full([nc*numa2, nr*numa2], givens[0])
+    GG = np.full([nr, nc], givens[0])
+    GGG = np.full([nr*numa2, nc*numa2], givens[0])
 if len(alphas) > 1:
     nr = len(alphas)
     RR, AA = np.meshgrid(rhos, alphas)
@@ -89,8 +89,8 @@ if len(alphas) > 1:
     pivindex = 'alpha'
 else:
     nr = len(givens)
-    AA = np.full([nc, nr], alphas[0])
-    AAA = np.full([nc*numa2, nr*numa2], alphas[0])
+    AA = np.full([nr, nc], alphas[0])
+    AAA = np.full([nr*numa2, nc*numa2], alphas[0])
 
 b = a2max/a1max
 Rq = R2/R1
@@ -105,7 +105,7 @@ nodilemma = [1.0, 1.0, 1.0, 1.0]
 green = [0.0, 1.0, 0.0, 1.0]
 
 MRT0 = b*Rq
-Z = np.full((numa2*nr, numa2*nc, 4), green)
+Z = np.full((nr*numa2, nc*numa2, 4), green)
 X, Y = np.meshgrid(np.linspace(0.0, a2max, num=numa2), np.linspace(a2max, 0.0, num=numa2))
 X = np.tile(A=X, reps=[nr, nc])
 Y = np.tile(A=Y, reps=[nr, nc])
@@ -143,9 +143,9 @@ letter = ord('b')
 for axrow in axs:
     for ax in axrow:
         if ax.get_subplotspec().is_first_row():
-            ax.set(xticks=[0, numa2*nc/2, numa2*nc], yticks=[0, numa2*nr/2, numa2*nr], xticklabels=[], yticklabels=[])
+            ax.set(xticks=[0, nc*numa2/2, nc*numa2], yticks=[0, nr*numa2/2, nr*numa2], xticklabels=[], yticklabels=[])
             ax.set_title('Game types', pad=50.0, fontsize=fslabel)
-            ax.text(0, numa2*nr*1.035, 'a', fontsize=fslabel, weight='bold')
+            ax.text(0, nr*numa2*1.035, 'a', fontsize=fslabel, weight='bold')
             pos = ax.get_position()
             newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
             ax.set_position(newpos)

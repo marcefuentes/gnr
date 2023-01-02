@@ -19,7 +19,7 @@ givenmax = 1.0
 num = 21    # Number of subplot rows and columns
 numa2 = 2
 ngiven = 21
-filename = 'gamesd3'
+filename = 'gamesd'
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
@@ -44,7 +44,7 @@ def fitness(x, y, given, alpha, rho):
     w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
     return w
 
-def gametypes(a2c, a2d, Z):
+def gametypes(a2c, a2d, Z, a2eq, weq):
     mask = (mask0 & (T < R) & (P < S))
     Z[mask] = nodilemma
     a2eq[mask] = a2c[mask]
@@ -140,8 +140,10 @@ for given in givens:
 
     Z0 = np.full([nr, nc, 4], green)
     Z1 = np.full([nr, nc, 4], green)
-    a2eq = np.copy(zeros)
-    weq = np.copy(zeros)
+    a2eq0 = np.copy(zeros)
+    a2eq1 = np.copy(zeros)
+    weq0 = np.copy(zeros)
+    weq1 = np.copy(zeros)
     xeq = np.copy(zeros)
     w01 = fitness(a20, a21, given, AA, RR)
     w10 = fitness(a21, a20, given, AA, RR)
@@ -155,28 +157,34 @@ for given in givens:
     R = np.copy(w00)
     P = np.copy(w11)
     S = np.copy(w10)
-    gametypes(a20, a21, Z0)
+    gametypes(a20, a21, Z0, a2eq0, weq0)
 
     mask0 = (w00 < w11)
     T = np.copy(w10)
     R = np.copy(w11)
     P = np.copy(w00)
     S = np.copy(w01)
-    gametypes(a21, a20, Z0)
+    gametypes(a21, a20, Z0, a2eq0, weq0)
 
     mask0 = (w11 > w22)
     T = np.copy(w12)
     R = np.copy(w11)
     P = np.copy(w22)
     S = np.copy(w21)
-    gametypes(a21, a22, Z1)
+    gametypes(a21, a22, Z1, a2eq1, weq1)
 
     mask0 = (w11 < w22)
     T = np.copy(w21)
     R = np.copy(w22)
     P = np.copy(w11)
     S = np.copy(w12)
-    gametypes(a22, a21, Z1)
+    gametypes(a22, a21, Z1, a2eq1, weq1)
+
+    a2eq = np.copy(a2eq0)
+    weq = np.copy(weq0)
+    mask = (a2eq0 == a21)
+    a2eq[mask] = a2eq1[mask]
+    weq[mask] = weq1[mask]
 
     Mss = [[a2social, wsocial], [a2eq, weq]]
 

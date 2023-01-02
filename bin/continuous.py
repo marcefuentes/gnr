@@ -128,12 +128,9 @@ Z[((T < R) & (P < S)) | (R == P)] = nodilemma
 
 MRT = MRT0*(1.0 - GG)
 Q0 = Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
-a2social = a2max/(1.0 + Q0*b)
 Q = Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
 a2eq = a2max/(1.0 + Q*b)
-wsocial = fitness(a2social, a2social, GG, AA, RR)
 weq = fitness(a2eq, a2eq, GG, AA, RR)
-Mss = [[a2social, wsocial], [a2eq, weq]]
 
 fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+1)))
 fig.delaxes(axs[0, 1])

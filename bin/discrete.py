@@ -118,7 +118,6 @@ a20 = np.copy(zeros)
 a21 = a20 + a2max/2.0
 a22 = a20 + a2max
 a2eq = np.copy(zeros)
-a2social = np.copy(zeros)
 weq = np.copy(zeros)
 xeq = np.copy(zeros)
 Z0 = np.full([nr, nc, 4], green)

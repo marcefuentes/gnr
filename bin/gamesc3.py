@@ -13,11 +13,11 @@ alphamin = 0.1
 alphamax = 0.9
 logesmin = -5.0
 logesmax = 5.0
-givenmin = 0.95
-givenmax = 0.95
+givenmin = 0.0
+givenmax = 1.0
 
 num = 21    # Number of subplot rows and columns
-numa2 = 16
+numa2 = 17
 ngiven = 21
 filename = 'gamesc'
 R1 = 2.0
@@ -64,9 +64,11 @@ logess = np.linspace(logesmin, logesmax, num=nc)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
 a2 = np.linspace(0.0, a2max, num=numa2)
-a2 = np.tile(a2, nr)
-RRR, AAA = np.meshgrid(rhos, np.repeat(alphas, numa2))
-
+a2f = np.tile(a2[:-1], [nr, nc])
+a2n = np.tile(a2[1:], [nr, nc])
+a2f = a2f.T
+a2n = a2n.T
+RRR, AAA = np.meshgrid(rhos, np.repeat(alphas, numa2-1))
 xmin = logesmin
 xmax = logesmax
 xlabel = 'Substitutability of $\it{B}$'
@@ -78,7 +80,7 @@ traitvmaxs = [a2max, fitness(np.array([a2max]), np.array([a2max]), np.array([0.0
 xticklabels = [round(xmin), round((xmin + xmax)/2), round(xmax)]
 yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
 extent = 0, nc, 0, nr
-extenta2 = 0, nc, 0, nr*numa2
+extenta2 = 0, nc, 0, nr*(numa2-1)
 prisoner = [0.5, 0.0, 0.0, 1.0]
 snowdrift = [0.0, 1.0, 1.0, 1.0]
 nodilemma = [1.0, 1.0, 1.0, 1.0]
@@ -93,9 +95,9 @@ letter = ord('b')
 for axrow in axs:
     for ax in axrow:
         if ax.get_subplotspec().is_first_row():
-            ax.set(xticks=[0, nc*numa2/2, nc*numa2], yticks=[0, nr*numa2/2, nr*numa2], xticklabels=[], yticklabels=[])
+            ax.set(xticks=[0, nc/2, nc], yticks=[0, nr*(numa2-1)/2, nr*(numa2-1)], xticklabels=[], yticklabels=[])
             ax.set_title('Game types', pad=50.0, fontsize=fslabel)
-            ax.text(0, nr*numa2*1.035, 'a', fontsize=fslabel, weight='bold')
+            ax.text(0, nr*(numa2-1)*1.035, 'a', fontsize=fslabel, weight='bold')
             pos = ax.get_position()
             newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
             ax.set_position(newpos)
@@ -115,11 +117,11 @@ for given in givens:
     if movie:
         text = fig.text(0.90, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
 
-    Z = np.full([nr*numa2, nc, 4], green)
-    T = fitness(Y, X, given, AAA, RRR)
-    R = fitness(Y, Y, given, AAA, RRR)
-    P = fitness(X, X, given, AAA, RRR)
-    S = fitness(X, Y, given, AAA, RRR)
+    Z = np.full([nr*(numa2-1), nc, 4], green)
+    T = fitness(a2n, a2f, given, AAA, RRR)
+    R = fitness(a2n, a2n, given, AAA, RRR)
+    P = fitness(a2f, a2f, given, AAA, RRR)
+    S = fitness(a2f, a2n, given, AAA, RRR)
     mask = (R < P)
     H = T[mask]
     T[mask] = S[mask]
@@ -140,7 +142,7 @@ for given in givens:
     weq = fitness(a2eq, a2eq, given, AA, RR)
     Mss = [[a2social, wsocial], [a2eq, weq]]
 
-    axs[0, 0].imshow(Z, extent=extenta2)
+    axs[0, 0].imshow(Z, extent=extenta2, aspect=1.0/(numa2 - 1))
 
     for row, Ms in zip(axs[1:], Mss):
         for ax, M, traitvmax in zip(row, Ms, traitvmaxs):

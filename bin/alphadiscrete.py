@@ -114,7 +114,7 @@ for axrow in axs:
         if ax.get_subplotspec().is_first_col():
             ax.set(xticks=[0, nc/2, nc], yticks=[0, nr*numa2/2, nr*numa2], xticklabels=[], yticklabels=[])
             ax.set_yticklabels(yticklabels, fontsize=fstick) 
-            ax.text(0, nr*numa2*1.035, 'a', fontsize=fslabel, weight='bold')
+            ax.text(0, nr*numa2*1.035, chr(letter), fontsize=fslabel, weight='bold')
         else:
             ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
             ax.text(0, nr*1.035, chr(letter), fontsize=fslabel, weight='bold')

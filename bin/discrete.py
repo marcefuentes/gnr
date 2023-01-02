@@ -166,8 +166,6 @@ Z = np.full([numa2*nr, nc, 4], green)
 Z[::2,:] = Z1
 Z[1::2,:] = Z0
 
-Mss = [[a2social, wsocial], [a2eq, weq]]
-
 fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+1)))
 fig.delaxes(axs[0, 1])
 fig.delaxes(axs[0, 2])

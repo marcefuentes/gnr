@@ -4,6 +4,7 @@ from glob import glob
 import os
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
+import mymodule
 import numpy as np
 import pandas as pd
 import time
@@ -18,36 +19,18 @@ movie = False
 
 numa2 = 64
 filename = 'output'
-R1 = 2.0
-R2 = 2.0
-a1max = 1.0
-a2max = 1.0
 
 fslabel = 32 # Label font size
 fstick = 24 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-def fitness(x, y, given, alpha, rho):
-    q1 = (a2max - y)*R1/b
-    q2 = y*R2*(1.0 - given) + x*R2*given
-    w = q1*q2
-    mask = (w > 0.0) & (rho == 0.0)
-    w[mask] = pow(q1[mask], 1.0 - alpha[mask])*pow(q2[mask], alpha[mask])
-    mask = (w > 0.0) & (rho < 0.0)
-    w[mask] = (1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask])
-    mask = (w > 0.0) & (rho < 0.0)
-    w[mask] = pow(w[mask], 1.0/rho[mask])
-    mask = (rho > 0.0)
-    w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
-    return w
-
 dfs = []
 for folder in folders:
     df = pd.concat(map(pd.read_csv, glob(os.path.join(folder, '*.csv'))), ignore_index=True)
     df.ChooseGrainmean = 1.0 - df.ChooseGrainmean
     df.MimicGrainmean = 1.0 - df.MimicGrainmean
-    df['help'] = df.a2Seenmean*R2*df.Given
+    df['help'] = df.a2Seenmean*mymodule.R2*df.Given
     dfs.append(df)
 
 df = dfs[0]
@@ -92,28 +75,21 @@ else:
     AA = np.full([nr, nc], alphas[0])
     AAA = np.full([nr*numa2, nc*numa2], alphas[0])
 
-b = a2max/a1max
-Rq = R2/R1
-traitvmaxs = [a2max, a2max, a2max, fitness(np.array([a2max]), np.array([a2max]), np.array([0.0]), np.array([0.9]), np.array([5.0]))]
+traitvmaxs = [mymodule.a2max, mymodule.a2max, mymodule.a2max, mymodule.fitness(np.array([mymodule.a2max]), np.array([mymodule.a2max]), np.array([0.0]), np.array([0.9]), np.array([5.0]))]
 xticklabels = [round(xmin), round((xmin + xmax)/2), round(xmax)]
 yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
 extent = 0, nc, 0, nr
 extenta2 = 0, nc*numa2, 0, nr*numa2
-prisoner = [0.5, 0.0, 0.0, 1.0]
-RTS = [1.0, 1.0, 0.0, 1.0]
-snowdrift = [0.0, 1.0, 1.0, 1.0]
-nodilemma = [1.0, 1.0, 1.0, 1.0]
-green = [0.0, 1.0, 0.0, 1.0]
 
-MRT0 = b*Rq
-Z = np.full((nr*numa2, nc*numa2, 4), green)
-X, Y = np.meshgrid(np.linspace(0.0, a2max, num=numa2), np.linspace(a2max, 0.0, num=numa2))
+MRT0 = mymodule.b*mymodule.Rq
+Z = np.full((nr*numa2, nc*numa2, 4), mymodule.default)
+X, Y = np.meshgrid(np.linspace(0.0, mymodule.a2max, num=numa2), np.linspace(mymodule.a2max, 0.0, num=numa2))
 X = np.tile(A=X, reps=[nr, nc])
 Y = np.tile(A=Y, reps=[nr, nc])
-T = fitness(Y, X, GGG, AAA, RRR)
-R = fitness(Y, Y, GGG, AAA, RRR)
-P = fitness(X, X, GGG, AAA, RRR)
-S = fitness(X, Y, GGG, AAA, RRR)
+T = mymodule.fitness(Y, X, GGG, AAA, RRR)
+R = mymodule.fitness(Y, Y, GGG, AAA, RRR)
+P = mymodule.fitness(X, X, GGG, AAA, RRR)
+S = mymodule.fitness(X, Y, GGG, AAA, RRR)
 mask = (R < P)
 H = T[mask]
 T[mask] = S[mask]
@@ -121,16 +97,18 @@ S[mask] = H
 H = R[mask]
 R[mask] = P[mask]
 P[mask] = H
-Z[(T > R) & (P > S)] = prisoner
-Z[(T > R) & (P > S) & (2.0*R <= T + S)] = RTS
-Z[(T >= R) & (P <= S)] = snowdrift
-Z[((T < R) & (P < S))] = nodilemma
+Z[(T < R) & (P < S)] = mymodule.nodilemma
+Z[(T < R) & (P < S) & (2.0*R <= T + S)] = mymodule.RTSnd
+Z[(T > R) & (P > S)] = mymodule.prisoner
+Z[(T > R) & (P > S) & (2.0*R <= T + S)] = mymodule.RTSpd
+Z[(T >= R) & (P <= S)] = mymodule.snowdrift
+Z[R == P] = mymodule.nodilemma
 
 MRT = MRT0*(1.0 - GG)
-Q0 = Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
-Q = Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
-a2eq = a2max/(1.0 + Q*b)
-weq = fitness(a2eq, a2eq, GG, AA, RR)
+Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
+Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
+a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
+weq = mymodule.fitness(a2eq, a2eq, GG, AA, RR)
 
 fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+1)))
 fig.delaxes(axs[0, 1])

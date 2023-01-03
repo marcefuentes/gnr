@@ -4,6 +4,7 @@ from glob import glob
 import os
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
+import mymodule
 import numpy as np
 import pandas as pd
 import time
@@ -18,49 +19,13 @@ datafolderp = 'discrete/p'
 datafolderr = 'discrete/r'
 movie = False
 
-filename = 'discrete'
 numa2 = 2
-R1 = 2.0
-R2 = 2.0
-a1max = 1.0
-a2max = 1.0
+filename = 'discrete'
 
 fslabel = 32 # Label font size
 fstick = 24 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
-
-def fitness(x, y, given, alpha, rho):
-    q1 = (a2max - y)*R1/b
-    q2 = y*R2*(1.0 - given) + x*R2*given
-    w = q1*q2
-    mask = (w > 0.0) & (rho == 0.0)
-    w[mask] = pow(q1[mask], 1.0 - alpha[mask])*pow(q2[mask], alpha[mask])
-    mask = (w > 0.0) & (rho < 0.0)
-    w[mask] = (1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask])
-    mask = (w > 0.0) & (rho < 0.0)
-    w[mask] = pow(w[mask], 1.0/rho[mask])
-    mask = (rho > 0.0)
-    w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
-    return w
-
-def gametypes(a2c, a2d, Z):
-    mask = (mask0 & (T < R) & (P < S))
-    Z[mask] = nodilemma
-    a2eq[mask] = a2c[mask]
-    weq[mask] = R[mask]
-    mask = (mask0 & (T > R) & (P > S))
-    Z[mask] = prisoner
-    a2eq[mask] = a2d[mask]
-    weq[mask] = P[mask]
-    mask = (mask0 & (2.0*R <= T + S))
-    Z[mask] = RTS
-    mask = (mask0 & (T >= R) & (P <= S))
-    Z[mask] = snowdrift
-    xeq[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
-    a2eq[mask] = a2c[mask]*xeq[mask] + a2d[mask]*(1.0 - xeq[mask])
-    weq[mask] = (T[mask] + S[mask])*xeq[mask]*(1.0 - xeq[mask]) + R[mask]*xeq[mask]*xeq[mask] + P[mask]*(1.0 - xeq[mask])*(1.0 - xeq[mask])
-    pass
 
 dfps = []
 dfrs = []
@@ -81,7 +46,6 @@ logess = np.sort(pd.unique(df.logES))
 rhos = 1.0 - 1.0/pow(2.0, logess)
 nc = len(rhos)
 nr = len(givens)
-b = a2max/a1max
 xmin = logess[0]
 xmax = logess[-1]
 ymin = givens[-1]
@@ -92,16 +56,11 @@ pivindex = 'Given'
 
 RR, GG = np.meshgrid(rhos, givens)
 
-traitvmaxs = [a2max, a2max]
+traitvmaxs = [mymodule.a2max, mymodule.a2max]
 xticklabels = [round(xmin), round((xmin + xmax)/2), round(xmax)]
 yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
 extent = 0, nc, 0, nr
 extenta2 = 0, nc, 0, nr*numa2
-prisoner = [0.5, 0.0, 0.0, 1.0]
-RTS = [1.0, 1.0, 0.0, 1.0]
-snowdrift = [0.0, 1.0, 1.0, 1.0]
-nodilemma = [1.0, 1.0, 1.0, 1.0]
-green = [0.0, 1.0, 0.0, 1.0]
 
 zeros = np.zeros([nr, nc])
 
@@ -128,61 +87,61 @@ for axrow in axs:
 for axrow, alpha in zip(axs, alphas):
     AA = np.full([nr, nc], alpha)
     a20 = np.copy(zeros)
-    a21 = a20 + a2max/2.0
-    a22 = a20 + a2max
+    a21 = a20 + mymodule.a2max/2.0
+    a22 = a20 + mymodule.a2max
 
-    w00 = fitness(a20, a20, GG, AA, RR)
-    w01 = fitness(a20, a21, GG, AA, RR)
-    w02 = fitness(a20, a22, GG, AA, RR)
-    w10 = fitness(a21, a20, GG, AA, RR)
-    w11 = fitness(a21, a21, GG, AA, RR)
-    w12 = fitness(a21, a22, GG, AA, RR)
-    w20 = fitness(a22, a20, GG, AA, RR)
-    w21 = fitness(a22, a21, GG, AA, RR)
-    w22 = fitness(a22, a22, GG, AA, RR)
+    w00 = mymodule.fitness(a20, a20, GG, AA, RR)
+    w01 = mymodule.fitness(a20, a21, GG, AA, RR)
+    w02 = mymodule.fitness(a20, a22, GG, AA, RR)
+    w10 = mymodule.fitness(a21, a20, GG, AA, RR)
+    w11 = mymodule.fitness(a21, a21, GG, AA, RR)
+    w12 = mymodule.fitness(a21, a22, GG, AA, RR)
+    w20 = mymodule.fitness(a22, a20, GG, AA, RR)
+    w21 = mymodule.fitness(a22, a21, GG, AA, RR)
+    w22 = mymodule.fitness(a22, a22, GG, AA, RR)
 
     a2social = np.copy(zeros)
     mask = (w11 > w00)
     a2social[mask] = a21[mask]
     mask = (w22 > w11)
     a2social[mask] = a22[mask]
-    wsocial = fitness(a2social, a2social, GG, AA, RR)
+    wsocial = mymodule.fitness(a2social, a2social, GG, AA, RR)
 
     a2eq = np.copy(zeros)
     weq = np.copy(zeros)
     xeq = np.copy(zeros)
-    Z0 = np.full([nr, nc, 4], green)
-    Z1 = np.full([nr, nc, 4], green)
+    Z0 = np.full([nr, nc, 4], mymodule.default)
+    Z1 = np.full([nr, nc, 4], mymodule.default)
 
     mask0 = (w00 > w11)
     T = np.copy(w01)
     R = np.copy(w00)
     P = np.copy(w11)
     S = np.copy(w10)
-    gametypes(a20, a21, Z0)
+    mymodule.gametypes(mask0, T, R, P, S, a20, a21, Z0, a2eq, xeq, weq)
 
     mask0 = (w00 < w11)
     T = np.copy(w10)
     R = np.copy(w11)
     P = np.copy(w00)
     S = np.copy(w01)
-    gametypes(a21, a20, Z0)
+    mymodule.gametypes(mask0, T, R, P, S, a21, a20, Z0, a2eq, xeq, weq)
 
     mask0 = (w11 > w22)
     T = np.copy(w12)
     R = np.copy(w11)
     P = np.copy(w22)
     S = np.copy(w21)
-    gametypes(a21, a22, Z1)
+    mymodule.gametypes(mask0, T, R, P, S, a21, a22, Z1, a2eq, xeq, weq)
 
     mask0 = (w11 < w22)
     T = np.copy(w21)
     R = np.copy(w22)
     P = np.copy(w11)
     S = np.copy(w12)
-    gametypes(a22, a21, Z1)
+    mymodule.gametypes(mask0, T, R, P, S, a22, a21, Z1, a2eq, xeq, weq)
 
-    Z = np.full([nr*numa2, nc, 4], green)
+    Z = np.full([nr*numa2, nc, 4], mymodule.default)
     Z[::2,:] = Z1
     Z[1::2,:] = Z0
 

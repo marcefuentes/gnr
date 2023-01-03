@@ -1,5 +1,19 @@
 #! /usr/bin/env python
 
+prisoner = [0.5, 0.0, 0.0, 1.0]
+RTSpd = [1.0, 0.5, 0.0, 1.0]
+RTSnd = [1.0, 1.0, 0.0, 1.0]
+snowdrift = [0.0, 1.0, 1.0, 1.0]
+nodilemma = [1.0, 1.0, 1.0, 1.0]
+default = [0.0, 1.0, 0.0, 1.0]
+
+R1 = 2.0
+R2 = 2.0
+a1max = 1.0
+a2max = 1.0
+Rq = R2/R1
+b = a2max/a1max
+
 def fitness(x, y, given, alpha, rho):
     q1 = (a2max - y)*R1/b
     q2 = y*R2*(1.0 - given) + x*R2*given
@@ -14,28 +28,23 @@ def fitness(x, y, given, alpha, rho):
     w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
     return w
 
-def gametypes(a2c, a2d, Z, a2eq, weq):
+def gametypes(mask0, T, R, P, S, a2c, a2d, Z, a2eq, xeq, weq):
     mask = (mask0 & (T < R) & (P < S))
     Z[mask] = nodilemma
     a2eq[mask] = a2c[mask]
     weq[mask] = R[mask]
-    mask = (mask0 & (T >= R) & (P <= S))
-    Z[mask] = snowdrift
-    xeq[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
-    a2eq[mask] = a2c[mask]*xeq[mask] + a2d[mask]*(1.0 - xeq[mask])
-    weq[mask] = (T[mask] + S[mask])*xeq[mask]*(1.0 - xeq[mask]) + R[mask]*xeq[mask]*xeq[mask] + P[mask]*(1.0 - xeq[mask])*(1.0 - xeq[mask])
+    mask = (mask & (2.0*R <= T + S))
+    Z[mask] = RTSnd
     mask = (mask0 & (T > R) & (P > S))
     Z[mask] = prisoner
     a2eq[mask] = a2d[mask]
     weq[mask] = P[mask]
     mask = (mask & (2.0*R <= T + S))
-    Z[mask] = RTS
+    Z[mask] = RTSpd
+    mask = (mask0 & (T >= R) & (P <= S))
+    Z[mask] = snowdrift
+    xeq[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
+    a2eq[mask] = a2c[mask]*xeq[mask] + a2d[mask]*(1.0 - xeq[mask])
+    weq[mask] = (T[mask] + S[mask])*xeq[mask]*(1.0 - xeq[mask]) + R[mask]*xeq[mask]*xeq[mask] + P[mask]*(1.0 - xeq[mask])*(1.0 - xeq[mask])
     pass
-
-prisoner = [0.5, 0.0, 0.0, 1.0]
-RTSpd = [1.0, 0.5, 0.0, 1.0]
-RTSnd = [1.0, 1.0, 0.0, 1.0]
-snowdrift = [0.0, 1.0, 1.0, 1.0]
-nodilemma = [1.0, 1.0, 1.0, 1.0]
-green = [0.0, 1.0, 0.0, 1.0]
 

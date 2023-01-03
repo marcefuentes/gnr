@@ -4,6 +4,7 @@ from glob import glob
 import os
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
+import mymodule
 import numpy as np
 import pandas as pd
 import time
@@ -20,29 +21,11 @@ movie = False
 
 numa2 = 32
 filename = 'continuous'
-R1 = 2.0
-R2 = 2.0
-a1max = 1.0
-a2max = 1.0
 
 fslabel = 32 # Label font size
 fstick = 24 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
-
-def fitness(x, y, given, alpha, rho):
-    q1 = (a2max - y)*R1/b
-    q2 = y*R2*(1.0 - given) + x*R2*given
-    w = q1*q2
-    mask = (w > 0.0) & (rho == 0.0)
-    w[mask] = pow(q1[mask], 1.0 - alpha[mask])*pow(q2[mask], alpha[mask])
-    mask = (w > 0.0) & (rho < 0.0)
-    w[mask] = (1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask])
-    mask = (w > 0.0) & (rho < 0.0)
-    w[mask] = pow(w[mask], 1.0/rho[mask])
-    mask = (rho > 0.0)
-    w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
-    return w
 
 dfps = []
 dfrs = []
@@ -75,19 +58,13 @@ pivindex = 'Given'
 
 RRR, GGG = np.meshgrid(np.repeat(rhos, numa2), np.repeat(givens, numa2))
 
-traitvmaxs = [a2max, a2max]
+traitvmaxs = [mymodule.a2max, mymodule.a2max]
 xticklabels = [round(xmin), round((xmin + xmax)/2), round(xmax)]
 yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
 extent = 0, nc, 0, nr
 extenta2 = 0, nc*numa2, 0, nr*numa2
-prisoner = [0.5, 0.0, 0.0, 1.0]
-RTS = [1.0, 1.0, 0.0, 1.0]
-snowdrift = [0.0, 1.0, 1.0, 1.0]
-nodilemma = [1.0, 1.0, 1.0, 1.0]
-green = [0.0, 1.0, 0.0, 1.0]
 
-b = a2max/a1max
-X, Y = np.meshgrid(np.linspace(0.0, a2max, num=numa2), np.linspace(a2max, 0.0, num=numa2))
+X, Y = np.meshgrid(np.linspace(0.0, mymodule.a2max, num=numa2), np.linspace(mymodule.a2max, 0.0, num=numa2))
 X = np.tile(A=X, reps=[nr, nc])
 Y = np.tile(A=Y, reps=[nr, nc])
 
@@ -113,10 +90,10 @@ for axrow in axs:
 
 for axrow, alpha in zip(axs, alphas):
     AAA = np.full([nr*numa2, nc*numa2], alpha)
-    T = fitness(Y, X, GGG, AAA, RRR)
-    R = fitness(Y, Y, GGG, AAA, RRR)
-    P = fitness(X, X, GGG, AAA, RRR)
-    S = fitness(X, Y, GGG, AAA, RRR)
+    T = mymodule.fitness(Y, X, GGG, AAA, RRR)
+    R = mymodule.fitness(Y, Y, GGG, AAA, RRR)
+    P = mymodule.fitness(X, X, GGG, AAA, RRR)
+    S = mymodule.fitness(X, Y, GGG, AAA, RRR)
     mask = (R < P)
     H = T[mask]
     T[mask] = S[mask]
@@ -124,11 +101,13 @@ for axrow, alpha in zip(axs, alphas):
     H = R[mask]
     R[mask] = P[mask]
     P[mask] = H
-    Z = np.full((nr*numa2, nc*numa2, 4), green)
-    Z[((T < R) & (P < S))] = nodilemma
-    Z[(T > R) & (P > S)] = prisoner
-    Z[(T > R) & (P > S) & (2.0*R <= T + S)] = RTS
-    Z[(T >= R) & (P <= S)] = snowdrift
+    Z = np.full((nr*numa2, nc*numa2, 4), mymodule.default)
+    Z[(T < R) & (P < S)] = mymodule.nodilemma
+    Z[(T < R) & (P < S) & (2.0*R <= T + S)] = mymodule.RTSnd
+    Z[(T > R) & (P > S)] = mymodule.prisoner
+    Z[(T > R) & (P > S) & (2.0*R <= T + S)] = mymodule.RTSpd
+    Z[(T >= R) & (P <= S)] = mymodule.snowdrift
+    Z[R == P] = mymodule.nodilemma
 
     axrow[0].imshow(Z, extent=extenta2)
 

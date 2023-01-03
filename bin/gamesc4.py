@@ -3,6 +3,7 @@
 import os
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
+import mymodule
 import numpy as np
 import time
 
@@ -19,35 +20,17 @@ givenmax = 1.0
 num = 21    # Number of subplot rows and columns
 ngiven = 21
 filename = 'gamesc'
-R1 = 2.0
-R2 = 2.0
-a1max = 1.0
-a2max = 1.0
 
 fslabel = 32 # Label font size
 fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-def fitness(x, y, given, alpha, rho):
-    q1 = (a2max - y)*R1/b
-    q2 = y*R2*(1.0 - given) + x*R2*given
-    w = q1*q2
-    mask = (w > 0.0) & (rho == 0.0)
-    w[mask] = pow(q1[mask], 1.0 - alpha[mask])*pow(q2[mask], alpha[mask])
-    mask = (w > 0.0) & (rho < 0.0)
-    w[mask] = (1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask])
-    mask = (w > 0.0) & (rho < 0.0)
-    w[mask] = pow(w[mask], 1.0/rho[mask])
-    mask = (rho > 0.0)
-    w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
-    return w
-
 def gametype (x, y, Z, given, alpha, rho):
-    T = fitness(x, y, given, AA, RR)
-    R = fitness(x, x, given, AA, RR)
-    P = fitness(y, y, given, AA, RR)
-    S = fitness(y, x, given, AA, RR)
+    T = mymodule.fitness(x, y, given, AA, RR)
+    R = mymodule.fitness(x, x, given, AA, RR)
+    P = mymodule.fitness(y, y, given, AA, RR)
+    S = mymodule.fitness(y, x, given, AA, RR)
     mask = (R < P)
     H = T[mask]
     T[mask] = S[mask]
@@ -55,10 +38,12 @@ def gametype (x, y, Z, given, alpha, rho):
     H = R[mask]
     R[mask] = P[mask]
     P[mask] = H
-    Z[(T > R) & (P > S)] = prisoner
-    Z[(T > R) & (P > S) & (2.0*R <= T + S)] = RTS
-    Z[(T >= R) & (P <= S)] = snowdrift
-    Z[((T < R) & (P < S))] = nodilemma
+    Z[(T < R) & (P < S)] = mymodule.nodilemma
+    Z[(T < R) & (P < S) & (2.0*R <= T + S)] = mymodule.RTSnd
+    Z[(T > R) & (P > S)] = mymodule.prisoner
+    Z[(T > R) & (P > S) & (2.0*R <= T + S)] = mymodule.RTSpd
+    Z[(T >= R) & (P <= S)] = mymodule.snowdrift
+    Z[R == P] = mymodule.nodilemma
     return Z
 
 if givenmin != givenmax:
@@ -71,9 +56,7 @@ else:
 
 nc = num
 nr = num
-b = a2max/a1max
-Rq = R2/R1
-MRT0 = b*Rq
+MRT0 = b*mymodule.Rq
 if givens[-1] > 0.9999999:
     givens[-1] = 0.9999999
 alphas = np.linspace(alphamax, alphamin, num=nr)
@@ -89,7 +72,7 @@ ymin = alphamin
 ymax = alphamax
 ylabel = 'Value of $\it{B}$'
 
-traitvmaxs = [a2max, fitness(np.array([a2max]), np.array([a2max]), np.array([0.0]), np.array([0.9]), np.array([5.0]))]
+traitvmaxs = [mymodule.a2max, mymodule.fitness(np.array([mymodule.a2max]), np.array([mymodule.a2max]), np.array([0.0]), np.array([0.9]), np.array([5.0]))]
 xticklabels = [round(xmin), round((xmin + xmax)/2), round(xmax)]
 yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
 extent = 0, nc, 0, nr
@@ -98,7 +81,7 @@ prisoner = [0.5, 0.0, 0.0, 1.0]
 RTS = [1.0, 1.0, 0.0, 1.0]
 snowdrift = [0.0, 1.0, 1.0, 1.0]
 nodilemma = [1.0, 1.0, 1.0, 1.0]
-green = [0.0, 1.0, 0.0, 1.0]
+mymodule.default = [0.0, 1.0, 0.0, 1.0]
 
 fig, axs = plt.subplots(nrows=3, ncols=2, figsize=(12, 18))
 fig.delaxes(axs[0, 1])
@@ -132,27 +115,27 @@ for given in givens:
         text = fig.text(0.90, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
 
     MRT = MRT0*(1.0 - given)
-    Q0 = Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
-    a2social = a2max/(1.0 + Q0*b)
-    Q = Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
-    a2eq = a2max/(1.0 + Q*b)
-    wsocial = fitness(a2social, a2social, given, AA, RR)
-    weq = fitness(a2eq, a2eq, given, AA, RR)
+    Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
+    a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
+    Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
+    a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
+    wsocial = mymodule.fitness(a2social, a2social, given, AA, RR)
+    weq = mymodule.fitness(a2eq, a2eq, given, AA, RR)
     Mss = [[a2social, wsocial], [a2eq, weq]]
 
-    Z0 = np.full([nr, nc, 4], green)
+    Z0 = np.full([nr, nc, 4], mymodule.default)
     a2 = 1.01*a2eq
     mask = (a2 > 1.0)
     a2[mask] = ones[mask]
     Z0 = gametype(a2eq, a2, Z0, given, AA, RR)
 
-    Z1 = np.full([nr, nc, 4], green)
+    Z1 = np.full([nr, nc, 4], mymodule.default)
     a2 = 0.99*a2eq
     mask = (a2 < 0.0)
     a2[mask] = zeros[mask]
     Z1 = gametype(a2eq, a2, Z1, given, AA, RR)
 
-    Z = np.full([nr*2, nc, 4], green)
+    Z = np.full([nr*2, nc, 4], mymodule.default)
     Z[::2,:] = Z1
     Z[1::2,:] = Z0
 

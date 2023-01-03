@@ -77,11 +77,6 @@ xticklabels = [round(xmin), round((xmin + xmax)/2), round(xmax)]
 yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
 extent = 0, nc, 0, nr
 extenta2 = 0, nc, 0, nr*2
-prisoner = [0.5, 0.0, 0.0, 1.0]
-RTS = [1.0, 1.0, 0.0, 1.0]
-snowdrift = [0.0, 1.0, 1.0, 1.0]
-nodilemma = [1.0, 1.0, 1.0, 1.0]
-mymodule.default = [0.0, 1.0, 0.0, 1.0]
 
 fig, axs = plt.subplots(nrows=3, ncols=2, figsize=(12, 18))
 fig.delaxes(axs[0, 1])

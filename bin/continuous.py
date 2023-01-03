@@ -17,7 +17,7 @@ folders = ['none', 'p', 'r', 'pr', 'p8r', 'given0']
 
 movie = False
 
-numa2 = 64
+numa2 = 128
 filename = 'output'
 
 fslabel = 32 # Label font size

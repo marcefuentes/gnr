@@ -19,7 +19,7 @@ datafolderp = 'continuous/p'
 datafolderr = 'continuous/r'
 movie = False
 
-numa2 = 32
+numa2 = 128
 filename = 'continuous'
 
 fslabel = 32 # Label font size

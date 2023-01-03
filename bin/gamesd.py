@@ -13,8 +13,8 @@ alphamin = 0.1
 alphamax = 0.9
 logesmin = -5.0
 logesmax = 5.0
-givenmin = 0.95
-givenmax = 0.95
+givenmin = 0.0
+givenmax = 1.0
 
 num = 21    # Number of subplot rows and columns
 numa2 = 2
@@ -58,6 +58,8 @@ def gametypes(a2c, a2d, Z, a2eq, weq):
     Z[mask] = prisoner
     a2eq[mask] = a2d[mask]
     weq[mask] = P[mask]
+    mask = (mask & (2.0*R <= T + S))
+    Z[mask] = RTS
     pass
 
 if givenmin != givenmax:
@@ -89,6 +91,7 @@ yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
 extent = 0, nc, 0, nr
 extenta2 = 0, nc, 0, nr*numa2
 prisoner = [0.5, 0.0, 0.0, 1.0]
+RTS = [1.0, 1.0, 0.0, 1.0]
 snowdrift = [0.0, 1.0, 1.0, 1.0]
 nodilemma = [1.0, 1.0, 1.0, 1.0]
 green = [0.0, 1.0, 0.0, 1.0]

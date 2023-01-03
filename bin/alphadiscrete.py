@@ -49,15 +49,17 @@ def gametypes(a2c, a2d, Z):
     Z[mask] = nodilemma
     a2eq[mask] = a2c[mask]
     weq[mask] = R[mask]
+    mask = (mask0 & (T > R) & (P > S))
+    Z[mask] = prisoner
+    a2eq[mask] = a2d[mask]
+    weq[mask] = P[mask]
+    mask = (mask0 & (2.0*R <= T + S))
+    Z[mask] = RTS
     mask = (mask0 & (T >= R) & (P <= S))
     Z[mask] = snowdrift
     xeq[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2eq[mask] = a2c[mask]*xeq[mask] + a2d[mask]*(1.0 - xeq[mask])
     weq[mask] = (T[mask] + S[mask])*xeq[mask]*(1.0 - xeq[mask]) + R[mask]*xeq[mask]*xeq[mask] + P[mask]*(1.0 - xeq[mask])*(1.0 - xeq[mask])
-    mask = (mask0 & (T > R) & (P > S))
-    Z[mask] = prisoner
-    a2eq[mask] = a2d[mask]
-    weq[mask] = P[mask]
     pass
 
 dfps = []
@@ -96,6 +98,7 @@ yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
 extent = 0, nc, 0, nr
 extenta2 = 0, nc, 0, nr*numa2
 prisoner = [0.5, 0.0, 0.0, 1.0]
+RTS = [1.0, 1.0, 0.0, 1.0]
 snowdrift = [0.0, 1.0, 1.0, 1.0]
 nodilemma = [1.0, 1.0, 1.0, 1.0]
 green = [0.0, 1.0, 0.0, 1.0]

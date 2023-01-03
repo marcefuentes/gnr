@@ -81,6 +81,7 @@ yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
 extent = 0, nc, 0, nr
 extenta2 = 0, nc*numa2, 0, nr*numa2
 prisoner = [0.5, 0.0, 0.0, 1.0]
+RTS = [1.0, 1.0, 0.0, 1.0]
 snowdrift = [0.0, 1.0, 1.0, 1.0]
 nodilemma = [1.0, 1.0, 1.0, 1.0]
 green = [0.0, 1.0, 0.0, 1.0]
@@ -124,9 +125,10 @@ for axrow, alpha in zip(axs, alphas):
     R[mask] = P[mask]
     P[mask] = H
     Z = np.full((nr*numa2, nc*numa2, 4), green)
+    Z[((T < R) & (P < S))] = nodilemma
     Z[(T > R) & (P > S)] = prisoner
-    Z[(T >= R) & (P <= S) & (R != P)] = snowdrift
-    Z[((T < R) & (P < S)) | (R == P)] = nodilemma
+    Z[(T > R) & (P > S) & (2.0*R <= T + S)] = RTS
+    Z[(T >= R) & (P <= S)] = snowdrift
 
     axrow[0].imshow(Z, extent=extenta2)
 

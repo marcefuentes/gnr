@@ -59,6 +59,8 @@ def gametypes(a2c, a2d):
     Z[mask] = prisoner
     a2eq[mask] = a2d[mask]
     weq[mask] = P[mask]
+    mask = (mask & (2.0*R <= T + S))
+    Z[mask] = RTS
     pass
 
 if givenmin != givenmax:
@@ -89,6 +91,7 @@ xticklabels = [round(xmin), round((xmin + xmax)/2), round(xmax)]
 yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
 extent = 0, nc, 0, nr
 prisoner = [0.5, 0.0, 0.0, 1.0]
+RTS = [1.0, 1.0, 0.0, 1.0]
 snowdrift = [0.0, 1.0, 1.0, 1.0]
 nodilemma = [1.0, 1.0, 1.0, 1.0]
 green = [0.0, 1.0, 0.0, 1.0]

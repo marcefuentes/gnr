@@ -82,6 +82,7 @@ yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
 extent = 0, nc, 0, nr
 extenta2 = 0, nc, 0, nr*(numa2-1)
 prisoner = [0.5, 0.0, 0.0, 1.0]
+RTS = [1.0, 1.0, 0.0, 1.0]
 snowdrift = [0.0, 1.0, 1.0, 1.0]
 nodilemma = [1.0, 1.0, 1.0, 1.0]
 green = [0.0, 1.0, 0.0, 1.0]
@@ -130,8 +131,9 @@ for given in givens:
     R[mask] = P[mask]
     P[mask] = H
     Z[(T > R) & (P > S)] = prisoner
-    Z[(T >= R) & (P <= S) & (R != P)] = snowdrift
-    Z[((T < R) & (P < S)) | (R == P)] = nodilemma
+    Z[(T > R) & (P > S) & (2.0*R <= T + S)] = RTS
+    Z[(T >= R) & (P <= S)] = snowdrift
+    Z[((T < R) & (P < S))] = nodilemma
 
     MRT = MRT0*(1.0 - given)
     Q0 = Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))

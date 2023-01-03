@@ -2,9 +2,10 @@
 
 prisoner = [0.5, 0.5, 0.5, 1.0]
 RTSpd = [1.0, 0.3, 0.0, 1.0]
-RTSnd = [1.0, 0.7, 0.0, 1.0]
 snowdrift = [0.0, 1.0, 1.0, 1.0]
+RTSsd = [0.0, 0.5, 1.0, 1.0]
 nodilemma = [1.0, 1.0, 1.0, 1.0]
+RTSnd = [1.0, 0.7, 0.0, 1.0]
 default = [0.0, 1.0, 0.0, 1.0]
 
 R1 = 2.0
@@ -46,5 +47,7 @@ def gametypes(mask0, T, R, P, S, a2c, a2d, Z, a2eq, xeq, weq):
     xeq[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2eq[mask] = a2c[mask]*xeq[mask] + a2d[mask]*(1.0 - xeq[mask])
     weq[mask] = (T[mask] + S[mask])*xeq[mask]*(1.0 - xeq[mask]) + R[mask]*xeq[mask]*xeq[mask] + P[mask]*(1.0 - xeq[mask])*(1.0 - xeq[mask])
+    mask = (mask & (2.0*R <= T + S))
+    Z[mask] = RTSsd
     pass
 

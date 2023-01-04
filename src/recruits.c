@@ -53,7 +53,7 @@ struct rtype *create_recruits (int deaths, double wc)
 	return head;
 }
 
-void kill (struct rtype *recruit, struct itype *i_first, int n, int macromutation)
+void kill (struct rtype *recruit, struct itype *i_first, int n, int discrete)
 {
 	struct itype *i;
 	int pick;
@@ -67,7 +67,7 @@ void kill (struct rtype *recruit, struct itype *i_first, int n, int macromutatio
 
 		i = i_first + pick;
 		i->a2Default = recruit->a2Default;
-		if (macromutation == 0)
+		if (discrete == 0)
 		{
 			i->a2Decided = i->a2Default;
 		}

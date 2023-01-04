@@ -1,13 +1,13 @@
 #include <math.h>
 #include "sim.h"
 
-void decide_a2 (struct itype *i, struct itype *i_last, double amax, int indirectr, int macromutation)
+void decide_a2 (struct itype *i, struct itype *i_last, double amax, int indirectr, int discrete)
 {
 	for ( ; i < i_last; i++ )
 	{
 		if ( i->age == 0 || i->partner->age == 0 || (i->partner != i->oldpartner && indirectr == 0) )
 		{
-			if ( macromutation == 0 )
+			if ( discrete == 0 )
 			{
 				if ( fabs(i->a2Decided - i->a2Default) > i->MimicGrain )
 				{
@@ -26,7 +26,7 @@ void decide_a2 (struct itype *i, struct itype *i_last, double amax, int indirect
 				}
 			}
 		}
-		else if ( macromutation == 0 )
+		else if ( discrete == 0 )
 		{
 			int block = (i->partner->a2Seen - i->a2Decided) / i->MimicGrain;
 

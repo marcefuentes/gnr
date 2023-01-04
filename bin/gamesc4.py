@@ -57,7 +57,7 @@ else:
 
 nc = num
 nr = num
-MRT0 = b*mymodule.Rq
+MRT0 = mymodule.b*mymodule.Rq
 if givens[-1] > 0.9999999:
     givens[-1] = 0.9999999
 alphas = np.linspace(alphamax, alphamin, num=nr)

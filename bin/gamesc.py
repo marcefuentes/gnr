@@ -110,6 +110,7 @@ for given in givens:
     Z[(T > R) & (P > S)] = mymodule.prisoner
     Z[(T > R) & (P > S) & (2.0*R <= T + S)] = mymodule.RTSpd
     Z[(T >= R) & (P <= S)] = mymodule.snowdrift
+    Z[(T >= R) & (P <= S) & (2.0*R <= T + S)] = mymodule.RTSsd
     Z[R == P] = mymodule.nodilemma
 
     MRT = MRT0*(1.0 - given)

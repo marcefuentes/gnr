@@ -14,11 +14,11 @@ alphamin = 0.1
 alphamax = 0.9
 logesmin = -5.0
 logesmax = 5.0
-givenmin = 0.0
-givenmax = 1.0
+givenmin = 0.95
+givenmax = 0.95
 
 num = 21    # Number of subplot rows and columns
-numa2 = 4
+numa2 = 3
 ngiven = 21
 filename = 'gamesc'
 
@@ -37,18 +37,18 @@ else:
 
 nc = num
 nr = num
-MRT0 = b*mymodule.Rq
+MRT0 = mymodule.b*mymodule.Rq
 if givens[-1] > 0.9999999:
     givens[-1] = 0.9999999
 alphas = np.linspace(alphamax, alphamin, num=nr)
 logess = np.linspace(logesmin, logesmax, num=nc)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
-a2 = np.linspace(0.0, mymodule.a2max, num=numa2)
-a2f = np.tile(a2[:-1], [nr, nc])
-a2n = np.tile(a2[1:], [nr, nc])
-a2f = a2f.T
-a2n = a2n.T
+a2 = np.linspace(mymodule.a2max, 0.0, num=numa2)
+a2high = np.tile(a2[:-1], [nr, nc])
+a2low = np.tile(a2[1:], [nr, nc])
+a2high = a2high.T
+a2low = a2low.T
 RRR, AAA = np.meshgrid(rhos, np.repeat(alphas, numa2-1))
 xmin = logesmin
 xmax = logesmax
@@ -95,10 +95,10 @@ for given in givens:
         text = fig.text(0.90, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
 
     Z = np.full([nr*(numa2-1), nc, 4], mymodule.default)
-    T = mymodule.fitness(a2n, a2f, given, AAA, RRR)
-    R = mymodule.fitness(a2n, a2n, given, AAA, RRR)
-    P = mymodule.fitness(a2f, a2f, given, AAA, RRR)
-    S = mymodule.fitness(a2f, a2n, given, AAA, RRR)
+    T = mymodule.fitness(a2high, a2low, given, AAA, RRR)
+    R = mymodule.fitness(a2high, a2high, given, AAA, RRR)
+    P = mymodule.fitness(a2low, a2low, given, AAA, RRR)
+    S = mymodule.fitness(a2low, a2high, given, AAA, RRR)
     mask = (R < P)
     H = T[mask]
     T[mask] = S[mask]
@@ -111,6 +111,7 @@ for given in givens:
     Z[(T > R) & (P > S)] = mymodule.prisoner
     Z[(T > R) & (P > S) & (2.0*R <= T + S)] = mymodule.RTSpd
     Z[(T >= R) & (P <= S)] = mymodule.snowdrift
+    Z[(T >= R) & (P <= S) & (2.0*R <= T + S)] = mymodule.RTSsd
     Z[R == P] = mymodule.nodilemma
 
     MRT = MRT0*(1.0 - given)

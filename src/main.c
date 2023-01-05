@@ -262,7 +262,7 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 				prun->Given = gGiven;
 				prun->time = t + 1;
 				prun->wmax = wmax;
-				stats_period (i_first, i_last, prun, gN, ga2Min, ga2Max, gR2);
+				stats_period (i_first, i_last, prun, gN, ga2Min, ga2Max);
 				prun++;
 			}
 

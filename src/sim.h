@@ -66,7 +66,7 @@ void		choose_partner		(struct itype *i, struct itype *i_last, int groupsize);
 struct rtype	*create_recruits	(int deaths, double wc);
 void		free_recruits		(struct rtype *recruit);
 void		kill			(struct rtype *recruit, struct itype *i_first, int n, int discrete);
-void		stats_period		(struct itype *i_first, struct itype *i_last, struct pruntype *prun, int n, double amin, double amax, double r2);
+void		stats_period		(struct itype *i_first, struct itype *i_last, struct pruntype *prun, int n, double amin, double amax);
 void		stats_end		(struct pruntype *prun_first, struct pruntype *prun_last, struct ptype *p_first);
 void		stats_runs		(struct ptype *p, struct ptype *p_last, int runs);
 void		write_headers		(char *filename);

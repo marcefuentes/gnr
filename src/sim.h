@@ -3,6 +3,7 @@
 #define CONTINUOUS_V 5
 #define BINS 64
 #define BOOLEAN_V 2
+#define GAMES 8
 
 // Structures
 
@@ -17,6 +18,7 @@ struct ptype
 	double		summedian[CONTINUOUS_V], summedian2[CONTINUOUS_V];
 	double		sumiqr[CONTINUOUS_V], sumiqr2[CONTINUOUS_V];
 	double		sumb[BOOLEAN_V], sumb2[BOOLEAN_V];
+	double		sumgames[GAMES], sumgames2[GAMES];
 };
 
 struct pruntype
@@ -29,6 +31,7 @@ struct pruntype
 	double		median[CONTINUOUS_V];
 	double		iqr[CONTINUOUS_V];
 	double		frb[BOOLEAN_V];
+	double		frgames[GAMES];
 };
 
 struct itype
@@ -66,14 +69,16 @@ void		choose_partner		(struct itype *i, struct itype *i_last, int groupsize);
 struct rtype	*create_recruits	(int deaths, double wc);
 void		free_recruits		(struct rtype *recruit);
 void		kill			(struct rtype *recruit, struct itype *i_first, int n, int discrete);
-void		stats_period		(struct itype *i_first, struct itype *i_last, struct pruntype *prun, int n, double amin, double amax);
-void		stats_end		(struct pruntype *prun_first, struct pruntype *prun_last, struct ptype *p_first);
+void		stats_period		(struct itype *i, struct itype *i_last, struct pruntype *prun, int n, double amin, double amax);
+void		stats_end		(struct pruntype *prun, struct pruntype *prun_last, struct ptype *p);
 void		stats_runs		(struct ptype *p, struct ptype *p_last, int runs);
-void		write_headers		(char *filename);
+void		write_headers_csv	(char *filename);
 void		write_headers_i		(char *filename);
 void		write_headers_frq	(char *filename);
-void		write_stats		(char *filename, struct ptype *p, struct ptype *p_last);
+void		write_headers_gam	(char *filename);
+void		write_stats_csv		(char *filename, struct ptype *p, struct ptype *p_last);
 void		write_stats_frq		(char *filename, struct ptype *p, struct ptype *p_last);
+void		write_stats_gam		(char *filename, struct ptype *p, struct ptype *p_last);
 void		write_i			(char *filename, float alpha, float logES, float Given, struct itype *i, struct itype *i_last);
 void		write_time_elapsed	(char *filename, float time_elapsed);
 void		file_write_error	(char *filename);

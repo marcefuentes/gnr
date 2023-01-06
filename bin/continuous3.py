@@ -108,7 +108,7 @@ for t in ts:
         text = fig.text(0.90, 0.90, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')
 
     df = dfgam.loc[df.Time == t].copy()
-    for ax, frequency in zip(axs[0], ['nodilemmaRS', 'snowdrift', 'prisoners', 'prisonersRS']):
+    for ax, frequency in zip(axs[0], ['nodilemmaRS', 'snowdrift', 'prisoner', 'prisonerRS']):
         Z0 = pd.pivot_table(df, values=frequency, index=[pivindex], columns=['logES']).sort_index(axis=0, ascending=False)
         Z0 = Z0.to_numpy()
         Z = np.full([nr, nc, 4], mymodule.colormap[frequency])

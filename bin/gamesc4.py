@@ -40,7 +40,7 @@ def gametype (x, y, Z, given, alpha, rho):
     P[mask] = H
     Z[(T < R) & (P < S)] = mymodule.nodilemma
     Z[(T < R) & (P < S) & (2.0*R <= T + S)] = mymodule.RTSnd
-    Z[(T > R) & (P > S)] = mymodule.prisoners
+    Z[(T > R) & (P > S)] = mymodule.prisoner
     Z[(T > R) & (P > S) & (2.0*R <= T + S)] = mymodule.RTSpd
     Z[(T >= R) & (P <= S)] = mymodule.snowdrift
     Z[(T >= R) & (P <= S) & (2.0*R <= T + S)] = mymodule.RTSsd

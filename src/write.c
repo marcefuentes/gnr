@@ -84,8 +84,8 @@ void write_headers_gam (char *filename)
 						"nodilemmaRS",
 						"snowdrift",
 						"snowdriftRS",
-						"prisoners",
-						"prisonersRS",
+						"prisoner",
+						"prisonerRS",
 						"other" };
 
 	if ( (fp = fopen (filename, "a+")) == NULL )

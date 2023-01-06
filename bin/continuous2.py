@@ -110,7 +110,7 @@ for t in ts:
         text = fig.text(0.90, 0.90, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')
 
     df = dfgam.loc[df.Time == t].copy()
-    df['mostcommon'] = df[['equal', 'nodilemma', 'nodilemmaRS', 'snowdrift', 'snowdriftRS', 'prisoners', 'prisonersRS', 'other']].idxmax(axis=1)
+    df['mostcommon'] = df[['equal', 'nodilemma', 'nodilemmaRS', 'snowdrift', 'snowdriftRS', 'prisoner', 'prisonerRS', 'other']].idxmax(axis=1)
     df['rgba'] = df['mostcommon'].map(mymodule.colormap)
     Z0 = pd.pivot_table(df, values='mostcommon', index=[pivindex], columns=['logES'], aggfunc=lambda x: ' '.join(x)).sort_index(axis=0, ascending=False)
     Z0 = Z0.to_numpy()

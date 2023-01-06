@@ -11,6 +11,11 @@ import time
 
 start_time = time.perf_counter ()
 
+traits0 = ['nodilemmaRS', 'snowdrift', 'prisoner', 'prisonerRS']
+traitlabels0 = ['$\it{T}$ < $\it{R}$, $\it{P}$ < $\it{S}$\n2$\it{R}$ < $\it{T}$ + $\it{S}$', 
+                '$\it{T}$ > $\it{R}$, $\it{P}$ < $\it{S}$\n2$\it{R}$ > $\it{T}$ + $\it{S}$', 
+                '$\it{T}$ > $\it{R}$, $\it{P}$ > $\it{S}$\n2$\it{R}$ > $\it{T}$ + $\it{S}$', 
+                '$\it{T}$ > $\it{R}$, $\it{P}$ > $\it{S}$\n2$\it{R}$ < $\it{T}$ + $\it{S}$']
 traits = ['a2Seenmean', 'ChooseGrainmean', 'MimicGrainmean', 'wmean']
 traitlabels = ['Effort to get $\it{B}$', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner', 'Fitness']
 folders = ['none2', 'p', 'r', 'pr', 'p8r', 'given0']
@@ -90,7 +95,6 @@ for axrow in axs:
             ax.text(0, nr*1.035, 'a' + chr(letter - 26), fontsize=fslabel, weight='bold')
         ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
         if ax.get_subplotspec().is_first_row():
-            ax.set_title('Game types', pad=50.0, fontsize=fslabel)
             pos = ax.get_position()
             newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
             ax.set_position(newpos)
@@ -99,6 +103,8 @@ for axrow in axs:
         if ax.get_subplotspec().is_last_row():
             ax.set_xticklabels(xticklabels, fontsize=fstick)
         letter += 1
+for ax, traitlabel in zip(axs[0], traitlabels0):
+    ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 for ax, traitlabel in zip(axs[1], traitlabels):
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
@@ -108,10 +114,10 @@ for t in ts:
         text = fig.text(0.90, 0.90, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')
 
     df = dfgam.loc[df.Time == t].copy()
-    for ax, frequency in zip(axs[0], ['nodilemmaRS', 'snowdrift', 'prisoner', 'prisonerRS']):
-        Z0 = pd.pivot_table(df, values=frequency, index=[pivindex], columns=['logES']).sort_index(axis=0, ascending=False)
+    for ax, trait in zip(axs[0], traits0):
+        Z0 = pd.pivot_table(df, values=trait, index=[pivindex], columns=['logES']).sort_index(axis=0, ascending=False)
         Z0 = Z0.to_numpy()
-        Z = np.full([nr, nc, 4], mymodule.colormap[frequency])
+        Z = np.full([nr, nc, 4], mymodule.colormap[trait])
         for i in range(Z0.shape[0]):
             for j in range(Z0.shape[1]):
                 Z[i, j] = Z[i, j]*Z0[i, j]

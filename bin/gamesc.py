@@ -93,7 +93,7 @@ for given in givens:
     if movie:
         text = fig.text(0.90, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
 
-    Z = np.full([nr*numa2, nc*numa2, 4], mymodule.default)
+    Z = np.full([nr*numa2, nc*numa2, 4], mymodule.colormap['default'])
     T = mymodule.fitness(Y, X, given, AAA, RRR)
     R = mymodule.fitness(Y, Y, given, AAA, RRR)
     P = mymodule.fitness(X, X, given, AAA, RRR)
@@ -105,13 +105,13 @@ for given in givens:
     H = R[mask]
     R[mask] = P[mask]
     P[mask] = H
-    Z[(T < R) & (P < S)] = mymodule.nodilemma
-    Z[(T < R) & (P < S) & (2.0*R <= T + S)] = mymodule.RTSnd
-    Z[(T > R) & (P > S)] = mymodule.prisoner
-    Z[(T > R) & (P > S) & (2.0*R <= T + S)] = mymodule.RTSpd
-    Z[(T >= R) & (P <= S)] = mymodule.snowdrift
-    Z[(T >= R) & (P <= S) & (2.0*R <= T + S)] = mymodule.RTSsd
-    Z[R == P] = mymodule.nodilemma
+    Z[(T < R) & (P < S)] = mymodule.colormap['nodilemma']
+    Z[(T < R) & (P < S) & (2.0*R <= T + S)] = mymodule.colormap['nodilemmaRS']
+    Z[(T > R) & (P > S)] = mymodule.colormap['prisoner']
+    Z[(T > R) & (P > S) & (2.0*R <= T + S)] = mymodule.colormap['prisonerRS']
+    Z[(T >= R) & (P <= S)] = mymodule.colormap['snowdrift']
+    Z[(T >= R) & (P <= S) & (2.0*R <= T + S)] = mymodule.colormap['snowdriftRS']
+    Z[R == P] = mymodule.colormap['nodilemma']
 
     MRT = MRT0*(1.0 - given)
     Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))

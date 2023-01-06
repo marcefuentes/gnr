@@ -101,14 +101,14 @@ for axrow, alpha in zip(axs, alphas):
     H = R[mask]
     R[mask] = P[mask]
     P[mask] = H
-    Z = np.full((nr*numa2, nc*numa2, 4), mymodule.default)
-    Z[(T < R) & (P < S)] = mymodule.nodilemma
-    Z[(T < R) & (P < S) & (2.0*R <= T + S)] = mymodule.RTSnd
-    Z[(T > R) & (P > S)] = mymodule.prisoner
-    Z[(T > R) & (P > S) & (2.0*R <= T + S)] = mymodule.RTSpd
-    Z[(T >= R) & (P <= S)] = mymodule.snowdrift
-    Z[(T >= R) & (P <= S) & (2.0*R <= T + S)] = mymodule.RTSsd
-    Z[R == P] = mymodule.nodilemma
+    Z = np.full((nr*numa2, nc*numa2, 4), mymodule.colormap['default'])
+    Z[(T < R) & (P < S)] = mymodule.colormap['nodilemma']
+    Z[(T < R) & (P < S) & (2.0*R <= T + S)] = mymodule.colormap['nodilemmaRS']
+    Z[(T > R) & (P > S)] = mymodule.colormap['prisoner']
+    Z[(T > R) & (P > S) & (2.0*R <= T + S)] = mymodule.colormap['prisonerRS']
+    Z[(T >= R) & (P <= S)] = mymodule.colormap['snowdrift']
+    Z[(T >= R) & (P <= S) & (2.0*R <= T + S)] = mymodule.colormap['snowdriftRS']
+    Z[R == P] = mymodule.colormap['nodilemma']
 
     axrow[0].imshow(Z, extent=extenta2)
 

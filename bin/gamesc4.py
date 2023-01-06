@@ -119,19 +119,19 @@ for given in givens:
     weq = mymodule.fitness(a2eq, a2eq, given, AA, RR)
     Mss = [[a2social, wsocial], [a2eq, weq]]
 
-    Z0 = np.full([nr, nc, 4], mymodule.default)
+    Z0 = np.full([nr, nc, 4], mymodule.colormap['default'])
     a2 = 1.01*a2eq
     mask = (a2 > 1.0)
     a2[mask] = ones[mask]
     Z0 = gametype(a2eq, a2, Z0, given, AA, RR)
 
-    Z1 = np.full([nr, nc, 4], mymodule.default)
+    Z1 = np.full([nr, nc, 4], mymodule.colormap['default'])
     a2 = 0.99*a2eq
     mask = (a2 < 0.0)
     a2[mask] = zeros[mask]
     Z1 = gametype(a2eq, a2, Z1, given, AA, RR)
 
-    Z = np.full([nr*2, nc, 4], mymodule.default)
+    Z = np.full([nr*2, nc, 4], mymodule.colormap['default'])
     Z[::2,:] = Z1
     Z[1::2,:] = Z0
 

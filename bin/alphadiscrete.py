@@ -110,8 +110,8 @@ for axrow, alpha in zip(axs, alphas):
     a2eq = np.copy(zeros)
     weq = np.copy(zeros)
     xeq = np.copy(zeros)
-    Z0 = np.full([nr, nc, 4], mymodule.default)
-    Z1 = np.full([nr, nc, 4], mymodule.default)
+    Z0 = np.full([nr, nc, 4], mymodule.colormap['default'])
+    Z1 = np.full([nr, nc, 4], mymodule.colormap['default'])
 
     mask0 = (w00 > w11)
     T = np.copy(w01)
@@ -141,7 +141,7 @@ for axrow, alpha in zip(axs, alphas):
     S = np.copy(w12)
     mymodule.gametypes(mask0, T, R, P, S, a22, a21, Z1, a2eq, xeq, weq)
 
-    Z = np.full([nr*numa2, nc, 4], mymodule.default)
+    Z = np.full([nr*numa2, nc, 4], mymodule.colormap['default'])
     Z[::2,:] = Z1
     Z[1::2,:] = Z0
 

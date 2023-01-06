@@ -100,8 +100,8 @@ for given in givens:
     if movie:
         text = fig.text(0.90, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
 
-    Z0 = np.full([nr, nc, 4], mymodule.default)
-    Z1 = np.full([nr, nc, 4], mymodule.default)
+    Z0 = np.full([nr, nc, 4], mymodule.colormap['default'])
+    Z1 = np.full([nr, nc, 4], mymodule.colormap['default'])
     a2eq0 = np.copy(zeros)
     a2eq1 = np.copy(zeros)
     weq0 = np.copy(zeros)
@@ -150,7 +150,7 @@ for given in givens:
 
     Mss = [[a2social, wsocial], [a2eq, weq]]
 
-    Z = np.full([nr*numa2, nc, 4], mymodule.default)
+    Z = np.full([nr*numa2, nc, 4], mymodule.colormap['default'])
     Z[::2,:] = Z1
     Z[1::2,:] = Z0
 

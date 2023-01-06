@@ -95,7 +95,7 @@ for given in givens:
     if movie:
         text = fig.text(0.90, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
 
-    Z = np.full([nr, nc, 4], mymodule.default)
+    Z = np.full([nr, nc, 4], mymodule.colormap['default'])
     a2eq = np.copy(zeros)
     weq = np.copy(zeros)
     xeq = np.copy(zeros)

@@ -108,8 +108,8 @@ for given in givens:
     P[mask] = H
     Z[(T < R) & (P < S)] = mymodule.colormap['nodilemma']
     Z[(T < R) & (P < S) & (2.0*R <= T + S)] = mymodule.colormap['nodilemmaRS']
-    Z[(T > R) & (P > S)] = mymodule.colormap['prisoner']
-    Z[(T > R) & (P > S) & (2.0*R <= T + S)] = mymodule.colormap['prisonerRS']
+    Z[(T > R) & (P > S)] = mymodule.colormap['prisoners']
+    Z[(T > R) & (P > S) & (2.0*R <= T + S)] = mymodule.colormap['prisonersRS']
     Z[(T >= R) & (P <= S)] = mymodule.colormap['snowdrift']
     Z[(T >= R) & (P <= S) & (2.0*R <= T + S)] = mymodule.colormap['snowdriftRS']
     Z[R == P] = mymodule.colormap['nodilemma']

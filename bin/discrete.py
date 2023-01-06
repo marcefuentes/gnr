@@ -82,8 +82,8 @@ a22 = a20 + mymodule.a2max
 a2eq = np.copy(zeros)
 weq = np.copy(zeros)
 xeq = np.copy(zeros)
-Z0 = np.full([nr, nc, 4], mymodule.default)
-Z1 = np.full([nr, nc, 4], mymodule.default)
+Z0 = np.full([nr, nc, 4], mymodule.colormap['default'])
+Z1 = np.full([nr, nc, 4], mymodule.colormap['default'])
 
 w00 = mymodule.fitness(a20, a20, GG, AA, RR)
 w01 = mymodule.fitness(a20, a21, GG, AA, RR)
@@ -123,7 +123,7 @@ P = np.copy(w11)
 S = np.copy(w12)
 mymodule.gametypes(mask0, T, R, P, S, a22, a21, Z1, a2eq, xeq, weq)
 
-Z = np.full([nr*numa2, nc, 4], mymodule.default)
+Z = np.full([nr*numa2, nc, 4], mymodule.colormap['default'])
 Z[::2,:] = Z1
 Z[1::2,:] = Z0
 
@@ -164,8 +164,8 @@ for t in ts:
 
     for axrow, df in zip(axs[1:], dfs):
         for ax, trait, traitvmax in zip(axrow, traits, traitvmaxs):
-            df_piv = pd.pivot_table(df.loc[df.Time == t], values=trait, index=[pivindex], columns=['logES']).sort_index(axis=0, ascending=False)
-            ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
+            Z = pd.pivot_table(df.loc[df.Time == t], values=trait, index=[pivindex], columns=['logES']).sort_index(axis=0, ascending=False)
+            ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
 
     if movie:
         plt.savefig('temp.png', transparent=False)

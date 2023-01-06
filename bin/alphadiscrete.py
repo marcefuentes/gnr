@@ -155,12 +155,12 @@ for t in ts:
     for axrow, dfp, dfr in zip(axs, dfps, dfrs):
         df = dfp.loc[dfp.Time == t].copy()
         df[traits[0]] = 1.0 - df[traits[0]]
-        df_piv = pd.pivot_table(df, values=traits[0], index=[pivindex], columns=['logES']).sort_index(axis=0, ascending=False)
-        axrow[1].imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmaxs[0])
+        Z = pd.pivot_table(df, values=traits[0], index=[pivindex], columns=['logES']).sort_index(axis=0, ascending=False)
+        axrow[1].imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmaxs[0])
         df = dfr.loc[dfr.Time == t].copy()
         df[traits[1]] = 1.0 - df[traits[1]]
-        df_piv = pd.pivot_table(df, values=traits[1], index=[pivindex], columns=['logES']).sort_index(axis=0, ascending=False)
-        axrow[2].imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmaxs[1])
+        Z = pd.pivot_table(df, values=traits[1], index=[pivindex], columns=['logES']).sort_index(axis=0, ascending=False)
+        axrow[2].imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmaxs[1])
 
     if movie:
         plt.savefig('temp.png', transparent=False)

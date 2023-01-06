@@ -1,12 +1,14 @@
 #! /usr/bin/env python
 
-prisoner = [0.5, 0.5, 0.5, 1.0]
-RTSpd = [1.0, 0.3, 0.0, 1.0]
-snowdrift = [0.0, 1.0, 1.0, 1.0]
-RTSsd = [0.0, 0.5, 1.0, 1.0]
-nodilemma = [1.0, 1.0, 1.0, 1.0]
-RTSnd = [1.0, 0.7, 0.0, 1.0]
-default = [0.0, 1.0, 0.0, 1.0]
+colormap = {
+    'prisoner' : [0.5, 0.5, 0.5, 1.0],
+    'prisonerRS' : [1.0, 0.3, 0.0, 1.0],
+    'snowdrift' : [0.0, 1.0, 1.0, 1.0],
+    'snowdriftRS' : [0.0, 0.5, 1.0, 1.0],
+    'nodilemma' : [1.0, 1.0, 1.0, 1.0],
+    'nodilemmaRS' : [1.0, 0.7, 0.0, 1.0],
+    'default' : [0.0, 1.0, 0.0, 1.0]
+}
 
 R1 = 2.0
 R2 = 2.0
@@ -31,23 +33,23 @@ def fitness(x, y, given, alpha, rho):
 
 def gametypes(mask0, T, R, P, S, a2c, a2d, Z, a2eq, xeq, weq):
     mask = (mask0 & (T < R) & (P < S))
-    Z[mask] = nodilemma
+    Z[mask] = colormap['nodilemma']
     a2eq[mask] = a2c[mask]
     weq[mask] = R[mask]
     mask = (mask & (2.0*R <= T + S))
-    Z[mask] = RTSnd
+    Z[mask] = colormap['nodilemmaRS']
     mask = (mask0 & (T > R) & (P > S))
-    Z[mask] = prisoner
+    Z[mask] = colormap['prisoner']
     a2eq[mask] = a2d[mask]
     weq[mask] = P[mask]
     mask = (mask & (2.0*R <= T + S))
-    Z[mask] = RTSpd
+    Z[mask] = colormap['prisonerRS']
     mask = (mask0 & (T >= R) & (P <= S))
-    Z[mask] = snowdrift
+    Z[mask] = colormap['snowdrift']
     xeq[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2eq[mask] = a2c[mask]*xeq[mask] + a2d[mask]*(1.0 - xeq[mask])
     weq[mask] = (T[mask] + S[mask])*xeq[mask]*(1.0 - xeq[mask]) + R[mask]*xeq[mask]*xeq[mask] + P[mask]*(1.0 - xeq[mask])*(1.0 - xeq[mask])
     mask = (mask & (2.0*R <= T + S))
-    Z[mask] = RTSsd
+    Z[mask] = colormap['snowdriftRS']
     pass
 

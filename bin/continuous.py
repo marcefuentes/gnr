@@ -148,8 +148,8 @@ for t in ts:
 
     for axrow, df in zip(axs[1:], dfs):
         for ax, trait, traitvmax in zip(axrow, traits, traitvmaxs):
-            df_piv = pd.pivot_table(df.loc[df.Time == t], values=trait, index=[pivindex], columns=['logES']).sort_index(axis=0, ascending=False)
-            ax.imshow(df_piv, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
+            Z = pd.pivot_table(df.loc[df.Time == t], values=trait, index=[pivindex], columns=['logES']).sort_index(axis=0, ascending=False)
+            ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
 
     if movie:
         plt.savefig('temp.png', transparent=False)

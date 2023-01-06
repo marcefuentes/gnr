@@ -120,7 +120,7 @@ for t in ts:
         Z = np.full([nr, nc, 4], mymodule.colormap[trait])
         for i in range(Z0.shape[0]):
             for j in range(Z0.shape[1]):
-                Z[i, j] = Z[i, j]*Z0[i, j]
+                Z[i, j] = (1.0 - Z[i, j])*(1.0 - Z0[i, j]) + Z[i, j]
         ax.imshow(Z, extent=extent)
 
     for axrow, df in zip(axs[1:], dfs):

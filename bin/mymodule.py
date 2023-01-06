@@ -1,13 +1,13 @@
 #! /usr/bin/env python
 
 colormap = {
+    'default' : [0.0, 1.0, 0.0, 1.0],
+    'nodilemma' : [1.0, 1.0, 1.0, 1.0],
+    'nodilemmaRS' : [1.0, 0.7, 0.0, 1.0],
     'prisoner' : [0.5, 0.5, 0.5, 1.0],
     'prisonerRS' : [1.0, 0.3, 0.0, 1.0],
     'snowdrift' : [0.0, 1.0, 1.0, 1.0],
-    'snowdriftRS' : [0.0, 0.5, 1.0, 1.0],
-    'nodilemma' : [1.0, 1.0, 1.0, 1.0],
-    'nodilemmaRS' : [1.0, 0.7, 0.0, 1.0],
-    'default' : [0.0, 1.0, 0.0, 1.0]
+    'snowdriftRS' : [0.0, 0.5, 1.0, 1.0]
 }
 
 R1 = 2.0

@@ -13,8 +13,8 @@ start_time = time.perf_counter ()
 
 traits0 = ['nodilemmaRS', 'snowdrift', 'prisoner', 'prisonerRS']
 traitlabels0 = ['$\it{T}$ < $\it{R}$, $\it{P}$ < $\it{S}$\n2$\it{R}$ < $\it{T}$ + $\it{S}$', 
-                '$\it{T}$ > $\it{R}$, $\it{P}$ < $\it{S}$\n2$\it{R}$ > $\it{T}$ + $\it{S}$', 
-                '$\it{T}$ > $\it{R}$, $\it{P}$ > $\it{S}$\n2$\it{R}$ > $\it{T}$ + $\it{S}$', 
+                'Snowdrift', 
+                'Prisoner\'s dilemma', 
                 '$\it{T}$ > $\it{R}$, $\it{P}$ > $\it{S}$\n2$\it{R}$ < $\it{T}$ + $\it{S}$']
 traits = ['a2Seenmean', 'ChooseGrainmean', 'MimicGrainmean', 'wmean']
 traitlabels = ['Effort to get $\it{B}$', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner', 'Fitness']

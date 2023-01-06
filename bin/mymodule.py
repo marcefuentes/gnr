@@ -1,8 +1,8 @@
 #! /usr/bin/env python
 
 colormap = {
-    'prisoner' : [0.5, 0.5, 0.5, 1.0],
-    'prisonerRS' : [1.0, 0.3, 0.0, 1.0],
+    'prisoners' : [0.5, 0.5, 0.5, 1.0],
+    'prisonersRS' : [1.0, 0.3, 0.0, 1.0],
     'snowdrift' : [0.0, 1.0, 1.0, 1.0],
     'snowdriftRS' : [0.0, 0.5, 1.0, 1.0],
     'nodilemma' : [1.0, 1.0, 1.0, 1.0],
@@ -39,11 +39,11 @@ def gametypes(mask0, T, R, P, S, a2c, a2d, Z, a2eq, xeq, weq):
     mask = (mask & (2.0*R <= T + S))
     Z[mask] = colormap['nodilemmaRS']
     mask = (mask0 & (T > R) & (P > S))
-    Z[mask] = colormap['prisoner']
+    Z[mask] = colormap['prisoners']
     a2eq[mask] = a2d[mask]
     weq[mask] = P[mask]
     mask = (mask & (2.0*R <= T + S))
-    Z[mask] = colormap['prisonerRS']
+    Z[mask] = colormap['prisonersRS']
     mask = (mask0 & (T >= R) & (P <= S))
     Z[mask] = colormap['snowdrift']
     xeq[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])

@@ -68,6 +68,10 @@ fig = plt.figure(figsize=(16, 8))
 fig.supxlabel(xlabel, x=0.525, y=0.03, fontsize=fslabel)
 fig.supylabel(ylabel, x=0.05, y=0.52, fontsize=fslabel)
 
+xdata = [0.0, 0.5, 1.0]
+my_cmap = plt.get_cmap('magma')
+colors = my_cmap(xdata)
+
 outergrid = fig.add_gridspec(1, 2, left=0.15, right=0.9, top=0.86, bottom=0.176)
 
 for t in ts:
@@ -76,17 +80,17 @@ for t in ts:
         axs = innergrid.subplots()
         for axrow in axs:
             for ax in axrow:
-                ax.set(xticks=[], yticks=[], ylim=(0.0, 1.1))
+                ax.set(xticks=[], yticks=[], ylim=(0.0, 1.0))
         for ax, loges in zip(axs[-1, ::everyx], logess[::everyx]):
             ax.set_xlabel(round(loges), fontsize=fstick)
         for ax, row in zip(axs[::everyy, 0], rows[::everyy]):
             ax.set_ylabel(f'{row:1.1f}', rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
         for axrow, row in zip(axs, rows):
             for ax, loges in zip(axrow, logess):
+                barheight = []
                 for b in ['a2Seen0', 'a2Seen31', 'a2Seen63']:
-                    barheight = df.loc[(df['Time'] == t) & (df['logES'] == loges) & (df[rowname] == row), b]
-                    ax.bar(x=b, height=barheight, align='edge')
-
+                    barheight.append(df.loc[(df['Time'] == t) & (df['logES'] > loges - 0.1) & (df['logES'] < loges + 0.1) & (df[rowname] == row), b].values[0])
+                ax.bar(x=xdata, height=barheight, align='edge', width=1.0/2.0, color=colors)
     if movie:
         text = fig.text(0.90, 0.90, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')
         plt.savefig('temp.png', transparent=False)

@@ -11,8 +11,8 @@ import time
 start_time = time.perf_counter ()
 
 traits = ['a2Seen0', 'a2Seen31', 'a2Seen63']
-folders = ['none', 'r']
-movie = False
+folders = ['none', 'p']
+movie = True
 
 filename = 'histogram'
 fslabel = 32 # Label font size
@@ -80,17 +80,18 @@ for t in ts:
         axs = innergrid.subplots()
         for axrow in axs:
             for ax in axrow:
-                ax.set(xticks=[], yticks=[], ylim=(0.0, 1.0))
+                ax.set(xticks=[], yticks=[], xlim=(0.0, 1.0), ylim=(0.0, 1.0))
         for ax, loges in zip(axs[-1, ::everyx], logess[::everyx]):
             ax.set_xlabel(round(loges), fontsize=fstick)
         for ax, row in zip(axs[::everyy, 0], rows[::everyy]):
             ax.set_ylabel(f'{row:1.1f}', rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
         for axrow, row in zip(axs, rows):
             for ax, loges in zip(axrow, logess):
-                barheight = []
-                for b in ['a2Seen0', 'a2Seen31', 'a2Seen63']:
-                    barheight.append(df.loc[(df['Time'] == t) & (df['logES'] > loges - 0.1) & (df['logES'] < loges + 0.1) & (df[rowname] == row), b].values[0])
-                ax.bar(x=xdata, height=barheight, align='edge', width=1.0/2.0, color=colors)
+                bottom = 0.0
+                for b, c in zip(['a2Seen0', 'a2Seen31', 'a2Seen63'], colors):
+                    barheight = df.loc[(df['Time'] == t) & (df['logES'] > loges - 0.1) & (df['logES'] < loges + 0.1) & (df[rowname] == row), b].values[0]
+                    ax.bar(x=0.5, height=barheight, bottom=bottom, width=1.0, color=c)
+                    bottom = bottom + barheight
     if movie:
         text = fig.text(0.90, 0.90, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')
         plt.savefig('temp.png', transparent=False)

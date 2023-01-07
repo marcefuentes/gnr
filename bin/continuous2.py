@@ -11,6 +11,11 @@ import time
 
 start_time = time.perf_counter ()
 
+traits0 = ['nodilemmaRS', 'snowdrift', 'prisoner', 'prisonerRS']
+traitlabels0 = ['$\it{T}$ < $\it{R}$, $\it{P}$ < $\it{S}$\n2$\it{R}$ < $\it{T}$ + $\it{S}$', 
+                'Snowdrift', 
+                'Prisoner\'s dilemma', 
+                'Prisoner\'s dilemma\n2$\it{R}$ < $\it{T}$ + $\it{S}$']
 traits = ['a2Seenmean', 'ChooseGrainmean', 'MimicGrainmean', 'wmean']
 traitlabels = ['Effort to get $\it{B}$', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner', 'Fitness']
 folders = ['none2', 'p', 'r', 'pr', 'p8r', 'given0']
@@ -78,29 +83,28 @@ yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
 extent = 0, nc, 0, nr
 
 fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+1)))
-fig.delaxes(axs[0, 1])
-fig.delaxes(axs[0, 2])
-fig.delaxes(axs[0, 3])
 fig.supxlabel(xlabel, x=0.513, y=0.06, fontsize=fslabel*1.50)
 fig.supylabel(ylabel, x=0.05, y=0.493, fontsize=fslabel*1.50, ha='center')
 
-letter = ord('b')
+letter = ord('a')
 for axrow in axs:
     for ax in axrow:
+        if letter <= ord('z'): 
+            ax.text(0, nr*1.035, chr(letter), fontsize=fslabel, weight='bold')
+        else:
+            ax.text(0, nr*1.035, 'a' + chr(letter - 26), fontsize=fslabel, weight='bold')
         ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
         if ax.get_subplotspec().is_first_row():
-            ax.set_title('Game types', pad=50.0, fontsize=fslabel)
-            ax.text(0, nr*1.035, 'a', fontsize=fslabel, weight='bold')
             pos = ax.get_position()
             newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
             ax.set_position(newpos)
-        else:
-            ax.text(0, nr*1.035, chr(letter), fontsize=fslabel, weight='bold')
-            letter += 1
         if ax.get_subplotspec().is_first_col():
             ax.set_yticklabels(yticklabels, fontsize=fstick) 
         if ax.get_subplotspec().is_last_row():
             ax.set_xticklabels(xticklabels, fontsize=fstick)
+        letter += 1
+for ax, traitlabel in zip(axs[0], traitlabels0):
+    ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 for ax, traitlabel in zip(axs[1], traitlabels):
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
@@ -110,15 +114,14 @@ for t in ts:
         text = fig.text(0.90, 0.90, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')
 
     df = dfgam.loc[df.Time == t].copy()
-    df['mostcommon'] = df[['equal', 'nodilemma', 'nodilemmaRS', 'snowdrift', 'snowdriftRS', 'prisoner', 'prisonerRS', 'other']].idxmax(axis=1)
-    df['rgba'] = df['mostcommon'].map(mymodule.colormap)
-    Z0 = pd.pivot_table(df, values='mostcommon', index=[pivindex], columns=['logES'], aggfunc=lambda x: ' '.join(x)).sort_index(axis=0, ascending=False)
-    Z0 = Z0.to_numpy()
-    Z = np.full([nr, nc, 4], mymodule.colormap['default'])
-    for i in range(Z0.shape[0]):
-        for j in range(Z0.shape[1]):
-            Z[i, j] = mymodule.colormap[Z0[i, j]]
-    axs[0, 0].imshow(Z, extent=extent)
+    for ax, trait in zip(axs[0], traits0):
+        Z0 = pd.pivot_table(df, values=trait, index=[pivindex], columns=['logES']).sort_index(axis=0, ascending=False)
+        Z0 = Z0.to_numpy()
+        Z = np.full([nr, nc, 4], mymodule.colormap[trait])
+        for i in range(Z0.shape[0]):
+            for j in range(Z0.shape[1]):
+                Z[i, j] = (1.0 - Z[i, j])*(1.0 - Z0[i, j]) + Z[i, j]
+        ax.imshow(Z, extent=extent)
 
     for axrow, df in zip(axs[1:], dfs):
         for ax, trait, traitvmax in zip(axrow, traits, traitvmaxs):

@@ -112,9 +112,6 @@ for ax, alpha in zip(axs[::every, 0], alphas[::every]):
 
 for given in givens:
 
-    if movie:
-        text = fig.text(0.90, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
-
     MRT = MRT0*(1.0 - given)
     Q = Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
     a2ss = a2max/(1.0 + Q*b)
@@ -133,10 +130,11 @@ for given in givens:
             ax.plot(q1_ic, indifference(q1_ic, weq, alpha, rho), linewidth=4, alpha= 0.8, c=cm.magma(weq/traitvmax))
 
     if movie:
+        text = fig.text(0.90, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
         plt.savefig('temp.png', transparent=False)
+        text.remove()
         frames.append(iio.imread('temp.png'))
         os.remove('temp.png')
-        text.remove()
     else:
         plt.savefig(filename + '.png', transparent=False)
 

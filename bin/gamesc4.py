@@ -107,9 +107,6 @@ for ax, traitlabel in zip(axs[1], traitlabels):
 
 for given in givens:
 
-    if movie:
-        text = fig.text(0.90, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
-
     MRT = MRT0*(1.0 - given)
     Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
     a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
@@ -142,10 +139,11 @@ for given in givens:
             ax.imshow(M, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
 
     if movie:
+        text = fig.text(0.90, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
         plt.savefig('temp.png', transparent=False)
+        text.remove()
         frames.append(iio.imread('temp.png'))
         os.remove('temp.png')
-        text.remove()
     else:
         plt.savefig(filename + '.png', transparent=False)
 

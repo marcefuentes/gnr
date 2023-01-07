@@ -113,10 +113,6 @@ for axrow, alpha in zip(axs, alphas):
     axrow[0].imshow(Z, extent=extenta2)
 
 for t in ts:
-
-    if movie:
-        text = fig.text(0.90, 0.90, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')
-
     for axrow, dfp, dfr in zip(axs, dfps, dfrs):
         df = dfp.loc[dfp.Time == t].copy()
         df[traits[0]] = 1.0 - df[traits[0]]
@@ -126,12 +122,12 @@ for t in ts:
         df[traits[1]] = 1.0 - df[traits[1]]
         Z = pd.pivot_table(df, values=traits[1], index=[pivindex], columns=['logES']).sort_index(axis=0, ascending=False)
         axrow[2].imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmaxs[1])
-
     if movie:
+        text = fig.text(0.90, 0.90, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')
         plt.savefig('temp.png', transparent=False)
+        text.remove()
         frames.append(iio.imread('temp.png'))
         os.remove('temp.png')
-        text.remove()
     else:
         plt.savefig(filename + '.png', transparent=False)
 

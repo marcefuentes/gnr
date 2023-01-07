@@ -11,7 +11,7 @@ import time
 start_time = time.perf_counter ()
 
 traits = ['a2Seen0', 'a2Seen31', 'a2Seen63']
-folders = ['none', 'p']
+folders = ['none', 'r']
 movie = False
 
 filename = 'histogram'

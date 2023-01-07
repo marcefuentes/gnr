@@ -91,9 +91,6 @@ for ax, traitlabel in zip(axs[1], traitlabels):
 
 for given in givens:
 
-    if movie:
-        text = fig.text(0.90, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
-
     Z = np.full([nr*numa2, nc*numa2, 4], mymodule.colormap['default'])
     T = mymodule.fitness(a2high, a2low, given, AAA, RRR)
     R = mymodule.fitness(a2high, a2high, given, AAA, RRR)
@@ -130,10 +127,11 @@ for given in givens:
             ax.imshow(M, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
 
     if movie:
+        text = fig.text(0.90, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
         plt.savefig('temp.png', transparent=False)
+        text.remove()
         frames.append(iio.imread('temp.png'))
         os.remove('temp.png')
-        text.remove()
     else:
         plt.savefig(filename + '.png', transparent=False)
 

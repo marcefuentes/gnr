@@ -74,9 +74,6 @@ for ax, alpha in zip(axs[::every, 0], alphas[::every]):
 
 for given in givens:
 
-    if movie:
-        text = fig.text(0.90, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
-
     Z = np.full([nr, nc, 4], mymodule.colormap['default'])
     Tf = np.copy(zeros)
     Rf = np.copy(zeros)
@@ -118,10 +115,11 @@ for given in givens:
             ax.plot(xaxis, y, c=zz, linewidth=3, marker='o', markerfacecolor='white', markersize=3)
 
     if movie:
+        text = fig.text(0.90, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
         plt.savefig('temp.png', transparent=False)
+        text.remove()
         frames.append(iio.imread('temp.png'))
         os.remove('temp.png')
-        text.remove()
     else:
         plt.savefig(filename + '.png', transparent=False)
 

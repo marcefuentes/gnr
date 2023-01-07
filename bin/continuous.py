@@ -142,20 +142,16 @@ for ax, traitlabel in zip(axs[1], traitlabels):
 axs[0, 0].imshow(Z, extent=extenta2)
 
 for t in ts:
-
-    if movie:
-        text = fig.text(0.90, 0.90, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')
-
     for axrow, df in zip(axs[1:], dfs):
         for ax, trait, traitvmax in zip(axrow, traits, traitvmaxs):
             Z = pd.pivot_table(df.loc[df.Time == t], values=trait, index=[pivindex], columns=['logES']).sort_index(axis=0, ascending=False)
             ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
-
     if movie:
+        text = fig.text(0.90, 0.90, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')
         plt.savefig('temp.png', transparent=False)
+        text.remove()
         frames.append(iio.imread('temp.png'))
         os.remove('temp.png')
-        text.remove()
     else:
         plt.savefig(filename + '.png', transparent=False)
 

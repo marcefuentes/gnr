@@ -83,7 +83,7 @@ for t in ts:
             for ax, loges in zip(axrow, logess):
                 bottom = 0.0
                 for b, c in zip(['a2Seen0', 'a2Seen31', 'a2Seen63'], colors):
-                    barheight = df.loc[(df['Time'] == t) & (df['logES'] > loges - 0.1) & (df['logES'] < loges + 0.1) & (df[rowname] == row), b].values[0]
+                    barheight = df.loc[(df['Time'] == t) & (df['logES'] > loges - 0.1) & (df['logES'] < loges + 0.1) & (df[rowindex] == row), b].values[0]
                     ax.bar(x=0.5, height=barheight, bottom=bottom, width=1.0, color=c)
                     bottom = bottom + barheight
     if movie:

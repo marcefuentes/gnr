@@ -45,16 +45,14 @@ if movie:
     frames = []
 else:
     ts = [ts[-1]]
-givens = np.sort(pd.unique(df.Given))[::-1]
-if givens[0] > 0.9999999:
-    givens[0] = 0.9999999
 logess = np.sort(pd.unique(df.logES))
+givens = np.sort(pd.unique(df.Given))[::-1]
 alphas = np.sort(pd.unique(df.alpha))[::-1]
+
 nc = len(logess)
 xmin = logess[0]
 xmax = logess[-1]
 xlabel = 'Substitutability of $\it{B}$'
-
 if len(givens) > 1:
     nr = len(givens)
     ymin = givens[-1]

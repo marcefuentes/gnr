@@ -31,10 +31,9 @@ if movie:
     frames = []
 else:
     ts = [ts[-1]]
-logess = pd.unique(df.logES)
-givens = pd.unique(df.Given)
-alphas = pd.unique(df.alpha)
-
+givens = np.sort(pd.unique(df.Given))[::-1]
+logess = np.sort(pd.unique(df.logES))
+alphas = np.sort(pd.unique(df.alpha))[::-1]
 nc = len(logess)
 xmin = np.amin(logess)
 xmax = np.amax(logess)

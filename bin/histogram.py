@@ -58,9 +58,9 @@ fig = plt.figure(figsize=(16, 8))
 fig.supxlabel(xlabel, x=0.525, y=0.03, fontsize=fslabel)
 fig.supylabel(ylabel, x=0.05, y=0.52, fontsize=fslabel)
 
-xdata = [0.0, 0.5, 1.0]
+bins = [0.0, 0.5, 1.0]
 my_cmap = plt.get_cmap('magma')
-colors = my_cmap(xdata)
+colors = my_cmap(bins)
 
 outergrid = fig.add_gridspec(1, 2, left=0.15, right=0.9, top=0.86, bottom=0.176)
 innergrid = [outergrid[0].subgridspec(nrows=nr, ncols=nc, wspace=0, hspace=0), 
@@ -81,9 +81,9 @@ for t in ts:
         for axrow, row in zip(axs, rows):
             for ax, loges in zip(axrow, logess):
                 bottom = 0.0
-                for b, c in zip(['a2Seen0', 'a2Seen31', 'a2Seen63'], colors):
-                    barheight = df.loc[(df['Time'] == t) & (df['logES'] > loges - 0.1) & (df['logES'] < loges + 0.1) & (df[rowindex] == row), b].values[0]
-                    ax.bar(x=0.5, height=barheight, bottom=bottom, width=1.0, color=c)
+                for trait, color in zip(traits, colors):
+                    barheight = df.loc[(df['Time'] == t) & (df['logES'] > loges - 0.1) & (df['logES'] < loges + 0.1) & (df[rowindex] == row), trait].values[0]
+                    ax.bar(x=0.5, height=barheight, bottom=bottom, width=1.0, color=color)
                     bottom = bottom + barheight
     if movie:
         text = fig.text(0.90, 0.90, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')

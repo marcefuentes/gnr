@@ -11,15 +11,20 @@ import time
 
 start_time = time.perf_counter ()
 
+trait0s = ['nodilemmaRS', 'snowdrift', 'prisoner', 'prisonerRS']
+traitlabel0s = ['$\it{T}$ < $\it{R}$, $\it{P}$ < $\it{S}$\n2$\it{R}$ < $\it{T}$ + $\it{S}$', 
+                'Snowdrift', 
+                'Prisoner\'s dilemma', 
+                'Prisoner\'s dilemma\n2$\it{R}$ < $\it{T}$ + $\it{S}$']
 traits = ['ChooseGrainmean', 'MimicGrainmean']
-traitlabels = ['Game types', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
+traitlabels = ['Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
 alphafolders = ['alpha75', 'alpha50', 'alpha25']
 alphas = [0.75, 0.50, 0.25]
+datafolderg = 'continuous/none2'
 datafolderp = 'continuous/p'
 datafolderr = 'continuous/r'
 movie = False
 
-numa2 = 128
 filename = 'continuous'
 
 fslabel = 32 # Label font size
@@ -27,11 +32,14 @@ fstick = 24 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
+dfgs = []
 dfps = []
 dfrs = []
 for alphafolder in alphafolders:
+    dfg = pd.concat(map(pd.read_csv, glob(os.path.join(alphafolder, datafolderg, '*.gam'))), ignore_index=True)
     dfp = pd.concat(map(pd.read_csv, glob(os.path.join(alphafolder, datafolderp, '*.csv'))), ignore_index=True)
     dfr = pd.concat(map(pd.read_csv, glob(os.path.join(alphafolder, datafolderr, '*.csv'))), ignore_index=True)
+    dfgs.append(dfg)
     dfps.append(dfp)
     dfrs.append(dfr)
 
@@ -41,87 +49,66 @@ if movie:
     frames = []
 else:
     ts = [ts[-1]]
-givens = np.sort(pd.unique(df.Given))[::-1]
-if givens[0] > 0.9999999:
-    givens[0] = 0.9999999
-logess = np.sort(pd.unique(df.logES))
-rhos = 1.0 - 1.0/pow(2.0, logess)
-nc = len(rhos)
-nr = len(givens)
-xmin = logess[0]
-xmax = logess[-1]
-ymin = givens[-1]
-ymax = givens[0]
+logess = pd.unique(df.logES)
+givens = pd.unique(df.Given)
+alphas = pd.unique(df.alpha)
+
+nc = len(logess)
+xmin = np.amin(logess)
+xmax = np.amax(logess)
 xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Partner\'s share of $\it{B}$'
-rowindex = 'Given'
-
-RRR, GGG = np.meshgrid(np.repeat(rhos, numa2), np.repeat(givens, numa2))
-
-traitvmaxs = [mymodule.a2max, mymodule.a2max]
+if len(givens) > 1:
+    rows = givens
+    ylabel = 'Partner\'s share of $\it{B}$'
+    rowindex = 'Given'
+if len(alphas) > 1:
+    rows = alphas
+    ylabel = 'Value of $\it{B}$'
+    rowindex = 'alpha'
+nr = len(rows)
+ymin = np.amin(rows)
+ymax = np.amax(rows)
 xticklabels = [round(xmin), round((xmin + xmax)/2), round(xmax)]
 yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
 extent = 0, nc, 0, nr
-extenta2 = 0, nc*numa2, 0, nr*numa2
 
-X, Y = np.meshgrid(np.linspace(0.0, mymodule.a2max, num=numa2), np.linspace(mymodule.a2max, 0.0, num=numa2))
-X = np.tile(A=X, reps=[nr, nc])
-Y = np.tile(A=Y, reps=[nr, nc])
+fig, axs = plt.subplots(nrows=len(alphafolders), ncols=len(trait0s)+len(traits), figsize=(6*(len(trait0s)+len(traits)), 6*len(alphafolders)))
+fig.supxlabel(xlabel, x=0.512, y=0.02, fontsize=fslabel*1.25)
+fig.supylabel(ylabel, x=0.07, y=0.493, fontsize=fslabel*1.25, ha='center')
 
-fig, axs = plt.subplots(nrows=len(alphafolders), ncols=len(traitlabels), figsize=(6*len(traitlabels), 6*len(alphafolders)))
-fig.supxlabel(xlabel, x=0.512, y=0.03, fontsize=fslabel*1.25)
-fig.supylabel(ylabel, x=0.05, y=0.493, fontsize=fslabel*1.25, ha='center')
-
+alltraitlabels = traitlabel0s + traitlabels
 letter = ord('a')
 for axrow in axs:
-    for ax, traitlabel in zip(axrow, traitlabels):
+    for ax, alltraitlabel in zip(axrow, alltraitlabels):
+        ax.text(0, nr*1.035, chr(letter), fontsize=fslabel, weight='bold')
+        ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
         if ax.get_subplotspec().is_first_row():
-            ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
+            ax.set_title(alltraitlabel, pad=50.0, fontsize=fslabel)
         if ax.get_subplotspec().is_first_col():
-            ax.text(0, nr*numa2*1.035, chr(letter), fontsize=fslabel, weight='bold')
-            ax.set(xticks=[0, nc*numa2/2, nc*numa2], yticks=[0, nr*numa2/2, nr*numa2], xticklabels=[]) 
             ax.set_yticklabels(yticklabels, fontsize=fstick) 
-        else:
-            ax.text(0, nr*1.035, chr(letter), fontsize=fslabel, weight='bold')
-            ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
         if ax.get_subplotspec().is_last_row():
             ax.set_xticklabels(xticklabels, fontsize=fstick)
         letter += 1
 
-for axrow, alpha in zip(axs, alphas):
-    AAA = np.full([nr*numa2, nc*numa2], alpha)
-    T = mymodule.fitness(Y, X, GGG, AAA, RRR)
-    R = mymodule.fitness(Y, Y, GGG, AAA, RRR)
-    P = mymodule.fitness(X, X, GGG, AAA, RRR)
-    S = mymodule.fitness(X, Y, GGG, AAA, RRR)
-    mask = (R < P)
-    H = T[mask]
-    T[mask] = S[mask]
-    S[mask] = H
-    H = R[mask]
-    R[mask] = P[mask]
-    P[mask] = H
-    Z = np.full((nr*numa2, nc*numa2, 4), mymodule.colormap['default'])
-    Z[(T < R) & (P < S)] = mymodule.colormap['nodilemma']
-    Z[(T < R) & (P < S) & (2.0*R <= T + S)] = mymodule.colormap['nodilemmaRS']
-    Z[(T > R) & (P > S)] = mymodule.colormap['prisoner']
-    Z[(T > R) & (P > S) & (2.0*R <= T + S)] = mymodule.colormap['prisonerRS']
-    Z[(T >= R) & (P <= S)] = mymodule.colormap['snowdrift']
-    Z[(T >= R) & (P <= S) & (2.0*R <= T + S)] = mymodule.colormap['snowdriftRS']
-    Z[R == P] = mymodule.colormap['nodilemma']
-
-    axrow[0].imshow(Z, extent=extenta2)
-
 for t in ts:
-    for axrow, dfp, dfr in zip(axs, dfps, dfrs):
+    for axrow, dfg, dfp, dfr in zip(axs, dfgs, dfps, dfrs):
+        df = dfg.loc[dfg.Time == t].copy()
+        for ax, trait0 in zip(axrow[:len(trait0s)], trait0s):
+            Z0 = pd.pivot_table(df, values=trait0, index=[rowindex], columns=['logES']).sort_index(axis=0, ascending=False)
+            Z0 = Z0.to_numpy()
+            Z = np.full([nr, nc, 4], mymodule.colormap[trait0])
+            for i in range(Z0.shape[0]):
+                for j in range(Z0.shape[1]):
+                    Z[i, j] = (1.0 - Z[i, j])*(1.0 - Z0[i, j]) + Z[i, j]
+            ax.imshow(Z, extent=extent)
         df = dfp.loc[dfp.Time == t].copy()
         df[traits[0]] = 1.0 - df[traits[0]]
         Z = pd.pivot_table(df, values=traits[0], index=[rowindex], columns=['logES']).sort_index(axis=0, ascending=False)
-        axrow[1].imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmaxs[0])
+        axrow[len(trait0s)].imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=1)
         df = dfr.loc[dfr.Time == t].copy()
         df[traits[1]] = 1.0 - df[traits[1]]
         Z = pd.pivot_table(df, values=traits[1], index=[rowindex], columns=['logES']).sort_index(axis=0, ascending=False)
-        axrow[2].imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmaxs[1])
+        axrow[len(trait0s)+1].imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=1)
     if movie:
         text = fig.text(0.90, 0.90, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')
         plt.savefig('temp.png', transparent=False)

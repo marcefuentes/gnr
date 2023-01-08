@@ -54,7 +54,7 @@ ymin = givens[-1]
 ymax = givens[0]
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Partner\'s share of $\it{B}$'
-pivindex = 'Given'
+rowindex = 'Given'
 
 RRR, GGG = np.meshgrid(np.repeat(rhos, numa2), np.repeat(givens, numa2))
 
@@ -116,11 +116,11 @@ for t in ts:
     for axrow, dfp, dfr in zip(axs, dfps, dfrs):
         df = dfp.loc[dfp.Time == t].copy()
         df[traits[0]] = 1.0 - df[traits[0]]
-        Z = pd.pivot_table(df, values=traits[0], index=[pivindex], columns=['logES']).sort_index(axis=0, ascending=False)
+        Z = pd.pivot_table(df, values=traits[0], index=[rowindex], columns=['logES']).sort_index(axis=0, ascending=False)
         axrow[1].imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmaxs[0])
         df = dfr.loc[dfr.Time == t].copy()
         df[traits[1]] = 1.0 - df[traits[1]]
-        Z = pd.pivot_table(df, values=traits[1], index=[pivindex], columns=['logES']).sort_index(axis=0, ascending=False)
+        Z = pd.pivot_table(df, values=traits[1], index=[rowindex], columns=['logES']).sort_index(axis=0, ascending=False)
         axrow[2].imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmaxs[1])
     if movie:
         text = fig.text(0.90, 0.90, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')

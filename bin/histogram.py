@@ -31,38 +31,29 @@ if movie:
     frames = []
 else:
     ts = [ts[-1]]
-givens = np.sort(pd.unique(df.Given))[::-1]
-logess = np.sort(pd.unique(df.logES))
-rhos = 1.0 - 1.0/pow(2.0, logess)
-alphas = np.sort(pd.unique(df.alpha))[::-1]
-nc = len(rhos)
-xmin = logess[0]
-xmax = logess[-1]
+logess = pd.unique(df.logES)
+givens = pd.unique(df.Given)
+alphas = pd.unique(df.alpha)
+
+nc = len(logess)
+xmin = np.amin(logess)
+xmax = np.amax(logess)
 xlabel = 'Substitutability of $\it{B}$'
-
 if len(givens) > 1:
-    nr = len(givens)
-    ymin = givens[-1]
-    ymax = givens[0]
-    ylabel = 'Partner\'s share of $\it{B}$'
-    rowname = 'Given'
     rows = givens
-else:
-    nr = len(alphas)
+    ylabel = 'Partner\'s share of $\it{B}$'
+    rowindex = 'Given'
 if len(alphas) > 1:
-    nr = len(alphas)
-    ymin = alphas[-1]
-    ymax = alphas[0]
-    ylabel = 'Value of $\it{B}$'
-    rowname = 'alpha'
     rows = alphas
-else:
-    nr = len(givens)
-
-everyx = int(nc/2)
-everyy = int(nr/2)
+    ylabel = 'Value of $\it{B}$'
+    rowindex = 'alpha'
+nr = len(rows)
+ymin = np.amin(rows)
+ymax = np.amax(rows)
 xticklabels = [round(xmin), round((xmin + xmax)/2), round(xmax)]
 yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
+everyx = int(nc/2)
+everyy = int(nr/2)
 
 fig = plt.figure(figsize=(16, 8))
 fig.supxlabel(xlabel, x=0.525, y=0.03, fontsize=fslabel)

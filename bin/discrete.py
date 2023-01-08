@@ -54,7 +54,7 @@ if len(givens) > 1:
     ymin = givens[-1]
     ymax = givens[0]
     ylabel = 'Partner\'s share of $\it{B}$'
-    pivindex = 'Given'
+    rowindex = 'Given'
 else:
     nr = len(alphas)
     GG = np.full([nr, nc], givens[0])
@@ -64,7 +64,7 @@ if len(alphas) > 1:
     ymin = alphas[-1]
     ymax = alphas[0]
     ylabel = 'Value of $\it{B}$'
-    pivindex = 'alpha'
+    rowindex = 'alpha'
 else:
     nr = len(givens)
     AA = np.full([nr, nc], alphas[0])
@@ -160,7 +160,7 @@ axs[0, 0].imshow(Z, extent=extenta2, aspect=1.0/numa2)
 for t in ts:
     for axrow, df in zip(axs[1:], dfs):
         for ax, trait, traitvmax in zip(axrow, traits, traitvmaxs):
-            Z = pd.pivot_table(df.loc[df.Time == t], values=trait, index=[pivindex], columns=['logES']).sort_index(axis=0, ascending=False)
+            Z = pd.pivot_table(df.loc[df.Time == t], values=trait, index=[rowindex], columns=['logES']).sort_index(axis=0, ascending=False)
             ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
     if movie:
         text = fig.text(0.90, 0.90, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')

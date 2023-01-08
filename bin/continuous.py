@@ -56,11 +56,11 @@ xlabel = 'Substitutability of $\it{B}$'
 if len(givens) > 1:
     rows = givens
     ylabel = 'Partner\'s share of $\it{B}$'
-    pivindex = 'Given'
+    rowindex = 'Given'
 if len(alphas) > 1:
     rows = alphas
     ylabel = 'Value of $\it{B}$'
-    pivindex = 'alpha'
+    rowindex = 'alpha'
 nr = len(rows)
 ymin = np.amin(rows)
 ymax = np.amax(rows)
@@ -98,7 +98,7 @@ for ax, traitlabel in zip(axs[1], traitlabels):
 for t in ts:
     df = dfgam.loc[df.Time == t].copy()
     for ax, trait in zip(axs[0], traits0):
-        Z0 = pd.pivot_table(df, values=trait, index=[pivindex], columns=['logES']).sort_index(axis=0, ascending=False)
+        Z0 = pd.pivot_table(df, values=trait, index=[rowindex], columns=['logES']).sort_index(axis=0, ascending=False)
         Z0 = Z0.to_numpy()
         Z = np.full([nr, nc, 4], mymodule.colormap[trait])
         for i in range(Z0.shape[0]):
@@ -107,7 +107,7 @@ for t in ts:
         ax.imshow(Z, extent=extent)
     for axrow, df in zip(axs[1:], dfs):
         for ax, trait, traitvmax in zip(axrow, traits, traitvmaxs):
-            Z = pd.pivot_table(df.loc[df.Time == t], values=trait, index=[pivindex], columns=['logES']).sort_index(axis=0, ascending=False)
+            Z = pd.pivot_table(df.loc[df.Time == t], values=trait, index=[rowindex], columns=['logES']).sort_index(axis=0, ascending=False)
             ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
     if movie:
         text = fig.text(0.90, 0.90, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')

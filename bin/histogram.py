@@ -11,8 +11,8 @@ import time
 start_time = time.perf_counter ()
 
 traits = ['a2Seen0', 'a2Seen31', 'a2Seen63']
-folders = ['none', 'p']
-movie = True
+folders = ['none', 'r']
+movie = False
 
 filename = 'histogram'
 fslabel = 32 # Label font size
@@ -73,18 +73,21 @@ my_cmap = plt.get_cmap('magma')
 colors = my_cmap(xdata)
 
 outergrid = fig.add_gridspec(1, 2, left=0.15, right=0.9, top=0.86, bottom=0.176)
+innergrid = [outergrid[0].subgridspec(nrows=nr, ncols=nc, wspace=0, hspace=0), 
+                outergrid[1].subgridspec(nrows=nr, ncols=nc, wspace=0, hspace=0)]
+axss = [innergrid[0].subplots(), innergrid[1].subplots()]
+
+for axs in axss:
+    for axrow in axs:
+        for ax in axrow:
+            ax.set(xticks=[], yticks=[], xlim=(0.0, 1.0), ylim=(0.0, 1.0))
+    for ax, loges in zip(axs[-1, ::everyx], logess[::everyx]):
+        ax.set_xlabel(round(loges), fontsize=fstick)
+for ax, row in zip(axss[0][::everyy, 0], rows[::everyy]):
+    ax.set_ylabel(f'{row:1.1f}', rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 
 for t in ts:
-    for df, outer in zip(dfs, outergrid):
-        innergrid = outer.subgridspec(nrows=nr, ncols=nc, wspace=0, hspace=0)
-        axs = innergrid.subplots()
-        for axrow in axs:
-            for ax in axrow:
-                ax.set(xticks=[], yticks=[], xlim=(0.0, 1.0), ylim=(0.0, 1.0))
-        for ax, loges in zip(axs[-1, ::everyx], logess[::everyx]):
-            ax.set_xlabel(round(loges), fontsize=fstick)
-        for ax, row in zip(axs[::everyy, 0], rows[::everyy]):
-            ax.set_ylabel(f'{row:1.1f}', rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
+    for df, axs in zip(dfs, axss):
         for axrow, row in zip(axs, rows):
             for ax, loges in zip(axrow, logess):
                 bottom = 0.0

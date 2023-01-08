@@ -49,33 +49,24 @@ givens = np.sort(pd.unique(df.Given))[::-1]
 if givens[0] > 0.9999999:
     givens[0] = 0.9999999
 logess = np.sort(pd.unique(df.logES))
-rhos = 1.0 - 1.0/pow(2.0, logess)
 alphas = np.sort(pd.unique(df.alpha))[::-1]
-nc = len(rhos)
+nc = len(logess)
 xmin = logess[0]
 xmax = logess[-1]
 xlabel = 'Substitutability of $\it{B}$'
 
 if len(givens) > 1:
     nr = len(givens)
-    RR, GG = np.meshgrid(rhos, givens)
     ymin = givens[-1]
     ymax = givens[0]
     ylabel = 'Partner\'s share of $\it{B}$'
     pivindex = 'Given'
-else:
-    nr = len(alphas)
-    GG = np.full([nr, nc], givens[0])
 if len(alphas) > 1:
     nr = len(alphas)
-    RR, AA = np.meshgrid(rhos, alphas)
     ymin = alphas[-1]
     ymax = alphas[0]
     ylabel = 'Value of $\it{B}$'
     pivindex = 'alpha'
-else:
-    nr = len(givens)
-    AA = np.full([nr, nc], alphas[0])
 
 traitvmaxs = [mymodule.a2max, mymodule.a2max, mymodule.a2max, mymodule.fitness(np.array([mymodule.a2max]), np.array([mymodule.a2max]), np.array([0.0]), np.array([0.9]), np.array([5.0]))]
 xticklabels = [round(xmin), round((xmin + xmax)/2), round(xmax)]

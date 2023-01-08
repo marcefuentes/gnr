@@ -45,27 +45,25 @@ if movie:
     frames = []
 else:
     ts = [ts[-1]]
-logess = np.sort(pd.unique(df.logES))
-givens = np.sort(pd.unique(df.Given))[::-1]
-alphas = np.sort(pd.unique(df.alpha))[::-1]
+logess = pd.unique(df.logES)
+givens = pd.unique(df.Given)
+alphas = pd.unique(df.alpha)
 
 nc = len(logess)
-xmin = logess[0]
-xmax = logess[-1]
+xmin = np.amin(logess)
+xmax = np.amax(logess)
 xlabel = 'Substitutability of $\it{B}$'
 if len(givens) > 1:
-    nr = len(givens)
-    ymin = givens[-1]
-    ymax = givens[0]
+    rows = givens
     ylabel = 'Partner\'s share of $\it{B}$'
     pivindex = 'Given'
 if len(alphas) > 1:
-    nr = len(alphas)
-    ymin = alphas[-1]
-    ymax = alphas[0]
+    rows = alphas
     ylabel = 'Value of $\it{B}$'
     pivindex = 'alpha'
-
+nr = len(rows)
+ymin = np.amin(rows)
+ymax = np.amax(rows)
 traitvmaxs = [mymodule.a2max, mymodule.a2max, mymodule.a2max, mymodule.fitness(np.array([mymodule.a2max]), np.array([mymodule.a2max]), np.array([0.0]), np.array([0.9]), np.array([5.0]))]
 xticklabels = [round(xmin), round((xmin + xmax)/2), round(xmax)]
 yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]

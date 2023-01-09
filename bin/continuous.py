@@ -18,7 +18,7 @@ traitlabels0 = ['$\it{T}$ < $\it{R}$, $\it{P}$ < $\it{S}$\n2$\it{R}$ < $\it{T}$ 
                 'Prisoner\'s dilemma\n2$\it{R}$ < $\it{T}$ + $\it{S}$']
 traits = ['a2Seenmean', 'ChooseGrainmean', 'MimicGrainmean', 'wmean']
 traitlabels = ['Effort to get $\it{B}$', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner', 'Fitness']
-folders = ['none2', 'p', 'r', 'pr', 'p8r', 'given0']
+folders = ['none', 'p', 'r', 'pr', 'p8r', 'given0']
 
 movie = False
 
@@ -29,7 +29,7 @@ fstick = 24 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-dfgam = pd.concat(map(pd.read_csv, glob(os.path.join('none2', '*.gam'))), ignore_index=True)
+dfgam = pd.concat(map(pd.read_csv, glob(os.path.join('none', '*.gam'))), ignore_index=True)
 
 dfs = []
 for folder in folders:

@@ -11,10 +11,10 @@ import time
 
 start_time = time.perf_counter ()
 
-traits0 = ['nodilemmaRS', 'snowdrift', 'prisoner', 'prisonerRS']
-traitlabels0 = ['$\it{T}$ < $\it{R}$, $\it{P}$ < $\it{S}$\n2$\it{R}$ < $\it{T}$ + $\it{S}$', 
+trait0s = ['nodilemmaRS', 'snowdrift', 'prisoner', 'prisonerRS']
+traitlabel0s = ['Harmony game\n2$\it{R}$ < $\it{T}$ + $\it{S}$', 
                 'Snowdrift', 
-                'Prisoner\'s dilemma', 
+                'Prisoner\'s dilemma\n2$\it{R}$ > $\it{T}$ + $\it{S}$', 
                 'Prisoner\'s dilemma\n2$\it{R}$ < $\it{T}$ + $\it{S}$']
 traits = ['a2Seenmean', 'ChooseGrainmean', 'MimicGrainmean', 'wmean']
 traitlabels = ['Effort to get $\it{B}$', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner', 'Fitness']
@@ -90,17 +90,17 @@ for axrow in axs:
         if ax.get_subplotspec().is_last_row():
             ax.set_xticklabels(xticklabels, fontsize=fstick)
         letter += 1
-for ax, traitlabel in zip(axs[0], traitlabels0):
+for ax, traitlabel in zip(axs[0], traitlabel0s):
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 for ax, traitlabel in zip(axs[1], traitlabels):
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
 for t in ts:
     df = dfgam.loc[df.Time == t].copy()
-    for ax, trait in zip(axs[0], traits0):
-        Z0 = pd.pivot_table(df, values=trait, index=[rowindex], columns=['logES']).sort_index(axis=0, ascending=False)
+    for ax, trait0 in zip(axs[0], trait0s):
+        Z0 = pd.pivot_table(df, values=trait0, index=[rowindex], columns=['logES']).sort_index(axis=0, ascending=False)
         Z0 = Z0.to_numpy()
-        Z = np.full([nr, nc, 4], mymodule.colormap[trait])
+        Z = np.full([nr, nc, 4], mymodule.colormap[trait0])
         for i in range(Z0.shape[0]):
             for j in range(Z0.shape[1]):
                 Z[i, j] = (1.0 - Z[i, j])*(1.0 - Z0[i, j]) + Z[i, j]

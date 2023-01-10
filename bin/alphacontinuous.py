@@ -12,9 +12,9 @@ import time
 start_time = time.perf_counter ()
 
 trait0s = ['nodilemmaRS', 'snowdrift', 'prisoner', 'prisonerRS']
-traitlabel0s = ['$\it{T}$ < $\it{R}$, $\it{P}$ < $\it{S}$\n2$\it{R}$ < $\it{T}$ + $\it{S}$', 
+traitlabel0s = ['Harmony game\n2$\it{R}$ < $\it{T}$ + $\it{S}$', 
                 'Snowdrift', 
-                'Prisoner\'s dilemma', 
+                'Prisoner\'s dilemma\n2$\it{R}$ > $\it{T}$ + $\it{S}$', 
                 'Prisoner\'s dilemma\n2$\it{R}$ < $\it{T}$ + $\it{S}$']
 traits = ['ChooseGrainmean', 'MimicGrainmean']
 traitlabels = ['Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']

@@ -29,7 +29,7 @@ fstick = 24 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-dfgam = pd.concat(map(pd.read_csv, glob(os.path.join('none', '*.gam'))), ignore_index=True)
+dfgam = pd.concat(map(pd.read_csv, glob(os.path.join(folders[0], '*.gam'))), ignore_index=True)
 
 dfs = []
 for folder in folders:

@@ -25,7 +25,7 @@ datafolderp = 'continuous/p'
 datafolderr = 'continuous/r'
 movie = False
 
-filename = 'continuous'
+filename = 'alpha'
 
 fslabel = 32 # Label font size
 fstick = 24 # Tick font size

@@ -20,7 +20,7 @@ datafolderr = 'discrete/r'
 movie = False
 
 numa2 = 2
-filename = 'discrete'
+filename = 'alpha'
 
 fslabel = 32 # Label font size
 fstick = 24 # Tick font size

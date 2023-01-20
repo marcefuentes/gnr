@@ -21,8 +21,7 @@ traitlabels = ['Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking 
 alphafolders = ['alpha75', 'alpha50', 'alpha25']
 alphas = [0.75, 0.50, 0.25]
 datafolderg = 'none'
-datafolderp = 'p'
-datafolderr = 'r'
+datafolders = ['p', 'r']
 movie = False
 
 filename = 'output'
@@ -33,17 +32,16 @@ plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
 dfgs = []
-dfps = []
-dfrs = []
+dfss = []
 for alphafolder in alphafolders:
     dfg = pd.concat(map(pd.read_csv, glob(os.path.join(alphafolder, datafolderg, '*.gam'))), ignore_index=True)
-    dfp = pd.concat(map(pd.read_csv, glob(os.path.join(alphafolder, datafolderp, '*.csv'))), ignore_index=True)
-    dfr = pd.concat(map(pd.read_csv, glob(os.path.join(alphafolder, datafolderr, '*.csv'))), ignore_index=True)
     dfgs.append(dfg)
-    dfps.append(dfp)
-    dfrs.append(dfr)
+    dfs = []
+    for datafolder in datafolders:
+        dfs.append(pd.concat(map(pd.read_csv, glob(os.path.join(alphafolder, datafolder, '*.csv'))), ignore_index=True))
+    dfss.append(dfs)
 
-df = dfps[0]
+df = dfss[0][0]
 ts = df.Time.unique()
 if movie:
     frames = []
@@ -91,7 +89,7 @@ for axrow in axs:
         letter += 1
 
 for t in ts:
-    for axrow, dfg, dfp, dfr in zip(axs, dfgs, dfps, dfrs):
+    for axrow, dfg, dfs in zip(axs, dfgs, dfss):
         df = dfg.loc[dfg.Time == t].copy()
         for ax, trait0 in zip(axrow[:len(trait0s)], trait0s):
             Z0 = pd.pivot_table(df, values=trait0, index=[rowindex], columns=['logES']).sort_index(axis=0, ascending=False)
@@ -101,14 +99,11 @@ for t in ts:
                 for j in range(Z0.shape[1]):
                     Z[i, j] = (1.0 - Z[i, j])*(1.0 - Z0[i, j]) + Z[i, j]
             ax.imshow(Z, extent=extent)
-        df = dfp.loc[dfp.Time == t].copy()
-        df[traits[0]] = 1.0 - df[traits[0]]
-        Z = pd.pivot_table(df, values=traits[0], index=[rowindex], columns=['logES']).sort_index(axis=0, ascending=False)
-        axrow[len(trait0s)].imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=1)
-        df = dfr.loc[dfr.Time == t].copy()
-        df[traits[1]] = 1.0 - df[traits[1]]
-        Z = pd.pivot_table(df, values=traits[1], index=[rowindex], columns=['logES']).sort_index(axis=0, ascending=False)
-        axrow[len(trait0s)+1].imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=1)
+        for ax, df, trait in zip(axrow[len(trait0s):], dfs, traits): 
+            df = df.loc[df.Time == t].copy()
+            df[trait] = 1.0 - df[trait]
+            Z = pd.pivot_table(df, values=trait, index=[rowindex], columns=['logES']).sort_index(axis=0, ascending=False)
+            ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=1)
     if movie:
         text = fig.text(0.90, 0.90, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')
         plt.savefig('temp.png', transparent=False)

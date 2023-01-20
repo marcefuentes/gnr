@@ -15,8 +15,7 @@ traits = ['ChooseGrainmean', 'MimicGrainmean']
 traitlabels = ['Game types', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
 alphafolders = ['alpha75', 'alpha50', 'alpha25']
 alphas = [0.75, 0.50, 0.25]
-datafolderp = 'p'
-datafolderr = 'r'
+datafolders = ['p', 'r']
 movie = False
 
 numa2 = 2
@@ -27,15 +26,14 @@ fstick = 24 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-dfps = []
-dfrs = []
+dfss = []
 for alphafolder in alphafolders:
-    dfp = pd.concat(map(pd.read_csv, glob(os.path.join(alphafolder, datafolderp, '*.csv'))), ignore_index=True)
-    dfr = pd.concat(map(pd.read_csv, glob(os.path.join(alphafolder, datafolderr, '*.csv'))), ignore_index=True)
-    dfps.append(dfp)
-    dfrs.append(dfr)
+    dfs = []
+    for datafolder in datafolders:
+        dfs.append(pd.concat(map(pd.read_csv, glob(os.path.join(alphafolder, datafolder, '*.csv'))), ignore_index=True))
+    dfss.append(dfs)
 
-df = dfps[0]
+df = dfss[0][0]
 ts = df.Time.unique()
 if movie:
     frames = []
@@ -148,15 +146,12 @@ for axrow, alpha in zip(axs, alphas):
     axrow[0].imshow(Z, extent=extenta2, aspect=1.0/numa2)
 
 for t in ts:
-    for axrow, dfp, dfr in zip(axs, dfps, dfrs):
-        df = dfp.loc[dfp.Time == t].copy()
-        df[traits[0]] = 1.0 - df[traits[0]]
-        Z = pd.pivot_table(df, values=traits[0], index=[rowindex], columns=['logES']).sort_index(axis=0, ascending=False)
-        axrow[1].imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmaxs[0])
-        df = dfr.loc[dfr.Time == t].copy()
-        df[traits[1]] = 1.0 - df[traits[1]]
-        Z = pd.pivot_table(df, values=traits[1], index=[rowindex], columns=['logES']).sort_index(axis=0, ascending=False)
-        axrow[2].imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmaxs[1])
+    for axrow, dfs in zip(axs, dfss):
+        for ax, df, trait in zip(axrow[1:], dfs, traits): 
+            df = df.loc[df.Time == t].copy()
+            df[trait] = 1.0 - df[trait]
+            Z = pd.pivot_table(df, values=trait, index=[rowindex], columns=['logES']).sort_index(axis=0, ascending=False)
+            ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmaxs[0])
     if movie:
         text = fig.text(0.90, 0.90, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')
         plt.savefig('temp.png', transparent=False)

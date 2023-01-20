@@ -9,14 +9,14 @@ import time
 
 start_time = time.perf_counter ()
 
-alphamin = 0.1
-alphamax = 0.9
+alphamin = 0.25
+alphamax = 0.75
 logesmin = -5.0
 logesmax = 5.0
-givenmin = 0.95
-givenmax = 0.95
+givenmin = 0.5
+givenmax = 0.5
 
-num = 5    # Number of subplot rows & columns
+num = 3    # Number of subplot rows & columns
 numa2 = 128
 n_ic = 5    # Number of indifference curves
 ngiven = 21
@@ -108,7 +108,7 @@ for row in axs:
 for ax, loges in zip(axs[-1, ::every], logess[::every]):
     ax.set_xlabel(round(loges), fontsize=fstick)
 for ax, alpha in zip(axs[::every, 0], alphas[::every]):
-    ax.set_ylabel(f'{alpha:1.1f}', rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
+    ax.set_ylabel(f'{alpha:1.2f}', rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 
 for given in givens:
 

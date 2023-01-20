@@ -20,12 +20,12 @@ traits = ['ChooseGrainmean', 'MimicGrainmean']
 traitlabels = ['Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner']
 alphafolders = ['alpha75', 'alpha50', 'alpha25']
 alphas = [0.75, 0.50, 0.25]
-datafolderg = 'continuous/none'
-datafolderp = 'continuous/p'
-datafolderr = 'continuous/r'
+datafolderg = 'none'
+datafolderp = 'p'
+datafolderr = 'r'
 movie = False
 
-filename = 'alpha'
+filename = 'output'
 
 fslabel = 32 # Label font size
 fstick = 24 # Tick font size

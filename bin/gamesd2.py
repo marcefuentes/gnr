@@ -21,7 +21,7 @@ a2high = 0.6
 
 num = 21    # Number of subplot rows and columns
 ngiven = 21
-filename = 'gamesd'
+filename = 'gamesd2'
 
 fslabel = 32 # Label font size
 fstick = 18 # Tick font size

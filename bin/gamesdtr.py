@@ -29,8 +29,8 @@ plt.rcParams['ps.fonttype'] = 42
 
 if givenmin != givenmax:
     movie = True
-    givens0 = np.linspace(givenmin, givenmax, num=ngiven)
-    givens = np.concatenate((givens0, np.flip(givens0)))
+    #givens0 = np.linspace(givenmin, givenmax, num=ngiven)
+    givens = np.linspace(givenmin, givenmax, num=ngiven)
     frames = []
 else:
     movie = False 

@@ -18,7 +18,7 @@ traitlabel0s = ['Harmony game\n2$\it{R}$ < $\it{T}$ + $\it{S}$',
                 'Prisoner\'s dilemma\n2$\it{R}$ < $\it{T}$ + $\it{S}$']
 traits = ['a2Seenmean', 'ChooseGrainmean', 'MimicGrainmean', 'wmean']
 traitlabels = ['Effort to get $\it{B}$', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner', 'Fitness']
-folders = ['none', 'p', 'r', 'pr', 'p8r', 'given0']
+folders = ['none', 'p', 'r', 'pr', 'p8r', '../given00/none']
 
 movie = False
 
@@ -80,6 +80,7 @@ for axrow in axs:
             ax.text(0, nr*1.035, chr(letter), fontsize=fslabel, weight='bold')
         else:
             ax.text(0, nr*1.035, 'a' + chr(letter - 26), fontsize=fslabel, weight='bold')
+        letter += 1
         ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
         if ax.get_subplotspec().is_first_row():
             pos = ax.get_position()
@@ -89,7 +90,6 @@ for axrow in axs:
             ax.set_yticklabels(yticklabels, fontsize=fstick) 
         if ax.get_subplotspec().is_last_row():
             ax.set_xticklabels(xticklabels, fontsize=fstick)
-        letter += 1
 for ax, traitlabel in zip(axs[0], traitlabel0s):
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 for ax, traitlabel in zip(axs[1], traitlabels):

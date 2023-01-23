@@ -55,8 +55,8 @@ extent = 0, nc, 0, nr
 
 zeros = np.zeros([nr, nc])
 a20 = np.copy(zeros)
-a21 = a20 + mymodule.a2max/2.0
-a22 = a20 + mymodule.a2max
+a21 = np.full([nr, nc], mymodule.a2max/2.0)
+a22 = np.full([nr, nc], mymodule.a2max)
 w00 = mymodule.fitness(a20, a20, zeros, AA, RR)
 w11 = mymodule.fitness(a21, a21, zeros, AA, RR)
 w22 = mymodule.fitness(a22, a22, zeros, AA, RR)
@@ -118,7 +118,7 @@ for given in givens:
     S = np.copy(w01)
     mymodule.gametypes(mask0, T, R, P, S, a21, a20, Z, TS, a2eq0, xeq, weq0)
 
-    axs[0, 0].imshow(Z, extent=extent)
+    axs[0, 0].imshow(TS, extent=extent)
 
     Z = np.full([nr, nc, 4], mymodule.colormap['default'])
     TS = np.zeros([nr, nc])
@@ -137,7 +137,7 @@ for given in givens:
     S = np.copy(w12)
     mymodule.gametypes(mask0, T, R, P, S, a22, a21, Z, TS, a2eq1, xeq, weq1)
 
-    axs[0, 1].imshow(Z, extent=extent)
+    axs[0, 1].imshow(TS, extent=extent)
 
     a2eq = np.copy(a2eq0)
     weq = np.copy(weq0)

@@ -11,13 +11,17 @@ import time
 
 start_time = time.perf_counter ()
 
+trait0s = ['nodilemmaRS', 'snowdrift', 'prisoner', 'prisonerRS']
+traitlabel0s = ['Game types', 
+                'Game types', 
+                '2$\it{R}$ - $\it{T}$ - $\it{S}$', 
+                '2$\it{R}$ - $\it{T}$ - $\it{S}$']
 traits = ['a2Seenmean', 'ChooseGrainmean', 'MimicGrainmean', 'wmean']
 traitlabels = ['Effort to get $\it{B}$', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner', 'Fitness']
 folders = ['none', 'p', 'r', 'pr', 'p8r', '../given00/none']
 
 movie = False
 
-numa2 = 2
 filename = 'output'
 
 fslabel = 32 # Label font size
@@ -73,89 +77,91 @@ traitvmaxs = [mymodule.a2max, mymodule.a2max, mymodule.a2max, mymodule.fitness(n
 xticklabels = [round(xmin), round((xmin + xmax)/2), round(xmax)]
 yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
 extent = 0, nc, 0, nr
-extenta2 = 0, nc, 0, nr*numa2
 
 zeros = np.zeros([nr, nc])
 a20 = np.copy(zeros)
 a21 = a20 + mymodule.a2max/2.0
 a22 = a20 + mymodule.a2max
+w00 = mymodule.fitness(a20, a20, GG, AA, RR)
+w11 = mymodule.fitness(a21, a21, GG, AA, RR)
+w22 = mymodule.fitness(a22, a22, GG, AA, RR)
+
+fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+1)))
+fig.supxlabel(xlabel, x=0.513, y=0.06, fontsize=fslabel*1.5)
+fig.supylabel(ylabel, x=0.05, y=0.493, fontsize=fslabel*1.5, ha='center')
+
+letter = ord('a')
+for axrow in axs:
+    for ax in axrow:
+        if letter <= ord('z'): 
+            ax.text(0, nr*1.035, chr(letter), fontsize=fslabel, weight='bold')
+        else:
+            ax.text(0, nr*1.035, 'a' + chr(letter - 26), fontsize=fslabel, weight='bold')
+        letter += 1
+        ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
+        if ax.get_subplotspec().is_first_row():
+            pos = ax.get_position()
+            newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
+            ax.set_position(newpos)
+        if ax.get_subplotspec().is_first_col():
+            ax.set_yticklabels(yticklabels, fontsize=fstick) 
+        if ax.get_subplotspec().is_last_row():
+            ax.set_xticklabels(xticklabels, fontsize=fstick)
+for ax, traitlabel in zip(axs[0], traitlabel0s):
+    ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
+for ax, traitlabel in zip(axs[1], traitlabels):
+    ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
+
 a2eq = np.copy(zeros)
 weq = np.copy(zeros)
 xeq = np.copy(zeros)
-Z0 = np.full([nr, nc, 4], mymodule.colormap['default'])
-Z1 = np.full([nr, nc, 4], mymodule.colormap['default'])
 
-w00 = mymodule.fitness(a20, a20, GG, AA, RR)
 w01 = mymodule.fitness(a20, a21, GG, AA, RR)
 w02 = mymodule.fitness(a20, a22, GG, AA, RR)
 w10 = mymodule.fitness(a21, a20, GG, AA, RR)
-w11 = mymodule.fitness(a21, a21, GG, AA, RR)
 w12 = mymodule.fitness(a21, a22, GG, AA, RR)
 w20 = mymodule.fitness(a22, a20, GG, AA, RR)
 w21 = mymodule.fitness(a22, a21, GG, AA, RR)
-w22 = mymodule.fitness(a22, a22, GG, AA, RR)
+
+Z = np.full([nr, nc, 4], mymodule.colormap['default'])
+TS = np.zeros([nr, nc])
 
 mask0 = (w00 > w11)
 T = np.copy(w01)
 R = np.copy(w00)
 P = np.copy(w11)
 S = np.copy(w10)
-mymodule.gametypes(mask0, T, R, P, S, a20, a21, Z0, a2eq, xeq, weq)
+mymodule.gametypes(mask0, T, R, P, S, a20, a21, Z, TS, a2eq, xeq, weq)
 
 mask0 = (w00 < w11)
 T = np.copy(w10)
 R = np.copy(w11)
 P = np.copy(w00)
 S = np.copy(w01)
-mymodule.gametypes(mask0, T, R, P, S, a21, a20, Z0, a2eq, xeq, weq)
+mymodule.gametypes(mask0, T, R, P, S, a21, a20, Z, TS, a2eq, xeq, weq)
+
+axs[0, 0].imshow(Z, extent=extent)
+axs[0, 2].imshow(TS, extent=extent)
+
+Z = np.full([nr, nc, 4], mymodule.colormap['default'])
+TS = np.zeros([nr, nc])
 
 mask0 = (w11 > w22)
 T = np.copy(w12)
 R = np.copy(w11)
 P = np.copy(w22)
 S = np.copy(w21)
-mymodule.gametypes(mask0, T, R, P, S, a21, a22, Z1, a2eq, xeq, weq)
+mymodule.gametypes(mask0, T, R, P, S, a21, a22, Z, TS, a2eq, xeq, weq)
 
 mask0 = (w11 < w22)
 T = np.copy(w21)
 R = np.copy(w22)
 P = np.copy(w11)
 S = np.copy(w12)
-mymodule.gametypes(mask0, T, R, P, S, a22, a21, Z1, a2eq, xeq, weq)
+mymodule.gametypes(mask0, T, R, P, S, a22, a21, Z, TS, a2eq, xeq, weq)
 
-Z = np.full([nr*numa2, nc, 4], mymodule.colormap['default'])
-Z[::2,:] = Z1
-Z[1::2,:] = Z0
-
-fig, axs = plt.subplots(nrows=len(folders)+1, ncols=len(traits), figsize=(6*len(traits), 6*(len(folders)+1)))
-fig.delaxes(axs[0, 1])
-fig.delaxes(axs[0, 2])
-fig.delaxes(axs[0, 3])
-fig.supxlabel(xlabel, x=0.513, y=0.06, fontsize=fslabel*1.5)
-fig.supylabel(ylabel, x=0.05, y=0.493, fontsize=fslabel*1.5, ha='center')
-
-letter = ord('b')
-for axrow in axs:
-    for ax in axrow:
-        if ax.get_subplotspec().is_first_row():
-            ax.set(xticks=[0, nc/2, nc], yticks=[0, nr*numa2/2, nr*numa2], xticklabels=[], yticklabels=[])
-            ax.set_title('Game types', pad=50.0, fontsize=fslabel)
-            ax.text(0, nr*numa2*1.035, 'a', fontsize=fslabel, weight='bold')
-            pos = ax.get_position()
-            newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
-            ax.set_position(newpos)
-        else:
-            ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
-            ax.text(0, nr*1.035, chr(letter), fontsize=fslabel, weight='bold')
-            letter += 1
-        if ax.get_subplotspec().is_first_col():
-            ax.set_yticklabels(yticklabels, fontsize=fstick) 
-        if ax.get_subplotspec().is_last_row():
-            ax.set_xticklabels(xticklabels, fontsize=fstick)
-for ax, traitlabel in zip(axs[1], traitlabels):
-    ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
-
-axs[0, 0].imshow(Z, extent=extenta2, aspect=1.0/numa2)
+axs[0, 1].imshow(Z, extent=extent)
+axs[0, 3].imshow(TS, extent=extent)
 
 for t in ts:
     for axrow, df in zip(axs[1:], dfs):

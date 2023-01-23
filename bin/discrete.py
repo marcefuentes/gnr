@@ -141,7 +141,7 @@ S = np.copy(w01)
 mymodule.gametypes(mask0, T, R, P, S, a21, a20, Z, TS, a2eq, xeq, weq)
 
 axs[0, 0].imshow(Z, extent=extent)
-axs[0, 2].imshow(TS, extent=extent)
+axs[0, 2].imshow(TS, extent=extent, cmap='magma', vmin=0, vmax=0.7)
 
 Z = np.full([nr, nc, 4], mymodule.colormap['default'])
 TS = np.zeros([nr, nc])
@@ -161,7 +161,7 @@ S = np.copy(w12)
 mymodule.gametypes(mask0, T, R, P, S, a22, a21, Z, TS, a2eq, xeq, weq)
 
 axs[0, 1].imshow(Z, extent=extent)
-axs[0, 3].imshow(TS, extent=extent)
+axs[0, 3].imshow(TS, extent=extent, cmap='magma', vmin=0, vmax=0.7)
 
 for t in ts:
     for axrow, df in zip(axs[1:], dfs):

@@ -14,8 +14,8 @@ alphamin = 0.1
 alphamax = 0.9
 logesmin = -5.0
 logesmax = 5.0
-givenmin = 0.95
-givenmax = 0.95
+givenmin = 0.0
+givenmax = 1.0
 
 num = 21    # Number of subplot rows and columns
 numa2 = 2
@@ -29,7 +29,8 @@ plt.rcParams['ps.fonttype'] = 42
 
 if givenmin != givenmax:
     movie = True
-    givens = np.linspace(givenmin, givenmax, num=ngiven)
+    givens0 = np.linspace(givenmin, givenmax, num=ngiven)
+    givens = np.concatenate((givens0, np.flip(givens0)))
     frames = []
 else:
     movie = False 

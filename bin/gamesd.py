@@ -103,8 +103,6 @@ for given in givens:
     w10 = mymodule.fitness(a21, a20, given, AA, RR)
     w12 = mymodule.fitness(a21, a22, given, AA, RR)
     w21 = mymodule.fitness(a22, a21, given, AA, RR)
-    w02 = mymodule.fitness(a20, a22, given, AA, RR)
-    w20 = mymodule.fitness(a22, a20, given, AA, RR)
 
     Z = np.full([nr, nc, 4], mymodule.colormap['default'])
 

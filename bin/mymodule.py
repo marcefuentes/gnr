@@ -53,3 +53,5 @@ def gametypes(mask0, T, R, P, S, a2c, a2d, Z, a2eq, xeq, weq):
     Z[mask] = colormap['snowdriftRS']
     pass
 
+def tr(mask0, T, R, P, S, Z):
+    Z[mask0] = (1.0 + T[mask0] + S[mask0] - 2*R[mask0])/2.0

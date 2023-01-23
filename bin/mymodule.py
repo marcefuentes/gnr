@@ -31,9 +31,11 @@ def fitness(x, y, given, alpha, rho):
     w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
     return w
 
-def gametypes(mask0, T, R, P, S, a2c, a2d, Z, a2eq, xeq, weq):
+def gametypes(mask0, T, R, P, S, a2c, a2d, Z, TS, a2eq, xeq, weq):
+    TS[mask0] = (1.0 + T[mask0] + S[mask0] - 2*R[mask0])/2.0
     mask = (mask0 & (T < R) & (P < S))
     Z[mask] = colormap['nodilemma']
+    TS[mask] = 0.0
     a2eq[mask] = a2c[mask]
     weq[mask] = R[mask]
     mask = (mask & (2.0*R <= T + S))
@@ -53,5 +55,3 @@ def gametypes(mask0, T, R, P, S, a2c, a2d, Z, a2eq, xeq, weq):
     Z[mask] = colormap['snowdriftRS']
     pass
 
-def tr(mask0, T, R, P, S, Z):
-    Z[mask0] = (1.0 + T[mask0] + S[mask0] - 2*R[mask0])/2.0

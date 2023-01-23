@@ -103,38 +103,40 @@ for given in givens:
     w21 = mymodule.fitness(a22, a21, given, AA, RR)
 
     Z = np.full([nr, nc, 4], mymodule.colormap['default'])
+    TS = np.zeros([nr, nc])
 
     mask0 = (w00 > w11)
     T = np.copy(w01)
     R = np.copy(w00)
     P = np.copy(w11)
     S = np.copy(w10)
-    mymodule.gametypes(mask0, T, R, P, S, a20, a21, Z, a2eq0, xeq, weq0)
+    mymodule.gametypes(mask0, T, R, P, S, a20, a21, Z, TS, a2eq0, xeq, weq0)
 
     mask0 = (w00 < w11)
     T = np.copy(w10)
     R = np.copy(w11)
     P = np.copy(w00)
     S = np.copy(w01)
-    mymodule.gametypes(mask0, T, R, P, S, a21, a20, Z, a2eq0, xeq, weq0)
+    mymodule.gametypes(mask0, T, R, P, S, a21, a20, Z, TS, a2eq0, xeq, weq0)
 
     axs[0, 0].imshow(Z, extent=extent)
 
     Z = np.full([nr, nc, 4], mymodule.colormap['default'])
+    TS = np.zeros([nr, nc])
 
     mask0 = (w11 > w22)
     T = np.copy(w12)
     R = np.copy(w11)
     P = np.copy(w22)
     S = np.copy(w21)
-    mymodule.gametypes(mask0, T, R, P, S, a21, a22, Z, a2eq1, xeq, weq1)
+    mymodule.gametypes(mask0, T, R, P, S, a21, a22, Z, TS, a2eq1, xeq, weq1)
 
     mask0 = (w11 < w22)
     T = np.copy(w21)
     R = np.copy(w22)
     P = np.copy(w11)
     S = np.copy(w12)
-    mymodule.gametypes(mask0, T, R, P, S, a22, a21, Z, a2eq1, xeq, weq1)
+    mymodule.gametypes(mask0, T, R, P, S, a22, a21, Z, TS, a2eq1, xeq, weq1)
 
     axs[0, 1].imshow(Z, extent=extent)
 

@@ -80,13 +80,13 @@ void write_headers_gam (char *filename)
 
 	// 20 is the maximum number of characters of variable names
 	char headers[GAMES][20] = { "equal",
-						"nodilemma",
-						"nodilemmaRS",
-						"snowdrift",
-						"snowdriftRS",
-						"prisoner",
-						"prisonerRS",
-						"other" };
+					"nodilemma",
+					"nodilemmaRS",
+					"snowdrift",
+					"snowdriftRS",
+					"prisoner",
+					"prisonerRS",
+					"other" };
 
 	if ( (fp = fopen (filename, "a+")) == NULL )
 	{
@@ -99,6 +99,8 @@ void write_headers_gam (char *filename)
 	{
 		fprintf (fp, ",%s,%sSD", headers[v], headers[v]);
 	}
+
+	fprintf (fp, ",%s,%s,%s,%s", "TSmean", "TSmeanSD", "TSsd", "TSsdSD");
 
 	fprintf (fp, "\n");
 
@@ -183,6 +185,8 @@ void write_stats_gam (char *filename, struct ptype *p, struct ptype *p_last)
 		{
 			fprintf (fp, ",%f,%f", p->sumgames[v], p->sumgames2[v]);
 		}
+
+		fprintf (fp, ",%f,%f,%f,%f", p->summeanTS, p->summean2TS, p->sumsdTS, p->sumsd2TS);
 
 		fprintf (fp, "\n");
 	}

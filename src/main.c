@@ -380,7 +380,10 @@ void game_types (struct itype *i, struct itype *i_last, struct pruntype *prun)
 {
 	int boolean[GAMES] = { 0 };
 	double q1, q1p, q2;
-	double T, R, P, S, temp;
+	double T, R, P, S, temp, TS;
+
+	prun->meanTS = 0.0;
+	prun->sdTS = 0.0;
 
 	for ( ; i < i_last; i += 2 )
 	{
@@ -412,34 +415,53 @@ void game_types (struct itype *i, struct itype *i_last, struct pruntype *prun)
 		if ( R == P )
 		{
 			boolean[0] ++;	// equal
+			prun->meanTS += 0.0;
+			prun->sdTS += 0.0;
 		}
 		else if ( T < R && P < S && 2.0*R >= T + S )
 		{
 			boolean[1] ++;	// no dilemma
+			prun->meanTS += 0.0;
+			prun->sdTS += 0.0;
 		}
 		else if ( T < R && P < S && 2.0*R < T + S )
 		{
 			boolean[2] ++;	// no dilemma RS
+			TS = (1.0 + T + S - 2.0*R)/2.0;
+			prun->meanTS += TS;
+			prun->sdTS += TS*TS;
 		}
 		else if ( T >= R && P <= S && 2.0*R >= T + S )
 		{
 			boolean[3] ++;	// snowdrift
+			prun->meanTS += 0.0;
+			prun->sdTS += 0.0;
 		}
 		else if ( T >= R && P <= S && 2.0*R < T + S )
 		{
 			boolean[4] ++;	//snowdrift RS
+			prun->meanTS += 0.0;
+			prun->sdTS += 0.0;
 		}
 		else if ( T > R && P > S && 2.0*R >= T + S )
 		{
 			boolean[5] ++;	// prisoner's dilemma
+			TS = (1.0 + T + S - 2.0*R)/2.0;
+			prun->meanTS += TS;
+			prun->sdTS += TS*TS;
 		}
 		else if ( T > R && P > S && 2.0*R < T + S )
 		{
 			boolean[6] ++;	// prisoner's dilemma RS
+			TS = (1.0 + T + S - 2.0*R)/2.0;
+			prun->meanTS += TS;
+			prun->sdTS += TS*TS;
 		}
 		else
 		{
 			boolean[7] ++;
+			prun->meanTS += 0.0;
+			prun->sdTS += 0.0;
 		}
 	}
 
@@ -448,6 +470,8 @@ void game_types (struct itype *i, struct itype *i_last, struct pruntype *prun)
 		prun->frgames[v] = (double) boolean[v]*2.0/gN;
 	}
 
+	prun->meanTS = prun->meanTS*2.0/gN;
+	prun->sdTS = stdev(prun->meanTS, prun->sdTS, gN/2); 
 }
 		
 double ces (double q1, double q2)

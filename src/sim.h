@@ -19,6 +19,8 @@ struct ptype
 	double		sumiqr[CONTINUOUS_V], sumiqr2[CONTINUOUS_V];
 	double		sumb[BOOLEAN_V], sumb2[BOOLEAN_V];
 	double		sumgames[GAMES], sumgames2[GAMES];
+	double		summeanTS, summean2TS;
+	double		sumsdTS, sumsd2TS;
 };
 
 struct pruntype
@@ -32,6 +34,8 @@ struct pruntype
 	double		iqr[CONTINUOUS_V];
 	double		frb[BOOLEAN_V];
 	double		frgames[GAMES];
+	double		meanTS;
+	double		sdTS;
 };
 
 struct itype
@@ -82,3 +86,4 @@ void		write_stats_gam		(char *filename, struct ptype *p, struct ptype *p_last);
 void		write_i			(char *filename, float alpha, float logES, float Given, struct itype *i, struct itype *i_last);
 void		write_time_elapsed	(char *filename, float time_elapsed);
 void		file_write_error	(char *filename);
+double		stdev			(double sum, double sum2, int n);

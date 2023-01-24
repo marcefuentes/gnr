@@ -2,7 +2,6 @@
 #include "sim.h"
 
 int select_bin (double ceiling, double binsize, double v);
-double stdev (double sum, double sum2, int n);
 
 void stats_period (struct itype *i, struct itype *i_last, struct pruntype *prun, int n, double amin, double amax)
 {
@@ -176,6 +175,14 @@ void stats_end (struct pruntype *prun, struct pruntype *prun_last, struct ptype 
 			p->sumgames[v] += h;
 			p->sumgames2[v] += h*h;
 		}
+
+		h = prun->meanTS;
+		p->summeanTS += h;
+		p->summean2TS += h*h;
+
+		h = prun->sdTS;
+		p->sumsdTS += h;
+		p->sumsd2TS += h*h;
 	}
 }
 
@@ -214,6 +221,11 @@ void stats_runs (struct ptype *p, struct ptype *p_last, int runs)
 			p->sumgames2[v] = stdev (p->sumgames[v], p->sumgames2[v], runs);
 			p->sumgames[v] /= runs;
 		}
+
+		p->summean2TS = stdev(p->summeanTS, p->summean2TS, runs);
+		p->summeanTS /= runs;
+		p->sumsd2TS = stdev(p->sumsdTS, p->sumsd2TS, runs);
+		p->sumsdTS /= runs;
 	}
 }
 

@@ -55,8 +55,8 @@ extent = 0, nc, 0, nr
 
 zeros = np.zeros([nr, nc])
 a20 = np.copy(zeros)
-a21 = np.full([nr, nc], mymodule.a2max/2.0)
-a22 = np.full([nr, nc], mymodule.a2max)
+a21 = a20 + mymodule.a2max/2.0
+a22 = a20 + mymodule.a2max
 w00 = mymodule.fitness(a20, a20, zeros, AA, RR)
 w11 = mymodule.fitness(a21, a21, zeros, AA, RR)
 w22 = mymodule.fitness(a22, a22, zeros, AA, RR)

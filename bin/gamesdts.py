@@ -118,7 +118,7 @@ for given in givens:
     S = np.copy(w01)
     mymodule.gametypes(mask0, T, R, P, S, a21, a20, Z, TS, a2eq0, xeq, weq0)
 
-    axs[0, 0].imshow(TS, extent=extent)
+    axs[0, 0].imshow(TS, extent=extent, cmap='magma', vmin=0, vmax=0.7)
 
     Z = np.full([nr, nc, 4], mymodule.colormap['default'])
     TS = np.zeros([nr, nc])
@@ -137,7 +137,7 @@ for given in givens:
     S = np.copy(w12)
     mymodule.gametypes(mask0, T, R, P, S, a22, a21, Z, TS, a2eq1, xeq, weq1)
 
-    axs[0, 1].imshow(TS, extent=extent)
+    axs[0, 1].imshow(TS, extent=extent, cmap='magma', vmin=0, vmax=0.7)
 
     a2eq = np.copy(a2eq0)
     weq = np.copy(weq0)

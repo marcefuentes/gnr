@@ -37,7 +37,7 @@ for alpha in alphas:
         f.write('IndirectR,0\n')
         f.write(f'alpha,{alpha}\n')
         f.write(f'ES,{loges}\n')
-        f.write(f'given,{given}\n')
+        f.write(f'Given,{given}\n')
 
         f.close()
         c = c + 1

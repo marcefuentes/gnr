@@ -32,27 +32,36 @@ def fitness(x, y, given, alpha, rho):
     return w
 
 def gametypes(mask0, T, R, P, S, a2c, a2d, Z, TS, a2eq, xeq, weq):
+
     TS[mask0] = 0.0
+
     mask = (mask0 & (T < R) & (P < S))
     Z[mask] = colormap['nodilemma']
     a2eq[mask] = a2c[mask]
     weq[mask] = R[mask]
+
     mask = (mask & (2.0*R <= T + S))
     Z[mask] = colormap['nodilemmaRS']
     TS[mask] = (1.0 + T[mask] + S[mask] - 2*R[mask])/2.0
+
     mask = (mask0 & (T > R) & (P > S))
     Z[mask] = colormap['prisoner']
     TS[mask] = (1.0 + T[mask] + S[mask] - 2*R[mask])/2.0
     a2eq[mask] = a2d[mask]
     weq[mask] = P[mask]
+
     mask = (mask & (2.0*R <= T + S))
     Z[mask] = colormap['prisonerRS']
+    TS[mask] = (1.0 + T[mask] + S[mask] - 2*R[mask])/2.0
+
     mask = (mask0 & (T >= R) & (P <= S))
     Z[mask] = colormap['snowdrift']
     xeq[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2eq[mask] = a2c[mask]*xeq[mask] + a2d[mask]*(1.0 - xeq[mask])
     weq[mask] = (T[mask] + S[mask])*xeq[mask]*(1.0 - xeq[mask]) + R[mask]*xeq[mask]*xeq[mask] + P[mask]*(1.0 - xeq[mask])*(1.0 - xeq[mask])
+
     mask = (mask & (2.0*R <= T + S))
     Z[mask] = colormap['snowdriftRS']
+
     pass
 

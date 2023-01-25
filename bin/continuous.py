@@ -11,7 +11,7 @@ import time
 
 start_time = time.perf_counter ()
 
-trait0s = ['nodilemmaRS', 'snowdrift', 'prisoner', 'prisonerRS']
+trait0s = ['nodilemmaRS', 'snowdrift', 'prisoner']
 traitlabel0s = ['Harmony game\n2$\it{R}$ < $\it{T}$ + $\it{S}$', 
                 'Snowdrift', 
                 'Prisoner\'s dilemma\n2$\it{R}$ > $\it{T}$ + $\it{S}$', 
@@ -105,6 +105,8 @@ for t in ts:
             for j in range(Z0.shape[1]):
                 Z[i, j] = (1.0 - Z[i, j])*(1.0 - Z0[i, j]) + Z[i, j]
         ax.imshow(Z, extent=extent)
+    Z = pd.pivot_table(df, values='TSmean', index=[rowindex], columns=['logES']).sort_index(axis=0, ascending=False)
+    axs[0, 3].imshow(Z, extent=extent, cmap='magma', vmin=0.4, vmax=0.5)
     for axrow, df in zip(axs[1:], dfs):
         for ax, trait, traitvmax in zip(axrow, traits, traitvmaxs):
             Z = pd.pivot_table(df.loc[df.Time == t], values=trait, index=[rowindex], columns=['logES']).sort_index(axis=0, ascending=False)

@@ -11,14 +11,9 @@ import time
 
 start_time = time.perf_counter ()
 
-traits0 = ['nodilemmaRS', 'snowdrift', 'prisoner', 'prisonerRS']
-traitlabels0 = ['$\it{T}$ < $\it{R}$, $\it{P}$ < $\it{S}$\n2$\it{R}$ < $\it{T}$ + $\it{S}$', 
-                'Snowdrift', 
-                'Prisoner\'s dilemma', 
-                'Prisoner\'s dilemma\n2$\it{R}$ < $\it{T}$ + $\it{S}$']
-traitroots = ['a2Seen', 'ChooseGrain', 'MimicGrain', 'w']
-traitlabels = ['Effort to get $\it{B}$', 'Sensitivity for\nchoosing partner', 'Sensitivity for\nmimicking partner', 'Fitness']
-folders = ['none', 'p', 'r', 'pr', 'p8r', 'given0']
+traitroots = ['a2Seen', 'w']
+traitlabels = ['Effort to get $\it{B}$', 'Fitness']
+folders = ['none', 'r']
 
 movie = False
 
@@ -29,8 +24,6 @@ fslabel = 32 # Label font size
 fstick = 24 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
-
-dfgam = pd.concat(map(pd.read_csv, glob(os.path.join('none', '*.gam'))), ignore_index=True)
 
 dfs = []
 for folder in folders:
@@ -67,7 +60,7 @@ everyx = int(nc/2)
 everyy = int(nr/2)
 extent = 0, nc, 0, nr
 
-fig = plt.figure(figsize=(len(traitroots)*6, (len(folders)+1)*6))
+fig = plt.figure(figsize=(len(traitroots)*6, len(folders)*6))
 fig.supxlabel(xlabel, x=0.513, y=0.06, fontsize=fslabel*1.50)
 fig.supylabel(ylabel, x=0.05, y=0.493, fontsize=fslabel*1.50, ha='center')
 
@@ -75,7 +68,7 @@ bins = np.arange(start=0, stop=nbins, step=1)
 my_cmap = plt.get_cmap('magma')
 colors = my_cmap(bins/nbins)
 
-outergrid = fig.add_gridspec(len(folders)+1, len(traitroots), left=0.15, right=0.9, top=0.86, bottom=0.176)
+outergrid = fig.add_gridspec(len(folders), len(traitroots), left=0.15, right=0.9, top=0.86, bottom=0.176)
 
 axs = outergrid.subplots()
 letter = ord('a')
@@ -86,36 +79,21 @@ for axrow in axs:
         else:
             ax.text(0, nr*1.035, 'a' + chr(letter - 26), fontsize=fslabel, weight='bold')
         ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
-        if ax.get_subplotspec().is_first_row():
-            pos = ax.get_position()
-            newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
-            ax.set_position(newpos)
         if ax.get_subplotspec().is_first_col():
             ax.set_yticklabels(yticklabels, fontsize=fstick) 
         if ax.get_subplotspec().is_last_row():
             ax.set_xticklabels(xticklabels, fontsize=fstick)
         letter += 1
-for ax, traitlabel in zip(axs[0], traitlabels0):
-    ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
-for ax, traitlabel in zip(axs[1], traitlabels):
+for ax, traitlabel in zip(axs[0], traitlabels):
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
 for t in ts:
-    df = dfgam.loc[df.Time == t].copy()
-    for ax, trait in zip(axs[0], traits0):
-        Z0 = pd.pivot_table(df, values=trait, index=[rowindex], columns=['logES']).sort_index(axis=0, ascending=False)
-        Z0 = Z0.to_numpy()
-        Z = np.full([nr, nc, 4], mymodule.colormap[trait])
-        for i in range(Z0.shape[0]):
-            for j in range(Z0.shape[1]):
-                Z[i, j] = (1.0 - Z[i, j])*(1.0 - Z0[i, j]) + Z[i, j]
-        ax.imshow(Z, extent=extent)
     for outerrow, df in enumerate(dfs):
         for outercol, traitroot in enumerate(traitroots):
             traits = []
             for b in bins:
                 traits.append(traitroot + str(b)) 
-            innergrid = outergrid[outerrow+1, outercol].subgridspec(nrows=nr, ncols=nc, wspace=0, hspace=0)
+            innergrid = outergrid[outerrow, outercol].subgridspec(nrows=nr, ncols=nc, wspace=0, hspace=0)
             axs = innergrid.subplots()
             for axrow, row in zip(axs, rows):
                 for ax, loges in zip (axrow, logess):

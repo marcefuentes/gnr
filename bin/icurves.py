@@ -4,6 +4,7 @@ from matplotlib import cm
 import os
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
+import mymodule
 import numpy as np
 import time
 
@@ -33,20 +34,6 @@ plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
 every = int(num/2)
-
-def fitness(x, y, given, alpha, rho):
-    q1 = (a2max - y)*R1/b
-    q2 = y*R2*(1.0 - given) + x*R2*given
-    w = q1*q2
-    mask = (w > 0.0) & (rho == 0.0)
-    w[mask] = pow(q1[mask], 1.0 - alpha[mask])*pow(q2[mask], alpha[mask])
-    mask = (w > 0.0) & (rho < 0.0)
-    w[mask] = (1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask])
-    mask = (w > 0.0) & (rho < 0.0)
-    w[mask] = pow(w[mask], 1.0/rho[mask])
-    mask = (rho > 0.0)
-    w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
-    return w
 
 def indifference(q, w, alpha, rho):
     if rho == 0.0:
@@ -85,7 +72,7 @@ wis = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 
-traitvmax = fitness(np.array([a2max]), np.array([a2max]), np.array([0.0]), np.array([0.9]), np.array([5.0]))
+traitvmax = mymodule.fitness(np.array([a2max]), np.array([a2max]), np.array([0.0]), np.array([0.9]), np.array([5.0]))
 icsss = []
 for alpha in alphas:
     icss = []
@@ -115,7 +102,7 @@ for given in givens:
     MRT = MRT0*(1.0 - given)
     Q = Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
     a2ss = a2max/(1.0 + Q*b)
-    wss = fitness(a2ss, a2ss, given, AA, RR)
+    wss = mymodule.fitness(a2ss, a2ss, given, AA, RR)
     q2ss = a2ss*R2
 
     for row, alpha, q2s, ws, icss in zip(axs, alphas, q2ss, wss, icsss):

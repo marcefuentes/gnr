@@ -10,23 +10,18 @@ import time
 
 start_time = time.perf_counter ()
 
-alphamin = 0.25
-alphamax = 0.75
+alphamin = 0.1
+alphamax = 0.9
 logesmin = -5.0
 logesmax = 5.0
-givenmin = 0.5
-givenmax = 0.5
+givenmin = 0.95
+givenmax = 0.95
 
 num = 3    # Number of subplot rows & columns
 numa2 = 128
 n_ic = 5    # Number of indifference curves
 ngiven = 21
 filename = 'icurves'
-
-R1 = 2.0
-R2 = 2.0
-a1max = 1.0
-a2max = 1.0
 
 fslabel = 32 # Label font size
 fstick = 18 # Tick font size
@@ -54,25 +49,23 @@ else:
 
 nc = num
 nr = num
-b = a2max/a1max
-Rq = R2/R1
-MRT0 = b*Rq
+MRT0 = mymodule.b*mymodule.Rq
 if givens[-1] > 0.9999999:
     givens[-1] = 0.9999999
 alphas = np.linspace(alphamax, alphamin, num=nr)
 logess = np.linspace(logesmin, logesmax, num=nc)
 rhos = 1.0 - 1.0/pow(2, logess)
-a1_budget = np.linspace(0.0, a1max, num=3)
-q2_budget = (a2max - b*a1_budget)*R2
-q1_budget = a1_budget*R1
-q1_ic = np.linspace(0.0, a1max*R1, num=numa2)
+a1_budget = np.linspace(0.0, mymodule.a1max, num=3)
+q2_budget = (mymodule.a2max - mymodule.b*a1_budget)*mymodule.R2
+q1_budget = a1_budget*mymodule.R1
+q1_ic = np.linspace(0.0, mymodule.a1max*mymodule.R1, num=numa2)
 RR, AA = np.meshgrid(rhos, alphas)
 wis = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
 
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 
-traitvmax = mymodule.fitness(np.array([a2max]), np.array([a2max]), np.array([0.0]), np.array([0.9]), np.array([5.0]))
+traitvmax = mymodule.fitness(np.array([mymodule.a2max]), np.array([mymodule.a2max]), np.array([0.0]), np.array([0.9]), np.array([5.0]))
 icsss = []
 for alpha in alphas:
     icss = []
@@ -91,19 +84,19 @@ axs = grid.subplots()
 
 for row in axs:
     for ax in row:
-        ax.set(xticks=[], yticks=[], xlim=(0.0, a1max*R1), ylim=(0.0, a2max*R2))
+        ax.set(xticks=[], yticks=[], xlim=(0.0, mymodule.a1max*mymodule.R1), ylim=(0.0, mymodule.a2max*mymodule.R2))
 for ax, loges in zip(axs[-1, ::every], logess[::every]):
     ax.set_xlabel(round(loges), fontsize=fstick)
 for ax, alpha in zip(axs[::every, 0], alphas[::every]):
-    ax.set_ylabel(f'{alpha:1.2f}', rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
+    ax.set_ylabel(f'{alpha:1.1f}', rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
 
 for given in givens:
 
     MRT = MRT0*(1.0 - given)
-    Q = Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
-    a2ss = a2max/(1.0 + Q*b)
+    Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
+    a2ss = mymodule.a2max/(1.0 + Q*mymodule.b)
     wss = mymodule.fitness(a2ss, a2ss, given, AA, RR)
-    q2ss = a2ss*R2
+    q2ss = a2ss*mymodule.R2
 
     for row, alpha, q2s, ws, icss in zip(axs, alphas, q2ss, wss, icsss):
         budget0 = q2_budget*(1.0 - given)

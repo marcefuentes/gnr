@@ -176,12 +176,10 @@ for ax, traitlabel in zip(axs[1], traitlabels):
 #axs[0, 0].imshow(Z, extent=extenta2)
 
 RS = np.zeros([nr*numa2, nc*numa2])
-mask = (T >= R) & (P <= S)
-RS[mask] = 2.0*R[mask] - T[mask] - S[mask]
-mask = (T > R) & (P > S)
+mask = (T >= R) 
 RS[mask] = 2.0*R[mask] - T[mask] - S[mask]
 axs[0, 1].imshow(RS, extent=extenta2, cmap='magma', vmin=0.0, vmax=0.5)
-axs[0, 1].set_title('$\it{R}$ - $\it{S}$ under\nsnowdrift', pad=50.0, fontsize=fslabel)
+axs[0, 1].set_title('2$\it{R}$ - $\it{T}$ - $\it{S}$ under\nany dilemma', pad=50.0, fontsize=fslabel)
 axs[0, 1].text(0,
                 nr*numa2*1.035,
                 'a',
@@ -191,9 +189,9 @@ axs[0, 1].set_yticklabels(yticklabels, fontsize=fstick)
 
 TS = np.zeros([nr*numa2, nc*numa2])
 mask = (T > R) & (P > S)
-TS[mask] = (1.0 + T[mask] + S[mask] - 2.0*R[mask])/2.0 
+TS[mask] = 0.5 + T[mask] + S[mask] - 2.0*R[mask] 
 axs[0, 2].imshow(TS, extent=extenta2, cmap='magma', vmin=0.0, vmax=0.5)
-axs[0, 2].set_title('$\it{T}$ + $\it{S}$ - 2$\it{R}$ under\nprisoner\'s dilemma',
+axs[0, 2].set_title('0.5 + $\it{T}$ + $\it{S}$ - 2$\it{R}$ under\nprisoner\'s dilemma',
                     pad=50.0,
                     fontsize=fslabel)
 axs[0, 2].text(0,

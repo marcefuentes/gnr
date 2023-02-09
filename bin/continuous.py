@@ -177,7 +177,6 @@ for ax, traitlabel in zip(axs[1], traitlabels):
 
 RS = np.zeros([nr*numa2, nc*numa2])
 mask = (T >= R) & (P <= S)
-#RS[mask] = R[mask] - S[mask] 
 RS[mask] = 2.0*R[mask] - T[mask] - S[mask]
 mask = (T > R) & (P > S)
 RS[mask] = 2.0*R[mask] - T[mask] - S[mask]
@@ -192,7 +191,7 @@ axs[0, 1].set_yticklabels(yticklabels, fontsize=fstick)
 
 TS = np.zeros([nr*numa2, nc*numa2])
 mask = (T > R) & (P > S)
-TS[mask] =  (1.0 + T[mask] + S[mask] - 2.0*R[mask])/2.0 
+TS[mask] = (1.0 + T[mask] + S[mask] - 2.0*R[mask])/2.0 
 axs[0, 2].imshow(TS, extent=extenta2, cmap='magma', vmin=0.0, vmax=0.5)
 axs[0, 2].set_title('$\it{T}$ + $\it{S}$ - 2$\it{R}$ under\nprisoner\'s dilemma',
                     pad=50.0,

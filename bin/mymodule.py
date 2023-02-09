@@ -43,17 +43,16 @@ def gametypes(mask0, T, R, P, S, a2c, a2d, Z, TS, a2eq, xeq, weq):
 
     mask = (mask & (2.0*R <= T + S))
     Z[mask] = colormap['nodilemmaRS']
-    TS[mask] = (1.0 + T[mask] + S[mask] - 2*R[mask])/2.0
 
     mask = (mask0 & (T > R) & (P > S))
     Z[mask] = colormap['prisoner']
-    TS[mask] = (1.0 + T[mask] + S[mask] - 2.0*R[mask])/2.0
+    TS[mask] = 1.0 + T[mask] + S[mask] - 2.0*R[mask]
     a2eq[mask] = a2d[mask]
     weq[mask] = P[mask]
 
     mask = (mask & (2.0*R <= T + S))
     Z[mask] = colormap['prisonerRS']
-    TS[mask] = (1.0 + T[mask] + S[mask] - 2.0*R[mask])/2.0
+    TS[mask] = 1.0 + T[mask] + S[mask] - 2.0*R[mask]
 
     mask = (mask0 & (T >= R) & (P <= S))
     Z[mask] = colormap['snowdrift']

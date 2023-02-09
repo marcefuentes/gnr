@@ -17,8 +17,8 @@ trait0s = ['nodilemmaRS',
             'prisonerRS']
 traitlabel0s = ['Game types', 
                 'Game types', 
-                '2$\it{R}$ - $\it{T}$ - $\it{S}$', 
-                '2$\it{R}$ - $\it{T}$ - $\it{S}$']
+                '$\it{T}$ + $\it{S}$ - 2$\it{R}$ under\nprisoner\'s dilemma', 
+                '$\it{T}$ + $\it{S}$ - 2$\it{R}$ under\nprisoner\'s dilemma']
 traits = ['a2Seenmean',
             'ChooseGrainmean',
             'MimicGrainmean',
@@ -182,7 +182,7 @@ S = np.copy(w01)
 mymodule.gametypes(mask0, T, R, P, S, a21, a20, Z, TS, a2eq, xeq, weq)
 
 axs[0, 0].imshow(Z, extent=extent)
-axs[0, 2].imshow(TS, extent=extent, cmap='magma', vmin=0, vmax=0.7)
+axs[0, 2].imshow(TS, extent=extent, cmap='magma', vmin=0, vmax=1.0)
 
 Z = np.full([nr, nc, 4], mymodule.colormap['default'])
 TS = np.zeros([nr, nc])
@@ -202,7 +202,7 @@ S = np.copy(w12)
 mymodule.gametypes(mask0, T, R, P, S, a22, a21, Z, TS, a2eq, xeq, weq)
 
 axs[0, 1].imshow(Z, extent=extent)
-axs[0, 3].imshow(TS, extent=extent, cmap='magma', vmin=0, vmax=0.7)
+axs[0, 3].imshow(TS, extent=extent, cmap='magma', vmin=0, vmax=1.0)
 
 for t in ts:
     for axrow, df in zip(axs[1:], dfs):

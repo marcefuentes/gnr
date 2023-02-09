@@ -191,7 +191,7 @@ TS = np.zeros([nr*numa2, nc*numa2])
 mask = (T > R) & (P > S)
 TS[mask] =  (1.0 + T[mask] + S[mask] - 2.0*R[mask])/2.0 
 axs[0, 2].imshow(TS, extent=extenta2, cmap='magma', vmin=0.0, vmax=0.5)
-axs[0, 2].set_title('2$\it{R}$ - $\it{T}$ - $\it{S}$ under\nprisoner\'s dilemma',
+axs[0, 2].set_title('$\it{T}$ + $\it{S}$ - 2$\it{R}$ under\nprisoner\'s dilemma',
                     pad=50.0,
                     fontsize=fslabel)
 axs[0, 2].text(0,

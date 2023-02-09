@@ -175,11 +175,14 @@ for ax, traitlabel in zip(axs[1], traitlabels):
 #Z[(T < R) & (P < S) & (2.0*R <= T + S)] = mymodule.colormap['nodilemmaRS']
 #axs[0, 0].imshow(Z, extent=extenta2)
 
-Z = np.full((nr*numa2, nc*numa2, 4), mymodule.colormap['nodilemma'])
-Z[(T >= R) & (P <= S)] = mymodule.colormap['snowdrift']
-#Z[(T >= R) & (P <= S) & (2.0*R <= T + S)] = mymodule.colormap['snowdriftRS']
-axs[0, 1].imshow(Z, extent=extenta2)
-axs[0, 1].set_title('Snowdrift', pad=50.0, fontsize=fslabel)
+RS = np.zeros([nr*numa2, nc*numa2])
+mask = (T >= R) & (P <= S)
+#RS[mask] = R[mask] - S[mask] 
+RS[mask] = 2.0*R[mask] - T[mask] - S[mask]
+mask = (T > R) & (P > S)
+RS[mask] = 2.0*R[mask] - T[mask] - S[mask]
+axs[0, 1].imshow(RS, extent=extenta2, cmap='magma', vmin=0.0, vmax=0.5)
+axs[0, 1].set_title('$\it{R}$ - $\it{S}$ under\nsnowdrift', pad=50.0, fontsize=fslabel)
 axs[0, 1].text(0,
                 nr*numa2*1.035,
                 'a',

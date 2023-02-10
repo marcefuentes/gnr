@@ -15,8 +15,6 @@ logesmin = -5.0
 logesmax = 5.0
 givenmin = 0.95
 givenmax = 0.95
-a2low = 0.25
-a2high = 0.75
 
 num = 21    # Number of subplot rows and columns
 ngiven = 21
@@ -48,8 +46,8 @@ xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 
 zeros = np.zeros([nr, nc])
-low = np.full([nr, nc], a2low)
-high = np.full([nr, nc], a2high)
+low = np.full([nr, nc], mymodule.a2low)
+high = np.full([nr, nc], mymodule.a2high)
 R = mymodule.fitness(high, high, zeros, AA, RR)
 P = mymodule.fitness(low, low, zeros, AA, RR)
 xaxis = [1, 2, 3, 4]

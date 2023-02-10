@@ -126,6 +126,11 @@ fig.supxlabel(xlabel,
                 x=0.513,
                 y=0.06,
                 fontsize=fslabel*1.5)
+fig.supylabel(ylabel,
+                x=0.05,
+                y=0.493,
+                fontsize=fslabel*1.5,
+                ha='center')
 
 letter = ord('a')
 for axrow in axs:

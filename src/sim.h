@@ -3,7 +3,6 @@
 #define CONTINUOUS_V 5
 #define BINS 64
 #define BOOLEAN_V 2
-#define GAMES 8
 
 // Structures
 
@@ -18,7 +17,6 @@ struct ptype
 	double		summedian[CONTINUOUS_V], summedian2[CONTINUOUS_V];
 	double		sumiqr[CONTINUOUS_V], sumiqr2[CONTINUOUS_V];
 	double		sumb[BOOLEAN_V], sumb2[BOOLEAN_V];
-	double		sumgames[GAMES], sumgames2[GAMES];
 	double		summeanTS, summean2TS;
 	double		sumsdTS, sumsd2TS;
 };
@@ -33,7 +31,6 @@ struct pruntype
 	double		median[CONTINUOUS_V];
 	double		iqr[CONTINUOUS_V];
 	double		frb[BOOLEAN_V];
-	double		frgames[GAMES];
 	double		meanTS;
 	double		sdTS;
 };
@@ -79,10 +76,8 @@ void		stats_runs		(struct ptype *p, struct ptype *p_last, int runs);
 void		write_headers_csv	(char *filename);
 void		write_headers_i		(char *filename);
 void		write_headers_frq	(char *filename);
-void		write_headers_gam	(char *filename);
 void		write_stats_csv		(char *filename, struct ptype *p, struct ptype *p_last);
 void		write_stats_frq		(char *filename, struct ptype *p, struct ptype *p_last);
-void		write_stats_gam		(char *filename, struct ptype *p, struct ptype *p_last);
 void		write_i			(char *filename, float alpha, float logES, float Given, struct itype *i, struct itype *i_last);
 void		write_time_elapsed	(char *filename, float time_elapsed);
 void		file_write_error	(char *filename);

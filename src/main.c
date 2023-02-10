@@ -52,7 +52,6 @@ void	write_globals (char *filename);
 void	caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first); 
 void	start_population (struct itype *i, struct itype *i_last);
 double	fitness (struct itype *i, struct itype *i_last);	
-void	game_types(struct itype *i, struct itype *i_last, struct pruntype *prun);
 double	ces (double q1, double q2);				// gES, galpha
 //double	macromutate (double trait, double sum);			// gDiscrete
 double	calculate_cost	(double choose, double mimic);		// gChooseCost, gMimicCost
@@ -80,23 +79,19 @@ int main (int argc, char *argv[])
 	char csv[13];
 	char ics[13];
 	char frq[13];
-	char gam[13];
 	strcpy (glo, argv[1]);
 	strcpy (gl2, argv[1]);
 	strcpy (csv, argv[1]);
 	strcpy (ics, argv[1]);
 	strcpy (frq, argv[1]);
-	strcpy (gam, argv[1]);
 	strcat (glo, ".glo");
 	strcat (gl2, ".gl2");
 	strcat (csv, ".csv");
 	strcat (ics, ".ics");
 	strcat (frq, ".frq");
-	strcat (gam, ".gam");
 
 	write_headers_csv (csv);
 	write_headers_frq (frq);
-	write_headers_gam (gam);
 	read_globals (glo);
 	write_globals (gl2); 
 	if ( gRuns == 1 )
@@ -142,7 +137,6 @@ int main (int argc, char *argv[])
 	stats_runs (p_first, p_last, gRuns);
 	write_stats_csv (csv, p_first, p_last); // Writes periodic data
 	write_stats_frq (frq, p_first, p_last); // Writes periodic data
-	write_stats_gam (gam, p_first, p_last); // Writes periodic data
 
 	free (p_first);
 
@@ -269,7 +263,6 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 				prun->time = t + 1;
 				prun->wmax = wmax;
 				stats_period (i_first, i_last, prun, gN, ga2Min, ga2Max);
-				game_types(i_first, i_last, prun);
 				prun++;
 			}
 
@@ -376,89 +369,6 @@ double fitness (struct itype *i, struct itype *i_last)
 	return wC;
 }
 
-void game_types (struct itype *i, struct itype *i_last, struct pruntype *prun)
-{
-	int boolean[GAMES] = { 0 };
-	double q1, q1p, q2;
-	double T, R, P, S, temp, TS;
-
-	prun->meanTS = 0.0;
-	prun->sdTS = 0.0;
-
-	for ( ; i < i_last; i += 2 )
-	{
-		q1 = gR1*ga1Max*(1.0 - i->a2Decided/ga2Max);
-		q1p = gR1*ga1Max*(1.0 - i->partner->a2Decided/ga2Max);
-
-		q2 = gR2*i->partner->a2Decided*(1.0 - gGiven) + gR2*i->a2Decided*gGiven;
-		T = ces(q1p, q2);
-
-		q2 = gR2*i->a2Decided;
-		R = ces(q1, q2);
-
-		q2 = gR2*i->partner->a2Decided;
-		P = ces(q1p, q2);
-
-		q2 = gR2*i->a2Decided*(1.0 - gGiven) + gR2*i->partner->a2Decided*gGiven;
-		S = ces(q1, q2);
-
-		if ( R < P )
-		{
-			temp = R;
-			R = P;
-			P = temp;
-			temp = T;
-			T = S;
-			S = temp;
-		}
-
-		if ( R == P )
-		{
-			boolean[0] ++;	// equal
-		}
-		else if ( T < R && P < S && 2.0*R >= T + S )
-		{
-			boolean[1] ++;	// no dilemma
-		}
-		else if ( T < R && P < S && 2.0*R < T + S )
-		{
-			boolean[2] ++;	// no dilemma RS
-		}
-		else if ( T >= R && P <= S && 2.0*R >= T + S )
-		{
-			boolean[3] ++;	// snowdrift
-		}
-		else if ( T >= R && P <= S && 2.0*R < T + S )
-		{
-			boolean[4] ++;	//snowdrift RS
-		}
-		else if ( T > R && P > S && 2.0*R >= T + S )
-		{
-			boolean[5] ++;	// prisoner's dilemma
-		}
-		else if ( T > R && P > S && 2.0*R < T + S )
-		{
-			boolean[6] ++;	// prisoner's dilemma RS
-		}
-		else
-		{
-			boolean[7] ++;
-		}
-
-		TS = (1.0 + T + S - 2.0*R)/2.0;
-		prun->meanTS += TS;
-		prun->sdTS += TS*TS;
-	}
-
-	for ( int v = 0; v < GAMES; v++ )
-	{
-		prun->frgames[v] = (double) boolean[v]*2.0/gN;
-	}
-
-	prun->meanTS = prun->meanTS*2.0/gN;
-	prun->sdTS = stdev(prun->meanTS, prun->sdTS, gN/2); 
-}
-		
 double ces (double q1, double q2)
 {
 	double w;

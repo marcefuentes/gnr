@@ -168,21 +168,6 @@ void stats_end (struct pruntype *prun, struct pruntype *prun_last, struct ptype 
 			p->sumb[v] += h;
 			p->sumb2[v] += h*h;
 		}
-
-		for ( int v = 0; v < GAMES; v++ )
-		{
-			h = prun->frgames[v];
-			p->sumgames[v] += h;
-			p->sumgames2[v] += h*h;
-		}
-
-		h = prun->meanTS;
-		p->summeanTS += h;
-		p->summean2TS += h*h;
-
-		h = prun->sdTS;
-		p->sumsdTS += h;
-		p->sumsd2TS += h*h;
 	}
 }
 
@@ -215,17 +200,6 @@ void stats_runs (struct ptype *p, struct ptype *p_last, int runs)
 			p->sumb2[v] = stdev (p->sumb[v], p->sumb2[v], runs);
 			p->sumb[v] /= runs;
 		}
-
-		for ( int v = 0; v < GAMES; v++)
-		{
-			p->sumgames2[v] = stdev (p->sumgames[v], p->sumgames2[v], runs);
-			p->sumgames[v] /= runs;
-		}
-
-		p->summean2TS = stdev(p->summeanTS, p->summean2TS, runs);
-		p->summeanTS /= runs;
-		p->sumsd2TS = stdev(p->sumsdTS, p->sumsd2TS, runs);
-		p->sumsdTS /= runs;
 	}
 }
 

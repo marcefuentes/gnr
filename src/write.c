@@ -74,39 +74,6 @@ void write_headers_frq (char *filename)
 	fclose (fp);
 }
 
-void write_headers_gam (char *filename)
-{
-	FILE *fp;
-
-	// 20 is the maximum number of characters of variable names
-	char headers[GAMES][20] = { "equal",
-					"nodilemma",
-					"nodilemmaRS",
-					"snowdrift",
-					"snowdriftRS",
-					"prisoner",
-					"prisonerRS",
-					"other" };
-
-	if ( (fp = fopen (filename, "a+")) == NULL )
-	{
-		file_write_error (filename);
-	}
-
-	fprintf (fp, "alpha,logES,Given,Time");
-
-	for ( int v = 0; v < GAMES; v++ )
-	{
-		fprintf (fp, ",%s,%sSD", headers[v], headers[v]);
-	}
-
-	fprintf (fp, ",%s,%s,%s,%s", "TSmean", "TSmeanSD", "TSsd", "TSsdSD");
-
-	fprintf (fp, "\n");
-
-	fclose (fp);
-}
-
 void write_stats_csv (char *filename, struct ptype *p, struct ptype *p_last)
 {
 	FILE *fp;
@@ -161,32 +128,6 @@ void write_stats_frq (char *filename, struct ptype *p, struct ptype *p_last)
 				fprintf (fp, ",%f,%f", p->sumc[v][b], p->sumc2[v][b]);
 			}
 		}
-
-		fprintf (fp, "\n");
-	}
-
-	fclose (fp);
-}
-
-void write_stats_gam (char *filename, struct ptype *p, struct ptype *p_last)
-{
-	FILE *fp;
-
-	if ( (fp = fopen (filename, "a+")) == NULL )
-	{
-		file_write_error (filename);
-	}
-
-	for ( ; p < p_last; p++ )
-	{
-		fprintf (fp, "%f,%f,%f,%i", p->alpha, p->logES, p->Given, p->time);
-
-		for ( int v = 0; v < GAMES; v++ )
-		{
-			fprintf (fp, ",%f,%f", p->sumgames[v], p->sumgames2[v]);
-		}
-
-		fprintf (fp, ",%f,%f,%f,%f", p->summeanTS, p->summean2TS, p->sumsdTS, p->sumsd2TS);
 
 		fprintf (fp, "\n");
 	}

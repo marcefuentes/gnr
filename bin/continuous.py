@@ -169,14 +169,16 @@ for ax, traitlabel in zip(axs[1], traitlabels):
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
 Z = np.full((nr*numa2, nc*numa2, 4), mymodule.colormap['white'])
-Z[(T > R) & (R > S) & (S > P)] = mymodule.colormap['snowdrift']
+mask = (T > R) & (R > S) & (S > P)
+Z[mask] = mymodule.colormap['snowdrift']
 ax = axs[0, 0]
 ax.imshow(Z, extent=extenta2)
 ax.set_yticklabels(yticklabels, fontsize=fstick) 
 ax.set_title('Snowdrift', pad=50.0, fontsize=fslabel)
 
 Z = np.full((nr*numa2, nc*numa2, 4), mymodule.colormap['white'])
-Z[(T > R) & (R > P) & (P > S)] = mymodule.colormap['prisoner']
+mask = (T > R) & (R > P) & (P > S)
+Z[mask] = mymodule.colormap['prisoner']
 ax = axs[0, 1]
 ax.imshow(Z, extent=extenta2)
 ax.set_title('Prisoner\'s dilemma', pad=50.0, fontsize=fslabel)

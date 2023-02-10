@@ -11,10 +11,6 @@ import time
 
 start_time = time.perf_counter ()
 
-trait0s = ['nodilemmaRS',
-            'snowdrift',
-            'prisoner',
-            'prisonerRS']
 traitlabel0s = ['Game types', 
                 'Game types', 
                 '$\it{T}$ + $\it{S}$ - 2$\it{R}$ under\nprisoner\'s dilemma', 
@@ -100,12 +96,10 @@ yticklabels = [round(ymin, 1),
 extent = 0, nc, 0, nr
 
 zeros = np.zeros([nr, nc])
-a20 = np.copy(zeros)
-a21 = a20 + mymodule.a2max/2.0
-a22 = a20 + mymodule.a2max
-w00 = mymodule.fitness(a20, a20, GG, AA, RR)
-w11 = mymodule.fitness(a21, a21, GG, AA, RR)
-w22 = mymodule.fitness(a22, a22, GG, AA, RR)
+low = np.full([nr, nc], mymodule.a2low)
+high = np.full([nr, nc], mymodule.a2high)
+R = mymodule.fitness(high, high, GG, AA, RR)
+P = mymodule.fitness(low, low, GG, AA, RR)
 
 fig, axs = plt.subplots(nrows=len(folders)+1,
                         ncols=len(traits),
@@ -157,52 +151,15 @@ a2eq = np.copy(zeros)
 weq = np.copy(zeros)
 xeq = np.copy(zeros)
 
-w01 = mymodule.fitness(a20, a21, GG, AA, RR)
-w02 = mymodule.fitness(a20, a22, GG, AA, RR)
-w10 = mymodule.fitness(a21, a20, GG, AA, RR)
-w12 = mymodule.fitness(a21, a22, GG, AA, RR)
-w20 = mymodule.fitness(a22, a20, GG, AA, RR)
-w21 = mymodule.fitness(a22, a21, GG, AA, RR)
-
+T = mymodule.fitness(high, low, GG, AA, RR)
+S = mymodule.fitness(low, high, GG, AA, RR)
 Z = np.full([nr, nc, 4], mymodule.colormap['default'])
 TS = np.zeros([nr, nc])
 
-mask0 = (w00 > w11)
-T = np.copy(w01)
-R = np.copy(w00)
-P = np.copy(w11)
-S = np.copy(w10)
-mymodule.gametypes(mask0, T, R, P, S, a20, a21, Z, TS, a2eq, xeq, weq)
-
-mask0 = (w00 < w11)
-T = np.copy(w10)
-R = np.copy(w11)
-P = np.copy(w00)
-S = np.copy(w01)
-mymodule.gametypes(mask0, T, R, P, S, a21, a20, Z, TS, a2eq, xeq, weq)
+mymodule.gametypes(T, R, P, S, low, high, Z, TS, a2eq, xeq, weq)
 
 axs[0, 0].imshow(Z, extent=extent)
-axs[0, 2].imshow(TS, extent=extent, cmap='magma', vmin=0, vmax=1.0)
-
-Z = np.full([nr, nc, 4], mymodule.colormap['default'])
-TS = np.zeros([nr, nc])
-
-mask0 = (w11 > w22)
-T = np.copy(w12)
-R = np.copy(w11)
-P = np.copy(w22)
-S = np.copy(w21)
-mymodule.gametypes(mask0, T, R, P, S, a21, a22, Z, TS, a2eq, xeq, weq)
-
-mask0 = (w11 < w22)
-T = np.copy(w21)
-R = np.copy(w22)
-P = np.copy(w11)
-S = np.copy(w12)
-mymodule.gametypes(mask0, T, R, P, S, a22, a21, Z, TS, a2eq, xeq, weq)
-
-axs[0, 1].imshow(Z, extent=extent)
-axs[0, 3].imshow(TS, extent=extent, cmap='magma', vmin=0, vmax=1.0)
+axs[0, 1].imshow(TS, extent=extent, cmap='magma', vmin=0, vmax=1.0)
 
 for t in ts:
     for axrow, df in zip(axs[1:], dfs):

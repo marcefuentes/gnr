@@ -14,8 +14,8 @@ alphamin = 0.1
 alphamax = 0.9
 logesmin = -5.0
 logesmax = 5.0
-givenmin = 0.0
-givenmax = 1.0
+givenmin = 0.95
+givenmax = 0.95
 
 num = 21    # Number of subplot rows and columns
 numa2 = 64
@@ -45,10 +45,12 @@ alphas = np.linspace(alphamax, alphamin, num=nr)
 logess = np.linspace(logesmin, logesmax, num=nc)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
-X, Y = np.meshgrid(np.linspace(0.0, mymodule.a2max, num=numa2), np.linspace(mymodule.a2max, 0.0, num=numa2))
+X, Y = np.meshgrid(np.linspace(0.0, mymodule.a2max, num=numa2),
+                    np.linspace(mymodule.a2max, 0.0, num=numa2))
 X = np.tile(A=X, reps=[nr, nc])
 Y = np.tile(A=Y, reps=[nr, nc])
-RRR, AAA = np.meshgrid(np.repeat(rhos, numa2), np.repeat(alphas, numa2))
+RRR, AAA = np.meshgrid(np.repeat(rhos, numa2),
+                        np.repeat(alphas, numa2))
 
 xmin = logesmin
 xmax = logesmax
@@ -57,9 +59,18 @@ ymin = alphamin
 ymax = alphamax
 ylabel = 'Value of $\it{B}$'
 
-traitvmaxs = [mymodule.a2max, mymodule.fitness(np.array([mymodule.a2max]), np.array([mymodule.a2max]), np.array([0.0]), np.array([0.9]), np.array([5.0]))]
-xticklabels = [round(xmin), round((xmin + xmax)/2), round(xmax)]
-yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
+traitvmaxs = [mymodule.a2max,
+                mymodule.fitness(np.array([mymodule.a2max]),
+                np.array([mymodule.a2max]),
+                np.array([0.0]),
+                np.array([0.9]),
+                np.array([5.0]))]
+xticklabels = [round(xmin),
+                round((xmin + xmax)/2),
+                round(xmax)]
+yticklabels = [round(ymin, 1),
+                round((ymin + ymax)/2, 1),
+                round(ymax, 1)]
 extent = 0, nc, 0, nr
 extenta2 = 0, nc*numa2, 0, nr*numa2
 
@@ -72,15 +83,29 @@ letter = ord('b')
 for axrow in axs:
     for ax in axrow:
         if ax.get_subplotspec().is_first_row():
-            ax.set(xticks=[0, nc*numa2/2, nc*numa2], yticks=[0, nr*numa2/2, nr*numa2], xticklabels=[], yticklabels=[])
+            ax.set(xticks=[0, nc*numa2/2, nc*numa2],
+                    yticks=[0, nr*numa2/2, nr*numa2],
+                    xticklabels=[],
+                    yticklabels=[])
             ax.set_title('Game types', pad=50.0, fontsize=fslabel)
-            ax.text(0, nr*numa2*1.035, 'a', fontsize=fslabel, weight='bold')
+            ax.text(0,
+                    nr*numa2*1.035,
+                    'a',
+                    fontsize=fslabel,
+                    weight='bold')
             pos = ax.get_position()
             newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
             ax.set_position(newpos)
         else:
-            ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
-            ax.text(0, nr*1.035, chr(letter), fontsize=fslabel, weight='bold')
+            ax.set(xticks=[0, nc/2, nc],
+                            yticks=[0, nr/2, nr],
+                            xticklabels=[],
+                            yticklabels=[])
+            ax.text(0,
+                    nr*1.035,
+                    chr(letter),
+                    fontsize=fslabel,
+                    weight='bold')
             letter += 1
         if ax.get_subplotspec().is_first_col():
             ax.set_yticklabels(yticklabels, fontsize=fstick) 
@@ -96,20 +121,22 @@ for given in givens:
     R = mymodule.fitness(Y, Y, given, AAA, RRR)
     P = mymodule.fitness(X, X, given, AAA, RRR)
     S = mymodule.fitness(X, Y, given, AAA, RRR)
-    mask = (R < P)
-    H = T[mask]
-    T[mask] = S[mask]
-    S[mask] = H
-    H = R[mask]
-    R[mask] = P[mask]
-    P[mask] = H
-    Z[(T < R) & (P < S)] = mymodule.colormap['nodilemma']
-    Z[(T < R) & (P < S) & (2.0*R <= T + S)] = mymodule.colormap['nodilemmaRS']
-    Z[(T > R) & (P > S)] = mymodule.colormap['prisoner']
-    Z[(T > R) & (P > S) & (2.0*R <= T + S)] = mymodule.colormap['prisonerRS']
-    Z[(T >= R) & (P <= S)] = mymodule.colormap['snowdrift']
-    Z[(T >= R) & (P <= S) & (2.0*R <= T + S)] = mymodule.colormap['snowdriftRS']
-    Z[R == P] = mymodule.colormap['nodilemma']
+    mask = ((R > T) & (T > S) & (S > P)) | ((R > S) & (S > T) & (S > P))
+    Z[mask] = mymodule.colormap['harmony']
+    mask = (mask & (2.0*R <= T + S))
+    Z[mask] = mymodule.colormap['harmonyTS']
+    mask = (T > P) & (P > R) & (R > S)
+    Z[mask] = mymodule.colormap['deadlock']
+    mask = (mask & (2.0*P <= T + S))
+    Z[mask] = mymodule.colormap['deadlockTS']
+    mask = (T > R) & (R > P) & (P > S)
+    Z[mask] = mymodule.colormap['prisoner']
+    mask = (mask & (2.0*R <= T + S))
+    Z[mask] = mymodule.colormap['prisonerTS']
+    mask = (T > R) & (R > S) & (S > P)
+    Z[mask] = mymodule.colormap['snowdrift']
+    mask = (mask & (2.0*R <= T + S))
+    Z[mask] = mymodule.colormap['snowdriftTS']
 
     MRT = MRT0*(1.0 - given)
     Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
@@ -127,7 +154,12 @@ for given in givens:
             ax.imshow(M, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
 
     if movie:
-        text = fig.text(0.90, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
+        text = fig.text(0.90,
+                        0.90,
+                        f'given: {given:4.2f}',
+                        fontsize=fstick,
+                        color='grey',
+                        ha='right')
         plt.savefig('temp.png', transparent=False)
         text.remove()
         frames.append(iio.imread('temp.png'))

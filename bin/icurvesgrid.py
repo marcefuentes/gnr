@@ -103,7 +103,7 @@ for outer, given in enumerate(givens):
                 ax.plot(q1_ic, ic, c='0.850')
             budget = budget0 + q2eq*given
             ax.plot(q1_budget, budget, c='green', alpha=0.8)
-            ax.plot(q1_ic, indifference(q1_ic, weq, alpha, rho), linewidth=4, alpha= 0.8, c=cm.magma(weq/traitvmax))
+            ax.plot(q1_ic, indifference(q1_ic, weq, alpha, rho), linewidth=4, alpha= 0.8, c=cm.viridis(weq/traitvmax))
 
 plt.savefig(filename + '.png', transparent=False)
 

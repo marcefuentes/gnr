@@ -19,7 +19,7 @@ traitlabels = ['Effort to get $\it{B}$',
                 'Sensitivity for\nchoosing partner',
                 'Sensitivity for\nmimicking partner',
                 'Fitness']
-folders = ['none', 'p', 'r', 'pr', 'p8r', 'given0']
+folders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
 
 movie = False
 
@@ -40,7 +40,7 @@ for folder in folders:
     #df['help'] = df.a2Seenmean*mymodule.R2*df.Given
     dfs.append(df)
 
-df = dfs[0]
+df = dfs[1]
 ts = df.Time.unique()
 if movie:
     frames = []
@@ -173,27 +173,26 @@ for axrow in axs:
 for ax, traitlabel in zip(axs[1], traitlabels):
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
-Z = np.full((nr*numa2, nc*numa2, 4), mymodule.colormap['white'])
+Z = np.zeros([nr*numa2, nc*numa2])
 mask = (T > R) & (R > S) & (S > P)
-Z[mask] = mymodule.colormap['snowdrift']
+Z[mask] = R[mask] - P[mask]
 ax = axs[0, 0]
-ax.imshow(Z, extent=extenta2)
+ax.imshow(Z, extent=extenta2, cmap='viridis', vmin=0.0, vmax=0.5)
 ax.set_yticklabels(yticklabels, fontsize=fstick) 
-ax.set_title('Snowdrift', pad=50.0, fontsize=fslabel)
-
-Z = np.full((nr*numa2, nc*numa2, 4), mymodule.colormap['white'])
-mask = (T > R) & (R > P) & (P > S)
-Z[mask] = mymodule.colormap['prisoner']
-ax = axs[0, 1]
-ax.imshow(Z, extent=extenta2)
-ax.set_title('Prisoner\'s dilemma', pad=50.0, fontsize=fslabel)
+ax.set_title('Snowdrift\n$\it{R}$ - $\it{P}$', pad=50.0, fontsize=fslabel)
 
 Z = np.zeros([nr*numa2, nc*numa2])
-mask = ((R > P) & (T >= R)) | ((R < P) & (S >= P))
-Z[mask] = 2.0*R[mask] - T[mask] - S[mask]
+mask = ((T > R) & (R > P) & (P > S))
+Z[mask] = 1.0 + S[mask] - P[mask]
+ax = axs[0, 1]
+ax.imshow(Z, extent=extenta2, cmap='viridis', vmin=0.0, vmax=1.0)
+ax.set_title('Prisoner\'s dilemma\n$\it{S}$ - $\it{P}$', pad=50.0, fontsize=fslabel)
+
+Z = np.zeros([nr*numa2, nc*numa2])
+Z[mask] = 1.0 + T[mask] + S[mask] - 2.0*R[mask]
 ax = axs[0, 2]
-ax.imshow(Z, extent=extenta2, cmap='magma', vmin=0.0, vmax=1.0)
-ax.set_title('2$\it{R}$ - $\it{T}$ - $\it{S}$ under\nany dilemma\nwith 2$\it{R}$ > $\it{T}$ - $\it{S}$', pad=50.0, fontsize=fslabel)
+ax.imshow(Z, extent=extenta2, cmap='viridis', vmin=0.0, vmax=1.0)
+ax.set_title('Prisoner\'s dilemma\n$\it{T}$ + $\it{S}$ - 2$\it{R}$', pad=50.0, fontsize=fslabel)
 
 for t in ts:
     for axrow, df in zip(axs[1:], dfs):
@@ -205,7 +204,7 @@ for t in ts:
                                                             ascending=False)
             ax.imshow(Z,
                     extent=extent,
-                    cmap='magma',
+                    cmap='viridis',
                     vmin=0,
                     vmax=traitvmax)
     if movie:

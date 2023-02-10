@@ -159,7 +159,7 @@ TS = np.zeros([nr, nc])
 mymodule.gametypes(T, R, P, S, low, high, Z, TS, a2eq, xeq, weq)
 
 axs[0, 0].imshow(Z, extent=extent)
-axs[0, 1].imshow(TS, extent=extent, cmap='magma', vmin=0, vmax=1.0)
+axs[0, 1].imshow(TS, extent=extent, cmap='viridis', vmin=0, vmax=1.0)
 
 for t in ts:
     for axrow, df in zip(axs[1:], dfs):
@@ -171,7 +171,7 @@ for t in ts:
                                                             ascending=False)
             ax.imshow(Z,
                     extent=extent,
-                    cmap='magma',
+                    cmap='viridis',
                     vmin=0,
                     vmax=traitvmax)
     if movie:

@@ -145,7 +145,7 @@ for t in ts:
     for axrow, df in zip(axs[1:], dfs):
         for ax, trait, traitvmax in zip(axrow, traits, traitvmaxs):
             Z = pd.pivot_table(df.loc[df.Time == t], values=trait, index=[rowindex], columns=['logES']).sort_index(axis=0, ascending=False)
-            ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
+            ax.imshow(Z, extent=extent, cmap='viridis', vmin=0, vmax=traitvmax)
     if movie:
         text = fig.text(0.90, 0.90, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')
         plt.savefig('temp.png', transparent=False)

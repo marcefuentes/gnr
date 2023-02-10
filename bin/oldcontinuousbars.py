@@ -65,7 +65,7 @@ fig.supxlabel(xlabel, x=0.513, y=0.06, fontsize=fslabel*1.50)
 fig.supylabel(ylabel, x=0.05, y=0.493, fontsize=fslabel*1.50, ha='center')
 
 bins = np.arange(start=0, stop=nbins, step=1)
-my_cmap = plt.get_cmap('magma')
+my_cmap = plt.get_cmap('viridis')
 colors = my_cmap(bins/nbins)
 
 outergrid = fig.add_gridspec(len(folders), len(traitroots), left=0.15, right=0.9, top=0.86, bottom=0.176)

@@ -99,11 +99,11 @@ for given in givens:
     Mss = [[a2social, wsocial], [a2eq, weq]]
 
     axs[0, 0].imshow(Z, extent=extent)
-    axs[0, 1].imshow(TS, extent=extent, cmap='magma', vmin=0, vmax=0.7)
+    axs[0, 1].imshow(TS, extent=extent, cmap='viridis', vmin=0, vmax=0.7)
 
     for row, Ms in zip(axs[1:], Mss):
         for ax, M, traitvmax in zip(row, Ms, traitvmaxs):
-            ax.imshow(M, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
+            ax.imshow(M, extent=extent, cmap='viridis', vmin=0, vmax=traitvmax)
 
     if movie:
         text = fig.text(0.90, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')

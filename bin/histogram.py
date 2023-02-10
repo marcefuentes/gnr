@@ -59,7 +59,7 @@ fig.supxlabel(xlabel, x=0.525, y=0.03, fontsize=fslabel)
 fig.supylabel(ylabel, x=0.05, y=0.52, fontsize=fslabel)
 
 bins = [0.0, 0.5, 1.0]
-my_cmap = plt.get_cmap('magma')
+my_cmap = plt.get_cmap('viridis')
 colors = my_cmap(bins)
 
 outergrid = fig.add_gridspec(1, 2, left=0.15, right=0.9, top=0.86, bottom=0.176)

@@ -151,7 +151,7 @@ for t in ts:
             df = df.loc[df.Time == t].copy()
             df[trait] = 1.0 - df[trait]
             Z = pd.pivot_table(df, values=trait, index=[rowindex], columns=['logES']).sort_index(axis=0, ascending=False)
-            ax.imshow(Z, extent=extent, cmap='magma', vmin=0, vmax=traitvmaxs[0])
+            ax.imshow(Z, extent=extent, cmap='viridis', vmin=0, vmax=traitvmaxs[0])
     if movie:
         text = fig.text(0.90, 0.90, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')
         plt.savefig('temp.png', transparent=False)

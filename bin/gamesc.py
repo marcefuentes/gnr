@@ -153,7 +153,7 @@ for given in givens:
 
     for row, Ms in zip(axs[1:], Mss):
         for ax, M, traitvmax in zip(row, Ms, traitvmaxs):
-            ax.imshow(M, extent=extent, cmap='magma', vmin=0, vmax=traitvmax)
+            ax.imshow(M, extent=extent, cmap='viridis', vmin=0, vmax=traitvmax)
 
     if movie:
         text = fig.text(0.90,

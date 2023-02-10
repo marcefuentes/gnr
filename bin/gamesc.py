@@ -125,7 +125,7 @@ for given in givens:
     Z[mask] = mymodule.colormap['harmony']
     mask = (mask & (2.0*R <= T + S))
     Z[mask] = mymodule.colormap['harmonyTS']
-    mask = (T > P) & (P > R) & (R > S)
+    mask = (T >= P) & (P > R) & (R >= S)
     Z[mask] = mymodule.colormap['deadlock']
     mask = (mask & (2.0*P <= T + S))
     Z[mask] = mymodule.colormap['deadlockTS']
@@ -137,6 +137,8 @@ for given in givens:
     Z[mask] = mymodule.colormap['snowdrift']
     mask = (mask & (2.0*R <= T + S))
     Z[mask] = mymodule.colormap['snowdriftTS']
+    mask = (X > Y)
+    Z[mask] = mymodule.colormap['black']
 
     MRT = MRT0*(1.0 - given)
     Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))

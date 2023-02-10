@@ -16,8 +16,8 @@ logesmin = -5.0
 logesmax = 5.0
 givenmin = 0.95
 givenmax = 0.95
-a2low = 0.33
-a2high = 0.67
+a2low = 0.25
+a2high = 0.75
 
 num = 21    # Number of subplot rows and columns
 ngiven = 21

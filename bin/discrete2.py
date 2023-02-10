@@ -96,8 +96,8 @@ yticklabels = [round(ymin, 1),
 extent = 0, nc, 0, nr
 
 zeros = np.zeros([nr, nc])
-low = np.full([nr, nc], a2low)
-high = np.full([nr, nc], a2high)
+low = np.full([nr, nc], mymodule.a2low)
+high = np.full([nr, nc], mymodule.a2high)
 R = mymodule.fitness(high, high, GG, AA, RR)
 P = mymodule.fitness(low, low, GG, AA, RR)
 

@@ -15,8 +15,8 @@ logesmin = -5.0
 logesmax = 5.0
 givenmin = 0.95
 givenmax = 0.95
-a2low = 0.0
-a2high = 0.49
+a2low = 0.25
+a2high = 0.75
 
 num = 21    # Number of subplot rows and columns
 ngiven = 21
@@ -50,12 +50,12 @@ ylabel = 'Value of $\it{B}$'
 zeros = np.zeros([nr, nc])
 a20 = np.full([nr, nc], a2low)
 a21 = np.full([nr, nc], a2high)
-w00 = fitness(a20, a20, zeros, AA, RR)
-w11 = fitness(a21, a21, zeros, AA, RR)
+w00 = mymodule.fitness(a20, a20, zeros, AA, RR)
+w11 = mymodule.fitness(a21, a21, zeros, AA, RR)
 a2social = np.copy(a20)
 mask = (w11 > w00)
 a2social[mask] = a21[mask]
-wsocial = fitness(a2social, a2social, zeros, AA, RR)
+wsocial = mymodule.fitness(a2social, a2social, zeros, AA, RR)
 xaxis = [1, 2, 3, 4]
 
 fig = plt.figure(figsize=(8, 8))
@@ -75,6 +75,7 @@ for ax, alpha in zip(axs[::every, 0], alphas[::every]):
 for given in givens:
 
     Z = np.full([nr, nc, 4], mymodule.colormap['default'])
+    TS = np.copy(zeros)
     Tf = np.copy(zeros)
     Rf = np.copy(zeros)
     Pf = np.copy(zeros)
@@ -82,8 +83,8 @@ for given in givens:
     a2eq = np.copy(zeros)
     weq = np.copy(zeros)
     xeq = np.copy(zeros)
-    w01 = fitness(a20, a21, given, AA, RR)
-    w10 = fitness(a21, a20, given, AA, RR)
+    w01 = mymodule.fitness(a20, a21, given, AA, RR)
+    w10 = mymodule.fitness(a21, a20, given, AA, RR)
 
     mask0 = (w00 > w11)
     T = np.copy(w01)
@@ -94,7 +95,7 @@ for given in givens:
     Rf[mask0] = R[mask0]
     Pf[mask0] = P[mask0]
     Sf[mask0] = S[mask0]
-    mymodule.gametypes(mask0, T, R, P, S, a20, a21, Z, a2eq, xeq, weq)
+    mymodule.gametypes(mask0, T, R, P, S, a20, a21, Z, TS, a2eq, xeq, weq)
 
     mask0 = (w00 < w11)
     T = np.copy(w10)
@@ -105,7 +106,7 @@ for given in givens:
     Rf[mask0] = R[mask0]
     Pf[mask0] = P[mask0]
     Sf[mask0] = S[mask0]
-    mymodule.gametypes(mask0, T, R, P, S, a21, a20, Z, a2eq, xeq, weq)
+    mymodule.gametypes(mask0, T, R, P, S, a21, a20, Z, TS, a2eq, xeq, weq)
 
     for row, rowT, rowR, rowP, rowS, rowZ in zip(axs, Tf, Rf, Pf, Sf, Z):
         for ax, tt, rr, pp, ss, zz in zip(row, rowT, rowR, rowP, rowS, rowZ):

@@ -13,8 +13,10 @@ alphamin = 0.1
 alphamax = 0.9
 logesmin = -5.0
 logesmax = 5.0
-givenmin = 0.95
-givenmax = 0.95
+givenmin = 0.0
+givenmax = 1.0
+a2low = 0.25
+a2high = 0.75
 
 num = 21    # Number of subplot rows and columns
 ngiven = 21
@@ -46,19 +48,19 @@ xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 
 zeros = np.zeros([nr, nc])
-a20 = np.copy(zeros)
-a21 = np.full([nr, nc], mymodule.a2max/2.0)
-a22 = np.full([nr, nc], mymodule.a2max)
-w00 = mymodule.fitness(a20, a20, zeros, AA, RR)
-w11 = mymodule.fitness(a21, a21, zeros, AA, RR)
-w22 = mymodule.fitness(a22, a22, zeros, AA, RR)
-a2social = np.copy(zeros)
-mask = (w11 > w00)
-a2social[mask] = a21[mask]
-mask = (w22 > w11)
-a2social[mask] = a22[mask]
+low = np.full([nr, nc], a2low)
+high = np.full([nr, nc], a2high)
+P = mymodule.fitness(low, low, zeros, AA, RR)
+R = mymodule.fitness(high, high, zeros, AA, RR)
+a2social = np.copy(low)
+mask = (R > P)
+a2social[mask] = high[mask]
 wsocial = mymodule.fitness(a2social, a2social, zeros, AA, RR)
 xaxis = [1, 2, 3, 4]
+TS = np.copy(zeros)
+a2eq = np.copy(zeros)
+weq = np.copy(zeros)
+xeq = np.copy(zeros)
 
 fig = plt.figure(figsize=(8, 8))
 fig.supxlabel(xlabel, x=0.56, y=0.03, fontsize=fslabel)
@@ -76,77 +78,12 @@ for ax, alpha in zip(axs[::every, 0], alphas[::every]):
 
 for given in givens:
 
+    T = mymodule.fitness(high, low, given, AA, RR)
+    S = mymodule.fitness(low, high, given, AA, RR)
     Z = np.full([nr, nc, 4], mymodule.colormap['default'])
-    Tf = np.copy(zeros)
-    Rf = np.copy(zeros)
-    Pf = np.copy(zeros)
-    Sf = np.copy(zeros)
-    a2eq = np.copy(zeros)
-    weq = np.copy(zeros)
-    xeq = np.copy(zeros)
-    w01 = mymodule.fitness(a20, a21, given, AA, RR)
-    w10 = mymodule.fitness(a21, a20, given, AA, RR)
-    w12 = mymodule.fitness(a21, a22, given, AA, RR)
-    w21 = mymodule.fitness(a22, a21, given, AA, RR)
-    w02 = mymodule.fitness(a20, a22, given, AA, RR)
-    w20 = mymodule.fitness(a22, a20, given, AA, RR)
+    mymodule.gametypes(T, R, P, S, low, high, Z, TS, a2eq, xeq, weq)
 
-    mask0 = (wsocial == w00)
-    T = np.copy(w01)
-    R = np.copy(w00)
-    P = np.copy(w11)
-    S = np.copy(w10)
-    Tf[mask0] = T[mask0]
-    Rf[mask0] = R[mask0]
-    Pf[mask0] = P[mask0]
-    Sf[mask0] = S[mask0]
-    mymodule.gametypes(mask0, T, R, P, S, a20, a21, Z, a2eq, xeq, weq)
-
-    mask0 = (wsocial == w11) & (w20 > w22)
-    T = np.copy(w10)
-    R = np.copy(w11)
-    P = np.copy(w00)
-    S = np.copy(w01)
-    Tf[mask0] = T[mask0]
-    Rf[mask0] = R[mask0]
-    Pf[mask0] = P[mask0]
-    Sf[mask0] = S[mask0]
-    mymodule.gametypes(mask0, T, R, P, S, a21, a20, Z, a2eq, xeq, weq)
-
-    mask0 = (wsocial == w11) & (w20 <= w22)
-    T = np.copy(w12)
-    R = np.copy(w11)
-    P = np.copy(w22)
-    S = np.copy(w21)
-    Tf[mask0] = T[mask0]
-    Rf[mask0] = R[mask0]
-    Pf[mask0] = P[mask0]
-    Sf[mask0] = S[mask0]
-    mymodule.gametypes(mask0, T, R, P, S, a21, a22, Z, a2eq, xeq, weq)
-
-    mask0 = (wsocial == w22) & (w10 < w11)
-    T = np.copy(w21)
-    R = np.copy(w22)
-    P = np.copy(w11)
-    S = np.copy(w12)
-    Tf[mask0] = T[mask0]
-    Rf[mask0] = R[mask0]
-    Pf[mask0] = P[mask0]
-    Sf[mask0] = S[mask0]
-    mymodule.gametypes(mask0, T, R, P, S, a22, a21, Z, a2eq, xeq, weq)
-
-    mask0 = (wsocial == w22) & (w10 >= w11)
-    T = np.copy(w10)
-    R = np.copy(w11)
-    P = np.copy(w00)
-    S = np.copy(w01)
-    Tf[mask0] = T[mask0]
-    Rf[mask0] = R[mask0]
-    Pf[mask0] = P[mask0]
-    Sf[mask0] = S[mask0]
-    mymodule.gametypes(mask0, T, R, P, S, a21, a20, Z, a2eq, xeq, weq)
-
-    for row, rowT, rowR, rowP, rowS, rowZ in zip(axs, Tf, Rf, Pf, Sf, Z):
+    for row, rowT, rowR, rowP, rowS, rowZ in zip(axs, T, R, P, S, Z):
         for ax, tt, rr, pp, ss, zz in zip(row, rowT, rowR, rowP, rowS, rowZ):
             y = [tt, rr, pp, ss]
             for line in ax.get_lines():

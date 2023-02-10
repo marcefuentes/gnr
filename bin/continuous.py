@@ -111,13 +111,6 @@ T = mymodule.fitness(Y, X, GGG, AAA, RRR)
 R = mymodule.fitness(Y, Y, GGG, AAA, RRR)
 P = mymodule.fitness(X, X, GGG, AAA, RRR)
 S = mymodule.fitness(X, Y, GGG, AAA, RRR)
-mask = (R < P)
-H = T[mask]
-T[mask] = S[mask]
-S[mask] = H
-H = R[mask]
-R[mask] = P[mask]
-P[mask] = H
 
 MRT = MRT0*(1.0 - GG)
 Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
@@ -174,15 +167,15 @@ for axrow in axs:
 for ax, traitlabel in zip(axs[1], traitlabels):
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
-Z = np.full((nr*numa2, nc*numa2, 4), mymodule.colormap['nodilemma'])
-Z[(T >= R) & (P <= S)] = mymodule.colormap['snowdrift']
+Z = np.full((nr*numa2, nc*numa2, 4), mymodule.colormap['white'])
+Z[(T > R) & (R > S) & (S > P)] = mymodule.colormap['snowdrift']
 ax = axs[0, 0]
 ax.imshow(Z, extent=extenta2)
 ax.set_yticklabels(yticklabels, fontsize=fstick) 
 ax.set_title('Snowdrift', pad=50.0, fontsize=fslabel)
 
-Z = np.full((nr*numa2, nc*numa2, 4), mymodule.colormap['nodilemma'])
-Z[(T > R) & (P > S)] = mymodule.colormap['prisoner']
+Z = np.full((nr*numa2, nc*numa2, 4), mymodule.colormap['white'])
+Z[(T > R) & (R > P) & (P > S)] = mymodule.colormap['prisoner']
 ax = axs[0, 1]
 ax.imshow(Z, extent=extenta2)
 ax.set_title('Prisoner\'s dilemma', pad=50.0, fontsize=fslabel)
@@ -195,7 +188,7 @@ ax.imshow(Z, extent=extenta2, cmap='magma', vmin=0.0, vmax=1.0)
 ax.set_title('2$\it{R}$ - $\it{T}$ - $\it{S}$ under\nany dilemma\nwith 2$\it{R}$ > $\it{T}$ - $\it{S}$', pad=50.0, fontsize=fslabel)
 
 Z = np.zeros([nr*numa2, nc*numa2])
-mask = (T > R) & (P > S)
+mask = (T > R) & (R > S) & (S > P)
 Z[mask] = 1.0 + T[mask] + S[mask] - 2.0*R[mask] 
 ax = axs[0, 3]
 ax.imshow(Z, extent=extenta2, cmap='magma', vmin=0.0, vmax=1.0)

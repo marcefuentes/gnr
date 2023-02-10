@@ -10,6 +10,7 @@ colormap = {
     'prisonerTS' :  [1.0, 0.3, 0.0, 1.0],
     'snowdrift' :   [0.0, 1.0, 1.0, 1.0],
     'snowdriftTS' : [0.0, 0.5, 1.0, 1.0],
+    'white' :       [1.0, 1.0, 1.0, 1.0],
     'black' :       [0.0, 0.0, 0.0, 1.0]
 }
 
@@ -68,7 +69,7 @@ def gametypes(T, R, P, S, low, high, Z, TS, a2eq, xeq, weq):
     TS[mask] = 1.0 + T[mask] + S[mask] - 2.0*R[mask]
 
     # Snowdrift or chicken
-    mask = (T >= R) & (P <= S)
+    mask = (T > R) & (R > S) & (S > P)
     Z[mask] = colormap['snowdrift']
     xeq[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2eq[mask] = high[mask]*xeq[mask] + low[mask]*(1.0 - xeq[mask])

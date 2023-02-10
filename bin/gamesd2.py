@@ -14,8 +14,8 @@ alphamin = 0.1
 alphamax = 0.9
 logesmin = -5.0
 logesmax = 5.0
-givenmin = 0.95
-givenmax = 0.95
+givenmin = 0.0
+givenmax = 1.0
 a2low = 0.25
 a2high = 0.75
 
@@ -56,13 +56,14 @@ yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
 extent = 0, nc, 0, nr
 
 zeros = np.zeros([nr, nc])
-a20 = np.full([nr, nc], a2low)
-a21 = np.full([nr, nc], a2high)
-w00 = mymodule.fitness(a20, a20, zeros, AA, RR)
-w11 = mymodule.fitness(a21, a21, zeros, AA, RR)
-a2social = np.copy(a20)
-mask = (w11 > w00)
-a2social[mask] = a21[mask]
+low = np.full([nr, nc], a2low)
+high = np.full([nr, nc], a2high)
+R = mymodule.fitness(high, high, zeros, AA, RR)
+P = mymodule.fitness(low, low, zeros, AA, RR)
+TS = np.copy(zeros)
+a2social = np.copy(low)
+mask = (R > P)
+a2social[mask] = high[mask]
 wsocial = mymodule.fitness(a2social, a2social, zeros, AA, RR)
 
 fig, axs = plt.subplots(nrows=3, ncols=2, figsize=(12, 18))
@@ -95,24 +96,10 @@ for given in givens:
     a2eq = np.copy(zeros)
     weq = np.copy(zeros)
     xeq = np.copy(zeros)
-    w01 = mymodule.fitness(a20, a21, given, AA, RR)
-    w10 = mymodule.fitness(a21, a20, given, AA, RR)
+    T = mymodule.fitness(high, low, given, AA, RR)
+    S = mymodule.fitness(low, high, given, AA, RR)
     Z = np.full([nr, nc, 4], mymodule.colormap['default'])
-    TS = np.zeros([nr, nc])
-
-    mask0 = (w00 > w11)
-    T = np.copy(w01)
-    R = np.copy(w00)
-    P = np.copy(w11)
-    S = np.copy(w10)
-    mymodule.gametypes(mask0, T, R, P, S, a20, a21, Z, TS, a2eq, xeq, weq)
-
-    mask0 = (w00 < w11)
-    T = np.copy(w10)
-    R = np.copy(w11)
-    P = np.copy(w00)
-    S = np.copy(w01)
-    mymodule.gametypes(mask0, T, R, P, S, a21, a20, Z, TS, a2eq, xeq, weq)
+    mymodule.gametypes(T, R, P, S, low, high, Z, TS, a2eq, xeq, weq)
 
     Mss = [[a2social, wsocial], [a2eq, weq]]
 

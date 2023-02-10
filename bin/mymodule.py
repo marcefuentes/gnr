@@ -48,8 +48,8 @@ def gametypes(T, R, P, S, low, high, Z, TS, a2eq, xeq, weq):
     # Deadlock
     mask = ((T > P) & (P > R) & (R > S)) 
     Z[mask] = colormap['deadlock']
-    a2eq[mask] = high[mask]
-    weq[mask] = R[mask]
+    a2eq[mask] = low[mask]
+    weq[mask] = P[mask]
 
     mask = (mask & (2.0*P <= T + S))
     Z[mask] = colormap['deadlockTS']

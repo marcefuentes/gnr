@@ -121,6 +121,7 @@ weq = mymodule.fitness(a2eq, a2eq, GG, AA, RR)
 fig, axs = plt.subplots(nrows=len(folders)+1,
                         ncols=len(traits),
                         figsize=(6*len(traits), 6*(len(folders)+1)))
+fig.delaxes(axs[0, 3])
 fig.supxlabel(xlabel,
                 x=0.513,
                 y=0.06,
@@ -181,20 +182,11 @@ ax.imshow(Z, extent=extenta2)
 ax.set_title('Prisoner\'s dilemma', pad=50.0, fontsize=fslabel)
 
 Z = np.zeros([nr*numa2, nc*numa2])
-mask = (T >= R) 
+mask = ((R > P) & (T >= R)) | ((R < P) & (S >= P))
 Z[mask] = 2.0*R[mask] - T[mask] - S[mask]
 ax = axs[0, 2]
 ax.imshow(Z, extent=extenta2, cmap='magma', vmin=0.0, vmax=1.0)
 ax.set_title('2$\it{R}$ - $\it{T}$ - $\it{S}$ under\nany dilemma\nwith 2$\it{R}$ > $\it{T}$ - $\it{S}$', pad=50.0, fontsize=fslabel)
-
-Z = np.zeros([nr*numa2, nc*numa2])
-mask = (T > R) & (R > S) & (S > P)
-Z[mask] = 1.0 + T[mask] + S[mask] - 2.0*R[mask] 
-ax = axs[0, 3]
-ax.imshow(Z, extent=extenta2, cmap='magma', vmin=0.0, vmax=1.0)
-ax.set_title('$\it{T}$ + $\it{S}$ - 2$\it{R}$ under\nprisoner\'s dilemma',
-                    pad=50.0,
-                    fontsize=fslabel)
 
 for t in ts:
     for axrow, df in zip(axs[1:], dfs):

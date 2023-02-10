@@ -16,8 +16,8 @@ logesmin = -5.0
 logesmax = 5.0
 givenmin = 0.95
 givenmax = 0.95
-a2low = 0.1
-a2high = 0.6
+a2low = 0.33
+a2high = 0.67
 
 num = 21    # Number of subplot rows and columns
 ngiven = 21
@@ -92,26 +92,27 @@ for ax, traitlabel in zip(axs[1], traitlabels):
 
 for given in givens:
 
-    Z = np.full([nr, nc, 4], mymodule.colormap['default'])
     a2eq = np.copy(zeros)
     weq = np.copy(zeros)
     xeq = np.copy(zeros)
     w01 = mymodule.fitness(a20, a21, given, AA, RR)
     w10 = mymodule.fitness(a21, a20, given, AA, RR)
+    Z = np.full([nr, nc, 4], mymodule.colormap['default'])
+    TS = np.zeros([nr, nc])
 
     mask0 = (w00 > w11)
     T = np.copy(w01)
     R = np.copy(w00)
     P = np.copy(w11)
     S = np.copy(w10)
-    mymodule.gametypes(mask0, T, R, P, S, a20, a21, Z, a2eq, xeq, weq)
+    mymodule.gametypes(mask0, T, R, P, S, a20, a21, Z, TS, a2eq, xeq, weq)
 
     mask0 = (w00 < w11)
     T = np.copy(w10)
     R = np.copy(w11)
     P = np.copy(w00)
     S = np.copy(w01)
-    mymodule.gametypes(mask0, T, R, P, S, a21, a20, Z, a2eq, xeq, weq)
+    mymodule.gametypes(mask0, T, R, P, S, a21, a20, Z, TS, a2eq, xeq, weq)
 
     Mss = [[a2social, wsocial], [a2eq, weq]]
 

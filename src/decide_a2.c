@@ -18,7 +18,7 @@ void decide_a2 (struct itype *i, struct itype *i_last, double amax, int indirect
 			}
 			else
 			{
-				double a2def = round(i->a2Default*2.0)/2.0;
+				double a2def = (round(i->a2Default) + 0.5)/2.0;
 				if ( i->a2Decided != a2def )
 				{
 					i->a2Decided = a2def;

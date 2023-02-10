@@ -73,7 +73,7 @@ void kill (struct rtype *recruit, struct itype *i_first, int n, int discrete)
 		}
 		else
 		{
-			i->a2Decided = round(i->a2Default*2.0)/2.0;
+			i->a2Decided = (round(i->a2Default) + 0.5)/2.0;
 		}
 		i->a2SeenSum = 0.0;
 		i->ChooseGrain = recruit->ChooseGrain;

@@ -1,14 +1,16 @@
 #! /usr/bin/env python
 
 colormap = {
-    'default' : [0.0, 1.0, 0.0, 1.0],
-    'nodilemma' : [1.0, 1.0, 1.0, 1.0],
-    'nodilemmaRS' : [1.0, 0.7, 0.0, 1.0],
-    'prisoner' : [0.5, 0.5, 0.5, 1.0],
-    'prisonerRS' : [1.0, 0.3, 0.0, 1.0],
-    'snowdrift' : [0.0, 1.0, 1.0, 1.0],
-    'snowdriftRS' : [0.0, 0.5, 1.0, 1.0],
-    'black' : [0.0, 0.0, 0.0, 1.0]
+    'default' :     [0.0, 1.0, 0.0, 1.0],
+    'deadlock' :    [0.95, 0.95, 0.95, 1.0],
+    'deadlockTS' :  [1.0, 0.7, 0.0, 1.0],
+    'harmony' :     [1.0, 1.0, 0.0, 1.0],
+    'harmonyTS' :   [0.8, 0.8, 0.0, 1.0],
+    'prisoner' :    [0.5, 0.5, 0.5, 1.0],
+    'prisonerTS' :  [1.0, 0.3, 0.0, 1.0],
+    'snowdrift' :   [0.0, 1.0, 1.0, 1.0],
+    'snowdriftTS' : [0.0, 0.5, 1.0, 1.0],
+    'black' :       [0.0, 0.0, 0.0, 1.0]
 }
 
 R1 = 2.0
@@ -34,24 +36,36 @@ def fitness(x, y, given, alpha, rho):
 
 def gametypes(T, R, P, S, low, high, Z, TS, a2eq, xeq, weq):
 
-    mask = (T < R) & (P < S)
-    Z[mask] = colormap['nodilemma']
+    # Harmony
+    mask = ((R > T) & (T > S) & (S > P)) | ((R > S) & (S > T) & (S > P)) 
+    Z[mask] = colormap['harmony']
     a2eq[mask] = high[mask]
     weq[mask] = R[mask]
 
     mask = (mask & (2.0*R <= T + S))
-    Z[mask] = colormap['nodilemmaRS']
+    Z[mask] = colormap['harmonyTS']
 
-    mask = (T > R) & (P > S)
+    # Deadlock
+    mask = ((T > P) & (P > R) & (R > S)) 
+    Z[mask] = colormap['deadlock']
+    a2eq[mask] = high[mask]
+    weq[mask] = R[mask]
+
+    mask = (mask & (2.0*P <= T + S))
+    Z[mask] = colormap['deadlockTS']
+
+    # Prisoner's dilemma
+    mask = (T > R) & (R > P) & (P > S)
     Z[mask] = colormap['prisoner']
     TS[mask] = 1.0 + T[mask] + S[mask] - 2.0*R[mask]
     a2eq[mask] = low[mask]
     weq[mask] = P[mask]
 
     mask = (mask & (2.0*R <= T + S))
-    Z[mask] = colormap['prisonerRS']
+    Z[mask] = colormap['prisonerTS']
     TS[mask] = 1.0 + T[mask] + S[mask] - 2.0*R[mask]
 
+    # Snowdrift or chicken
     mask = (T >= R) & (P <= S)
     Z[mask] = colormap['snowdrift']
     xeq[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
@@ -59,7 +73,7 @@ def gametypes(T, R, P, S, low, high, Z, TS, a2eq, xeq, weq):
     weq[mask] = (T[mask] + S[mask])*xeq[mask]*(1.0 - xeq[mask]) + R[mask]*xeq[mask]*xeq[mask] + P[mask]*(1.0 - xeq[mask])*(1.0 - xeq[mask])
 
     mask = (mask & (2.0*R <= T + S))
-    Z[mask] = colormap['snowdriftRS']
+    Z[mask] = colormap['snowdriftTS']
 
     pass
 

@@ -86,10 +86,10 @@ traitvmaxs = [mymodule.a2max,
                 mymodule.a2max,
                 mymodule.a2max,
                 mymodule.fitness(np.array([mymodule.a2max]),
-                    np.array([mymodule.a2max]),
-                    np.array([0.0]),
-                    np.array([0.9]),
-                    np.array([5.0]))]
+                                    np.array([mymodule.a2max]),
+                                    np.array([0.0]),
+                                    np.array([0.9]),
+                                    np.array([5.0]))]
 xticklabels = [round(xmin),
                 round((xmin + xmax)/2),
                 round(xmax)]
@@ -114,16 +114,10 @@ S = mymodule.fitness(X, Y, GGG, AAA, RRR)
 fig, axs = plt.subplots(nrows=len(folders)+1,
                         ncols=len(traits),
                         figsize=(6*len(traits), 6*(len(folders)+1)))
-#fig.delaxes(axs[0, 3])
-fig.supxlabel(xlabel,
-                x=0.513,
-                y=0.06,
-                fontsize=fslabel*1.5)
-fig.supylabel(ylabel,
-                x=0.05,
-                y=0.493,
-                fontsize=fslabel*1.5,
-                ha='center')
+fig.delaxes(axs[0, 2])
+fig.delaxes(axs[0, 3])
+fig.supxlabel(xlabel, x=0.513, y=0.06, fontsize=fslabel*1.5)
+fig.supylabel(ylabel, x=0.05, y=0.493, fontsize=fslabel*1.5)
 
 letter = ord('a')
 for axrow in axs:
@@ -143,9 +137,9 @@ for axrow in axs:
             ax.set_position(newpos)
         else:
             ax.set(xticks=[0, nc/2, nc],
-                    yticks=[0, nr/2, nr],
-                    xticklabels=[],
-                    yticklabels=[])
+                            yticks=[0, nr/2, nr],
+                            xticklabels=[],
+                            yticklabels=[])
             if letter<= ord('z'):
                 ax.text(0, 
                         nr*1.035,
@@ -170,31 +164,18 @@ Z = np.full([nr*numa2, nc*numa2, 4], mymodule.colormap['default'])
 mymodule.gametypes(T, R, P, S, Z)
 ax = axs[0, 0]
 ax.imshow(Z, extent=extenta2)
-ax.set_yticklabels(yticklabels, fontsize=fstick) 
 ax.set_title('Game types', pad=50.0, fontsize=fslabel)
 
-Z = np.zeros([nr*numa2, nc*numa2])
-mask = (T > R) & (R > S) & (S > P)
-Z[mask] = R[mask] - P[mask]
+Z = np.zeros([nr*numa2, nc*numa2]) + 1.0
+mask = ((T > R) & (R >= P) & (P > S)) | ((T >= P) & (P > R) & (R >= S) & (2.0*P < T + S))
+Z[mask] = - T[mask] - S[mask] + 2.0*R[mask]
+mask = (((T >= P) & (P > R) & (R >= S) & (2.0*P > T + S))) | ((T < R) & (R > P) & (P < S)) 
+Z = np.ma.masked_array(Z, mask)
+cmap = plt.cm.cool
+cmap.set_bad('white')
 ax = axs[0, 1]
-ax.imshow(Z, extent=extenta2, cmap='cool', vmin=0.0, vmax=0.5)
-ax.set_yticklabels(yticklabels, fontsize=fstick) 
-ax.set_title('Snowdrift\n$\it{R}$ - $\it{P}$', pad=50.0, fontsize=fslabel)
-
-Z = np.zeros([nr*numa2, nc*numa2])
-mask = (T > R) & (R > P) & (P > S)
-Z[mask] = 1.0 - (P[mask] - S[mask])
-ax = axs[0, 2]
-ax.imshow(Z, extent=extenta2, cmap='cool', vmin=0.0, vmax=1.0)
-ax.set_title('Prisoner\'s dilemma\n1 - ($\it{P}$ - $\it{S}$)',
-                pad=50.0,
-                fontsize=fslabel)
-
-Z = np.zeros([nr*numa2, nc*numa2])
-Z[mask] = 1.0 + T[mask] + S[mask] - 2.0*R[mask]
-ax = axs[0, 3]
-ax.imshow(Z, extent=extenta2, cmap='cool', vmin=0.0, vmax=1.0)
-ax.set_title('Prisoner\'s dilemma\n$\it{T}$ + $\it{S}$ - 2$\it{R}$',
+ax.imshow(Z, extent=extenta2, cmap=cmap, vmin=0.0, vmax=1.0)
+ax.set_title('Value of taking turns',
                 pad=50.0,
                 fontsize=fslabel)
 
@@ -213,7 +194,7 @@ for t in ts:
                     vmax=traitvmax)
     if movie:
         text = fig.text(0.90,
-                        0.90,
+                        0.93,
                         f't\n{t}',
                         fontsize=fstick+4,
                         color='grey',

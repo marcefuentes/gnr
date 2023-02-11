@@ -79,10 +79,10 @@ traitvmaxs = [mymodule.a2max,
                 mymodule.a2max,
                 mymodule.a2max,
                 mymodule.fitness(np.array([mymodule.a2max]),
-                    np.array([mymodule.a2max]),
-                    np.array([0.0]),
-                    np.array([0.9]),
-                    np.array([5.0]))]
+                                    np.array([mymodule.a2max]),
+                                    np.array([0.0]),
+                                    np.array([0.9]),
+                                    np.array([5.0]))]
 xticklabels = [round(xmin),
                 round((xmin + xmax)/2),
                 round(xmax)]
@@ -91,24 +91,20 @@ yticklabels = [round(ymin, 1),
                 round(ymax, 1)]
 extent = 0, nc, 0, nr
 
-zeros = np.zeros([nr, nc])
 low = np.full([nr, nc], mymodule.a2low)
 high = np.full([nr, nc], mymodule.a2high)
+T = mymodule.fitness(high, low, GG, AA, RR)
 R = mymodule.fitness(high, high, GG, AA, RR)
 P = mymodule.fitness(low, low, GG, AA, RR)
+S = mymodule.fitness(low, high, GG, AA, RR)
 
 fig, axs = plt.subplots(nrows=len(folders)+1,
                         ncols=len(traits),
                         figsize=(6*len(traits), 6*(len(folders)+1)))
-fig.supxlabel(xlabel,
-                x=0.513,
-                y=0.06,
-                fontsize=fslabel*1.5)
-fig.supylabel(ylabel,
-                x=0.05,
-                y=0.493,
-                fontsize=fslabel*1.5,
-                ha='center')
+fig.delaxes(axs[0, 2])
+fig.delaxes(axs[0, 3])
+fig.supxlabel(xlabel, x=0.513, y=0.06, fontsize=fslabel*1.5)
+fig.supylabel(ylabel, x=0.05, y=0.493, fontsize=fslabel*1.5)
 
 letter = ord('a')
 for axrow in axs:
@@ -141,22 +137,22 @@ for axrow in axs:
 for ax, traitlabel in zip(axs[1], traitlabels):
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
-a2eq = np.copy(zeros)
-weq = np.copy(zeros)
-xeq = np.copy(zeros)
-
-T = mymodule.fitness(high, low, GG, AA, RR)
-S = mymodule.fitness(low, high, GG, AA, RR)
 Z = np.full([nr, nc, 4], mymodule.colormap['default'])
 mymodule.gametypes(T, R, P, S, Z)
 ax = axs[0, 0]
 ax.imshow(Z, extent=extent)
 ax.set_title('Game types', pad=50.0, fontsize=fslabel)
 
-Z = np.zeros([nr, nc])
+Z = np.zeros([nr, nc]) + 1.0
+mask = ((T > R) & (R >= P) & (P > S)) | ((T >= P) & (P > R) & (R >= S) & (2.0*P < T + S))
+Z[mask] = - T[mask] - S[mask] + 2.0*R[mask]
+mask = (((T >= P) & (P > R) & (R >= S) & (2.0*P > T + S))) | ((T < R) & (R > P) & (P < S)) 
+Z = np.ma.masked_array(Z, mask)
+cmap = plt.cm.cool
+cmap.set_bad('white')
 ax = axs[0, 1]
-ax.imshow(Z, extent=extent, cmap='viridis', vmin=0, vmax=1.0)
-ax.set_title('Prisoner\'s dilemma\n$\it{T}$ + $\it{S}$ - 2$\it{R}$',
+ax.imshow(Z, extent=extent, cmap=cmap, vmin=0, vmax=1)
+ax.set_title('Value of taking turns',
                 pad=50.0,
                 fontsize=fslabel)
 

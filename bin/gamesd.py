@@ -40,6 +40,15 @@ alphas = np.linspace(alphamax, alphamin, num=nr)
 logess = np.linspace(logesmin, logesmax, num=nc)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
+zeros = np.zeros([nr, nc])
+low = np.full([nr, nc], mymodule.a2low)
+high = np.full([nr, nc], mymodule.a2high)
+R = mymodule.fitness(high, high, 0.0, AA, RR)
+P = mymodule.fitness(low, low, 0.0, AA, RR)
+a2social = np.copy(low)
+mask = (R > P)
+a2social[mask] = high[mask]
+wsocial = mymodule.fitness(a2social, a2social, 0.0, AA, RR)
 
 xmin = logesmin
 xmax = logesmax
@@ -50,23 +59,17 @@ ylabel = 'Value of $\it{B}$'
 
 traitvmaxs = [mymodule.a2max,
                 mymodule.fitness(np.array([mymodule.a2max]),
-                np.array([mymodule.a2max]),
-                np.array([0.0]),
-                np.array([0.9]),
-                np.array([5.0]))]
-xticklabels = [round(xmin), round((xmin + xmax)/2), round(xmax)]
-yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
+                                    np.array([mymodule.a2max]),
+                                    np.array([0.0]),
+                                    np.array([0.9]),
+                                    np.array([5.0]))]
+xticklabels = [round(xmin),
+                round((xmin + xmax)/2),
+                round(xmax)]
+yticklabels = [round(ymin, 1),
+                round((ymin + ymax)/2, 1),
+                round(ymax, 1)]
 extent = 0, nc, 0, nr
-
-zeros = np.zeros([nr, nc])
-low = np.full([nr, nc], mymodule.a2low)
-high = np.full([nr, nc], mymodule.a2high)
-R = mymodule.fitness(high, high, zeros, AA, RR)
-P = mymodule.fitness(low, low, zeros, AA, RR)
-a2social = np.copy(low)
-mask = (R > P)
-a2social[mask] = high[mask]
-wsocial = mymodule.fitness(a2social, a2social, zeros, AA, RR)
 
 fig, axs = plt.subplots(nrows=3, ncols=2, figsize=(12, 18))
 fig.supxlabel(xlabel, x=0.515, y=0.03, fontsize=fslabel)
@@ -75,11 +78,18 @@ fig.supylabel(ylabel, x=0.04, y=0.510, fontsize=fslabel)
 letter = ord('a')
 for axrow in axs:
     for ax in axrow:
-        ax.text(0,
-                nr*1.035,
-                chr(letter),
-                fontsize=fslabel,
-                weight='bold')
+        if letter <= ord('z'): 
+            ax.text(0,
+                    nr*1.035,
+                    chr(letter),
+                    fontsize=fslabel,
+                    weight='bold')
+        else:
+            ax.text(0,
+                    nr*1.035,
+                    'a' + chr(letter - 26),
+                    fontsize=fslabel,
+                    weight='bold')
         letter += 1
         ax.set(xticks=[0, nc/2, nc],
                 yticks=[0, nr/2, nr],
@@ -100,7 +110,6 @@ for given in givens:
 
     T = mymodule.fitness(high, low, given, AA, RR)
     S = mymodule.fitness(low, high, given, AA, RR)
-
     Z = np.full([nr, nc, 4], mymodule.colormap['default'])
     mymodule.gametypes(T, R, P, S, Z)
     ax = axs[0, 0]
@@ -110,13 +119,13 @@ for given in givens:
     Z = np.copy(zeros) + 1.0
     mask = ((T > R) & (R >= P) & (P > S)) | ((T >= P) & (P > R) & (R >= S) & (2.0*P < T + S))
     Z[mask] = - T[mask] - S[mask] + 2.0*R[mask]
-    mask = ((T >= P) & (P > R) & (R >= S) & (2.0*P > T + S))
+    mask = (((T >= P) & (P > R) & (R >= S) & (2.0*P > T + S))) | ((T < R) & (R > P) & (P < S)) 
     Z = np.ma.masked_array(Z, mask)
     cmap = plt.cm.cool
     cmap.set_bad('white')
     ax = axs[0, 1]
     ax.imshow(Z, extent=extent, cmap=cmap, vmin=0, vmax=1)
-    ax.set_title('Prisoner\'s dilemma\n$\it{T}$ + $\it{S}$ - 2$\it{R}$',
+    ax.set_title('Value of taking turns',
                     pad=50.0,
                     fontsize=fslabel)
 

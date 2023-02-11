@@ -48,7 +48,12 @@ ymin = alphamin
 ymax = alphamax
 ylabel = 'Value of $\it{B}$'
 
-traitvmaxs = [mymodule.a2max, mymodule.fitness(np.array([mymodule.a2max]), np.array([mymodule.a2max]), np.array([0.0]), np.array([0.9]), np.array([5.0]))]
+traitvmaxs = [mymodule.a2max,
+                mymodule.fitness(np.array([mymodule.a2max]),
+                np.array([mymodule.a2max]),
+                np.array([0.0]),
+                np.array([0.9]),
+                np.array([5.0]))]
 xticklabels = [round(xmin), round((xmin + xmax)/2), round(xmax)]
 yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
 extent = 0, nc, 0, nr

@@ -71,11 +71,17 @@ cmap = plt.cm.viridis
 letter = ord('a')
 for axrow in axs:
     for ax in axrow:
-        ax.text(0, nr*1.035, chr(letter), fontsize=fslabel, weight='bold')
+        ax.text(0,
+                nr*1.035,
+                chr(letter),
+                fontsize=fslabel,
+                weight='bold')
         letter += 1
-        ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
+        ax.set(xticks=[0, nc/2, nc],
+                yticks=[0, nr/2, nr],
+                xticklabels=[],
+                yticklabels=[])
         if ax.get_subplotspec().is_first_row():
-            ax.set_title('Game types', pad=50.0, fontsize=fslabel)
             pos = ax.get_position()
             newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
             ax.set_position(newpos)
@@ -94,8 +100,14 @@ for given in givens:
     Z = np.full([nr, nc, 4], mymodule.colormap['default'])
     TS = np.copy(zeros)
     mymodule.gametypes(T, R, P, S, Z, TS)
-    axs[0, 0].imshow(Z, extent=extent)
-    axs[0, 1].imshow(TS, extent=extent, cmap=cmap, vmin=0, vmax=0.7)
+    ax = axs[0, 0]
+    ax.imshow(Z, extent=extent)
+    ax.set_title('Game types', pad=50.0, fontsize=fslabel)
+    ax = axs[0, 1]
+    ax.imshow(TS, extent=extent, cmap=cmap, vmin=0, vmax=0.7)
+    ax.set_title('Prisoner\'s dilemma\n$\it{T}$ + $\it{S}$ - 2$\it{R}$',
+                    pad=50.0,
+                    fontsize=fslabel)
 
     a2eq = np.copy(zeros)
     weq = np.copy(zeros)
@@ -107,7 +119,12 @@ for given in givens:
             ax.imshow(M, extent=extent, cmap=cmap, vmin=0, vmax=traitvmax)
 
     if movie:
-        text = fig.text(0.90, 0.95, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
+        text = fig.text(0.90,
+                        0.93,
+                        f'given\n{given:4.2f}',
+                        fontsize=fstick+4,
+                        color='grey',
+                        ha='right')
         plt.savefig('temp.png', transparent=False)
         text.remove()
         frames.append(iio.imread('temp.png'))

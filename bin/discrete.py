@@ -109,8 +109,8 @@ fig.supylabel(ylabel,
                 y=0.493,
                 fontsize=fslabel*1.5,
                 ha='center')
-
 cmap = plt.cm.viridis
+
 letter = ord('a')
 for axrow in axs:
     for ax in axrow:
@@ -150,9 +150,7 @@ T = mymodule.fitness(high, low, GG, AA, RR)
 S = mymodule.fitness(low, high, GG, AA, RR)
 Z = np.full([nr, nc, 4], mymodule.colormap['default'])
 TS = np.zeros([nr, nc])
-
-mymodule.gametypes(T, R, P, S, low, high, Z, TS, a2eq, xeq, weq)
-
+mymodule.gametypes(T, R, P, S, Z, TS)
 ax = axs[0, 0]
 ax.imshow(Z, extent=extent)
 ax.set_title('Game types', pad=50.0, fontsize=fslabel)
@@ -172,12 +170,12 @@ for t in ts:
                                                             ascending=False)
             ax.imshow(Z,
                     extent=extent,
-                    cmap='viridis',
+                    cmap=cmap,
                     vmin=0,
                     vmax=traitvmax)
     if movie:
         text = fig.text(0.90,
-                        0.90,
+                        0.93,
                         f't\n{t}',
                         fontsize=fstick+4,
                         color='grey',

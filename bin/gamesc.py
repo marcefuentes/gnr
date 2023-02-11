@@ -14,8 +14,8 @@ alphamin = 0.1
 alphamax = 0.9
 logesmin = -5.0
 logesmax = 5.0
-givenmin = 0.95
-givenmax = 0.95
+givenmin = 0.00
+givenmax = 1.00
 
 num = 21    # Number of subplot rows and columns
 numa2 = 64
@@ -49,6 +49,8 @@ X, Y = np.meshgrid(np.linspace(0.0, mymodule.a2max, num=numa2),
                     np.linspace(mymodule.a2max, 0.0, num=numa2))
 X = np.tile(A=X, reps=[nr, nc])
 Y = np.tile(A=Y, reps=[nr, nc])
+X = np.ma.masked_where(X > Y, X)
+Y = np.ma.masked_where(X > Y, Y)
 RRR, AAA = np.meshgrid(np.repeat(rhos, numa2),
                         np.repeat(alphas, numa2))
 

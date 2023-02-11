@@ -11,10 +11,6 @@ import time
 
 start_time = time.perf_counter ()
 
-traitlabel0s = ['Game types', 
-                'Game types', 
-                '$\it{T}$ + $\it{S}$ - 2$\it{R}$ under\nprisoner\'s dilemma', 
-                '$\it{T}$ + $\it{S}$ - 2$\it{R}$ under\nprisoner\'s dilemma']
 traits = ['a2Seenmean',
             'ChooseGrainmean',
             'MimicGrainmean',
@@ -23,7 +19,7 @@ traitlabels = ['Effort to get $\it{B}$',
                 'Sensitivity for\nchoosing partner',
                 'Sensitivity for\nmimicking partner',
                 'Fitness']
-folders = ['none', 'p', 'r', 'pr', 'p8r', 'given0']
+folders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
 
 movie = False
 
@@ -43,7 +39,7 @@ for folder in folders:
     #df['help'] = df.a2Seenmean*mymodule.R2*df.Given
     dfs.append(df)
 
-df = dfs[0]
+df = dfs[1]
 ts = df.Time.unique()
 if movie:
     frames = []
@@ -114,6 +110,7 @@ fig.supylabel(ylabel,
                 fontsize=fslabel*1.5,
                 ha='center')
 
+cmap = plt.cm.viridis
 letter = ord('a')
 for axrow in axs:
     for ax in axrow:
@@ -142,8 +139,6 @@ for axrow in axs:
             ax.set_yticklabels(yticklabels, fontsize=fstick) 
         if ax.get_subplotspec().is_last_row():
             ax.set_xticklabels(xticklabels, fontsize=fstick)
-for ax, traitlabel in zip(axs[0], traitlabel0s):
-    ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 for ax, traitlabel in zip(axs[1], traitlabels):
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
@@ -158,8 +153,14 @@ TS = np.zeros([nr, nc])
 
 mymodule.gametypes(T, R, P, S, low, high, Z, TS, a2eq, xeq, weq)
 
-axs[0, 0].imshow(Z, extent=extent)
-axs[0, 1].imshow(TS, extent=extent, cmap='viridis', vmin=0, vmax=1.0)
+ax = axs[0, 0]
+ax.imshow(Z, extent=extent)
+ax.set_title('Game types', pad=50.0, fontsize=fslabel)
+ax = axs[0, 1]
+ax.imshow(TS, extent=extent, cmap=cmap, vmin=0, vmax=1.0)
+ax.set_title('Prisoner\'s dilemma\n$\it{T}$ + $\it{S}$ - 2$\it{R}$',
+                pad=50.0,
+                fontsize=fslabel)
 
 for t in ts:
     for axrow, df in zip(axs[1:], dfs):

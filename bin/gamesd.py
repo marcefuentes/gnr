@@ -107,7 +107,7 @@ for given in givens:
             ax.imshow(M, extent=extent, cmap=cmap, vmin=0, vmax=traitvmax)
 
     if movie:
-        text = fig.text(0.90, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
+        text = fig.text(0.90, 0.95, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
         plt.savefig('temp.png', transparent=False)
         text.remove()
         frames.append(iio.imread('temp.png'))

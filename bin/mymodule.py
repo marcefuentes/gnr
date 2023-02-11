@@ -36,19 +36,15 @@ def fitness(x, y, given, alpha, rho):
     w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
     return w
 
-def gametypes(T, R, P, S, low, high, Z, TS, a2eq, xeq, weq):
+def gametypes(T, R, P, S, Z, TS):
 
     # Harmony
     mask = ((R > T) & (T > S) & (S > P)) | ((R > S) & (S > T) & (S > P)) 
     Z[mask] = colormap['harmony']
-    a2eq[mask] = high[mask]
-    weq[mask] = R[mask]
 
     # Deadlock
-    mask = ((T > P) & (P > R) & (R > S)) 
+    mask = ((T >= P) & (P > R) & (R >= S)) 
     Z[mask] = colormap['deadlock']
-    a2eq[mask] = low[mask]
-    weq[mask] = P[mask]
 
     mask = (mask & (2.0*P <= T + S))
     Z[mask] = colormap['deadlockTS']
@@ -57,22 +53,35 @@ def gametypes(T, R, P, S, low, high, Z, TS, a2eq, xeq, weq):
     mask = (T > R) & (R > P) & (P > S)
     Z[mask] = colormap['prisoner']
     TS[mask] = 1.0 + T[mask] + S[mask] - 2.0*R[mask]
-    a2eq[mask] = low[mask]
-    weq[mask] = P[mask]
 
     mask = (mask & (2.0*R <= T + S))
     Z[mask] = colormap['prisonerTS']
     TS[mask] = 1.0 + T[mask] + S[mask] - 2.0*R[mask]
 
-    # Snowdrift or chicken
+    # Snowdrift (chicken)
     mask = (T > R) & (R > S) & (S > P)
     Z[mask] = colormap['snowdrift']
-    xeq[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
-    a2eq[mask] = high[mask]*xeq[mask] + low[mask]*(1.0 - xeq[mask])
-    weq[mask] = (T[mask] + S[mask])*xeq[mask]*(1.0 - xeq[mask]) + R[mask]*xeq[mask]*xeq[mask] + P[mask]*(1.0 - xeq[mask])*(1.0 - xeq[mask])
 
     mask = (mask & (2.0*R <= T + S))
     Z[mask] = colormap['snowdriftTS']
+
+def equilibrium(T, R, P, S, low, high, a2eq, weq):
+
+    # Harmony
+    mask = (R > T) & (S > P) 
+    a2eq[mask] = high[mask]
+    weq[mask] = R[mask]
+
+    # Deadlock or prisoner's dilemma
+    mask = (T > R) & (P > S) 
+    a2eq[mask] = low[mask]
+    weq[mask] = P[mask]
+
+    # Snowdrift (chicken)
+    mask = (T > R) & (S > P)
+    weq[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
+    a2eq[mask] = high[mask]*weq[mask] + low[mask]*(1.0 - weq[mask])
+    weq[mask] = (T[mask] + S[mask])*weq[mask]*(1.0 - weq[mask]) + R[mask]*weq[mask]*weq[mask] + P[mask]*(1.0 - weq[mask])*(1.0 - weq[mask])
 
     pass
 

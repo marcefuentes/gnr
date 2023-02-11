@@ -14,8 +14,8 @@ alphamin = 0.1
 alphamax = 0.9
 logesmin = -5.0
 logesmax = 5.0
-givenmin = 0.95
-givenmax = 0.95
+givenmin = 0.55
+givenmax = 0.55
 
 num = 21    # Number of subplot rows and columns
 numa2 = 64
@@ -45,6 +45,8 @@ alphas = np.linspace(alphamax, alphamin, num=nr)
 logess = np.linspace(logesmin, logesmax, num=nc)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
+Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
+a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
 X, Y = np.meshgrid(np.linspace(0.0, mymodule.a2max, num=numa2),
                     np.linspace(mymodule.a2max, 0.0, num=numa2))
 X = np.tile(A=X, reps=[nr, nc])
@@ -81,6 +83,7 @@ fig, axs = plt.subplots(nrows=3, ncols=2, figsize=(12, 18))
 fig.delaxes(axs[0, 1])
 fig.supxlabel(xlabel, x=0.515, y=0.03, fontsize=fslabel)
 fig.supylabel(ylabel, x=0.04, y=0.510, fontsize=fslabel)
+cmap = plt.cm.viridis
 
 letter = ord('b')
 for axrow in axs:
@@ -120,39 +123,24 @@ for ax, traitlabel in zip(axs[1], traitlabels):
 for given in givens:
 
     Z = np.full([nr*numa2, nc*numa2, 4], mymodule.colormap['default'])
+    TS = np.zeros([nr*numa2, nc*numa2])
     T = mymodule.fitness(Y, X, given, AAA, RRR)
     R = mymodule.fitness(Y, Y, given, AAA, RRR)
     P = mymodule.fitness(X, X, given, AAA, RRR)
     S = mymodule.fitness(X, Y, given, AAA, RRR)
-    mask = (R > T) & (T > S) & (S > P)
-    Z[mask] = mymodule.colormap['harmony']
-    mask = (T >= P) & (P > R) & (R >= S)
-    Z[mask] = mymodule.colormap['deadlock']
-    mask = (mask & (2.0*P <= T + S))
-    Z[mask] = mymodule.colormap['deadlockTS']
-    mask = (T > R) & (R > P) & (P > S)
-    Z[mask] = mymodule.colormap['prisoner']
-    mask = (mask & (2.0*R <= T + S))
-    Z[mask] = mymodule.colormap['prisonerTS']
-    mask = (T > R) & (R > S) & (S > P)
-    Z[mask] = mymodule.colormap['snowdrift']
-    mask = (mask & (2.0*R <= T + S))
-    Z[mask] = mymodule.colormap['snowdriftTS']
+    mymodule.gametypes(T, R, P, S, Z, TS)
+    axs[0, 0].imshow(Z, extent=extenta2)
 
     MRT = MRT0*(1.0 - given)
-    Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
-    a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
     Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
     a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
-    wsocial = mymodule.fitness(a2social, a2social, given, AA, RR)
     weq = mymodule.fitness(a2eq, a2eq, given, AA, RR)
+    wsocial = mymodule.fitness(a2social, a2social, given, AA, RR)
     Mss = [[a2social, wsocial], [a2eq, weq]]
-
-    axs[0, 0].imshow(Z, extent=extenta2)
 
     for row, Ms in zip(axs[1:], Mss):
         for ax, M, traitvmax in zip(row, Ms, traitvmaxs):
-            ax.imshow(M, extent=extent, cmap='viridis', vmin=0, vmax=traitvmax)
+            ax.imshow(M, extent=extent, cmap=cmap, vmin=0, vmax=traitvmax)
 
     if movie:
         text = fig.text(0.90,

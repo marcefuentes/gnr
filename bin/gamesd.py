@@ -66,6 +66,7 @@ wsocial = mymodule.fitness(a2social, a2social, zeros, AA, RR)
 fig, axs = plt.subplots(nrows=3, ncols=2, figsize=(12, 18))
 fig.supxlabel(xlabel, x=0.515, y=0.03, fontsize=fslabel)
 fig.supylabel(ylabel, x=0.04, y=0.510, fontsize=fslabel)
+cmap = plt.cm.viridis
 
 letter = ord('a')
 for axrow in axs:
@@ -87,23 +88,23 @@ for ax, traitlabel in zip(axs[1], traitlabels):
 
 for given in givens:
 
-    a2eq = np.copy(zeros)
-    weq = np.copy(zeros)
-    xeq = np.copy(zeros)
     T = mymodule.fitness(high, low, given, AA, RR)
     S = mymodule.fitness(low, high, given, AA, RR)
+
     Z = np.full([nr, nc, 4], mymodule.colormap['default'])
     TS = np.copy(zeros)
-    mymodule.gametypes(T, R, P, S, low, high, Z, TS, a2eq, xeq, weq)
-
-    Mss = [[a2social, wsocial], [a2eq, weq]]
-
+    mymodule.gametypes(T, R, P, S, Z, TS)
     axs[0, 0].imshow(Z, extent=extent)
-    axs[0, 1].imshow(TS, extent=extent, cmap='viridis', vmin=0, vmax=0.7)
+    axs[0, 1].imshow(TS, extent=extent, cmap=cmap, vmin=0, vmax=0.7)
+
+    a2eq = np.copy(zeros)
+    weq = np.copy(zeros)
+    mymodule.equilibrium(T, R, P, S, low, high, a2eq, weq)
+    Mss = [[a2social, wsocial], [a2eq, weq]]
 
     for row, Ms in zip(axs[1:], Mss):
         for ax, M, traitvmax in zip(row, Ms, traitvmaxs):
-            ax.imshow(M, extent=extent, cmap='viridis', vmin=0, vmax=traitvmax)
+            ax.imshow(M, extent=extent, cmap=cmap, vmin=0, vmax=traitvmax)
 
     if movie:
         text = fig.text(0.90, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')

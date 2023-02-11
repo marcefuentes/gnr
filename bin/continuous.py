@@ -99,12 +99,8 @@ yticklabels = [round(ymin, 1),
 extent = 0, nc, 0, nr
 extenta2 = 0, nc*numa2, 0, nr*numa2
 
-MRT0 = mymodule.b*mymodule.Rq
-X, Y = np.meshgrid(np.linspace(0.0,
-                                mymodule.a2max, num=numa2),
-                                np.linspace(mymodule.a2max,
-                                0.0,
-                                num=numa2))
+X, Y = np.meshgrid(np.linspace(0.0, mymodule.a2max, num=numa2),
+                    np.linspace(mymodule.a2max, 0.0, num=numa2))
 X = np.tile(A=X, reps=[nr, nc])
 Y = np.tile(A=Y, reps=[nr, nc])
 H = np.copy(Y)
@@ -114,12 +110,6 @@ T = mymodule.fitness(Y, X, GGG, AAA, RRR)
 R = mymodule.fitness(Y, Y, GGG, AAA, RRR)
 P = mymodule.fitness(X, X, GGG, AAA, RRR)
 S = mymodule.fitness(X, Y, GGG, AAA, RRR)
-
-MRT = MRT0*(1.0 - GG)
-Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
-Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
-a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
-weq = mymodule.fitness(a2eq, a2eq, GG, AA, RR)
 
 fig, axs = plt.subplots(nrows=len(folders)+1,
                         ncols=len(traits),
@@ -134,7 +124,6 @@ fig.supylabel(ylabel,
                 y=0.493,
                 fontsize=fslabel*1.5,
                 ha='center')
-
 cmap = plt.cm.viridis
 
 letter = ord('a')
@@ -179,20 +168,8 @@ for ax, traitlabel in zip(axs[1], traitlabels):
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
 Z = np.full([nr*numa2, nc*numa2, 4], mymodule.colormap['default'])
-mask = (R > T) & (T > S) & (S > P)
-Z[mask] = mymodule.colormap['harmony']
-mask = (T >= P) & (P > R) & (R >= S)
-Z[mask] = mymodule.colormap['deadlock']
-mask = (mask & (2.0*P <= T + S))
-Z[mask] = mymodule.colormap['deadlockTS']
-mask = (T > R) & (R > P) & (P > S)
-Z[mask] = mymodule.colormap['prisoner']
-mask = (mask & (2.0*R <= T + S))
-Z[mask] = mymodule.colormap['prisonerTS']
-mask = (T > R) & (R > S) & (S > P)
-Z[mask] = mymodule.colormap['snowdrift']
-mask = (mask & (2.0*R <= T + S))
-Z[mask] = mymodule.colormap['snowdriftTS']
+TS = np.zeros([nr*numa2, nc*numa2])
+mymodule.gametypes(T, R, P, S, Z, TS)
 ax = axs[0, 0]
 ax.imshow(Z, extent=extenta2)
 ax.set_yticklabels(yticklabels, fontsize=fstick) 

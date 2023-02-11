@@ -107,6 +107,9 @@ X, Y = np.meshgrid(np.linspace(0.0,
                                 num=numa2))
 X = np.tile(A=X, reps=[nr, nc])
 Y = np.tile(A=Y, reps=[nr, nc])
+H = np.copy(Y)
+Y[(X > Y)] = X[(X > Y)] 
+X[(X > H)] = H[(X > H)] 
 T = mymodule.fitness(Y, X, GGG, AAA, RRR)
 R = mymodule.fitness(Y, Y, GGG, AAA, RRR)
 P = mymodule.fitness(X, X, GGG, AAA, RRR)
@@ -121,7 +124,7 @@ weq = mymodule.fitness(a2eq, a2eq, GG, AA, RR)
 fig, axs = plt.subplots(nrows=len(folders)+1,
                         ncols=len(traits),
                         figsize=(6*len(traits), 6*(len(folders)+1)))
-fig.delaxes(axs[0, 3])
+#fig.delaxes(axs[0, 3])
 fig.supxlabel(xlabel,
                 x=0.513,
                 y=0.06,
@@ -133,7 +136,6 @@ fig.supylabel(ylabel,
                 ha='center')
 
 cmap = plt.cm.viridis
-cmap.set_bad('black')
 
 letter = ord('a')
 for axrow in axs:
@@ -176,20 +178,40 @@ for axrow in axs:
 for ax, traitlabel in zip(axs[1], traitlabels):
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
+Z = np.full([nr*numa2, nc*numa2, 4], mymodule.colormap['default'])
+mask = (R > T) & (T > S) & (S > P)
+Z[mask] = mymodule.colormap['harmony']
+mask = (mask & (2.0*R <= T + S))
+Z[mask] = mymodule.colormap['harmonyTS']
+mask = (T >= P) & (P > R) & (R >= S)
+Z[mask] = mymodule.colormap['deadlock']
+mask = (mask & (2.0*P <= T + S))
+Z[mask] = mymodule.colormap['deadlockTS']
+mask = (T > R) & (R > P) & (P > S)
+Z[mask] = mymodule.colormap['prisoner']
+mask = (mask & (2.0*R <= T + S))
+Z[mask] = mymodule.colormap['prisonerTS']
+mask = (T > R) & (R > S) & (S > P)
+Z[mask] = mymodule.colormap['snowdrift']
+mask = (mask & (2.0*R <= T + S))
+Z[mask] = mymodule.colormap['snowdriftTS']
+ax = axs[0, 0]
+ax.imshow(Z, extent=extenta2)
+ax.set_yticklabels(yticklabels, fontsize=fstick) 
+ax.set_title('Game types', pad=50.0, fontsize=fslabel)
+
 Z = np.zeros([nr*numa2, nc*numa2])
 mask = (T > R) & (R > S) & (S > P)
 Z[mask] = R[mask] - P[mask]
-Z = np.ma.masked_where(X > Y, Z)
-ax = axs[0, 0]
+ax = axs[0, 1]
 ax.imshow(Z, extent=extenta2, cmap=cmap, vmin=0.0, vmax=0.5)
 ax.set_yticklabels(yticklabels, fontsize=fstick) 
 ax.set_title('Snowdrift\n$\it{R}$ - $\it{P}$', pad=50.0, fontsize=fslabel)
 
 Z = np.zeros([nr*numa2, nc*numa2])
 mask = (T > R) & (R > P) & (P > S)
-Z[mask] = 1.0 - P[mask] + S[mask]
-Z = np.ma.masked_where(X > Y, Z)
-ax = axs[0, 1]
+Z[mask] = 1.0 - (P[mask] - S[mask])
+ax = axs[0, 2]
 ax.imshow(Z, extent=extenta2, cmap=cmap, vmin=0.0, vmax=1.0)
 ax.set_title('Prisoner\'s dilemma\n1 - ($\it{P}$ - $\it{S}$)',
                 pad=50.0,
@@ -197,8 +219,7 @@ ax.set_title('Prisoner\'s dilemma\n1 - ($\it{P}$ - $\it{S}$)',
 
 Z = np.zeros([nr*numa2, nc*numa2])
 Z[mask] = 1.0 + T[mask] + S[mask] - 2.0*R[mask]
-Z = np.ma.masked_where(X > Y, Z)
-ax = axs[0, 2]
+ax = axs[0, 3]
 ax.imshow(Z, extent=extenta2, cmap=cmap, vmin=0.0, vmax=1.0)
 ax.set_title('Prisoner\'s dilemma\n$\it{T}$ + $\it{S}$ - 2$\it{R}$',
                 pad=50.0,

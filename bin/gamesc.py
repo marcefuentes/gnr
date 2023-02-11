@@ -14,8 +14,8 @@ alphamin = 0.1
 alphamax = 0.9
 logesmin = -5.0
 logesmax = 5.0
-givenmin = 0.00
-givenmax = 1.00
+givenmin = 0.95
+givenmax = 0.95
 
 num = 21    # Number of subplot rows and columns
 numa2 = 64
@@ -49,8 +49,9 @@ X, Y = np.meshgrid(np.linspace(0.0, mymodule.a2max, num=numa2),
                     np.linspace(mymodule.a2max, 0.0, num=numa2))
 X = np.tile(A=X, reps=[nr, nc])
 Y = np.tile(A=Y, reps=[nr, nc])
-X = np.ma.masked_where(X > Y, X)
-Y = np.ma.masked_where(X > Y, Y)
+H = np.copy(Y)
+Y[(X > Y)] = X[(X > Y)] 
+X[(X > H)] = H[(X > H)] 
 RRR, AAA = np.meshgrid(np.repeat(rhos, numa2),
                         np.repeat(alphas, numa2))
 
@@ -123,7 +124,7 @@ for given in givens:
     R = mymodule.fitness(Y, Y, given, AAA, RRR)
     P = mymodule.fitness(X, X, given, AAA, RRR)
     S = mymodule.fitness(X, Y, given, AAA, RRR)
-    mask = ((R > T) & (T > S) & (S > P)) | ((R > S) & (S > T) & (S > P))
+    mask = (R > T) & (T > S) & (S > P)
     Z[mask] = mymodule.colormap['harmony']
     mask = (mask & (2.0*R <= T + S))
     Z[mask] = mymodule.colormap['harmonyTS']
@@ -139,8 +140,6 @@ for given in givens:
     Z[mask] = mymodule.colormap['snowdrift']
     mask = (mask & (2.0*R <= T + S))
     Z[mask] = mymodule.colormap['snowdriftTS']
-    mask = (X > Y)
-    Z[mask] = mymodule.colormap['black']
 
     MRT = MRT0*(1.0 - given)
     Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))

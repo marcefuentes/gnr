@@ -1,14 +1,14 @@
 #! /usr/bin/env python
 
 colormap = {
-    'default' :     [0.0, 1.0, 0.0, 1.0],
-    'deadlock' :    [1.0, 0.95, 0.9, 1.0],
-    'deadlockTS' :  [1.0, 0.7, 0.0, 1.0],
-    'harmony' :     [0.95, 0.95, 1.0, 1.0],
-    'prisoner' :    [0.5, 0.5, 0.5, 1.0],
-    'prisonerTS' :  [1.0, 0.3, 0.0, 1.0],
-    'snowdrift' :   [0.0, 1.0, 1.0, 1.0],
-    'snowdriftTS' : [0.0, 0.5, 1.0, 1.0],
+    'default' :     [1.0, 1.0, 1.0, 1.0],
+    'deadlock' :    [0.96, 1.0, 1.0, 1.0],
+    'deadlockTS' :  [0.8, 1.0, 1.0, 1.0],
+    'harmony' :     [1.0, 0.96, 0.98, 1.0],
+    'prisoner' :    [0.2, 0.1, 0.4, 1.0],
+    'prisonerTS' :  [0.0, 1.0, 1.0, 1.0],
+    'snowdrift' :   [1.0, 0.0, 1.0, 1.0],
+    'snowdriftTS' : [1.0, 0.0, 1.0, 1.0],
     'white' :       [1.0, 1.0, 1.0, 1.0],
     'black' :       [0.0, 0.0, 0.0, 1.0]
 }
@@ -36,7 +36,7 @@ def fitness(x, y, given, alpha, rho):
     w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
     return w
 
-def gametypes(T, R, P, S, Z, TS):
+def gametypes(T, R, P, S, Z):
 
     # Harmony
     mask = ((R > T) & (T > S) & (S > P)) | ((R > S) & (S > T) & (S > P)) 
@@ -52,11 +52,9 @@ def gametypes(T, R, P, S, Z, TS):
     # Prisoner's dilemma
     mask = (T > R) & (R >= P) & (P > S)
     Z[mask] = colormap['prisoner']
-    TS[mask] = 1.0 + T[mask] + S[mask] - 2.0*R[mask]
 
     mask = (mask & (2.0*R < T + S))
     Z[mask] = colormap['prisonerTS']
-    TS[mask] = 1.0 + T[mask] + S[mask] - 2.0*R[mask]
 
     # Snowdrift (chicken)
     mask = (T > R) & (R > S) & (S > P)

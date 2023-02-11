@@ -71,7 +71,6 @@ wsocial = mymodule.fitness(a2social, a2social, zeros, AA, RR)
 fig, axs = plt.subplots(nrows=3, ncols=2, figsize=(12, 18))
 fig.supxlabel(xlabel, x=0.515, y=0.03, fontsize=fslabel)
 fig.supylabel(ylabel, x=0.04, y=0.510, fontsize=fslabel)
-cmap = plt.cm.viridis
 
 letter = ord('a')
 for axrow in axs:
@@ -103,13 +102,20 @@ for given in givens:
     S = mymodule.fitness(low, high, given, AA, RR)
 
     Z = np.full([nr, nc, 4], mymodule.colormap['default'])
-    TS = np.copy(zeros)
-    mymodule.gametypes(T, R, P, S, Z, TS)
+    mymodule.gametypes(T, R, P, S, Z)
     ax = axs[0, 0]
     ax.imshow(Z, extent=extent)
     ax.set_title('Game types', pad=50.0, fontsize=fslabel)
+
+    Z = np.copy(zeros) + 1.0
+    mask = ((T > R) & (R >= P) & (P > S)) | ((T >= P) & (P > R) & (R >= S) & (2.0*P < T + S))
+    Z[mask] = - T[mask] - S[mask] + 2.0*R[mask]
+    mask = ((T >= P) & (P > R) & (R >= S) & (2.0*P > T + S))
+    Z = np.ma.masked_array(Z, mask)
+    cmap = plt.cm.cool
+    cmap.set_bad('black')
     ax = axs[0, 1]
-    ax.imshow(TS, extent=extent, cmap=cmap, vmin=0, vmax=0.7)
+    ax.imshow(Z, extent=extent, cmap=cmap, vmin=0, vmax=1)
     ax.set_title('Prisoner\'s dilemma\n$\it{T}$ + $\it{S}$ - 2$\it{R}$',
                     pad=50.0,
                     fontsize=fslabel)
@@ -121,7 +127,7 @@ for given in givens:
 
     for row, Ms in zip(axs[1:], Mss):
         for ax, M, traitvmax in zip(row, Ms, traitvmaxs):
-            ax.imshow(M, extent=extent, cmap=cmap, vmin=0, vmax=traitvmax)
+            ax.imshow(M, extent=extent, cmap='viridis', vmin=0, vmax=traitvmax)
 
     if movie:
         text = fig.text(0.90,

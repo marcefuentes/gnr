@@ -83,7 +83,6 @@ fig, axs = plt.subplots(nrows=3, ncols=2, figsize=(12, 18))
 fig.delaxes(axs[0, 1])
 fig.supxlabel(xlabel, x=0.515, y=0.03, fontsize=fslabel)
 fig.supylabel(ylabel, x=0.04, y=0.510, fontsize=fslabel)
-cmap = plt.cm.viridis
 
 letter = ord('b')
 for axrow in axs:
@@ -123,12 +122,11 @@ for ax, traitlabel in zip(axs[1], traitlabels):
 for given in givens:
 
     Z = np.full([nr*numa2, nc*numa2, 4], mymodule.colormap['default'])
-    TS = np.zeros([nr*numa2, nc*numa2])
     T = mymodule.fitness(Y, X, given, AAA, RRR)
     R = mymodule.fitness(Y, Y, given, AAA, RRR)
     P = mymodule.fitness(X, X, given, AAA, RRR)
     S = mymodule.fitness(X, Y, given, AAA, RRR)
-    mymodule.gametypes(T, R, P, S, Z, TS)
+    mymodule.gametypes(T, R, P, S, Z)
     axs[0, 0].imshow(Z, extent=extenta2)
 
     MRT = MRT0*(1.0 - given)
@@ -140,7 +138,7 @@ for given in givens:
 
     for row, Ms in zip(axs[1:], Mss):
         for ax, M, traitvmax in zip(row, Ms, traitvmaxs):
-            ax.imshow(M, extent=extent, cmap=cmap, vmin=0, vmax=traitvmax)
+            ax.imshow(M, extent=extent, cmap='viridis', vmin=0, vmax=traitvmax)
 
     if movie:
         text = fig.text(0.90,

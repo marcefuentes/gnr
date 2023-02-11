@@ -51,10 +51,6 @@ high = np.full([nr, nc], mymodule.a2high)
 R = mymodule.fitness(high, high, zeros, AA, RR)
 P = mymodule.fitness(low, low, zeros, AA, RR)
 xaxis = [1, 2, 3, 4]
-TS = np.copy(zeros)
-a2eq = np.copy(zeros)
-weq = np.copy(zeros)
-xeq = np.copy(zeros)
 
 fig = plt.figure(figsize=(8, 8))
 fig.supxlabel(xlabel, x=0.56, y=0.03, fontsize=fslabel)
@@ -75,7 +71,7 @@ for given in givens:
     T = mymodule.fitness(high, low, given, AA, RR)
     S = mymodule.fitness(low, high, given, AA, RR)
     Z = np.full([nr, nc, 4], mymodule.colormap['default'])
-    mymodule.gametypes(T, R, P, S, low, high, Z, TS, a2eq, xeq, weq)
+    mymodule.gametypes(T, R, P, S, Z)
 
     for row, rowT, rowR, rowP, rowS, rowZ in zip(axs, T, R, P, S, Z):
         for ax, tt, rr, pp, ss, zz in zip(row, rowT, rowR, rowP, rowS, rowZ):

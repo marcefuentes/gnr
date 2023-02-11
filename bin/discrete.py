@@ -109,7 +109,6 @@ fig.supylabel(ylabel,
                 y=0.493,
                 fontsize=fslabel*1.5,
                 ha='center')
-cmap = plt.cm.viridis
 
 letter = ord('a')
 for axrow in axs:
@@ -149,13 +148,14 @@ xeq = np.copy(zeros)
 T = mymodule.fitness(high, low, GG, AA, RR)
 S = mymodule.fitness(low, high, GG, AA, RR)
 Z = np.full([nr, nc, 4], mymodule.colormap['default'])
-TS = np.zeros([nr, nc])
-mymodule.gametypes(T, R, P, S, Z, TS)
+mymodule.gametypes(T, R, P, S, Z)
 ax = axs[0, 0]
 ax.imshow(Z, extent=extent)
 ax.set_title('Game types', pad=50.0, fontsize=fslabel)
+
+Z = np.zeros([nr, nc])
 ax = axs[0, 1]
-ax.imshow(TS, extent=extent, cmap=cmap, vmin=0, vmax=1.0)
+ax.imshow(Z, extent=extent, cmap='viridis', vmin=0, vmax=1.0)
 ax.set_title('Prisoner\'s dilemma\n$\it{T}$ + $\it{S}$ - 2$\it{R}$',
                 pad=50.0,
                 fontsize=fslabel)
@@ -170,7 +170,7 @@ for t in ts:
                                                             ascending=False)
             ax.imshow(Z,
                     extent=extent,
-                    cmap=cmap,
+                    cmap='viridis',
                     vmin=0,
                     vmax=traitvmax)
     if movie:

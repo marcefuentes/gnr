@@ -2,10 +2,9 @@
 
 colormap = {
     'default' :     [0.0, 1.0, 0.0, 1.0],
-    'deadlock' :    [0.95, 0.95, 0.95, 1.0],
+    'deadlock' :    [1.0, 0.95, 0.95, 1.0],
     'deadlockTS' :  [1.0, 0.7, 0.0, 1.0],
-    'harmony' :     [1.0, 1.0, 0.0, 1.0],
-    'harmonyTS' :   [0.8, 0.8, 0.0, 1.0],
+    'harmony' :     [0.95, 0.95, 1.0, 1.0],
     'prisoner' :    [0.5, 0.5, 0.5, 1.0],
     'prisonerTS' :  [1.0, 0.3, 0.0, 1.0],
     'snowdrift' :   [0.0, 1.0, 1.0, 1.0],
@@ -44,9 +43,6 @@ def gametypes(T, R, P, S, low, high, Z, TS, a2eq, xeq, weq):
     Z[mask] = colormap['harmony']
     a2eq[mask] = high[mask]
     weq[mask] = R[mask]
-
-    mask = (mask & (2.0*R <= T + S))
-    Z[mask] = colormap['harmonyTS']
 
     # Deadlock
     mask = ((T > P) & (P > R) & (R > S)) 

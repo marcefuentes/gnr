@@ -181,8 +181,6 @@ for ax, traitlabel in zip(axs[1], traitlabels):
 Z = np.full([nr*numa2, nc*numa2, 4], mymodule.colormap['default'])
 mask = (R > T) & (T > S) & (S > P)
 Z[mask] = mymodule.colormap['harmony']
-mask = (mask & (2.0*R <= T + S))
-Z[mask] = mymodule.colormap['harmonyTS']
 mask = (T >= P) & (P > R) & (R >= S)
 Z[mask] = mymodule.colormap['deadlock']
 mask = (mask & (2.0*P <= T + S))

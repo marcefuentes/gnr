@@ -46,15 +46,15 @@ def gametypes(T, R, P, S, Z, TS):
     mask = ((T >= P) & (P > R) & (R >= S)) 
     Z[mask] = colormap['deadlock']
 
-    mask = (mask & (2.0*P <= T + S))
+    mask = (mask & (2.0*P < T + S))
     Z[mask] = colormap['deadlockTS']
 
     # Prisoner's dilemma
-    mask = (T > R) & (R > P) & (P > S)
+    mask = (T > R) & (R >= P) & (P > S)
     Z[mask] = colormap['prisoner']
     TS[mask] = 1.0 + T[mask] + S[mask] - 2.0*R[mask]
 
-    mask = (mask & (2.0*R <= T + S))
+    mask = (mask & (2.0*R < T + S))
     Z[mask] = colormap['prisonerTS']
     TS[mask] = 1.0 + T[mask] + S[mask] - 2.0*R[mask]
 
@@ -62,7 +62,7 @@ def gametypes(T, R, P, S, Z, TS):
     mask = (T > R) & (R > S) & (S > P)
     Z[mask] = colormap['snowdrift']
 
-    mask = (mask & (2.0*R <= T + S))
+    mask = (mask & (2.0*R < T + S))
     Z[mask] = colormap['snowdriftTS']
 
 def equilibrium(T, R, P, S, low, high, a2eq, weq):
@@ -73,7 +73,7 @@ def equilibrium(T, R, P, S, low, high, a2eq, weq):
     weq[mask] = R[mask]
 
     # Deadlock or prisoner's dilemma
-    mask = (T > R) & (P > S) 
+    mask = (T >= R) & (P >= S) 
     a2eq[mask] = low[mask]
     weq[mask] = P[mask]
 

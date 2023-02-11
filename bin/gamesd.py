@@ -113,7 +113,7 @@ for given in givens:
     mask = ((T >= P) & (P > R) & (R >= S) & (2.0*P > T + S))
     Z = np.ma.masked_array(Z, mask)
     cmap = plt.cm.cool
-    cmap.set_bad('black')
+    cmap.set_bad('white')
     ax = axs[0, 1]
     ax.imshow(Z, extent=extent, cmap=cmap, vmin=0, vmax=1)
     ax.set_title('Prisoner\'s dilemma\n$\it{T}$ + $\it{S}$ - 2$\it{R}$',

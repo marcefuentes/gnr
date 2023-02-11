@@ -132,6 +132,9 @@ fig.supylabel(ylabel,
                 fontsize=fslabel*1.5,
                 ha='center')
 
+cmap = plt.cm.viridis
+cmap.set_bad('black')
+
 letter = ord('a')
 for axrow in axs:
     for ax in axrow:
@@ -176,23 +179,30 @@ for ax, traitlabel in zip(axs[1], traitlabels):
 Z = np.zeros([nr*numa2, nc*numa2])
 mask = (T > R) & (R > S) & (S > P)
 Z[mask] = R[mask] - P[mask]
+Z = np.ma.masked_where(X > Y, Z)
 ax = axs[0, 0]
-ax.imshow(Z, extent=extenta2, cmap='viridis', vmin=0.0, vmax=0.5)
+ax.imshow(Z, extent=extenta2, cmap=cmap, vmin=0.0, vmax=0.5)
 ax.set_yticklabels(yticklabels, fontsize=fstick) 
 ax.set_title('Snowdrift\n$\it{R}$ - $\it{P}$', pad=50.0, fontsize=fslabel)
 
 Z = np.zeros([nr*numa2, nc*numa2])
-mask = ((T > R) & (R > P) & (P > S))
-Z[mask] = 1.0 + S[mask] - P[mask]
+mask = (T > R) & (R > P) & (P > S)
+Z[mask] = 1.0 - P[mask] + S[mask]
+Z = np.ma.masked_where(X > Y, Z)
 ax = axs[0, 1]
-ax.imshow(Z, extent=extenta2, cmap='viridis', vmin=0.0, vmax=1.0)
-ax.set_title('Prisoner\'s dilemma\n$\it{S}$ - $\it{P}$', pad=50.0, fontsize=fslabel)
+ax.imshow(Z, extent=extenta2, cmap=cmap, vmin=0.0, vmax=1.0)
+ax.set_title('Prisoner\'s dilemma\n1 - ($\it{P}$ - $\it{S}$)',
+                pad=50.0,
+                fontsize=fslabel)
 
 Z = np.zeros([nr*numa2, nc*numa2])
 Z[mask] = 1.0 + T[mask] + S[mask] - 2.0*R[mask]
+Z = np.ma.masked_where(X > Y, Z)
 ax = axs[0, 2]
-ax.imshow(Z, extent=extenta2, cmap='viridis', vmin=0.0, vmax=1.0)
-ax.set_title('Prisoner\'s dilemma\n$\it{T}$ + $\it{S}$ - 2$\it{R}$', pad=50.0, fontsize=fslabel)
+ax.imshow(Z, extent=extenta2, cmap=cmap, vmin=0.0, vmax=1.0)
+ax.set_title('Prisoner\'s dilemma\n$\it{T}$ + $\it{S}$ - 2$\it{R}$',
+                pad=50.0,
+                fontsize=fslabel)
 
 for t in ts:
     for axrow, df in zip(axs[1:], dfs):

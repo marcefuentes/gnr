@@ -69,6 +69,9 @@ a2social = np.copy(low)
 mask = (R > P)
 a2social[mask] = high[mask]
 wsocial = mymodule.fitness(a2social, a2social, 0.0, AA, RR)
+mask = (R == P)
+a2social[mask] = (low[mask] + high[mask])/2.0
+wsocial[mask] = R[mask]
 
 xmin = logess[0]
 xmax = logess[-1]

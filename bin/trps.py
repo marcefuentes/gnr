@@ -80,8 +80,14 @@ for given in givens:
                 line.remove()
             ax.plot(xaxis, y, c=zz, linewidth=3, marker='o', markerfacecolor='white', markersize=3)
 
+    text = fig.text(0.90,
+                    0.035,
+                    f'given\n{given:4.2f}',
+                    fontsize=fstick+4,
+                    color='grey',
+                    ha='right')
+
     if movie:
-        text = fig.text(0.90, 0.90, f'given: {given:4.2f}', fontsize=fstick, color='grey', ha='right')
         plt.savefig('temp.png', transparent=False)
         text.remove()
         frames.append(iio.imread('temp.png'))

@@ -147,13 +147,14 @@ for given in givens:
         for ax, M, traitvmax in zip(row, Ms, traitvmaxs):
             ax.imshow(M, extent=extent, cmap='viridis', vmin=0, vmax=traitvmax)
 
+    text = fig.text(0.90,
+                    0.035,
+                    f'given\n{given:4.2f}',
+                    fontsize=fstick+4,
+                    color='grey',
+                    ha='right')
+
     if movie:
-        text = fig.text(0.90,
-                        0.93,
-                        f'given\n{given:4.2f}',
-                        fontsize=fstick+4,
-                        color='grey',
-                        ha='right')
         plt.savefig('temp.png', transparent=False)
         text.remove()
         frames.append(iio.imread('temp.png'))

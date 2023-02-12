@@ -45,35 +45,28 @@ if movie:
     frames = []
 else:
     ts = [ts[-1]]
-givens = np.sort(pd.unique(df.Given))[::-1]
+
+given = pd.unique(df.Given)
+alphas = np.sort(pd.unique(df.alpha))[::-1]
+rowindex = 'alpha'
 logess = np.sort(pd.unique(df.logES))
 rhos = 1.0 - 1.0/pow(2.0, logess)
-alphas = np.sort(pd.unique(df.alpha))[::-1]
-nc = len(rhos)
+nr = len(alphas)
+nc = len(logess)
+low = np.full([nr, nc], mymodule.a2low)
+high = np.full([nr, nc], mymodule.a2high)
+RR, AA = np.meshgrid(rhos, alphas)
+R = mymodule.fitness(high, high, 0.0, AA, RR)
+P = mymodule.fitness(low, low, 0.0, AA, RR)
+T = mymodule.fitness(high, low, given, AA, RR)
+S = mymodule.fitness(low, high, given, AA, RR)
+
 xmin = logess[0]
 xmax = logess[-1]
 xlabel = 'Substitutability of $\it{B}$'
-
-if len(givens) > 1:
-    nr = len(givens)
-    RR, GG = np.meshgrid(rhos, givens)
-    ymin = givens[-1]
-    ymax = givens[0]
-    ylabel = 'Partner\'s share of $\it{B}$'
-    rowindex = 'Given'
-else:
-    nr = len(alphas)
-    GG = np.full([nr, nc], givens[0])
-if len(alphas) > 1:
-    nr = len(alphas)
-    RR, AA = np.meshgrid(rhos, alphas)
-    ymin = alphas[-1]
-    ymax = alphas[0]
-    ylabel = 'Value of $\it{B}$'
-    rowindex = 'alpha'
-else:
-    nr = len(givens)
-    AA = np.full([nr, nc], alphas[0])
+ymin = alphas[-1]
+ymax = alphas[0]
+ylabel = 'Value of $\it{B}$'
 
 traitvmaxs = [mymodule.a2max,
                 mymodule.a2max,
@@ -91,12 +84,6 @@ yticklabels = [round(ymin, 1),
                 round(ymax, 1)]
 extent = 0, nc, 0, nr
 
-low = np.full([nr, nc], mymodule.a2low)
-high = np.full([nr, nc], mymodule.a2high)
-T = mymodule.fitness(high, low, GG, AA, RR)
-R = mymodule.fitness(high, high, GG, AA, RR)
-P = mymodule.fitness(low, low, GG, AA, RR)
-S = mymodule.fitness(low, high, GG, AA, RR)
 
 fig, axs = plt.subplots(nrows=len(folders)+1,
                         ncols=len(traits),

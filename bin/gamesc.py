@@ -38,13 +38,13 @@ else:
 alphas = np.linspace(alphamax, alphamin, num=num)
 logess = np.linspace(logesmin, logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
+nr = len(alphas)
+nc = len(logess)
 RR, AA = np.meshgrid(rhos, alphas)
 MRT0 = mymodule.b*mymodule.Rq
 Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
 a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
 wsocial = mymodule.fitness(a2social, a2social, 0.0, AA, RR)
-nr = len(alphas)
-nc = len(logess)
 X, Y = np.meshgrid(np.linspace(0.0, mymodule.a2max, num=numa2),
                     np.linspace(mymodule.a2max, 0.0, num=numa2))
 X = np.tile(A=X, reps=[nr, nc])

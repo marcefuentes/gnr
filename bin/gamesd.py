@@ -34,13 +34,12 @@ else:
     movie = False 
     givens = np.array([givenmin])
 
-nc = num
-nr = num
-alphas = np.linspace(alphamax, alphamin, num=nr)
-logess = np.linspace(logesmin, logesmax, num=nc)
+alphas = np.linspace(alphamax, alphamin, num=num)
+logess = np.linspace(logesmin, logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
+nr = len(alphas)
+nc = len(logess)
 RR, AA = np.meshgrid(rhos, alphas)
-zeros = np.zeros([nr, nc])
 low = np.full([nr, nc], mymodule.a2low)
 high = np.full([nr, nc], mymodule.a2high)
 R = mymodule.fitness(high, high, 0.0, AA, RR)
@@ -50,11 +49,11 @@ mask = (R > P)
 a2social[mask] = high[mask]
 wsocial = mymodule.fitness(a2social, a2social, 0.0, AA, RR)
 
-xmin = logesmin
-xmax = logesmax
+xmin = logess[0]
+xmax = logess[-1]
 xlabel = 'Substitutability of $\it{B}$'
-ymin = alphamin
-ymax = alphamax
+ymin = alphas[-1]
+ymax = alphas[0]
 ylabel = 'Value of $\it{B}$'
 
 traitvmaxs = [mymodule.a2max,
@@ -106,6 +105,8 @@ for axrow in axs:
 for ax, traitlabel in zip(axs[1], traitlabels):
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
+zeros = np.zeros([nr, nc])
+
 for given in givens:
 
     T = mymodule.fitness(high, low, given, AA, RR)
@@ -124,7 +125,7 @@ for given in givens:
     cmap = plt.cm.cool
     cmap.set_bad('white')
     ax = axs[0, 1]
-    ax.imshow(Z, extent=extent, cmap=cmap, vmin=0, vmax=1)
+    ax.imshow(Z, extent=extent, cmap=cmap, vmin=0.0, vmax=1.0)
     ax.set_title('Value of taking turns',
                     pad=50.0,
                     fontsize=fslabel)

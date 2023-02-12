@@ -26,6 +26,27 @@ fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
+def firstrow(given):
+    Z = np.full([nr, nc, 4], mymodule.colormap['default'])
+    mymodule.gametypes(T, R, P, S, Z)
+    ax = axs[0, 0]
+    ax.imshow(Z, extent=extent)
+    ax.set_title('Game types', pad=50.0, fontsize=fslabel)
+
+    Z = np.copy(zeros) + 1.0
+    mask = ((T > R) & (R >= P) & (P > S)) | ((T >= P) & (P > R) & (R >= S) & (2.0*P < T + S))
+    Z[mask] = - T[mask] - S[mask] + 2.0*R[mask]
+    mask = (((T >= P) & (P > R) & (R >= S) & (2.0*P > T + S))) | ((T < R) & (R > P) & (P < S)) 
+    Z = np.ma.masked_array(Z, mask)
+    cmap = plt.cm.cool
+    cmap.set_bad('white')
+    ax = axs[0, 1]
+    ax.imshow(Z, extent=extent, cmap=cmap, vmin=0.0, vmax=1.0)
+    ax.set_title('Value of taking turns',
+                    pad=50.0,
+                    fontsize=fslabel)
+    pass
+
 if givenmin != givenmax:
     movie = True
     givens = np.linspace(givenmin, givenmax, num=ngiven)
@@ -111,24 +132,8 @@ for given in givens:
 
     T = mymodule.fitness(high, low, given, AA, RR)
     S = mymodule.fitness(low, high, given, AA, RR)
-    Z = np.full([nr, nc, 4], mymodule.colormap['default'])
-    mymodule.gametypes(T, R, P, S, Z)
-    ax = axs[0, 0]
-    ax.imshow(Z, extent=extent)
-    ax.set_title('Game types', pad=50.0, fontsize=fslabel)
 
-    Z = np.copy(zeros) + 1.0
-    mask = ((T > R) & (R >= P) & (P > S)) | ((T >= P) & (P > R) & (R >= S) & (2.0*P < T + S))
-    Z[mask] = - T[mask] - S[mask] + 2.0*R[mask]
-    mask = (((T >= P) & (P > R) & (R >= S) & (2.0*P > T + S))) | ((T < R) & (R > P) & (P < S)) 
-    Z = np.ma.masked_array(Z, mask)
-    cmap = plt.cm.cool
-    cmap.set_bad('white')
-    ax = axs[0, 1]
-    ax.imshow(Z, extent=extent, cmap=cmap, vmin=0.0, vmax=1.0)
-    ax.set_title('Value of taking turns',
-                    pad=50.0,
-                    fontsize=fslabel)
+    firstrow(given)
 
     a2eq = np.copy(zeros)
     weq = np.copy(zeros)

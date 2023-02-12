@@ -31,6 +31,30 @@ fstick = 24 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
+def firstrow(given):
+    T = mymodule.fitness(Y, X, given, AAA, RRR)
+    S = mymodule.fitness(X, Y, given, AAA, RRR)
+
+    Z = np.full([nr*numa2, nc*numa2, 4], mymodule.colormap['default'])
+    mymodule.gametypes(T, R, P, S, Z)
+    ax = axs[0, 0]
+    ax.imshow(Z, extent=extenta2)
+    ax.set_title('Game types', pad=50.0, fontsize=fslabel)
+
+    Z = np.zeros([nr*numa2, nc*numa2]) + 1.0
+    mask = ((T > R) & (R >= P) & (P > S)) | ((T >= P) & (P > R) & (R >= S) & (2.0*P < T + S))
+    Z[mask] = - T[mask] - S[mask] + 2.0*R[mask]
+    mask = (((T >= P) & (P > R) & (R >= S) & (2.0*P > T + S))) | ((T < R) & (R > P) & (P < S)) 
+    Z = np.ma.masked_array(Z, mask)
+    cmap = plt.cm.cool
+    cmap.set_bad('white')
+    ax = axs[0, 1]
+    ax.imshow(Z, extent=extenta2, cmap=cmap, vmin=0.0, vmax=1.0)
+    ax.set_title('Value of taking turns',
+                    pad=50.0,
+                    fontsize=fslabel)
+    pass
+
 dfs = []
 for folder in folders:
     df = pd.concat(map(pd.read_csv, glob(os.path.join(folder, '*.csv'))),
@@ -67,8 +91,6 @@ RRR, AAA = np.meshgrid(np.repeat(rhos, numa2),
                         np.repeat(alphas, numa2))
 R = mymodule.fitness(Y, Y, 0.0, AAA, RRR)
 P = mymodule.fitness(X, X, 0.0, AAA, RRR)
-T = mymodule.fitness(Y, X, given, AAA, RRR)
-S = mymodule.fitness(X, Y, given, AAA, RRR)
 
 xmin = logess[0]
 xmax = logess[-1]
@@ -143,24 +165,7 @@ for axrow in axs:
 for ax, traitlabel in zip(axs[1], traitlabels):
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
-Z = np.full([nr*numa2, nc*numa2, 4], mymodule.colormap['default'])
-mymodule.gametypes(T, R, P, S, Z)
-ax = axs[0, 0]
-ax.imshow(Z, extent=extenta2)
-ax.set_title('Game types', pad=50.0, fontsize=fslabel)
-
-Z = np.zeros([nr*numa2, nc*numa2]) + 1.0
-mask = ((T > R) & (R >= P) & (P > S)) | ((T >= P) & (P > R) & (R >= S) & (2.0*P < T + S))
-Z[mask] = - T[mask] - S[mask] + 2.0*R[mask]
-mask = (((T >= P) & (P > R) & (R >= S) & (2.0*P > T + S))) | ((T < R) & (R > P) & (P < S)) 
-Z = np.ma.masked_array(Z, mask)
-cmap = plt.cm.cool
-cmap.set_bad('white')
-ax = axs[0, 1]
-ax.imshow(Z, extent=extenta2, cmap=cmap, vmin=0.0, vmax=1.0)
-ax.set_title('Value of taking turns',
-                pad=50.0,
-                fontsize=fslabel)
+firstrow(given)
 
 for t in ts:
     for axrow, df in zip(axs[1:], dfs):

@@ -36,6 +36,8 @@ def firstrow(given):
     Z = np.copy(zeros) + 1.0
     mask = ((T > R) & (R >= P) & (P > S)) | ((T >= P) & (P > R) & (R >= S) & (2.0*P < T + S))
     Z[mask] = - T[mask] - S[mask] + 2.0*R[mask]
+    mask = (T > R) & (P < S)
+    Z[mask] = 0.5 - 8*(P[mask] - S[mask])
     mask = (((T >= P) & (P > R) & (R >= S) & (2.0*P > T + S))) | ((T < R) & (R > P) & (P < S)) 
     Z = np.ma.masked_array(Z, mask)
     cmap = plt.cm.cool

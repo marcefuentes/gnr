@@ -35,16 +35,16 @@ else:
     movie = False 
     givens = np.array([givenmin])
 
-nc = num
-nr = num
-alphas = np.linspace(alphamax, alphamin, num=nr)
-logess = np.linspace(logesmin, logesmax, num=nc)
+alphas = np.linspace(alphamax, alphamin, num=num)
+logess = np.linspace(logesmin, logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
 MRT0 = mymodule.b*mymodule.Rq
 Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
 a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
 wsocial = mymodule.fitness(a2social, a2social, 0.0, AA, RR)
+nr = len(alphas)
+nc = len(logess)
 X, Y = np.meshgrid(np.linspace(0.0, mymodule.a2max, num=numa2),
                     np.linspace(mymodule.a2max, 0.0, num=numa2))
 X = np.tile(A=X, reps=[nr, nc])
@@ -57,12 +57,11 @@ RRR, AAA = np.meshgrid(np.repeat(rhos, numa2),
 R = mymodule.fitness(Y, Y, 0.0, AAA, RRR)
 P = mymodule.fitness(X, X, 0.0, AAA, RRR)
 
-
-xmin = logesmin
-xmax = logesmax
+xmin = logess[0]
+xmax = logess[-1]
 xlabel = 'Substitutability of $\it{B}$'
-ymin = alphamin
-ymax = alphamax
+ymin = alphas[-1]
+ymax = alphas[0]
 ylabel = 'Value of $\it{B}$'
 
 traitvmaxs = [mymodule.a2max,

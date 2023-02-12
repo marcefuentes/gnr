@@ -46,41 +46,36 @@ if movie:
     frames = []
 else:
     ts = [ts[-1]]
-givens = np.sort(pd.unique(df.Given))[::-1]
-if givens[0] > 0.9999999:
-    givens[0] = 0.9999999
+
+given = pd.unique(df.Given)
+if given > 0.9999999:
+    given = 0.9999999
+alphas = np.sort(pd.unique(df.alpha))[::-1]
+rowindex = 'alpha'
 logess = np.sort(pd.unique(df.logES))
 rhos = 1.0 - 1.0/pow(2.0, logess)
-alphas = np.sort(pd.unique(df.alpha))[::-1]
-nc = len(rhos)
+nr = len(alphas)
+nc = len(logess)
+X, Y = np.meshgrid(np.linspace(0.0, mymodule.a2max, num=numa2),
+                    np.linspace(mymodule.a2max, 0.0, num=numa2))
+X = np.tile(A=X, reps=[nr, nc])
+Y = np.tile(A=Y, reps=[nr, nc])
+H = np.copy(Y)
+Y[(X > Y)] = X[(X > Y)] 
+X[(X > H)] = H[(X > H)] 
+RRR, AAA = np.meshgrid(np.repeat(rhos, numa2),
+                        np.repeat(alphas, numa2))
+R = mymodule.fitness(Y, Y, 0.0, AAA, RRR)
+P = mymodule.fitness(X, X, 0.0, AAA, RRR)
+T = mymodule.fitness(Y, X, given, AAA, RRR)
+S = mymodule.fitness(X, Y, given, AAA, RRR)
+
 xmin = logess[0]
 xmax = logess[-1]
 xlabel = 'Substitutability of $\it{B}$'
-
-if len(givens) > 1:
-    nr = len(givens)
-    RR, GG = np.meshgrid(rhos, givens)
-    RRR, GGG = np.meshgrid(np.repeat(rhos, numa2), np.repeat(givens, numa2))
-    ymin = givens[-1]
-    ymax = givens[0]
-    ylabel = 'Partner\'s share of $\it{B}$'
-    rowindex = 'Given'
-else:
-    nr = len(alphas)
-    GG = np.full([nr, nc], givens[0])
-    GGG = np.full([nr*numa2, nc*numa2], givens[0])
-if len(alphas) > 1:
-    nr = len(alphas)
-    RR, AA = np.meshgrid(rhos, alphas)
-    RRR, AAA = np.meshgrid(np.repeat(rhos, numa2), np.repeat(alphas, numa2))
-    ymin = alphas[-1]
-    ymax = alphas[0]
-    ylabel = 'Value of $\it{B}$'
-    rowindex = 'alpha'
-else:
-    nr = len(givens)
-    AA = np.full([nr, nc], alphas[0])
-    AAA = np.full([nr*numa2, nc*numa2], alphas[0])
+ymin = alphas[-1]
+ymax = alphas[0]
+ylabel = 'Value of $\it{B}$'
 
 traitvmaxs = [mymodule.a2max,
                 mymodule.a2max,
@@ -98,18 +93,6 @@ yticklabels = [round(ymin, 1),
                 round(ymax, 1)]
 extent = 0, nc, 0, nr
 extenta2 = 0, nc*numa2, 0, nr*numa2
-
-X, Y = np.meshgrid(np.linspace(0.0, mymodule.a2max, num=numa2),
-                    np.linspace(mymodule.a2max, 0.0, num=numa2))
-X = np.tile(A=X, reps=[nr, nc])
-Y = np.tile(A=Y, reps=[nr, nc])
-H = np.copy(Y)
-Y[(X > Y)] = X[(X > Y)] 
-X[(X > H)] = H[(X > H)] 
-T = mymodule.fitness(Y, X, GGG, AAA, RRR)
-R = mymodule.fitness(Y, Y, GGG, AAA, RRR)
-P = mymodule.fitness(X, X, GGG, AAA, RRR)
-S = mymodule.fitness(X, Y, GGG, AAA, RRR)
 
 fig, axs = plt.subplots(nrows=len(folders)+1,
                         ncols=len(traits),

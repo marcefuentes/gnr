@@ -34,25 +34,11 @@ plt.rcParams['ps.fonttype'] = 42
 def firstrow(given):
     T = mymodule.fitness(Y, X, given, AAA, RRR)
     S = mymodule.fitness(X, Y, given, AAA, RRR)
-
     Z = np.full([nr*numa2, nc*numa2, 4], mymodule.colormap['default'])
     mymodule.gametypes(T, R, P, S, Z)
     ax = axs[0, 0]
     ax.imshow(Z, extent=extenta2)
     ax.set_title('Game types', pad=50.0, fontsize=fslabel)
-
-    Z = np.zeros([nr*numa2, nc*numa2]) + 1.0
-    mask = ((T > R) & (R >= P) & (P > S)) | ((T >= P) & (P > R) & (R >= S) & (2.0*P < T + S))
-    Z[mask] = - T[mask] - S[mask] + 2.0*R[mask]
-    mask = (((T >= P) & (P > R) & (R >= S) & (2.0*P > T + S))) | ((T < R) & (R > P) & (P < S)) 
-    Z = np.ma.masked_array(Z, mask)
-    cmap = plt.cm.cool
-    cmap.set_bad('white')
-    ax = axs[0, 1]
-    ax.imshow(Z, extent=extenta2, cmap=cmap, vmin=0.0, vmax=1.0)
-    ax.set_title('Value of taking turns',
-                    pad=50.0,
-                    fontsize=fslabel)
     pass
 
 dfs = []
@@ -119,18 +105,19 @@ extenta2 = 0, nc*numa2, 0, nr*numa2
 fig, axs = plt.subplots(nrows=len(folders)+1,
                         ncols=len(traits),
                         figsize=(6*len(traits), 6*(len(folders)+1)))
+fig.delaxes(axs[0, 1])
 fig.delaxes(axs[0, 2])
 fig.delaxes(axs[0, 3])
 fig.supxlabel(xlabel, x=0.513, y=0.06, fontsize=fslabel*1.5)
 fig.supylabel(ylabel, x=0.05, y=0.493, fontsize=fslabel*1.5)
 
-letter = ord('a')
+letter = ord('b')
 for axrow in axs:
     for ax in axrow:
         if ax.get_subplotspec().is_first_row():
             ax.text(0,
                     nr*numa2*1.035,
-                    chr(letter),
+                    'a',
                     fontsize=fslabel,
                     weight='bold')
             ax.set(xticks=[0, nc*numa2/2, nc*numa2],
@@ -159,7 +146,7 @@ for axrow in axs:
                         weight='bold')
             if ax.get_subplotspec().is_first_col():
                 ax.set_yticklabels(yticklabels, fontsize=fstick) 
-        letter += 1
+            letter += 1
         if ax.get_subplotspec().is_last_row():
             ax.set_xticklabels(xticklabels, fontsize=fstick)
 for ax, traitlabel in zip(axs[1], traitlabels):

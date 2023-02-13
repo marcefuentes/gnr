@@ -4,8 +4,8 @@ R1 = 2.0
 R2 = 2.0
 a1max = 1.0
 a2max = 1.0
-a2low = 0.25
-a2high = 0.75
+a2low = 0.0
+a2high = 0.5
 Rq = R2/R1
 b = a2max/a1max
 

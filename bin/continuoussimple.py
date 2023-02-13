@@ -114,7 +114,7 @@ for axrow in axs:
                             xticklabels=[],
                             yticklabels=[])
         if ax.get_subplotspec().is_first_row():
-            ax.set_title(traitlabel, pad=40.0, fontsize=fslabel*0.8)
+            ax.set_title(traitlabel, pad=40.0, fontsize=fslabel*0.9)
         if ax.get_subplotspec().is_last_row():
             ax.set_xticklabels(xticklabels, fontsize=fstick)
 

@@ -9,10 +9,6 @@ import time
 
 start_time = time.perf_counter ()
 
-alphamin = 0.1
-alphamax = 0.9
-logesmin = -5.0
-logesmax = 5.0
 givenmin = 0.95
 givenmax = 0.95
 
@@ -37,8 +33,8 @@ else:
 
 nc = num
 nr = num
-alphas = np.linspace(alphamax, alphamin, num=nr)
-logess = np.linspace(logesmin, logesmax, num=nc)
+alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=nr)
+logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=nc)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
 

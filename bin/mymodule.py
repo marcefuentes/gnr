@@ -4,10 +4,14 @@ R1 = 2.0
 R2 = 2.0
 a1max = 1.0
 a2max = 1.0
-a2low = 0.0
+a2low = 0.00
 a2high = 0.5
 Rq = R2/R1
 b = a2max/a1max
+alphamin = 0.1
+alphamax = 0.9
+logesmin = -5.0
+logesmax = 5.0
 
 colormap = {
     'default' :     [1.0, 1.0, 1.0, 1.0],

@@ -9,10 +9,6 @@ start_time = time.perf_counter ()
 
 traitlabels = ['Games', 'Effort to get $\it{B}$', 'Fitness']
 givens = [0.95, 0.50, 0.0]
-alphamin = 0.1
-alphamax = 0.9
-logesmin = -5.0
-logesmax = 5.0
 
 num = 1001
 numg = 21
@@ -24,8 +20,8 @@ fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-alphas = np.linspace(alphamax, alphamin, num=num)
-logess = np.linspace(logesmin, logesmax, num=num)
+alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=num)
+logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
 MRT0 = mymodule.b*mymodule.Rq
@@ -39,17 +35,17 @@ Y = np.tile(A=Y, reps=[numg, numg])
 H = np.copy(Y)
 Y[(X > Y)] = X[(X > Y)] 
 X[(X > H)] = H[(X > H)] 
-alphas = np.linspace(alphamax, alphamin, num=numg)
-logess = np.linspace(logesmin, logesmax, num=numg)
+alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=numg)
+logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=numg)
 rhos = 1.0 - 1.0/pow(2, logess)
 RRR, AAA = np.meshgrid(np.repeat(rhos, numa2),
                         np.repeat(alphas, numa2))
 
-xmin = logesmin
-xmax = logesmax
+xmin = mymodule.logesmin
+xmax = mymodule.logesmax
 xlabel = 'Substitutability of $\it{B}$'
-ymin = alphamin
-ymax = alphamax
+ymin = mymodule.alphamin
+ymax = mymodule.alphamax
 ylabel = 'Value of $\it{B}$'
 
 traitvmaxs = [mymodule.a2max,

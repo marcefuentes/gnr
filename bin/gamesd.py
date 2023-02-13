@@ -14,7 +14,7 @@ alphamax = 0.9
 logesmin = -5.0
 logesmax = 5.0
 
-num = 21    # Number of subplot rows and columns
+num = 1001    # Number of subplot rows and columns
 filename = 'gamesd'
 
 fslabel = 32 # Label font size

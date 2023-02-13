@@ -26,16 +26,14 @@ alphas = np.linspace(alphamax, alphamin, num=num)
 logess = np.linspace(logesmin, logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
-nr = len(alphas)
-nc = len(logess)
-low = np.full([nr, nc], mymodule.a2low)
-high = np.full([nr, nc], mymodule.a2high)
+low = np.full([num, num], mymodule.a2low)
+high = np.full([num, num], mymodule.a2high)
 
-xmin = logess[0]
-xmax = logess[-1]
+xmin = logesmin
+xmax = logesmax
 xlabel = 'Substitutability of $\it{B}$'
-ymin = alphas[-1]
-ymax = alphas[0]
+ymin = alphamin
+ymax = alphamax
 ylabel = 'Value of $\it{B}$'
 
 traitvmaxs = [mymodule.a2max,
@@ -50,7 +48,7 @@ xticklabels = [round(xmin),
 yticklabels = [round(ymin, 1),
                 round((ymin + ymax)/2, 1),
                 round(ymax, 1)]
-extent = 0, nc, 0, nr
+extent = 0, num, 0, num
 
 fig, axs = plt.subplots(nrows=len(givens),
                         ncols=len(traitlabels),
@@ -62,13 +60,13 @@ letter = ord('a')
 for axrow in axs:
     for ax, traitlabel in zip(axrow, traitlabels):
         ax.text(0, 
-                nr*1.035,
+                num*1.035,
                 chr(letter),
                 fontsize=fslabel*0.8,
                 weight='bold')
         letter += 1
-        ax.set(xticks=[0, nc/2, nc],
-                yticks=[0, nr/2, nr],
+        ax.set(xticks=[0, num/2, num],
+                yticks=[0, num/2, num],
                 xticklabels=[],
                 yticklabels=[])
         if ax.get_subplotspec().is_first_col():
@@ -85,12 +83,12 @@ for axrow, given in zip(axs, givens):
     R = mymodule.fitness(high, high, given, AA, RR)
     P = mymodule.fitness(low, low, given, AA, RR)
 
-    Z = np.full([nr, nc, 4], mymodule.colormap['default'])
+    Z = np.full([num, num, 4], mymodule.colormap['default'])
     mymodule.gametypes(T, R, P, S, Z)
     axrow[0].imshow(Z, extent=extent)
 
-    a2eq = np.zeros([nr, nc])
-    weq = np.zeros([nr, nc])
+    a2eq = np.zeros([num, num])
+    weq = np.zeros([num, num])
     mymodule.equilibrium(T, R, P, S, low, high, a2eq, weq)
     if given == 0.0:
         mask = (R == P)

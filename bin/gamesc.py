@@ -14,9 +14,9 @@ alphamax = 0.9
 logesmin = -5.0
 logesmax = 5.0
 
-num = 21    # Number of subplot rows and columns
+num = 1001
+numg = 21
 numa2 = 64
-ngiven = 21
 filename = 'gamesc'
 
 fslabel = 32 # Label font size
@@ -31,23 +31,25 @@ RR, AA = np.meshgrid(rhos, alphas)
 MRT0 = mymodule.b*mymodule.Rq
 Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
 #a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
+
 X, Y = np.meshgrid(np.linspace(0.0, mymodule.a2max, num=numa2),
                     np.linspace(mymodule.a2max, 0.0, num=numa2))
-nr = len(alphas)
-nc = len(logess)
-X = np.tile(A=X, reps=[nr, nc])
-Y = np.tile(A=Y, reps=[nr, nc])
+X = np.tile(A=X, reps=[numg, numg])
+Y = np.tile(A=Y, reps=[numg, numg])
 H = np.copy(Y)
 Y[(X > Y)] = X[(X > Y)] 
 X[(X > H)] = H[(X > H)] 
+alphas = np.linspace(alphamax, alphamin, num=numg)
+logess = np.linspace(logesmin, logesmax, num=numg)
+rhos = 1.0 - 1.0/pow(2, logess)
 RRR, AAA = np.meshgrid(np.repeat(rhos, numa2),
                         np.repeat(alphas, numa2))
 
-xmin = logess[0]
-xmax = logess[-1]
+xmin = logesmin
+xmax = logesmax
 xlabel = 'Substitutability of $\it{B}$'
-ymin = alphas[-1]
-ymax = alphas[0]
+ymin = alphamin
+ymax = alphamax
 ylabel = 'Value of $\it{B}$'
 
 traitvmaxs = [mymodule.a2max,
@@ -62,8 +64,8 @@ xticklabels = [round(xmin),
 yticklabels = [round(ymin, 1),
                 round((ymin + ymax)/2, 1),
                 round(ymax, 1)]
-extent = 0, nc, 0, nr
-extenta2 = 0, nc*numa2, 0, nr*numa2
+extent = 0, num, 0, num
+extentg = 0, numg*numa2, 0, numg*numa2
 
 fig, axs = plt.subplots(nrows=len(givens),
                         ncols=len(traitlabels),
@@ -74,29 +76,27 @@ fig.supylabel(ylabel, x=0.03, y=0.493, fontsize=fslabel*1.2)
 letter = ord('a')
 for axrow in axs:
     for ax, traitlabel in zip(axrow, traitlabels):
-        if traitlabel == 'Games':
-            ax.text(0, 
-                    nr*numa2*1.035,
-                    chr(letter),
-                    fontsize=fslabel*0.8,
-                    weight='bold')
-        else:
-            ax.text(0, 
-                    nr*1.035,
-                    chr(letter),
-                    fontsize=fslabel*0.8,
-                    weight='bold')
-        letter += 1
         if ax.get_subplotspec().is_first_col():
-            ax.set(xticks=[0, nc*numa2/2, nc*numa2],
-                    yticks=[0, nr*numa2/2, nr*numa2],
+            ax.text(0, 
+                    numg*numa2*1.035,
+                    chr(letter),
+                    fontsize=fslabel*0.8,
+                    weight='bold')
+            ax.set(xticks=[0, numg*numa2/2, numg*numa2],
+                    yticks=[0, numg*numa2/2, numg*numa2],
                     xticklabels=[])
             ax.set_yticklabels(yticklabels, fontsize=fstick) 
         else:
-            ax.set(xticks=[0, nc/2, nc],
-                            yticks=[0, nr/2, nr],
+            ax.text(0, 
+                    num*1.035,
+                    chr(letter),
+                    fontsize=fslabel*0.8,
+                    weight='bold')
+            ax.set(xticks=[0, num/2, num],
+                            yticks=[0, num/2, num],
                             xticklabels=[],
                             yticklabels=[])
+        letter += 1
         if ax.get_subplotspec().is_first_row():
             ax.set_title(traitlabel, pad=40.0, fontsize=fslabel*0.9)
         if ax.get_subplotspec().is_last_row():
@@ -111,9 +111,9 @@ for axrow, given in zip(axs, givens):
     R = mymodule.fitness(Y, Y, given, AAA, RRR)
     P = mymodule.fitness(X, X, given, AAA, RRR)
 
-    Z = np.full([nr*numa2, nc*numa2, 4], mymodule.colormap['default'])
+    Z = np.full([numg*numa2, numg*numa2, 4], mymodule.colormap['default'])
     mymodule.gametypes(T, R, P, S, Z)
-    axrow[0].imshow(Z, extent=extenta2)
+    axrow[0].imshow(Z, extent=extentg)
 
     MRT = MRT0*(1.0 - given)
     Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))

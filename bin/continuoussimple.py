@@ -125,8 +125,7 @@ for axrow, given in zip(axs, givens):
     S = mymodule.fitness(X, Y, given, AAA, RRR)
     Z = np.full([nr*numa2, nc*numa2, 4], mymodule.colormap['default'])
     mymodule.gametypes(T, R, P, S, Z)
-    ax = axrow[0]
-    ax.imshow(Z, extent=extenta2)
+    axrow[0].imshow(Z, extent=extenta2)
 
 for t in ts:
     for axrow, df in zip(axs, dfs):

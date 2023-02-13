@@ -121,6 +121,7 @@ for axrow in axs:
 if givens[0] > 0.9999999:
     given = 0.9999999
 for axrow, given in zip(axs, givens):
+
     T = mymodule.fitness(Y, X, given, AAA, RRR)
     S = mymodule.fitness(X, Y, given, AAA, RRR)
     Z = np.full([nr*numa2, nc*numa2, 4], mymodule.colormap['default'])

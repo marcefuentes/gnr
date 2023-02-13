@@ -43,7 +43,7 @@ def gametypes(T, R, P, S, Z):
     Z[mask] = colormap['harmony']
 
     # Deadlock
-    mask = (T >= P) & (P > R) & (R >= S) 
+    mask = (T > R) & (R < P) & (P > S) 
     Z[mask] = colormap['deadlock']
 
     mask = (mask & (2.0*P < T + S))
@@ -57,7 +57,7 @@ def gametypes(T, R, P, S, Z):
     Z[mask] = colormap['prisonerTS']
 
     # Snowdrift (chicken)
-    mask = (T > R) & (R > S) & (S > P)
+    mask = (T >= R) & (R > S) & (S >= P)
     Z[mask] = colormap['snowdrift']
 
     mask = (mask & (2.0*R < T + S))

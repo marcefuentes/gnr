@@ -22,13 +22,12 @@ fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-
 alphas = np.linspace(alphamax, alphamin, num=num)
 logess = np.linspace(logesmin, logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
+RR, AA = np.meshgrid(rhos, alphas)
 nr = len(alphas)
 nc = len(logess)
-RR, AA = np.meshgrid(rhos, alphas)
 low = np.full([nr, nc], mymodule.a2low)
 high = np.full([nr, nc], mymodule.a2high)
 

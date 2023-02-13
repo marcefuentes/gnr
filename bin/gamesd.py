@@ -78,8 +78,6 @@ for axrow in axs:
         if ax.get_subplotspec().is_last_row():
             ax.set_xticklabels(xticklabels, fontsize=fstick)
 
-zeros = np.zeros([nr, nc])
-
 for axrow, given in zip(axs, givens):
 
     T = mymodule.fitness(high, low, given, AA, RR)
@@ -91,8 +89,8 @@ for axrow, given in zip(axs, givens):
     mymodule.gametypes(T, R, P, S, Z)
     axrow[0].imshow(Z, extent=extent)
 
-    a2eq = np.copy(zeros)
-    weq = np.copy(zeros)
+    a2eq = np.zeros([nr, nc])
+    weq = np.zeros([nr, nc])
     mymodule.equilibrium(T, R, P, S, low, high, a2eq, weq)
     if given == 0.0:
         mask = (R == P)

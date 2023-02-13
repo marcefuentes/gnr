@@ -1,5 +1,14 @@
 #! /usr/bin/env python
 
+R1 = 2.0
+R2 = 2.0
+a1max = 1.0
+a2max = 1.0
+a2low = 0.25
+a2high = 0.75
+Rq = R2/R1
+b = a2max/a1max
+
 colormap = {
     'default' :     [1.0, 1.0, 1.0, 1.0],
     'deadlock' :    [0.93, 0.96, 0.96, 1.0],
@@ -12,15 +21,6 @@ colormap = {
     'white' :       [1.0, 1.0, 1.0, 1.0],
     'black' :       [0.0, 0.0, 0.0, 1.0]
 }
-
-R1 = 2.0
-R2 = 2.0
-a1max = 1.0
-a2max = 1.0
-a2low = 0.25
-a2high = 0.75
-Rq = R2/R1
-b = a2max/a1max
 
 def fitness(x, y, given, alpha, rho):
     q1 = (a2max - y)*R1/b
@@ -39,11 +39,11 @@ def fitness(x, y, given, alpha, rho):
 def gametypes(T, R, P, S, Z):
 
     # Harmony
-    mask = ((R > T) & (T > S) & (S > P)) | ((R > S) & (S > T) & (S > P)) 
+    mask = (T < R) & (R > P) & (P < S) 
     Z[mask] = colormap['harmony']
 
     # Deadlock
-    mask = ((T >= P) & (P > R) & (R >= S)) 
+    mask = (T >= P) & (P > R) & (R >= S) 
     Z[mask] = colormap['deadlock']
 
     mask = (mask & (2.0*P < T + S))

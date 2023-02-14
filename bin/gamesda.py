@@ -75,6 +75,7 @@ for ax, traitlabel in zip(axs, traitlabels):
 
 frames = []
 for a2low, a2high in zip(a2lows, a2highs):
+
     low = np.full([num, num], a2low)
     high = np.full([num, num], a2high)
     T = mymodule.fitness(high, low, given, AA, RR)

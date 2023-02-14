@@ -12,16 +12,17 @@ logesmin = -5.0
 logesmax = 5.0
 
 colormap = {
-    'default' :     [1.0, 1.0, 1.0, 1.0],
-    'deadlock' :    [0.93, 0.96, 0.96, 1.0],
-    'deadlockTS' :  [0.6, 1.0, 1.0, 1.0],
-    'harmony' :     [1.0, 0.96, 0.98, 1.0],
-    'prisoner' :    [0.2, 0.1, 0.4, 1.0],
-    'prisonerTS' :  [0.0, 1.0, 1.0, 1.0],
-    'snowdrift' :   [1.0, 0.0, 1.0, 1.0],
-    'snowdriftTS' : [1.0, 0.0, 1.0, 1.0],
-    'white' :       [1.0, 1.0, 1.0, 1.0],
-    'black' :       [0.0, 0.0, 0.0, 1.0]
+    'default' :     [1.00, 1.00, 1.00, 1.0],
+    'harmony' :     [0.20, 1.00, 0.20, 0.1],
+    'harmonyTS' :   [0.20, 1.00, 0.20, 0.3],
+    'snowdrift' :   [1.00, 0.00, 1.00, 0.5],
+    'snowdriftTS' : [1.00, 0.00, 1.00, 1.0],
+    'prisoner' :    [0.50, 0.50, 0.50, 0.5],
+    'prisonerTS' :  [0.50, 0.50, 0.50, 1.0],
+    'deadlock' :    [0.50, 1.00, 0.00, 0.1],
+    'deadlockTS' :  [0.50, 1.00, 0.00, 0.3],
+    'white' :       [1.00, 1.00, 1.00, 1.0],
+    'black' :       [0.00, 0.00, 0.00, 1.0]
 }
 
 def fitness(x, y, given, alpha, rho):
@@ -43,6 +44,9 @@ def gametypes(T, R, P, S, Z):
     # Harmony
     mask = (T < R) & (R > P) & (P < S) 
     Z[mask] = colormap['harmony']
+
+    mask = (mask & (2.0*R < T + S))
+    Z[mask] = colormap['harmonyTS']
 
     # Deadlock
     mask = (T > R) & (R < P) & (P > S) 

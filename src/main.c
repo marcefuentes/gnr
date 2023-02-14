@@ -298,13 +298,13 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 					recruit->cost = calculate_cost (recruit->ChooseGrain, recruit->MimicGrain);
 				}
 
-				kill (recruit_first, i_first, gN, gDiscrete);
+				kill (recruit_first, i_first, gN, gDiscrete, ga2Init);
 				free_recruits (recruit_first);
 			}
 			
 			if ( gReciprocity == 1 )
 			{
-				decide_a2 (i_first, i_last, ga2Max, gIndirectR, gDiscrete);
+				decide_a2 (i_first, i_last, ga2Max, gIndirectR, gDiscrete, ga2Init);
 			}
 		}
 

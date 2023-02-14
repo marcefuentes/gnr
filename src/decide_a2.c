@@ -1,8 +1,10 @@
 #include <math.h>
 #include "sim.h"
 
-void decide_a2 (struct itype *i, struct itype *i_last, double amax, int indirectr, int discrete)
+void decide_a2 (struct itype *i, struct itype *i_last, double amax, int indirectr, int discrete, double a2init)
 {
+	double a2def;
+
 	for ( ; i < i_last; i++ )
 	{
 		if ( i->age == 0 || i->partner->age == 0 || (i->partner != i->oldpartner && indirectr == 0) )
@@ -18,7 +20,15 @@ void decide_a2 (struct itype *i, struct itype *i_last, double amax, int indirect
 			}
 			else
 			{
-				double a2def = (round(i->a2Default) + 0.5)/2.0;
+				if ( i->a2Default > a2init )
+				{
+					a2def = a2init + 0.25;
+				}
+				else
+				{
+					a2def = a2init - 0.25;
+				}
+
 				if ( i->a2Decided != a2def )
 				{
 					i->a2Decided = a2def;

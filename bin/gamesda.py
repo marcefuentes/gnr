@@ -24,8 +24,8 @@ alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=num)
 logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
-a2lows = np.linspace(0.0, 0.95, num=20)
-a2highs = 0.05 + a2lows
+a2lows = np.linspace(0.0, 0.5, num=20)
+a2highs = a2lows + 0.5
 
 xmin = mymodule.logesmin
 xmax = mymodule.logesmax

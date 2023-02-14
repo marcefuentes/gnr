@@ -8,7 +8,8 @@ import time
 start_time = time.perf_counter ()
 
 traitlabels = ['Games', 'Effort to get $\it{B}$', 'Fitness']
-givens = [0.95, 0.50, 0.0]
+given = 0.95
+a2lows = [0.50, 0.25, 0.00]
 
 num = 1001    # Number of subplot rows and columns
 filename = 'gamesd'
@@ -22,8 +23,6 @@ alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=num)
 logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
-low = np.full([num, num], mymodule.a2low)
-high = np.full([num, num], mymodule.a2high)
 
 xmin = mymodule.logesmin
 xmax = mymodule.logesmax
@@ -46,9 +45,9 @@ yticklabels = [round(ymin, 1),
                 round(ymax, 1)]
 extent = 0, num, 0, num
 
-fig, axs = plt.subplots(nrows=len(givens),
+fig, axs = plt.subplots(nrows=len(a2lows),
                         ncols=len(traitlabels),
-                        figsize=(6*len(traitlabels), 6*(len(givens))))
+                        figsize=(6*len(traitlabels), 6*(len(a2lows))))
 fig.supxlabel(xlabel, x=0.513, y=0.01, fontsize=fslabel*1.2)
 fig.supylabel(ylabel, x=0.03, y=0.493, fontsize=fslabel*1.2)
 
@@ -72,8 +71,10 @@ for axrow in axs:
         if ax.get_subplotspec().is_last_row():
             ax.set_xticklabels(xticklabels, fontsize=fstick)
 
-for axrow, given in zip(axs, givens):
+for axrow, a2low in zip(axs, a2lows):
 
+    low = np.full([num, num], a2low)
+    high = np.full([num, num], a2low + 0.5)
     T = mymodule.fitness(high, low, given, AA, RR)
     S = mymodule.fitness(low, high, given, AA, RR)
     R = mymodule.fitness(high, high, given, AA, RR)

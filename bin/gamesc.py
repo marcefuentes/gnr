@@ -8,7 +8,7 @@ import time
 start_time = time.perf_counter ()
 
 traitlabels = ['Games', 'Effort to get $\it{B}$', 'Fitness']
-givens = [0.95, 0.50, 0.0]
+givens = [0.95, 0.75]
 
 num = 1001
 numg = 21

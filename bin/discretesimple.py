@@ -16,9 +16,9 @@ traits = ['ChooseGrainmean',
 traitlabels = ['Games',
                 'Sensitivity for\nchoosing partner',
                 'Sensitivity for\nmimicking partner']
-folders = ['a2init50', 'a2init25']
+folders = ['a2init75', 'a2init50', 'a2init25']
 subfolder = 'pr'
-a2lows = [0.25, 0.00]
+a2lows = [0.50, 0.25, 0.00]
 given = 0.95
 
 num = 1001    # Number of subplot rows and columns
@@ -77,8 +77,8 @@ extent2 = 0, num, 0, num
 fig, axs = plt.subplots(nrows=len(a2lows),
                         ncols=len(traitlabels),
                         figsize=(6*len(traitlabels), 6*(len(a2lows))))
-fig.supxlabel(xlabel, x=0.513, y=0.01, fontsize=fslabel*1.2)
-fig.supylabel(ylabel, x=0.03, y=0.493, fontsize=fslabel*1.2)
+fig.supxlabel(xlabel, x=0.513, y=0.02, fontsize=fslabel*1.3)
+fig.supylabel(ylabel, x=0.03, y=0.493, fontsize=fslabel*1.3)
 
 letter = ord('a')
 for axrow in axs:
@@ -107,7 +107,7 @@ for axrow in axs:
                             xticklabels=[],
                             yticklabels=[])
         if ax.get_subplotspec().is_first_row():
-            ax.set_title(traitlabel, pad=40.0, fontsize=fslabel*0.9)
+            ax.set_title(traitlabel, pad=40.0, fontsize=fslabel)
         if ax.get_subplotspec().is_last_row():
             ax.set_xticklabels(xticklabels, fontsize=fstick)
 

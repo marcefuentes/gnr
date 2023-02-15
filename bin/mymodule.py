@@ -15,6 +15,7 @@ logesmax = 5.0
 
 colormap = {
     'white' :       [1.0, 1.0, 1.0, 1.0],
+    'red' :         [1.0, 0.0, 0.0, 1.0],
     'harmonyTS' :   [1.0, 0.0, 0.0, 1.0],
     'snowdrift' :   [0.7, 0.0, 0.7, 1.0],
     'snowdriftTS' : [1.0, 0.3, 1.0, 1.0],
@@ -62,13 +63,20 @@ def diagonal(R, P):
     return mask
 
 def gamecolors(T, R, P, S, Z):
+    harmonycolors(T, R, P, S, Z)
     deadlockcolors(T, R, P, S, Z)
     prisonercolors(T, R, P, S, Z)
     snowdriftcolors(T, R, P, S, Z)
     pass
 
+def harmonycolors(T, R, P, S, Z):
+    mask = harmony(T, R, P, S)
+    Z[mask] = colormap['white']
+    Z[diagonal(R, P)] = colormap['white']
+
 def deadlockcolors(T, R, P, S, Z):
     mask = deadlock(T, R, P, S)
+    Z[mask] = colormap['white']
     Z[TS(mask, T, P, S)] = colormap['deadlockTS']
     Z[diagonal(R, P)] = colormap['white']
     pass

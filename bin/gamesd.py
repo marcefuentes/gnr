@@ -9,7 +9,7 @@ start_time = time.perf_counter ()
 
 traitlabels = ['Games', 'Effort to get $\it{B}$', 'Fitness']
 a2lows = [0.50, 0.25, 0.00]
-given = 0.95
+given = 1.0
 
 num = 1001    # Number of subplot rows and columns
 filename = 'gamesd'
@@ -80,7 +80,7 @@ for axrow, a2low in zip(axs, a2lows):
     R = mymodule.fitness(high, high, given, AA, RR)
     P = mymodule.fitness(low, low, given, AA, RR)
 
-    Z = np.full([num, num, 4], mymodule.colormap['white'])
+    Z = np.full([num, num, 4], mymodule.colormap['red'])
     mymodule.gamecolors(T, R, P, S, Z)
     axrow[0].imshow(Z, extent=extent)
 

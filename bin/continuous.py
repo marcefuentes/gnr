@@ -37,7 +37,6 @@ for folder in folders:
                     ignore_index=True)
     df.ChooseGrainmean = 1.0 - df.ChooseGrainmean
     df.MimicGrainmean = 1.0 - df.MimicGrainmean
-    #df['help'] = df.a2Seenmean*mymodule.R2*df.Given
     dfs.append(df)
 
 df = dfs[1]
@@ -150,19 +149,19 @@ ax = axs[0, 0]
 ax.imshow(Z, extent=extenta2)
 ax.set_title('Games', pad=50.0, fontsize=fslabel)
 
-Z = np.full([nr*numa2, nc*numa2, 4], mymodule.colormap['white'])
-mymodule.prisonerTScolors(T, R, P, S, Z)
+Z = np.full([nr*numa2, nc*numa2], -1.0)
+mask = mymodule.snowdrift(T, R, P, S) | mymodule.prisoner(T, R, P, S)
+Z[mask] = (R[mask] > P[mask])
+Z[mask] = (S[mask] - P[mask])
 ax = axs[0, 1]
-ax.imshow(Z, extent=extenta2)
+ax.imshow(Z, extent=extenta2, vmin=-1, vmax=0.05)
 ax.set_title('Games', pad=50.0, fontsize=fslabel)
 
-Z = np.zeros([nr*numa2, nc*numa2])
-mask = mymodule.prisoner(T, R, P, S) & (T + S < 2.0*R)
+Z = np.full([nr*numa2, nc*numa2], -1.0)
+mask = mymodule.prisoner(T, R, P, S) 
 Z[mask] = (T[mask] + S[mask] - 2.0*R[mask])
-mask = (Z == 0)
-Z = np.ma.masked_where(mask, Z)
 ax = axs[0, 2]
-ax.imshow(Z, extent=extenta2)
+ax.imshow(Z, extent=extenta2, vmin=-1, vmax=0.1)
 ax.set_title('Games', pad=50.0, fontsize=fslabel)
 
 for t in ts:

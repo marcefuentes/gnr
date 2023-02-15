@@ -8,7 +8,7 @@ import time
 start_time = time.perf_counter ()
 
 traitlabels = ['Games', 'Effort to get $\it{B}$', 'Fitness']
-givens = [0.95, 0.5]
+given = 0.95
 
 num = 1001
 numg = 21
@@ -63,59 +63,55 @@ yticklabels = [round(ymin, 1),
 extent = 0, num, 0, num
 extentg = 0, numg*numa2, 0, numg*numa2
 
-fig, axs = plt.subplots(nrows=len(givens),
+fig, axs = plt.subplots(nrows=1,
                         ncols=len(traitlabels),
-                        figsize=(6*len(traitlabels), 6*(len(givens))))
+                        figsize=(6*len(traitlabels), 6))
 fig.supxlabel(xlabel, x=0.513, y=0.01, fontsize=fslabel*1.2)
 fig.supylabel(ylabel, x=0.03, y=0.493, fontsize=fslabel*1.2)
 
 letter = ord('a')
-for axrow in axs:
-    for ax, traitlabel in zip(axrow, traitlabels):
-        if ax.get_subplotspec().is_first_col():
-            ax.text(0, 
-                    numg*numa2*1.035,
-                    chr(letter),
-                    fontsize=fslabel*0.8,
-                    weight='bold')
-            ax.set(xticks=[0, numg*numa2/2, numg*numa2],
-                    yticks=[0, numg*numa2/2, numg*numa2],
-                    xticklabels=[])
-            ax.set_yticklabels(yticklabels, fontsize=fstick) 
-        else:
-            ax.text(0, 
-                    num*1.035,
-                    chr(letter),
-                    fontsize=fslabel*0.8,
-                    weight='bold')
-            ax.set(xticks=[0, num/2, num],
-                            yticks=[0, num/2, num],
-                            xticklabels=[],
-                            yticklabels=[])
-        letter += 1
-        if ax.get_subplotspec().is_first_row():
-            ax.set_title(traitlabel, pad=40.0, fontsize=fslabel*0.9)
-        if ax.get_subplotspec().is_last_row():
-            ax.set_xticklabels(xticklabels, fontsize=fstick)
+for ax, traitlabel in zip(axs, traitlabels):
+    if ax.get_subplotspec().is_first_col():
+        ax.text(0, 
+                numg*numa2*1.035,
+                chr(letter),
+                fontsize=fslabel*0.8,
+                weight='bold')
+        ax.set(xticks=[0, numg*numa2/2, numg*numa2],
+                yticks=[0, numg*numa2/2, numg*numa2],
+                xticklabels=[])
+        ax.set_yticklabels(yticklabels, fontsize=fstick) 
+    else:
+        ax.text(0, 
+                num*1.035,
+                chr(letter),
+                fontsize=fslabel*0.8,
+                weight='bold')
+        ax.set(xticks=[0, num/2, num],
+                        yticks=[0, num/2, num],
+                        xticklabels=[],
+                        yticklabels=[])
+    letter += 1
+    ax.set_title(traitlabel, pad=40.0, fontsize=fslabel*0.9)
+    ax.set_xticklabels(xticklabels, fontsize=fstick)
 
-if givens[0] > 0.9999999:
+if given > 0.9999999:
     given = 0.9999999
-for axrow, given in zip(axs, givens):
 
-    T = mymodule.fitness(Y, X, given, AAA, RRR)
-    S = mymodule.fitness(X, Y, given, AAA, RRR)
-    R = mymodule.fitness(Y, Y, given, AAA, RRR)
-    P = mymodule.fitness(X, X, given, AAA, RRR)
-    Z = np.full([numg*numa2, numg*numa2, 4], mymodule.colormap['white'])
-    mymodule.gamecolors(T, R, P, S, Z)
-    axrow[0].imshow(Z, extent=extentg)
+T = mymodule.fitness(Y, X, given, AAA, RRR)
+S = mymodule.fitness(X, Y, given, AAA, RRR)
+R = mymodule.fitness(Y, Y, given, AAA, RRR)
+P = mymodule.fitness(X, X, given, AAA, RRR)
+Z = np.full([numg*numa2, numg*numa2, 4], mymodule.colormap['white'])
+mymodule.gamecolors(T, R, P, S, Z)
+axs[0].imshow(Z, extent=extentg)
 
-    MRT = MRT0*(1.0 - given)
-    Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
-    a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
-    weq = mymodule.fitness(a2eq, a2eq, given, AA, RR)
-    axrow[1].imshow(a2eq, extent=extent, cmap='viridis', vmin=0, vmax=traitvmaxs[0])
-    axrow[2].imshow(weq, extent=extent, cmap='viridis', vmin=0, vmax=traitvmaxs[1])
+MRT = MRT0*(1.0 - given)
+Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
+a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
+weq = mymodule.fitness(a2eq, a2eq, given, AA, RR)
+axs[1].imshow(a2eq, extent=extent, cmap='viridis', vmin=0, vmax=traitvmaxs[0])
+axs[2].imshow(weq, extent=extent, cmap='viridis', vmin=0, vmax=traitvmaxs[1])
 
 plt.savefig(filename + '.png', transparent=False)
 

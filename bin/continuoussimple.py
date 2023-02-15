@@ -20,10 +20,10 @@ folders = ['given95', 'given50']
 givens = [0.95, 0.5]
 subfolder = 'pr'
 
-movie = False
-
 numa2 = 64
 filename = 'output'
+
+movie = False
 
 fslabel = 32 # Label font size
 fstick = 24 # Tick font size

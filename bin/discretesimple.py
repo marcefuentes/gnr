@@ -16,14 +16,15 @@ traits = ['ChooseGrainmean',
 traitlabels = ['Games',
                 'Sensitivity for\nchoosing partner',
                 'Sensitivity for\nmimicking partner']
-folders = ['given95', 'given50']
-folders = ['given95']
-givens = [0.95, 0.5]
+folders = ['a2init50', 'a2init25']
 subfolder = 'pr'
+a2lows = [0.25, 0.00]
+given = 0.95
+
+num = 1001    # Number of subplot rows and columns
+filename = 'output'
 
 movie = False
-
-filename = 'output'
 
 fslabel = 32 # Label font size
 fstick = 24 # Tick font size
@@ -48,14 +49,12 @@ else:
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 rowindex = 'alpha'
 logess = np.sort(pd.unique(df.logES))
-rhos = 1.0 - 1.0/pow(2.0, logess)
 nr = len(alphas)
 nc = len(logess)
-low = np.full([nr, nc], mymodule.a2low)
-high = np.full([nr, nc], mymodule.a2high)
+alphas = np.linspace(alphas[0], alphas[-1], num=num)
+logess = np.linspace(logess[0], logess[-1], num=num)
+rhos = 1.0 - 1.0/pow(2.0, logess)
 RR, AA = np.meshgrid(rhos, alphas)
-R = mymodule.fitness(high, high, 0.0, AA, RR)
-P = mymodule.fitness(low, low, 0.0, AA, RR)
 
 xmin = logess[0]
 xmax = logess[-1]
@@ -73,40 +72,56 @@ yticklabels = [round(ymin, 1),
                 round((ymin + ymax)/2, 1),
                 round(ymax, 1)]
 extent = 0, nc, 0, nr
+extent2 = 0, num, 0, num
 
-fig, axs = plt.subplots(nrows=len(givens),
+fig, axs = plt.subplots(nrows=len(a2lows),
                         ncols=len(traitlabels),
-                        figsize=(6*len(traitlabels), 6*(len(givens))))
+                        figsize=(6*len(traitlabels), 6*(len(a2lows))))
 fig.supxlabel(xlabel, x=0.513, y=0.01, fontsize=fslabel*1.2)
 fig.supylabel(ylabel, x=0.03, y=0.493, fontsize=fslabel*1.2)
 
 letter = ord('a')
 for axrow in axs:
     for ax, traitlabel in zip(axrow, traitlabels):
-        ax.text(0,
-                nr*1.035,
-                chr(letter),
-                fontsize=fslabel,
-                weight='bold')
-        ax.set(xticks=[0, nc/2, nc],
-                yticks=[0, nr/2, nr],
-                xticklabels=[],
-                yticklabels=[])
+        if traitlabel == 'Games':
+            ax.text(0, 
+                    num*1.035,
+                    chr(letter),
+                    fontsize=fslabel*0.8,
+                    weight='bold')
+        else:
+            ax.text(0, 
+                    nr*1.035,
+                    chr(letter),
+                    fontsize=fslabel*0.8,
+                    weight='bold')
         letter += 1
         if ax.get_subplotspec().is_first_col():
+            ax.set(xticks=[0, num/2, num],
+                    yticks=[0, num/2, num],
+                    xticklabels=[])
             ax.set_yticklabels(yticklabels, fontsize=fstick) 
+        else:
+            ax.set(xticks=[0, nc/2, nc],
+                            yticks=[0, nr/2, nr],
+                            xticklabels=[],
+                            yticklabels=[])
         if ax.get_subplotspec().is_first_row():
             ax.set_title(traitlabel, pad=40.0, fontsize=fslabel*0.9)
         if ax.get_subplotspec().is_last_row():
             ax.set_xticklabels(xticklabels, fontsize=fstick)
 
-for axrow, given in zip(axs, givens):
+for axrow, a2low in zip(axs, a2lows):
 
+    low = np.full([num, num], a2low)
+    high = np.full([num, num], a2low + 0.5)
     T = mymodule.fitness(high, low, given, AA, RR)
+    R = mymodule.fitness(high, high, given, AA, RR)
+    P = mymodule.fitness(low, low, given, AA, RR)
     S = mymodule.fitness(low, high, given, AA, RR)
-    Z = np.full([nr, nc, 4], mymodule.colormap['default'])
+    Z = np.full([num, num, 4], mymodule.colormap['default'])
     mymodule.gametypes(T, R, P, S, Z)
-    axrow[0].imshow(Z, extent=extent)
+    axrow[0].imshow(Z, extent=extent2)
 
 for t in ts:
     for axrow, df in zip(axs, dfs):

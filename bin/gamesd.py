@@ -8,8 +8,8 @@ import time
 start_time = time.perf_counter ()
 
 traitlabels = ['Games', 'Effort to get $\it{B}$', 'Fitness']
-given = 0.95
 a2lows = [0.50, 0.25, 0.00]
+given = 0.95
 
 num = 1001    # Number of subplot rows and columns
 filename = 'gamesd'

@@ -53,11 +53,11 @@ def snowdrift(T, R, P, S):
     mask = (T >= R) & (R > S) & (S >= P)
     return mask
 
-def TS(mask, T, R, P, S):
+def TS(mask, T, R, S):
     mask = (mask & (2.0*R < T + S))
     return mask
 
-def diagonal(T, R, P, S):
+def diagonal(R, P):
     mask = np.isclose(R, P)
     return mask
 
@@ -66,14 +66,14 @@ def gametypes(T, R, P, S, Z):
     Z[mask] = colormap['white']
     mask = deadlock(T, R, P, S)
     Z[mask] = colormap['white']
-    Z[TS(mask, T, P, R, S)] = colormap['deadlockTS'] # Atención: T, P, R, S
+    Z[TS(mask, T, P, S)] = colormap['deadlockTS']
     mask = prisoner(T, R, P, S)
     Z[mask] = colormap['prisoner']
-    Z[TS(mask, T, R, P, S)] = colormap['prisonerTS']
+    Z[TS(mask, T, R, S)] = colormap['prisonerTS']
     mask = snowdrift(T, R, P, S)
     Z[mask] = colormap['snowdrift']
-    Z[TS(mask, T, R, P, S)] = colormap['snowdriftTS']
-    Z[diagonal(T, R, P, S)] = colormap['white']
+    Z[TS(mask, T, R, S)] = colormap['snowdriftTS']
+    Z[diagonal(R, P)] = colormap['white']
     pass
 
 def equilibrium(T, R, P, S, low, high, a2eq, weq):

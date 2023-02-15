@@ -1,5 +1,7 @@
 #! /usr/bin/env python
 
+import numpy as np
+
 R1 = 2.0
 R2 = 2.0
 a1max = 1.0
@@ -12,17 +14,13 @@ logesmin = -5.0
 logesmax = 5.0
 
 colormap = {
-    'default' :     [1.00, 1.00, 1.00, 1.0],
-    'harmony' :     [1.00, 1.00, 1.00, 1.0],
-    'harmonyTS' :   [1.00, 0.00, 0.00, 1.0],
-    'snowdrift' :   [0.70, 0.00, 0.70, 1.0],
-    'snowdriftTS' : [1.00, 0.30, 1.00, 1.0],
-    'prisoner' :    [0.00, 0.10, 0.30, 1.0],
-    'prisonerTS' :  [0.30, 0.50, 0.80, 1.0],
-    'deadlock' :    [1.00, 1.00, 1.00, 1.0],
-    'deadlockTS' :  [0.60, 1.00, 0.60, 1.0],
-    'white' :       [1.00, 1.00, 1.00, 1.0],
-    'black' :       [0.00, 0.00, 0.00, 1.0]
+    'white' :       [1.0, 1.0, 1.0, 1.0],
+    'harmonyTS' :   [1.0, 0.0, 0.0, 1.0],
+    'snowdrift' :   [0.7, 0.0, 0.7, 1.0],
+    'snowdriftTS' : [1.0, 0.3, 1.0, 1.0],
+    'prisoner' :    [0.0, 0.1, 0.3, 1.0],
+    'prisonerTS' :  [0.3, 0.5, 0.8, 1.0],
+    'deadlockTS' :  [0.6, 1.0, 0.6, 1.0],
 }
 
 def fitness(x, y, given, alpha, rho):
@@ -43,7 +41,7 @@ def gametypes(T, R, P, S, Z):
 
     # Harmony
     mask = (T < R) & (R > P) & (P < S) 
-    Z[mask] = colormap['harmony']
+    Z[mask] = colormap['white']
 
     mask = (mask & (2.0*R < T + S))
     Z[mask] = colormap['harmonyTS']
@@ -56,7 +54,7 @@ def gametypes(T, R, P, S, Z):
     Z[mask] = colormap['deadlockTS']
 
     # Prisoner's dilemma
-    mask = (T > R) & (R >= P) & (P > S)
+    mask = (T > R) & (R > P) & (P > S)
     Z[mask] = colormap['prisoner']
 
     mask = (mask & (2.0*R < T + S))
@@ -68,6 +66,10 @@ def gametypes(T, R, P, S, Z):
 
     mask = (mask & (2.0*R < T + S))
     Z[mask] = colormap['snowdriftTS']
+
+    # Diagonal
+    mask = np.isclose(R, P)
+    Z[mask] = colormap['white']
 
 def equilibrium(T, R, P, S, low, high, a2eq, weq):
 

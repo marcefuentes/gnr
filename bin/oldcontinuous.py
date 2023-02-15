@@ -82,7 +82,7 @@ extent = 0, nc, 0, nr
 extenta2 = 0, nc*numa2, 0, nr*numa2
 
 MRT0 = mymodule.b*mymodule.Rq
-Z = np.full((nr*numa2, nc*numa2, 4), mymodule.colormap['default'])
+Z = np.full((nr*numa2, nc*numa2, 4), mymodule.colormap['white'])
 X, Y = np.meshgrid(np.linspace(0.0, mymodule.a2max, num=numa2), np.linspace(mymodule.a2max, 0.0, num=numa2))
 X = np.tile(A=X, reps=[nr, nc])
 Y = np.tile(A=Y, reps=[nr, nc])

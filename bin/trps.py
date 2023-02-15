@@ -66,7 +66,7 @@ for given in givens:
 
     T = mymodule.fitness(high, low, given, AA, RR)
     S = mymodule.fitness(low, high, given, AA, RR)
-    Z = np.full([nr, nc, 4], mymodule.colormap['default'])
+    Z = np.full([nr, nc, 4], mymodule.colormap['white'])
     mymodule.gametypes(T, R, P, S, Z)
 
     for row, rowT, rowR, rowP, rowS, rowZ in zip(axs, T, R, P, S, Z):

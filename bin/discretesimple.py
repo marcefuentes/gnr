@@ -119,7 +119,7 @@ for axrow, a2low in zip(axs, a2lows):
     R = mymodule.fitness(high, high, given, AA, RR)
     P = mymodule.fitness(low, low, given, AA, RR)
     S = mymodule.fitness(low, high, given, AA, RR)
-    Z = np.full([num, num, 4], mymodule.colormap['default'])
+    Z = np.full([num, num, 4], mymodule.colormap['white'])
     mymodule.gametypes(T, R, P, S, Z)
     axrow[0].imshow(Z, extent=extent2)
 

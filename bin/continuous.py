@@ -144,7 +144,7 @@ for axrow in axs:
 for ax, traitlabel in zip(axs[1], traitlabels):
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
-Z = np.full([nr*numa2, nc*numa2, 4], mymodule.colormap['default'])
+Z = np.full([nr*numa2, nc*numa2, 4], mymodule.colormap['white'])
 mymodule.gametypes(T, R, P, S, Z)
 ax = axs[0, 0]
 ax.imshow(Z, extent=extenta2)

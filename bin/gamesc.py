@@ -8,7 +8,7 @@ import time
 start_time = time.perf_counter ()
 
 traitlabels = ['Games', 'Effort to get $\it{B}$', 'Fitness']
-givens = [0.95, 0.75]
+givens = [0.95, 0.5]
 
 num = 1001
 numg = 21
@@ -107,7 +107,7 @@ for axrow, given in zip(axs, givens):
     R = mymodule.fitness(Y, Y, given, AAA, RRR)
     P = mymodule.fitness(X, X, given, AAA, RRR)
 
-    Z = np.full([numg*numa2, numg*numa2, 4], mymodule.colormap['default'])
+    Z = np.full([numg*numa2, numg*numa2, 4], mymodule.colormap['white'])
     mymodule.gametypes(T, R, P, S, Z)
     axrow[0].imshow(Z, extent=extentg)
 

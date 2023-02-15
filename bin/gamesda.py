@@ -83,7 +83,7 @@ for a2low, a2high in zip(a2lows, a2highs):
     R = mymodule.fitness(high, high, given, AA, RR)
     P = mymodule.fitness(low, low, given, AA, RR)
 
-    Z = np.full([num, num, 4], mymodule.colormap['default'])
+    Z = np.full([num, num, 4], mymodule.colormap['white'])
     mymodule.gametypes(T, R, P, S, Z)
     axs[0].imshow(Z, extent=extent)
 

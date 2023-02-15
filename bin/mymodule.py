@@ -37,39 +37,44 @@ def fitness(x, y, given, alpha, rho):
     w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
     return w
 
-def gametypes(T, R, P, S, Z):
-
-    # Harmony
+def harmony(T, R, P, S):
     mask = (T < R) & (R > P) & (P < S) 
-    Z[mask] = colormap['white']
+    return mask
 
-    mask = (mask & (2.0*R < T + S))
-    Z[mask] = colormap['harmonyTS']
+def deadlock(T, R, P, S):
+    mask = (T > R) & (R < P) & (P > S)
+    return mask
 
-    # Deadlock
-    mask = (T > R) & (R < P) & (P > S) 
-    Z[mask] = colormap['deadlock']
-
-    mask = (mask & (2.0*P < T + S))
-    Z[mask] = colormap['deadlockTS']
-
-    # Prisoner's dilemma
+def prisoner(T, R, P, S):
     mask = (T > R) & (R > P) & (P > S)
-    Z[mask] = colormap['prisoner']
+    return mask
 
-    mask = (mask & (2.0*R < T + S))
-    Z[mask] = colormap['prisonerTS']
-
-    # Snowdrift (chicken)
+def snowdrift(T, R, P, S):
     mask = (T >= R) & (R > S) & (S >= P)
-    Z[mask] = colormap['snowdrift']
+    return mask
 
+def TS(mask, T, R, P, S):
     mask = (mask & (2.0*R < T + S))
-    Z[mask] = colormap['snowdriftTS']
+    return mask
 
-    # Diagonal
+def diagonal(T, R, P, S):
     mask = np.isclose(R, P)
+    return mask
+
+def gametypes(T, R, P, S, Z):
+    mask = harmony(T, R, P, S)
     Z[mask] = colormap['white']
+    mask = deadlock(T, R, P, S)
+    Z[mask] = colormap['white']
+    Z[TS(mask, T, P, R, S)] = colormap['deadlockTS'] # Atención: T, P, R, S
+    mask = prisoner(T, R, P, S)
+    Z[mask] = colormap['prisoner']
+    Z[TS(mask, T, R, P, S)] = colormap['prisonerTS']
+    mask = snowdrift(T, R, P, S)
+    Z[mask] = colormap['snowdrift']
+    Z[TS(mask, T, R, P, S)] = colormap['snowdriftTS']
+    Z[diagonal(T, R, P, S)] = colormap['white']
+    pass
 
 def equilibrium(T, R, P, S, low, high, a2eq, weq):
 

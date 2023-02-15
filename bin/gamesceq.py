@@ -31,16 +31,16 @@ Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
 MRT = MRT0*(1.0 - given)
 Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
 a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
-weq = mymodule.fitness(a2eq, a2eq, given, AA, RR)
-a2eq = a2eq*0.0
+#weq = mymodule.fitness(a2eq, a2eq, given, AA, RR)
+
 X = np.zeros([numg*numa2, numg*numa2])
 Y = np.zeros([numg*numa2, numg*numa2])
-for i in range(0, numg):
-    for j in range(0, numg):
+for i in range(numg):
+    for j in range(numg):
         for k in range(numa2):
-            for l in reversed(range(numa2)):
-                X[i*numa2+k, j*numa2+l] = a2eq[i, j] + (1.0 - a2eq[i, j])*k/numa2
-                Y[i*numa2+k, j*numa2+l] = a2eq[i, j] + (1.0 - a2eq[i, j])*l/numa2
+            for l in range(numa2):
+                X[i*numa2+k, j*numa2+l] = a2eq[i, j] + (1.0 - a2eq[i, j])*l/numa2
+                Y[i*numa2+k, j*numa2+l] = 1.0 - (1.0 - a2eq[i, j])*k/numa2
 H = np.copy(Y)
 Y[(X > Y)] = X[(X > Y)] 
 X[(X > H)] = H[(X > H)] 

@@ -62,14 +62,25 @@ def diagonal(R, P):
     return mask
 
 def gamecolors(T, R, P, S, Z):
-    mask = harmony(T, R, P, S)
-    Z[mask] = colormap['white']
+    deadlockcolors(T, R, P, S, Z)
+    prisonercolors(T, R, P, S, Z)
+    snowdriftcolors(T, R, P, S, Z)
+    pass
+
+def deadlockcolors(T, R, P, S, Z):
     mask = deadlock(T, R, P, S)
-    Z[mask] = colormap['white']
     Z[TS(mask, T, P, S)] = colormap['deadlockTS']
+    Z[diagonal(R, P)] = colormap['white']
+    pass
+
+def prisonercolors(T, R, P, S, Z):
     mask = prisoner(T, R, P, S)
     Z[mask] = colormap['prisoner']
     Z[TS(mask, T, R, S)] = colormap['prisonerTS']
+    Z[diagonal(R, P)] = colormap['white']
+    pass
+
+def snowdriftcolors(T, R, P, S, Z):
     mask = snowdrift(T, R, P, S)
     Z[mask] = colormap['snowdrift']
     Z[TS(mask, T, R, S)] = colormap['snowdriftTS']

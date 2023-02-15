@@ -80,6 +80,12 @@ def prisonercolors(T, R, P, S, Z):
     Z[diagonal(R, P)] = colormap['white']
     pass
 
+def prisonerTScolors(T, R, P, S, Z):
+    mask = prisoner(T, R, P, S)
+    Z[TS(mask, T, R, S)] = colormap['prisonerTS']
+    Z[diagonal(R, P)] = colormap['white']
+    pass
+
 def snowdriftcolors(T, R, P, S, Z):
     mask = snowdrift(T, R, P, S)
     Z[mask] = colormap['snowdrift']

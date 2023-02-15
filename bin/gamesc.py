@@ -20,6 +20,8 @@ fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
+if given > 0.9999999:
+    given = 0.9999999
 alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=num)
 logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
@@ -27,6 +29,10 @@ RR, AA = np.meshgrid(rhos, alphas)
 MRT0 = mymodule.b*mymodule.Rq
 Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
 #a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
+MRT = MRT0*(1.0 - given)
+Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
+a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
+weq = mymodule.fitness(a2eq, a2eq, given, AA, RR)
 
 X, Y = np.meshgrid(np.linspace(0.0, mymodule.a2max, num=numa2),
                     np.linspace(mymodule.a2max, 0.0, num=numa2))
@@ -40,6 +46,12 @@ logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=numg)
 rhos = 1.0 - 1.0/pow(2, logess)
 RRR, AAA = np.meshgrid(np.repeat(rhos, numa2),
                         np.repeat(alphas, numa2))
+T = mymodule.fitness(Y, X, given, AAA, RRR)
+S = mymodule.fitness(X, Y, given, AAA, RRR)
+R = mymodule.fitness(Y, Y, given, AAA, RRR)
+P = mymodule.fitness(X, X, given, AAA, RRR)
+Z = np.full([numg*numa2, numg*numa2, 4], mymodule.colormap['white'])
+mymodule.gamecolors(T, R, P, S, Z)
 
 xmin = mymodule.logesmin
 xmax = mymodule.logesmax
@@ -95,21 +107,7 @@ for ax, traitlabel in zip(axs, traitlabels):
     ax.set_title(traitlabel, pad=40.0, fontsize=fslabel*0.9)
     ax.set_xticklabels(xticklabels, fontsize=fstick)
 
-if given > 0.9999999:
-    given = 0.9999999
-
-T = mymodule.fitness(Y, X, given, AAA, RRR)
-S = mymodule.fitness(X, Y, given, AAA, RRR)
-R = mymodule.fitness(Y, Y, given, AAA, RRR)
-P = mymodule.fitness(X, X, given, AAA, RRR)
-Z = np.full([numg*numa2, numg*numa2, 4], mymodule.colormap['white'])
-mymodule.gamecolors(T, R, P, S, Z)
 axs[0].imshow(Z, extent=extentg)
-
-MRT = MRT0*(1.0 - given)
-Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
-a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
-weq = mymodule.fitness(a2eq, a2eq, given, AA, RR)
 axs[1].imshow(a2eq, extent=extent, cmap='viridis', vmin=0, vmax=traitvmaxs[0])
 axs[2].imshow(weq, extent=extent, cmap='viridis', vmin=0, vmax=traitvmaxs[1])
 

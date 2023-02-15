@@ -25,7 +25,6 @@ logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
 a2lows = np.linspace(0.0, 0.5, num=20)
-a2highs = a2lows + 0.5
 
 xmin = mymodule.logesmin
 xmax = mymodule.logesmax
@@ -74,10 +73,10 @@ for ax, traitlabel in zip(axs, traitlabels):
         ax.set_xticklabels(xticklabels, fontsize=fstick)
 
 frames = []
-for a2low, a2high in zip(a2lows, a2highs):
+for a2low in a2lows:
 
     low = np.full([num, num], a2low)
-    high = np.full([num, num], a2high)
+    high = np.full([num, num], a2low + 0.5)
     T = mymodule.fitness(high, low, given, AA, RR)
     S = mymodule.fitness(low, high, given, AA, RR)
     R = mymodule.fitness(high, high, given, AA, RR)
@@ -94,7 +93,7 @@ for a2low, a2high in zip(a2lows, a2highs):
     axs[1].imshow(a2eq, extent=extent, cmap='viridis', vmin=0, vmax=traitvmaxs[0])
     axs[2].imshow(weq, extent=extent, cmap='viridis', vmin=0, vmax=traitvmaxs[1])
 
-    text = fig.text(0.90, 0.90, f'{a2high:4.2f}\n{a2low:4.2f}', fontsize=fstick, color='grey', ha='right')
+    text = fig.text(0.90, 0.90, f'{a2low:4.2f}', fontsize=fstick, color='grey', ha='right')
     plt.savefig('temp.png', transparent=False)
     text.remove()
     frames.append(iio.imread('temp.png'))

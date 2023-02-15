@@ -84,7 +84,7 @@ for a2low, a2high in zip(a2lows, a2highs):
     P = mymodule.fitness(low, low, given, AA, RR)
 
     Z = np.full([num, num, 4], mymodule.colormap['white'])
-    mymodule.gametypes(T, R, P, S, Z)
+    mymodule.gamecolors(T, R, P, S, Z)
     axs[0].imshow(Z, extent=extent)
 
     a2eq = np.zeros([num, num])

@@ -136,7 +136,7 @@ for ax, traitlabel in zip(axs[1], traitlabels):
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
 Z = np.full([nr, nc, 4], mymodule.colormap['white'])
-mymodule.gametypes(T, R, P, S, Z)
+mymodule.gamecolors(T, R, P, S, Z)
 ax = axs[0, 0]
 ax.imshow(Z, extent=extent)
 ax.set_title('Games', pad=50.0, fontsize=fslabel)

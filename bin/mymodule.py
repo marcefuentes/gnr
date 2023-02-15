@@ -61,7 +61,7 @@ def diagonal(R, P):
     mask = np.isclose(R, P)
     return mask
 
-def gametypes(T, R, P, S, Z):
+def gamecolors(T, R, P, S, Z):
     mask = harmony(T, R, P, S)
     Z[mask] = colormap['white']
     mask = deadlock(T, R, P, S)

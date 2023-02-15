@@ -151,7 +151,6 @@ ax.set_title('Games', pad=50.0, fontsize=fslabel)
 
 Z = np.full([nr*numa2, nc*numa2], -1.0)
 mask = mymodule.snowdrift(T, R, P, S) | mymodule.prisoner(T, R, P, S)
-Z[mask] = (R[mask] > P[mask])
 Z[mask] = (S[mask] - P[mask])
 ax = axs[0, 1]
 ax.imshow(Z, extent=extenta2, vmin=-1, vmax=0.05)

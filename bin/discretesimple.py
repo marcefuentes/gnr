@@ -125,7 +125,8 @@ for axrow, a2low in zip(axs, a2lows):
     axrow[0].imshow(Z, extent=extent2)
 
     Z = np.zeros([num, num])
-    mask = mymodule.prisoner(T, R, P, S) & (2.0*R > T + S)
+    #mask = mymodule.prisoner(T, R, P, S) & (2.0*R > T + S)
+    mask = mymodule.prisoner(T, R, P, S) | (mymodule.deadlock(T, R, P, S) & (2.0*P < T + S)) | (R == P)
     Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
     Z = np.ma.masked_where(Z == 0.0, Z)
     cmap = plt.cm.viridis

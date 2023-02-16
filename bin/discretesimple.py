@@ -14,7 +14,8 @@ start_time = time.perf_counter ()
 traits = ['ChooseGrainmean',
             'MimicGrainmean']
 traitlabels = ['Games',
-                '$\it{T}$ + $\it{S}$ - 2*$\it{R}$',
+                '$\it{S}$ - $\it{P}$',
+                '$\it{T}$ + $\it{S}$ - 2$\it{R}$',
                 'Sensitivity for\nchoosing partner',
                 'Sensitivity for\nmimicking partner']
 folders = ['a2init75', 'a2init50', 'a2init25']
@@ -125,17 +126,24 @@ for axrow, a2low in zip(axs, a2lows):
     axrow[0].imshow(Z, extent=extent2)
 
     Z = np.zeros([num, num])
-    #mask = mymodule.prisoner(T, R, P, S) & (2.0*R > T + S)
-    mask = mymodule.prisoner(T, R, P, S) | (mymodule.deadlock(T, R, P, S) & (2.0*P < T + S)) | (R == P)
-    Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
+    mask = mymodule.snowdrift(T, R, P, S) | mymodule.prisoner(T, R, P, S) | (R == P)
+    Z[mask] = 1.0 - (P[mask] - S[mask])
     Z = np.ma.masked_where(Z == 0.0, Z)
     cmap = plt.cm.viridis
     cmap.set_bad(color='white')
     axrow[1].imshow(Z, extent=extent, cmap=cmap, vmin=0, vmax=traitvmaxs[0])
 
+    Z = np.zeros([num, num])
+    mask = mymodule.prisoner(T, R, P, S) | (mymodule.deadlock(T, R, P, S) & (2.0*P < T + S)) | (R == P)
+    Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
+    Z = np.ma.masked_where(Z == 0.0, Z)
+    cmap = plt.cm.viridis
+    cmap.set_bad(color='white')
+    axrow[2].imshow(Z, extent=extent, cmap=cmap, vmin=0, vmax=traitvmaxs[0])
+
 for t in ts:
     for axrow, df in zip(axs, dfs):
-        for ax, trait, traitvmax in zip(axrow[2:], traits, traitvmaxs):
+        for ax, trait, traitvmax in zip(axrow[3:], traits, traitvmaxs):
             Z = pd.pivot_table(df.loc[df.Time == t],
                                 values=trait,
                                 index=[rowindex],

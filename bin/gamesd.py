@@ -7,7 +7,7 @@ import time
 
 start_time = time.perf_counter ()
 
-traitlabels = ['Games', 'Effort to get $\it{B}$', 'Fitness']
+traitlabels = ['Games', 'Games', 'Effort to get $\it{B}$', 'Fitness']
 a2lows = [0.50, 0.25, 0.00]
 given = 1.0
 
@@ -76,10 +76,9 @@ for axrow, a2low in zip(axs, a2lows):
     low = np.full([num, num], a2low)
     high = np.full([num, num], a2low + 0.5)
     T = mymodule.fitness(high, low, given, AA, RR)
-    S = mymodule.fitness(low, high, given, AA, RR)
     R = mymodule.fitness(high, high, given, AA, RR)
     P = mymodule.fitness(low, low, given, AA, RR)
-
+    S = mymodule.fitness(low, high, given, AA, RR)
     Z = np.full([num, num, 4], mymodule.colormap['red'])
     mymodule.gamecolors(T, R, P, S, Z)
     axrow[0].imshow(Z, extent=extent)
@@ -93,8 +92,16 @@ for axrow, a2low in zip(axs, a2lows):
         weq[mask] = (mymodule.fitness(low[mask], low[mask], given, AA[mask], RR[mask]) +
                         mymodule.fitness(high[mask], high[mask], given, AA[mask], RR[mask]))/2.0
 
-    axrow[1].imshow(a2eq, extent=extent, cmap='viridis', vmin=0, vmax=traitvmaxs[0])
-    axrow[2].imshow(weq, extent=extent, cmap='viridis', vmin=0, vmax=traitvmaxs[1])
+    
+    Z = np.zeros([num, num])
+    mask = mymodule.prisoner(T, R, P, S) & (2.0*R > T + S)
+    Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
+    Z = np.ma.masked_where(Z == 0.0, Z)
+    cmap = plt.cm.viridis
+    cmap.set_bad(color='white')
+    axrow[1].imshow(Z, extent=extent, cmap=cmap, vmin=0, vmax=traitvmaxs[0])
+    axrow[2].imshow(a2eq, extent=extent, cmap='viridis', vmin=0, vmax=traitvmaxs[0])
+    axrow[3].imshow(weq, extent=extent, cmap='viridis', vmin=0, vmax=traitvmaxs[1])
 
 plt.savefig(filename + '.png', transparent=False)
 

@@ -9,7 +9,7 @@ start_time = time.perf_counter ()
 
 given = 0.95
 alpha = 0.9
-loges = 5.0
+loges = 3.0
 numa2 = 1000
 filename = 'gamesuno'
 

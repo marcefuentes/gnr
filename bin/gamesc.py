@@ -7,13 +7,15 @@ import time
 
 start_time = time.perf_counter ()
 
-traitlabels = ['Games', 'Effort to get $\it{B}$', 'Fitness']
+traitlabels = ['Games',
+                '$\it{T}$ + $\it{S}$ - 2$\it{R}$',
+                '$\it{S}$ - $\it{P}$']
 given = 0.95
+filename = 'gamesc'
 
 num = 1001
 numg = 21
 numa2 = 64
-filename = 'gamesc'
 
 fslabel = 32 # Label font size
 fstick = 18 # Tick font size
@@ -47,32 +49,24 @@ rhos = 1.0 - 1.0/pow(2, logess)
 RRR, AAA = np.meshgrid(np.repeat(rhos, numa2),
                         np.repeat(alphas, numa2))
 T = mymodule.fitness(Y, X, given, AAA, RRR)
-S = mymodule.fitness(X, Y, given, AAA, RRR)
 R = mymodule.fitness(Y, Y, given, AAA, RRR)
 P = mymodule.fitness(X, X, given, AAA, RRR)
-Z = np.full([numg*numa2, numg*numa2, 4], mymodule.colormap['white'])
-mymodule.gamecolors(T, R, P, S, Z)
+S = mymodule.fitness(X, Y, given, AAA, RRR)
 
-xmin = mymodule.logesmin
-xmax = mymodule.logesmax
+xmin = logess[0]
+xmax = logess[-1]
 xlabel = 'Substitutability of $\it{B}$'
-ymin = mymodule.alphamin
-ymax = mymodule.alphamax
+ymin = alphas[-1]
+ymax = alphas[0]
 ylabel = 'Value of $\it{B}$'
 
-traitvmaxs = [mymodule.a2max,
-                mymodule.fitness(np.array([mymodule.a2max]),
-                                    np.array([mymodule.a2max]),
-                                    np.array([0.0]),
-                                    np.array([0.9]),
-                                    np.array([5.0]))]
 xticklabels = [round(xmin),
                 round((xmin + xmax)/2),
                 round(xmax)]
 yticklabels = [round(ymin, 1),
                 round((ymin + ymax)/2, 1),
                 round(ymax, 1)]
-extent = 0, num, 0, num
+extent2 = 0, num, 0, num
 extentg = 0, numg*numa2, 0, numg*numa2
 
 fig, axs = plt.subplots(nrows=1,
@@ -83,33 +77,44 @@ fig.supylabel(ylabel, x=0.03, y=0.493, fontsize=fslabel*1.2)
 
 letter = ord('a')
 for ax, traitlabel in zip(axs, traitlabels):
-    if ax.get_subplotspec().is_first_col():
-        ax.text(0, 
-                numg*numa2*1.035,
-                chr(letter),
-                fontsize=fslabel*0.8,
-                weight='bold')
-        ax.set(xticks=[0, numg*numa2/2, numg*numa2],
-                yticks=[0, numg*numa2/2, numg*numa2],
-                xticklabels=[])
-        ax.set_yticklabels(yticklabels, fontsize=fstick) 
-    else:
-        ax.text(0, 
-                num*1.035,
-                chr(letter),
-                fontsize=fslabel*0.8,
-                weight='bold')
-        ax.set(xticks=[0, num/2, num],
-                        yticks=[0, num/2, num],
-                        xticklabels=[],
-                        yticklabels=[])
+    ax.text(0, 
+            numg*numa2*1.035,
+            chr(letter),
+            fontsize=fslabel*0.8,
+            weight='bold')
     letter += 1
     ax.set_title(traitlabel, pad=40.0, fontsize=fslabel*0.9)
+    ax.set(xticks=[0, numg*numa2/2, numg*numa2],
+            yticks=[0, numg*numa2/2, numg*numa2],
+            xticklabels=[])
     ax.set_xticklabels(xticklabels, fontsize=fstick)
+    if ax.get_subplotspec().is_first_col():
+        ax.set_yticklabels(yticklabels, fontsize=fstick) 
+    else:
+        ax.set_yticklabels([]) 
 
+Z = np.full([numg*numa2, numg*numa2, 4], mymodule.colormap['white'])
+mymodule.gamecolors(T, R, P, S, Z)
 axs[0].imshow(Z, extent=extentg)
-axs[1].imshow(a2eq, extent=extent, cmap='viridis', vmin=0, vmax=traitvmaxs[0])
-axs[2].imshow(weq, extent=extent, cmap='viridis', vmin=0, vmax=traitvmaxs[1])
+
+Z = np.zeros([numg*numa2, numg*numa2])
+mask = (mymodule.prisoner(T, R, P, S) & (2.0*R < T + S)) | (mymodule.deadlock(T, R, P, S) & (2.0*P < T + S))
+Z[mask] = 0.1 - (2.0*R[mask] - T[mask] - S[mask])
+Z = np.ma.masked_where(Z == 0.0, Z)
+cmap = plt.cm.viridis
+cmap.set_bad(color='white')
+axs[1].imshow(Z, extent=extentg, cmap=cmap)
+
+Z = np.zeros([numg*numa2, numg*numa2])
+mask = mymodule.prisoner(T, R, P, S)
+Z[mask] = 1.0 - (S[mask] - P[mask])
+Z = np.ma.masked_where(Z == 0.0, Z)
+cmap = plt.cm.viridis
+cmap.set_bad(color='white')
+axs[2].imshow(Z, extent=extentg, cmap=cmap)
+
+#axs[2].imshow(a2eq, extent=extent2, cmap='viridis', vmin=0, vmax=traitvmaxs[0])
+#axs[3].imshow(weq, extent=extent2, cmap='viridis', vmin=0, vmax=traitvmaxs[1])
 
 plt.savefig(filename + '.png', transparent=False)
 

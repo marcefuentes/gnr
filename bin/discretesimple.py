@@ -6,10 +6,13 @@ import imageio.v2 as iio
 import matplotlib.pyplot as plt
 import mymodule
 import numpy as np
+import os
 import pandas as pd
 import time
 
 start_time = time.perf_counter ()
+thisscript = os.path.basename(__file__)
+filename = thisscript.split('.')[0]
 
 traits = ['ChooseGrainmean',
             'MimicGrainmean']
@@ -24,7 +27,6 @@ a2lows = [0.50, 0.25, 0.00]
 given = 0.95
 
 num = 1001    # Number of subplot rows and columns
-filename = 'output'
 
 movie = False
 

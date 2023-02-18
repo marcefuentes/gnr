@@ -1,20 +1,21 @@
 #! /usr/bin/env python
 
 from glob import glob
-import os
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 import pandas as pd
 import time
 
 start_time = time.perf_counter ()
+thisscript = os.path.basename(__file__)
+filename = thisscript.split('.')[0]
 
 traits = ['a2Seen0', 'a2Seen31', 'a2Seen63']
 folders = ['none', 'r']
 movie = False
 
-filename = 'histogram'
 fslabel = 32 # Label font size
 fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42

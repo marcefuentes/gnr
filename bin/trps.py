@@ -8,6 +8,8 @@ import numpy as np
 import time
 
 start_time = time.perf_counter ()
+thisscript = os.path.basename(__file__)
+filename = thisscript.split('.')[0]
 
 givenmin = 0.95
 givenmax = 0.95

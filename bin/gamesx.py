@@ -3,15 +3,17 @@
 import matplotlib.pyplot as plt
 import mymodule
 import numpy as np
+import os
 import time
 
 start_time = time.perf_counter ()
+thisscript = os.path.basename(__file__)
+filename = thisscript.split('.')[0]
 
 traitlabels = ['Games', 'Effort to get $\it{B}$', 'Fitness']
 givens = [0.95, 0.50]
 
 num = 21    # Number of subplot rows and columns
-filename = 'gamesx'
 
 fslabel = 32 # Label font size
 fstick = 18 # Tick font size

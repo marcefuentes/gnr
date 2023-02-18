@@ -1,14 +1,16 @@
 #! /usr/bin/env python
 
 from matplotlib import cm
-import os
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
 import mymodule
 import numpy as np
+import os
 import time
 
 start_time = time.perf_counter ()
+thisscript = os.path.basename(__file__)
+filename = thisscript.split('.')[0]
 
 givenmin = 0.0
 givenmax = 1.0
@@ -17,7 +19,6 @@ num = 3    # Number of subplot rows & columns
 numa2 = 128
 n_ic = 5    # Number of indifference curves
 ngiven = 21
-filename = 'icurves'
 
 fslabel = 32 # Label font size
 fstick = 18 # Tick font size

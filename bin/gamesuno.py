@@ -3,9 +3,12 @@
 import matplotlib.pyplot as plt
 import mymodule
 import numpy as np
+import os
 import time
 
 start_time = time.perf_counter ()
+thisscript = os.path.basename(__file__)
+filename = thisscript.split('.')[0]
 
 traitlabels = ['Games',
                 '$\it{T}$ + $\it{S}$ - 2$\it{R}$',
@@ -14,7 +17,6 @@ given = 0.95
 alpha = 0.6
 loges = 0.5
 numa2 = 1025
-filename = 'gamesuno'
 
 fslabel = 32 # Label font size
 fstick = 18 # Tick font size

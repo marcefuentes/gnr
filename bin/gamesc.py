@@ -3,15 +3,17 @@
 import matplotlib.pyplot as plt
 import mymodule
 import numpy as np
+import os
 import time
 
 start_time = time.perf_counter ()
+thisscript = os.path.basename(__file__)
+filename = thisscript.split('.')[0]
 
 traitlabels = ['Games',
                 '$\it{T}$ + $\it{S}$ - 2$\it{R}$',
                 '$\it{S}$ - $\it{P}$']
 given = 0.95
-filename = 'gamesc'
 
 num = 1001
 numg = 21

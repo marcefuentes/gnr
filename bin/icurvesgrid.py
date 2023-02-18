@@ -1,13 +1,15 @@
 #! /usr/bin/env python
 
 from matplotlib import cm
-import os
 import matplotlib.pyplot as plt
 import mymodule
 import numpy as np
+import os
 import time
 
 start_time = time.perf_counter ()
+thisscript = os.path.basename(__file__)
+filename = thisscript.split('.')[0]
 
 alphamin = 0.1
 alphamax = 0.9
@@ -19,7 +21,6 @@ num = 3    # Number of subplot rows & columns
 numa2 = 128
 n_ic = 5    # Number of indifference curves
 ngiven = 21
-filename = 'icurves'
 
 fslabel = 32 # Label font size
 fstick = 18 # Tick font size

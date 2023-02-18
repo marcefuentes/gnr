@@ -6,10 +6,13 @@ import imageio.v2 as iio
 import matplotlib.pyplot as plt
 import mymodule
 import numpy as np
+import os
 import pandas as pd
 import time
 
 start_time = time.perf_counter ()
+thisscript = os.path.basename(__file__)
+filename = thisscript.split('.')[0]
 
 traits = ['ChooseGrainmean',
             'MimicGrainmean']
@@ -21,7 +24,6 @@ givens = [0.95, 0.5]
 subfolder = 'pr'
 
 numa2 = 64
-filename = 'output'
 
 movie = False
 

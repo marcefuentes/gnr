@@ -6,10 +6,13 @@ import imageio.v2 as iio
 import matplotlib.pyplot as plt
 import mymodule
 import numpy as np
+import os
 import pandas as pd
 import time
 
 start_time = time.perf_counter ()
+thisscript = os.path.basename(__file__)
+filename = thisscript.split('.')[0]
 
 traits = ['a2Seenmean',
             'ChooseGrainmean',
@@ -23,7 +26,6 @@ folders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
 
 movie = False
 
-filename = 'output'
 
 fslabel = 32 # Label font size
 fstick = 24 # Tick font size

@@ -5,9 +5,12 @@ import imageio.v2 as iio
 import matplotlib.pyplot as plt
 import mymodule
 import numpy as np
+import os
 import time
 
 start_time = time.perf_counter ()
+thisscript = os.path.basename(__file__)
+filename = thisscript.split('.')[0]
 
 traitlabels = ['Games',
                 '$\it{T}$ + $\it{S}$ - 2$\it{R}$',
@@ -17,7 +20,6 @@ givens = np.linspace(0.0, 1.0, num=20)
 a2lows = [0.50, 0.25, 0.00]
 rows = a2lows
 title = 'Given: '
-filename = 'gamesdgiven'
 
 num = 1001    # Number of subplot rows and columns
 

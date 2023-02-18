@@ -3,16 +3,18 @@
 import matplotlib.pyplot as plt
 import mymodule
 import numpy as np
+import os
 import time
 
 start_time = time.perf_counter ()
+thisscript = os.path.basename(__file__)
+filename = thisscript.split('.')[0]
 
 traitlabels = ['Games', 'Effort to get $\it{B}$', 'Fitness']
 given = 0.95
 
 numg = 21
 numa2 = 64
-filename = 'gamesc'
 
 fslabel = 32 # Label font size
 fstick = 18 # Tick font size

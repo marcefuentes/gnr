@@ -11,8 +11,8 @@ thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
 traitlabels = ['Games (lower)',
+                '$\it{R}$ - $\it{P}$',
                 'Games (upper)',
-                '$\it{S}$ - $\it{P}$',
                 '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 given = 0.95
 

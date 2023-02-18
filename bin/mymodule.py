@@ -59,7 +59,8 @@ def TS(mask, T, R, S):
     return mask
 
 def diagonal(R, P):
-    mask = np.isclose(R, P)
+    #mask = np.isclose(R, P)
+    mask = (R == P)
     return mask
 
 def gamecolors(T, R, P, S, Z):

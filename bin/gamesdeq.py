@@ -96,12 +96,12 @@ for i, (a2low, a2high) in enumerate(zip(a2lows, a2highs)):
 
     if i == 0:
         Z = np.zeros([num, num])
-        mask = mymodule.prisoner(T, R, P, S)
-        Z[mask] = 1.0 - (P[mask] - S[mask])
+        mask = (T > R) & (R > P) & (P > S)
+        Z[mask] = R[mask] - P[mask]
         Z = np.ma.masked_where(Z == 0.0, Z)
         cmap = plt.cm.viridis
         cmap.set_bad(color='white')
-        axs[1].imshow(Z, extent=extent2, cmap=cmap)
+        axs[2*i+1].imshow(Z, extent=extent2, cmap=cmap)
     else:
         Z = np.zeros([num, num])
         mask = mymodule.prisoner(T, R, P, S) & (2.0*R > T + S)
@@ -109,7 +109,7 @@ for i, (a2low, a2high) in enumerate(zip(a2lows, a2highs)):
         Z = np.ma.masked_where(Z == 0.0, Z)
         cmap = plt.cm.viridis
         cmap.set_bad(color='white')
-        axs[3].imshow(Z, extent=extent2, cmap=cmap)
+        axs[2*i+1].imshow(Z, extent=extent2, cmap=cmap)
 
 plt.savefig(filename + '.png', transparent=False)
 

@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+import imageio.v2 as iio
 import matplotlib.pyplot as plt
 import mymodule
 import numpy as np
@@ -14,7 +15,8 @@ traitlabels = ['Games (lower)',
                 '$\it{R}$ - $\it{P}$',
                 'Games (upper)',
                 '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
-given = 0.95
+givens = np.linspace(0.0, 1.0, num=20)
+title = 'Given: '
 
 num = 1001    # Number of subplot rows and columns
 
@@ -82,6 +84,7 @@ for ax, traitlabel in zip(axs, traitlabels):
     ax.set_title(traitlabel, pad=40.0, fontsize=fslabel*0.9)
     ax.set_xticklabels(xticklabels, fontsize=fstick)
 
+frames = []
 for i, (a2low, a2high) in enumerate(zip(a2lows, a2highs)):
 
     low = np.full([num, num], a2low)

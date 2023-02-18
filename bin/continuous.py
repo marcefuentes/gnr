@@ -39,7 +39,7 @@ for folder in folders:
     df.MimicGrainmean = 1.0 - df.MimicGrainmean
     dfs.append(df)
 
-df = dfs[1]
+df = dfs[0]
 ts = df.Time.unique()
 if movie:
     frames = []
@@ -74,9 +74,9 @@ yticklabels = [round(ymin, 1),
                 round(ymax, 1)]
 extent = 0, nc, 0, nr
 
-fig, axs = plt.subplots(nrows=len(folders),
+fig, axs = plt.subplots(nrows=len(folders)+1,
                         ncols=len(traits),
-                        figsize=(6*len(traits), 6*len(folders)))
+                        figsize=(6*len(traits), 6*(len(folders)+1)))
 fig.supxlabel(xlabel, x=0.513, y=0.06, fontsize=fslabel*1.5)
 fig.supylabel(ylabel, x=0.05, y=0.493, fontsize=fslabel*1.5)
 

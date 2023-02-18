@@ -13,6 +13,10 @@ start_time = time.perf_counter ()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
+trait0labels = ['Games (lower)',
+                '$\it{R}$ - $\it{P}$',
+                'Games (upper)',
+                '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 traits = ['a2Seenmean',
             'ChooseGrainmean',
             'MimicGrainmean',
@@ -25,7 +29,7 @@ folders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
 
 movie = False
 
-num = 128
+num = 512
 
 fslabel = 32 # Label font size
 fstick = 24 # Tick font size
@@ -40,29 +44,39 @@ for folder in folders:
     df.MimicGrainmean = 1.0 - df.MimicGrainmean
     dfs.append(df)
 
-df = dfs[0]
+df = dfs[1]
 ts = df.Time.unique()
 if movie:
     frames = []
 else:
     ts = [ts[-1]]
-givens = np.sort(pd.unique(df.Given))[::-1]
-if givens[0] > 0.9999999:
-    givens[0] = 0.9999999
+given = df.Given[0]
+if given > 0.9999999:
+    given = 0.9999999
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 rowindex = 'alpha'
 logess = np.sort(pd.unique(df.logES))
 nr = len(alphas)
 nc = len(logess)
+alphas = np.linspace(alphas[0], alphas[-1], num=num)
+logess = np.linspace(logess[0], logess[-1], num=num)
+rhos = 1.0 - 1.0/pow(2, logess)
+RR, AA = np.meshgrid(rhos, alphas)
+MRT0 = mymodule.b*mymodule.Rq
+Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
+a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
+MRT = MRT0*(1.0 - given)
+Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
+a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
+a2lows = [0.0, a2eq]
+a2highs = [a2social, mymodule.a2max]
+
 xmin = logess[0]
 xmax = logess[-1]
 xlabel = 'Substitutability of $\it{B}$'
 ymin = alphas[-1]
 ymax = alphas[0]
 ylabel = 'Value of $\it{B}$'
-
-RR, AA = np.meshgrid(rhos, alphas)
-RRR, AAA = np.meshgrid(np.repeat(rhos, numa2), np.repeat(alphas, numa2))
 
 traitvmaxs = [mymodule.a2max,
                 mymodule.a2max,
@@ -79,37 +93,7 @@ yticklabels = [round(ymin, 1),
                 round((ymin + ymax)/2, 1),
                 round(ymax, 1)]
 extent = 0, nc, 0, nr
-extenta2 = 0, num, 0, num
-
-MRT0 = mymodule.b*mymodule.Rq
-Z = np.full((nr*numa2, nc*numa2, 4), mymodule.colormap['white'])
-X, Y = np.meshgrid(np.linspace(0.0, mymodule.a2max, num=numa2), np.linspace(mymodule.a2max, 0.0, num=numa2))
-X = np.tile(A=X, reps=[nr, nc])
-Y = np.tile(A=Y, reps=[nr, nc])
-T = mymodule.fitness(Y, X, GGG, AAA, RRR)
-R = mymodule.fitness(Y, Y, GGG, AAA, RRR)
-P = mymodule.fitness(X, X, GGG, AAA, RRR)
-S = mymodule.fitness(X, Y, GGG, AAA, RRR)
-mask = (R < P)
-H = T[mask]
-T[mask] = S[mask]
-S[mask] = H
-H = R[mask]
-R[mask] = P[mask]
-P[mask] = H
-Z[(T < R) & (P < S)] = mymodule.colormap['nodilemma']
-Z[(T < R) & (P < S) & (2.0*R <= T + S)] = mymodule.colormap['nodilemmaRS']
-Z[(T > R) & (P > S)] = mymodule.colormap['prisoner']
-Z[(T > R) & (P > S) & (2.0*R <= T + S)] = mymodule.colormap['prisonerRS']
-Z[(T >= R) & (P <= S)] = mymodule.colormap['snowdrift']
-Z[(T >= R) & (P <= S) & (2.0*R <= T + S)] = mymodule.colormap['snowdriftRS']
-Z[R == P] = mymodule.colormap['nodilemma']
-
-MRT = MRT0*(1.0 - GG)
-Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
-Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
-a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
-weq = mymodule.fitness(a2eq, a2eq, GG, AA, RR)
+extent2 = 0, num, 0, num
 
 fig, axs = plt.subplots(nrows=len(folders)+1,
                         ncols=len(traits),
@@ -122,7 +106,7 @@ for axrow in axs:
     for ax in axrow:
         if ax.get_subplotspec().is_first_row():
             ax.set(xticks=[0, num/2, num],
-                    yticks=[0, num/2, nr*numa2],
+                    yticks=[0, num/2, num],
                     xticklabels=[],
                     yticklabels=[])
             ax.set_title('Game types', pad=50.0, fontsize=fslabel)
@@ -130,6 +114,7 @@ for axrow in axs:
             pos = ax.get_position()
             newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
             ax.set_position(newpos)
+            letter += 1
         else:
             ax.set(xticks=[0, nc/2, nc],
                     yticks=[0, nr/2, nr],
@@ -141,10 +126,39 @@ for axrow in axs:
             ax.set_yticklabels(yticklabels, fontsize=fstick) 
         if ax.get_subplotspec().is_last_row():
             ax.set_xticklabels(xticklabels, fontsize=fstick)
+for ax, traitlabel in zip(axs[0], trait0labels):
+    ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 for ax, traitlabel in zip(axs[1], traitlabels):
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 
-axs[0, 0].imshow(Z, extent=extenta2)
+for i, (a2low, a2high) in enumerate(zip(a2lows, a2highs)):
+
+    low = np.full([num, num], a2low)
+    high = np.full([num, num], a2high)
+    T = mymodule.fitness(high, low, given, AA, RR)
+    R = mymodule.fitness(high, high, given, AA, RR)
+    P = mymodule.fitness(low, low, given, AA, RR)
+    S = mymodule.fitness(low, high, given, AA, RR)
+    Z = np.full([num, num, 4], mymodule.colormap['red'])
+    mymodule.gamecolors(T, R, P, S, Z)
+    axs[0, 2*i].imshow(Z, extent=extent2)
+
+    if i == 0:
+        Z = np.zeros([num, num])
+        mask = (T > R) & (R > P) & (P > S)
+        Z[mask] = R[mask] - P[mask]
+        Z = np.ma.masked_where(Z == 0.0, Z)
+        cmap = plt.cm.viridis
+        cmap.set_bad(color='white')
+        axs[0, 2*i+1].imshow(Z, extent=extent2, cmap=cmap)
+    else:
+        Z = np.zeros([num, num])
+        mask = mymodule.prisoner(T, R, P, S) & (2.0*R > T + S)
+        Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
+        Z = np.ma.masked_where(Z == 0.0, Z)
+        cmap = plt.cm.viridis
+        cmap.set_bad(color='white')
+        axs[0, 2*i+1].imshow(Z, extent=extent2, cmap=cmap)
 
 for t in ts:
     for axrow, df in zip(axs[1:], dfs):

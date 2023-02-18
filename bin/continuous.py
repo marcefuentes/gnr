@@ -101,27 +101,26 @@ fig, axs = plt.subplots(nrows=len(folders)+1,
 fig.supxlabel(xlabel, x=0.513, y=0.06, fontsize=fslabel*1.5)
 fig.supylabel(ylabel, x=0.05, y=0.493, fontsize=fslabel*1.5)
 
-letter = ord('b')
+letter = ord('a')
 for axrow in axs:
     for ax in axrow:
+        if letter <= ord('z'): 
+            textl = chr(letter)
+        else:
+            textl = 'a' + chr(letter - 26)
+        letter += 1
         if ax.get_subplotspec().is_first_row():
-            ax.set(xticks=[0, num/2, num],
-                    yticks=[0, num/2, num],
-                    xticklabels=[],
-                    yticklabels=[])
-            ax.set_title('Game types', pad=50.0, fontsize=fslabel)
-            ax.text(0, num*1.035, 'a', fontsize=fslabel, weight='bold')
+            pixels = num
             pos = ax.get_position()
             newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
             ax.set_position(newpos)
-            letter += 1
         else:
-            ax.set(xticks=[0, nc/2, nc],
-                    yticks=[0, nr/2, nr],
-                    xticklabels=[],
-                    yticklabels=[])
-            ax.text(0, nr*1.035, chr(letter), fontsize=fslabel, weight='bold')
-            letter += 1
+            pixels = nc
+        ax.set(xticks=[0, pixels/2, pixels],
+                yticks=[0, pixels/2, pixels],
+                xticklabels=[],
+                yticklabels=[])
+        ax.text(0, pixels*1.035, textl, fontsize=fslabel, weight='bold')
         if ax.get_subplotspec().is_first_col():
             ax.set_yticklabels(yticklabels, fontsize=fstick) 
         if ax.get_subplotspec().is_last_row():

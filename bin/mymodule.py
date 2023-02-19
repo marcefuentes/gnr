@@ -39,7 +39,7 @@ def fitness(x, y, given, alpha, rho):
     return w
 
 def harmony(T, R, P, S):
-    mask = (T < R) & (R > P) & (P < S) 
+    mask = ((T < R) & (R > P) & (P < S)) | (R == P) 
     return mask
 
 def deadlock(T, R, P, S):

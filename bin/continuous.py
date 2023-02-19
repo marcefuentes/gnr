@@ -69,7 +69,7 @@ MRT = MRT0*(1.0 - given)
 Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
 a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
 a2lows = [0.0, a2eq]
-a2highs = [a2social, mymodule.a2max]
+a2highs = [(1.0 + 4.0*a2social)/5.0, mymodule.a2max]
 
 xmin = logess[0]
 xmax = logess[-1]
@@ -144,7 +144,7 @@ for i, (a2low, a2high) in enumerate(zip(a2lows, a2highs)):
 
     if i == 0:
         Z = np.zeros([num, num])
-        mask = (T > R) & (R > P) & (P > S)
+        mask = (R > P)
         Z[mask] = R[mask] - P[mask]
         Z = np.ma.masked_where(Z == 0.0, Z)
         cmap = plt.cm.viridis
@@ -152,7 +152,7 @@ for i, (a2low, a2high) in enumerate(zip(a2lows, a2highs)):
         axs[0, 2*i+1].imshow(Z, extent=extent2, cmap=cmap)
     else:
         Z = np.zeros([num, num])
-        mask = mymodule.prisoner(T, R, P, S) & (2.0*R > T + S)
+        mask = mymodule.prisoner(T, R, P, S) | (mymodule.deadlock(T, R, P, S) & (2.0*P < T + S)) | (R == P)
         Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
         Z = np.ma.masked_where(Z == 0.0, Z)
         cmap = plt.cm.viridis

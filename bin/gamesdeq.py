@@ -15,8 +15,7 @@ traitlabels = ['Games (lower)',
                 '$\it{R}$ - $\it{P}$',
                 'Games (upper)',
                 '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
-givens = np.linspace(0.0, 1.0, num=20)
-givens = np.linspace(0.95, 0.95, num=1)
+givens = np.linspace(0.0, 1.0, num=21)
 title = 'Given: '
 
 num = 1001    # Number of subplot rows and columns
@@ -80,8 +79,8 @@ for given in givens:
     MRT = MRT0*(1.0 - given)
     Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
     a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
-    a2lows = [0.0, a2eq]
-    a2highs = [a2social, mymodule.a2max]
+    a2lows = [0.01*a2eq, 0.99*a2eq]
+    a2highs = [(99.0*a2social + mymodule.a2max)/100.0, (a2social + 99.0*mymodule.a2max)/100.0]
 
     for i, (a2low, a2high) in enumerate(zip(a2lows, a2highs)):
         low = np.full([num, num], a2low)
@@ -97,8 +96,8 @@ for given in givens:
         if i == 0:
             Z = np.zeros([num, num])
             #mask = (T > R) & (R > P) & (P > S)
-            mask = (R >= P)
-            Z[mask] = R[mask] - P[mask]
+            mask = (R > P)
+            Z[mask] = 2.0*R[mask] - T[mask] - S[mask]
             Z = np.ma.masked_where(Z == 0.0, Z)
             cmap = plt.cm.viridis
             cmap.set_bad(color='white')

@@ -53,9 +53,13 @@ outergrid = fig.add_gridspec(nrows=1,
                                 right=0.9,
                                 top=0.86,
                                 bottom=0.176)
-innergrid = [outergrid[0].subgridspec(nrows=num, ncols=num, wspace=0, hspace=0), 
-                outergrid[1].subgridspec(nrows=num, ncols=num, wspace=0, hspace=0)]
-axss = [innergrid[0].subplots(), innergrid[1].subplots()]
+axss = []
+for outer in outergrid:
+    grid = outer.subgridspec(nrows=num,
+                                ncols=num,
+                                wspace=0,
+                                hspace=0)
+    axss.append(grid.subplots())
 
 for axs in axss:
     for axrow in axs:

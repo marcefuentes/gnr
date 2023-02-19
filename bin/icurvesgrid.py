@@ -86,9 +86,9 @@ outergrid = fig.add_gridspec(nrows=1,
 letter = ord('a')
 for outer, given in zip(outergrid, givens):
     grid = outer.subgridspec(nrows=num,
-                                            ncols=num,
-                                            wspace=0,
-                                            hspace=0)
+                                ncols=num,
+                                wspace=0,
+                                hspace=0)
     axs = grid.subplots()
     axs[0, int(num/2)].set_title(f'{given*100:2.0f}%',
                                     pad=30.0,

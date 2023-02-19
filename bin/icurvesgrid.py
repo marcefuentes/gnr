@@ -84,8 +84,8 @@ outergrid = fig.add_gridspec(nrows=1,
                                 bottom=0.176)
 
 letter = ord('a')
-for outer, given in enumerate(givens):
-    grid = outergrid[0, outer].subgridspec(nrows=num,
+for outer, given in zip(outergrid, givens):
+    grid = outer.subgridspec(nrows=num,
                                             ncols=num,
                                             wspace=0,
                                             hspace=0)

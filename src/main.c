@@ -50,7 +50,7 @@ double	gGiven;					// Effect on partner: q2 = a2*R2*Given
 void	read_globals (char *filename);
 void	write_globals (char *filename);
 void	caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first); 
-void	start_population (struct itype *i, struct itype *i_last);
+void	start_population (struct itype *i, struct itype *i_last, double a2low);
 double	fitness (struct itype *i, struct itype *i_last);	
 double	ces (double q1, double q2);				// gES, galpha
 //double	macromutate (double trait, double sum);			// gDiscrete
@@ -235,6 +235,7 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 {
 	struct pruntype	*prun_first, *prun_last, *prun;
 	double		wmax = ces(ga1Max*gR1, ga2Max*gR2);
+	double		a2low, a2high;
 
 	for ( int r = 0; r < gRuns; r++ ) 
 	{
@@ -248,8 +249,27 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 		prun_last = prun_first + gPeriods + 1;
 		prun = prun_first;
 
-		start_population (i_first, i_last);
-	
+		double rho = 1.0 - 1.0/gES;
+		double MRT = (ga2Max/ga1Max)*(gR2/gR1);
+		double Q = (gR2/gR1)*pow(MRT*galpha/(1.0 - galpha), 1.0/(rho - 1.0));
+		double a2social = ga2Max/(1.0 + Q*ga2Max/ga1Max);
+		MRT = MRT*(1.0 - gGiven);
+		Q = (gR2/gR1)*pow(MRT*galpha/(1.0 - galpha), 1.0/(rho - 1.0));
+		double a2eq = ga2Max/(1.0 + Q*ga2Max/ga1Max);
+
+		if ( ga2Init < 0.5 )
+		{
+			a2low = 0.01*a2eq;
+			a2high = 0.99*a2social + 0.01*ga2Max;
+		}
+		else
+		{
+			a2low = 0.99*a2eq;
+			a2high = 0.01*a2social + 0.99*ga2Max;
+		}
+
+		start_population (i_first, i_last, a2low);
+
 		for ( int t = 0; t < gTime; t++ ) 
 		{
 			double wC = fitness (i_first, i_last);
@@ -298,13 +318,13 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 					recruit->cost = calculate_cost (recruit->ChooseGrain, recruit->MimicGrain);
 				}
 
-				kill (recruit_first, i_first, gN, gDiscrete, ga2Init);
+				kill (recruit_first, i_first, gN, gDiscrete, a2low, a2high);
 				free_recruits (recruit_first);
 			}
 			
 			if ( gReciprocity == 1 )
 			{
-				decide_a2 (i_first, i_last, ga2Max, gIndirectR, gDiscrete, ga2Init);
+				decide_a2 (i_first, i_last, ga2Max, gIndirectR, gDiscrete, a2low, a2high);
 			}
 		}
 
@@ -313,11 +333,18 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 	} 
 }
 
-void start_population (struct itype *i, struct itype *i_last)
+void start_population (struct itype *i, struct itype *i_last, double a2low)
 {
 	struct itype *j;
 
-	i->a2Decided = i->a2Default = ga2Init;
+	if ( gDiscrete == 0 )
+	{
+		i->a2Decided = i->a2Default = ga2Init;
+	}
+	else
+	{
+		i->a2Decided = i->a2Default = a2low;
+	}
 	i->a2SeenSum = 0.0;
 	i->ChooseGrain = gChooseGrainInit;
 	i->MimicGrain = gMimicGrainInit;

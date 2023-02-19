@@ -1,9 +1,10 @@
 #include <math.h>
 #include "sim.h"
 
-void decide_a2 (struct itype *i, struct itype *i_last, double amax, int indirectr, int discrete, double a2init)
+void decide_a2 (struct itype *i, struct itype *i_last, double amax, int indirectr, int discrete, double a2low, double a2high)
 {
 	double a2def;
+	double a2mid = (a2low + a2high)/2.0;
 
 	for ( ; i < i_last; i++ )
 	{
@@ -20,13 +21,13 @@ void decide_a2 (struct itype *i, struct itype *i_last, double amax, int indirect
 			}
 			else
 			{
-				if ( i->a2Default > a2init )
+				if ( i->a2Default > a2mid )
 				{
-					a2def = a2init + 0.25;
+					a2def = a2high;
 				}
 				else
 				{
-					a2def = a2init - 0.25;
+					a2def = a2low;
 				}
 
 				if ( i->a2Decided != a2def )

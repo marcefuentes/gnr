@@ -16,7 +16,6 @@ givens = [0.0, 0.5, 0.95]
 num = 3    # Number of subplot rows & columns
 numa2 = 128
 n_ic = 5    # Number of indifference curves
-ngiven = 21
 
 fslabel = 32 # Label font size
 fstick = 18 # Tick font size
@@ -41,7 +40,6 @@ def indifference(q, w, alpha, rho):
                         [pow(w, rho) <= (1.0 - alpha)*pow(q, rho), pow(w, rho) > (1.0 - alpha)*pow(q, rho)], [-0.1, lambda i: pow((pow(w, rho) - (1.0 - alpha)*pow(i, rho))/alpha, 1.0/rho)])
     return q2
 
-MRT0 = mymodule.b*mymodule.Rq
 if givens[-1] > 0.9999999:
     givens[-1] = 0.9999999
 alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=num)
@@ -52,6 +50,7 @@ q2_budget = (mymodule.a2max - mymodule.b*a1_budget)*mymodule.R2
 q1_budget = a1_budget*mymodule.R1
 q1_ic = np.linspace(0.0, mymodule.a1max*mymodule.R1, num=numa2)
 RR, AA = np.meshgrid(rhos, alphas)
+MRT0 = mymodule.b*mymodule.Rq
 wis = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
 
 every = int(num/2)
@@ -74,8 +73,15 @@ for alpha in alphas:
     icsss.append(icss)
 
 fig = plt.figure(figsize=(len(givens)*6, 6))
-fig.supxlabel(xlabel, x=0.525, y=0.0, fontsize=fslabel)
-fig.supylabel(ylabel, x=0.08, y=0.52, fontsize=fslabel)
+fig.supxlabel(xlabel,
+                x=0.525,
+                y=0.0,
+                fontsize=fslabel)
+fig.supylabel(ylabel,
+                x=0.08,
+                y=0.52,
+                fontsize=fslabel)
+
 outergrid = fig.add_gridspec(nrows=1,
                                 ncols=len(givens),
                                 left=0.15,

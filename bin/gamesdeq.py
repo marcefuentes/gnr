@@ -11,7 +11,7 @@ start_time = time.perf_counter ()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
-traitlabels = ['Games (lower)',
+gameslabels = ['Games (lower)',
                 '$\it{R}$ - $\it{P}$',
                 'Games (upper)',
                 '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
@@ -51,8 +51,8 @@ yticklabels = [round(ymin, 1),
 extent2 = 0, num, 0, num
 
 fig, axs = plt.subplots(nrows=1,
-                        ncols=len(traitlabels),
-                        figsize=(6*len(traitlabels), 6))
+                        ncols=len(gameslabels),
+                        figsize=(6*len(gameslabels), 6))
 fig.supxlabel(xlabel,
                 x=0.513,
                 y=0.01,
@@ -63,7 +63,7 @@ fig.supylabel(ylabel,
                 fontsize=fslabel*1.2)
 
 letter = ord('a')
-for ax, traitlabel in zip(axs, traitlabels):
+for ax, gameslabel in zip(axs, gameslabels):
     ax.text(0, 
             num*1.035,
             chr(letter),
@@ -76,7 +76,7 @@ for ax, traitlabel in zip(axs, traitlabels):
             yticklabels=[])
     if ax.get_subplotspec().is_first_col():
         ax.set_yticklabels(yticklabels, fontsize=fstick) 
-    ax.set_title(traitlabel, pad=40.0, fontsize=fslabel*0.9)
+    ax.set_title(gameslabel, pad=40.0, fontsize=fslabel*0.9)
     ax.set_xticklabels(xticklabels, fontsize=fstick)
 
 frames = []

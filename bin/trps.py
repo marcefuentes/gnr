@@ -84,7 +84,8 @@ for given in givens:
     Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
     a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
     a2lows = [0.01*a2eq, 0.99*a2eq]
-    a2highs = [(99.0*a2social + mymodule.a2max)/100.0, (a2social + 99.0*mymodule.a2max)/100.0]
+    a2highs = [(99.0*a2social + mymodule.a2max)/100.0,
+                (a2social + 99.0*mymodule.a2max)/100.0]
 
     for axs, a2low, a2high in zip(axss, a2lows, a2highs): 
         low = np.full([num, num], a2low)

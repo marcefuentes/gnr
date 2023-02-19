@@ -13,7 +13,7 @@ start_time = time.perf_counter ()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
-trait0labels = ['Games (lower)',
+gameslabels = ['Games (lower)',
                 '$\it{R}$ - $\it{P}$',
                 'Games (upper)',
                 '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
@@ -69,7 +69,8 @@ MRT = MRT0*(1.0 - given)
 Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
 a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
 a2lows = [0.01*a2eq, 0.99*a2eq]
-a2highs = [(99.0*a2social + mymodule.a2max)/100.0, (a2social + 99.0*mymodule.a2max)/100.0]
+a2highs = [(99.0*a2social + mymodule.a2max)/100.0,
+            (a2social + 99.0*mymodule.a2max)/100.0]
 
 xmin = logess[0]
 xmax = logess[-1]
@@ -98,8 +99,14 @@ extent2 = 0, num, 0, num
 fig, axs = plt.subplots(nrows=len(folders)+1,
                         ncols=len(traits),
                         figsize=(6*len(traits), 6*(len(folders)+1)))
-fig.supxlabel(xlabel, x=0.513, y=0.06, fontsize=fslabel*1.5)
-fig.supylabel(ylabel, x=0.05, y=0.493, fontsize=fslabel*1.5)
+fig.supxlabel(xlabel,
+                x=0.513,
+                y=0.06,
+                fontsize=fslabel*1.5)
+fig.supylabel(ylabel,
+                x=0.05,
+                y=0.493,
+                fontsize=fslabel*1.5)
 
 letter = ord('a')
 for axrow in axs:
@@ -125,8 +132,8 @@ for axrow in axs:
             ax.set_yticklabels(yticklabels, fontsize=fstick) 
         if ax.get_subplotspec().is_last_row():
             ax.set_xticklabels(xticklabels, fontsize=fstick)
-for ax, traitlabel in zip(axs[0], trait0labels):
-    ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
+for ax, gameslabel in zip(axs[0], gameslabels):
+    ax.set_title(gameslabel, pad=50.0, fontsize=fslabel)
 for ax, traitlabel in zip(axs[1], traitlabels):
     ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
 

@@ -54,6 +54,10 @@ def snowdrift(T, R, P, S):
     mask = (T >= R) & (R > S) & (S >= P)
     return mask
 
+def dilemma(T, R, P, S):
+    mask = prisoner(T, R, P, S) | snowdrift(T, R, P, S) | (deadlock(T, R, P, S) & (2.0*P < T + S))
+    return mask
+
 def TS(mask, T, R, S):
     mask = (mask & (2.0*R < T + S))
     return mask

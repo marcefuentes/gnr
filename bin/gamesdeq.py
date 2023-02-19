@@ -95,16 +95,15 @@ for given in givens:
 
         if i == 0:
             Z = np.zeros([num, num])
-            #mask = (T > R) & (R > P) & (P > S)
-            mask = (R > P)
-            Z[mask] = 2.0*R[mask] - T[mask] - S[mask]
+            mask = mymodule.dilemma(T, R, P, S)
+            Z[mask] = R[mask] - P[mask]
             Z = np.ma.masked_where(Z == 0.0, Z)
             cmap = plt.cm.viridis
             cmap.set_bad(color='white')
             axs[2*i+1].imshow(Z, extent=extent2, cmap=cmap)
         else:
             Z = np.zeros([num, num])
-            mask = mymodule.prisoner(T, R, P, S) | (mymodule.deadlock(T, R, P, S) & (2.0*P < T + S))
+            mask = mymodule.dilemma(T, R, P, S)
             Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
             Z = np.ma.masked_where(Z == 0.0, Z)
             cmap = plt.cm.viridis

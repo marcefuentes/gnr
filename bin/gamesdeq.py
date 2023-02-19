@@ -53,8 +53,14 @@ extent2 = 0, num, 0, num
 fig, axs = plt.subplots(nrows=1,
                         ncols=len(traitlabels),
                         figsize=(6*len(traitlabels), 6))
-fig.supxlabel(xlabel, x=0.513, y=0.01, fontsize=fslabel*1.2)
-fig.supylabel(ylabel, x=0.03, y=0.493, fontsize=fslabel*1.2)
+fig.supxlabel(xlabel,
+                x=0.513,
+                y=0.01,
+                fontsize=fslabel*1.2)
+fig.supylabel(ylabel,
+                x=0.03,
+                y=0.493,
+                fontsize=fslabel*1.2)
 
 letter = ord('a')
 for ax, traitlabel in zip(axs, traitlabels):
@@ -80,7 +86,8 @@ for given in givens:
     Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
     a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
     a2lows = [0.01*a2eq, 0.99*a2eq]
-    a2highs = [(99.0*a2social + mymodule.a2max)/100.0, (a2social + 99.0*mymodule.a2max)/100.0]
+    a2highs = [(99.0*a2social + mymodule.a2max)/100.0,
+                (a2social + 99.0*mymodule.a2max)/100.0]
 
     for i, (a2low, a2high) in enumerate(zip(a2lows, a2highs)):
         low = np.full([num, num], a2low)

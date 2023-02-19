@@ -11,10 +11,6 @@ start_time = time.perf_counter ()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
-alphamin = 0.1
-alphamax = 0.9
-logesmin = -5.0
-logesmax = 5.0
 givens = [0.0, 0.5, 0.95]
 
 num = 3    # Number of subplot rows & columns
@@ -47,13 +43,11 @@ def indifference(q, w, alpha, rho):
                         [pow(w, rho) <= (1.0 - alpha)*pow(q, rho), pow(w, rho) > (1.0 - alpha)*pow(q, rho)], [-0.1, lambda i: pow((pow(w, rho) - (1.0 - alpha)*pow(i, rho))/alpha, 1.0/rho)])
     return q2
 
-nc = num
-nr = num
 MRT0 = mymodule.b*mymodule.Rq
 if givens[-1] > 0.9999999:
     givens[-1] = 0.9999999
-alphas = np.linspace(alphamax, alphamin, num=nr)
-logess = np.linspace(logesmin, logesmax, num=nc)
+alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=num)
+logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
 a1_budget = np.linspace(0.0, mymodule.a1max, num=3)
 q2_budget = (mymodule.a2max - mymodule.b*a1_budget)*mymodule.R2
@@ -92,7 +86,10 @@ outer_grid = fig.add_gridspec(1,
 
 letter = ord('a')
 for outer, given in enumerate(givens):
-    grid = outer_grid[0, outer].subgridspec(num, num, wspace=0, hspace=0)
+    grid = outer_grid[0, outer].subgridspec(nrows=num,
+                                            ncols=num,
+                                            wspace=0,
+                                            hspace=0)
     axs = grid.subplots()
     axs[0, int(num/2)].set_title(f'{given*100:2.0f}%',
                                     pad=30.0,

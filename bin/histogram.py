@@ -32,32 +32,36 @@ if movie:
     frames = []
 else:
     ts = [ts[-1]]
-givens = np.sort(pd.unique(df.Given))[::-1]
-logess = np.sort(pd.unique(df.logES))
+given = df.Given[0]
 alphas = np.sort(pd.unique(df.alpha))[::-1]
+rowindex = 'alpha'
+logess = np.sort(pd.unique(df.logES))
+nr = len(alphas)
 nc = len(logess)
-xmin = np.amin(logess)
-xmax = np.amax(logess)
+xmin = logess[0]
+xmax = logess[-1]
 xlabel = 'Substitutability of $\it{B}$'
-if len(givens) > 1:
-    rows = givens
-    ylabel = 'Partner\'s share of $\it{B}$'
-    rowindex = 'Given'
-if len(alphas) > 1:
-    rows = alphas
-    ylabel = 'Value of $\it{B}$'
-    rowindex = 'alpha'
-nr = len(rows)
-ymin = np.amin(rows)
-ymax = np.amax(rows)
-xticklabels = [round(xmin), round((xmin + xmax)/2), round(xmax)]
-yticklabels = [round(ymin, 1), round((ymin + ymax)/2, 1), round(ymax, 1)]
+ymin = alphas[-1]
+ymax = alphas[0]
+ylabel = 'Value of $\it{B}$'
+xticklabels = [round(xmin),
+                round((xmin + xmax)/2),
+                round(xmax)]
+yticklabels = [round(ymin, 1),
+                round((ymin + ymax)/2, 1),
+                round(ymax, 1)]
 everyx = int(nc/2)
 everyy = int(nr/2)
 
 fig = plt.figure(figsize=(16, 8))
-fig.supxlabel(xlabel, x=0.525, y=0.03, fontsize=fslabel)
-fig.supylabel(ylabel, x=0.05, y=0.52, fontsize=fslabel)
+fig.supxlabel(xlabel,
+                x=0.525,
+                y=0.03,
+                fontsize=fslabel)
+fig.supylabel(ylabel,
+                x=0.05,
+                y=0.52,
+                fontsize=fslabel)
 
 bins = [0.0, 0.5, 1.0]
 my_cmap = plt.get_cmap('viridis')
@@ -74,20 +78,29 @@ for axs in axss:
             ax.set(xticks=[], yticks=[], xlim=(0.0, 1.0), ylim=(0.0, 1.0))
     for ax, loges in zip(axs[-1, ::everyx], logess[::everyx]):
         ax.set_xlabel(round(loges), fontsize=fstick)
-for ax, row in zip(axss[0][::everyy, 0], rows[::everyy]):
-    ax.set_ylabel(f'{row:1.1f}', rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
+for ax, alpha in zip(axss[0][::everyy, 0], alphas[::everyy]):
+    ax.set_ylabel(f'{alpha:1.1f}',
+                    rotation='horizontal',
+                    horizontalalignment='right',
+                    verticalalignment='center',
+                    fontsize=fstick)
 
 for t in ts:
     for df, axs in zip(dfs, axss):
-        for axrow, row in zip(axs, rows):
+        for axrow, alpha in zip(axs, alphas):
             for ax, loges in zip(axrow, logess):
                 bottom = 0.0
                 for trait, color in zip(traits, colors):
-                    barheight = df.loc[(df['Time'] == t) & (df['logES'] > loges - 0.1) & (df['logES'] < loges + 0.1) & (df[rowindex] == row), trait].values[0]
+                    barheight = df.loc[(df['Time'] == t) & (df['logES'] > loges - 0.1) & (df['logES'] < loges + 0.1) & (df[rowindex] == alpha), trait].values[0]
                     ax.bar(x=0.5, height=barheight, bottom=bottom, width=1.0, color=color)
                     bottom = bottom + barheight
     if movie:
-        text = fig.text(0.90, 0.90, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')
+        text = fig.text(0.90,
+                        0.90,
+                        f't\n{t}',
+                        fontsize=fstick+4,
+                        color='grey',
+                        ha='right')
         plt.savefig('temp.png', transparent=False)
         text.remove()
         frames.append(iio.imread('temp.png'))

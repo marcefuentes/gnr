@@ -104,7 +104,7 @@ for given in givens:
             axs[2*i+1].imshow(Z, extent=extent2, cmap=cmap)
         else:
             Z = np.zeros([num, num])
-            mask = mymodule.prisoner(T, R, P, S) | (mymodule.deadlock(T, R, P, S) & (2.0*P < T + S)) | (R == P)
+            mask = mymodule.prisoner(T, R, P, S) | (mymodule.deadlock(T, R, P, S) & (2.0*P < T + S))
             Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
             Z = np.ma.masked_where(Z == 0.0, Z)
             cmap = plt.cm.viridis

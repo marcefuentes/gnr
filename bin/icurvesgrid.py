@@ -23,8 +23,6 @@ fstick = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-every = int(num/2)
-
 def indifference(q, w, alpha, rho):
     if rho == 0.0:
         q2 = np.piecewise(q,
@@ -56,6 +54,7 @@ q1_ic = np.linspace(0.0, mymodule.a1max*mymodule.R1, num=numa2)
 RR, AA = np.meshgrid(rhos, alphas)
 wis = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
 
+every = int(num/2)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 
@@ -77,8 +76,8 @@ for alpha in alphas:
 fig = plt.figure(figsize=(len(givens)*6, 6))
 fig.supxlabel(xlabel, x=0.525, y=0.0, fontsize=fslabel)
 fig.supylabel(ylabel, x=0.08, y=0.52, fontsize=fslabel)
-outer_grid = fig.add_gridspec(1,
-                                len(givens),
+outergrid = fig.add_gridspec(nrows=1,
+                                ncols=len(givens),
                                 left=0.15,
                                 right=0.9,
                                 top=0.86,
@@ -86,7 +85,7 @@ outer_grid = fig.add_gridspec(1,
 
 letter = ord('a')
 for outer, given in enumerate(givens):
-    grid = outer_grid[0, outer].subgridspec(nrows=num,
+    grid = outergrid[0, outer].subgridspec(nrows=num,
                                             ncols=num,
                                             wspace=0,
                                             hspace=0)

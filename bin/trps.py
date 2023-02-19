@@ -47,7 +47,12 @@ fig.supylabel(ylabel,
                 y=0.52,
                 fontsize=fslabel)
 
-outergrid = fig.add_gridspec(1, 2, left=0.15, right=0.9, top=0.86, bottom=0.176)
+outergrid = fig.add_gridspec(nrows=1,
+                                ncols=2,
+                                left=0.15,
+                                right=0.9,
+                                top=0.86,
+                                bottom=0.176)
 innergrid = [outergrid[0].subgridspec(nrows=num, ncols=num, wspace=0, hspace=0), 
                 outergrid[1].subgridspec(nrows=num, ncols=num, wspace=0, hspace=0)]
 axss = [innergrid[0].subplots(), innergrid[1].subplots()]

@@ -85,7 +85,8 @@ for given in givens:
     MRT = MRT0*(1.0 - given)
     Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
     a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
-    a2lows = [0.01*a2eq, 0.99*a2eq]
+    a2lows = [0.01*a2eq,
+                0.99*a2eq]
     a2highs = [0.99*a2social + 0.01*mymodule.a2max,
                 0.01*a2social + 0.99*mymodule.a2max]
 

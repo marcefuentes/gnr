@@ -16,7 +16,6 @@ titles = ['Games (lower)',
                 'Games (upper)',
                 '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 givens = np.linspace(0.0, 1.0, num=21)
-frametitle = 'Given: '
 
 num = 1001
 
@@ -35,13 +34,14 @@ MRT0 = mymodule.b*mymodule.Rq
 Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
 a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
 
+xlabel = 'Substitutability of $\it{B}$'
+ylabel = 'Value of $\it{B}$'
+letter = ord('a')
+letterposition = num*1.035
 xmin = logess[0]
 xmax = logess[-1]
-xlabel = 'Substitutability of $\it{B}$'
 ymin = alphas[-1]
 ymax = alphas[0]
-ylabel = 'Value of $\it{B}$'
-
 xticks = [0, num/2, num]
 yticks = [0, num/2, num]
 xticklabels = [f'{xmin:2.0f}',
@@ -51,7 +51,8 @@ yticklabels = [f'{ymin:3.1f}',
                 f'{(ymin + ymax)/2.0:3.1f}',
                 f'{ymax:3.1f}']
 extentnum = 0, num, 0, num
-letterposition = num*1.035
+cmap = plt.cm.viridis
+cmap.set_bad(color='white')
 
 fig, axs = plt.subplots(nrows=1,
                         ncols=len(titles),
@@ -65,7 +66,6 @@ fig.supylabel(ylabel,
                 y=0.493,
                 fontsize=fslarge*1.2)
 
-letter = ord('a')
 for ax, title in zip(axs, titles):
     ax.text(0, 
             letterposition,
@@ -108,22 +108,17 @@ for given in givens:
             mask = mymodule.dilemma(T, R, P, S)
             Z[mask] = R[mask] - P[mask]
             Z = np.ma.masked_where(Z == 0.0, Z)
-            cmap = plt.cm.viridis
-            cmap.set_bad(color='white')
             axs[2*i+1].imshow(Z, extent=extentnum, cmap=cmap)
         else:
             Z = np.zeros([num, num])
             mask = mymodule.dilemma(T, R, P, S)
             Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
             Z = np.ma.masked_where(Z == 0.0, Z)
-            cmap = plt.cm.viridis
-            cmap.set_bad(color='white')
             axs[2*i+1].imshow(Z, extent=extentnum, cmap=cmap)
 
-    movieframe = given
     text = fig.text(0.90,
                     0.02,
-                    frametitle + f'{movieframe:4.2f}',
+                    'Given: ' + f'{given:4.2f}',
                     fontsize=fslarge,
                     color='grey',
                     ha='right')

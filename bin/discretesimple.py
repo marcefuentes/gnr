@@ -13,21 +13,21 @@ start_time = time.perf_counter ()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
-traits = ['ChooseGrainmean',
-            'MimicGrainmean']
 titles = ['Games',
-                #'$\it{S}$ - $\it{P}$',
+                '$\it{R}$ - $\it{P}$',
                 '$\it{T}$ + $\it{S}$ - 2$\it{R}$',
                 'Sensitivity for\nchoosing partner',
                 'Sensitivity for\nmimicking partner']
+traits = ['ChooseGrainmean',
+            'MimicGrainmean']
 folders = ['a2init75', 'a2init50', 'a2init25']
 subfolder = 'pr'
 a2lows = [0.50, 0.25, 0.00]
 given = 0.95
 
-num = 1001    # Number of subplot rows and columns
-
 movie = False
+
+num = 1001
 
 fslarge = 32 # Label font size
 fssmall = 24 # Tick font size
@@ -59,58 +59,71 @@ logess = np.linspace(logess[0], logess[-1], num=num)
 rhos = 1.0 - 1.0/pow(2.0, logess)
 RR, AA = np.meshgrid(rhos, alphas)
 
+xlabel = 'Substitutability of $\it{B}$'
+ylabel = 'Value of $\it{B}$'
+letter = ord('a')
+letterposition = num*1.035
+letterpositionr = nr*1.035
 xmin = logess[0]
 xmax = logess[-1]
-xlabel = 'Substitutability of $\it{B}$'
 ymin = alphas[-1]
 ymax = alphas[0]
-ylabel = 'Value of $\it{B}$'
-
+xticks = [0, num/2, num]
+yticks = [0, num/2, num]
+xticksr = [0, nc/2, nc]
+yticksr = [0, nr/2, nr]
+xticklabels = [f'{xmin:2.0f}',
+                f'{(xmin + xmax)/2.0:2.0f}',
+                f'{xmax:2.0f}']
+yticklabels = [f'{ymin:3.1f}',
+                f'{(ymin + ymax)/2.0:3.1f}',
+                f'{ymax:3.1f}']
+extentnum = 0, num, 0, num
+extentr= 0, nc, 0, nr
+cmap = plt.cm.viridis
+cmap.set_bad(color='white')
 traitvmaxs = [mymodule.a2max,
                 mymodule.a2max]
-xticklabels = [round(xmin),
-                round((xmin + xmax)/2),
-                round(xmax)]
-yticklabels = [round(ymin, 1),
-                round((ymin + ymax)/2, 1),
-                round(ymax, 1)]
-extent = 0, nc, 0, nr
-extent2 = 0, num, 0, num
 
 fig, axs = plt.subplots(nrows=len(a2lows),
                         ncols=len(titles),
                         figsize=(6*len(titles), 6*(len(a2lows))))
-fig.supxlabel(xlabel, x=0.513, y=0.02, fontsize=fslarge*1.3)
-fig.supylabel(ylabel, x=0.03, y=0.493, fontsize=fslarge*1.3)
+fig.supxlabel(xlabel,
+                x=0.513,
+                y=0.02,
+                fontsize=fslarge*1.3)
+fig.supylabel(ylabel,
+                x=0.03,
+                y=0.493,
+                fontsize=fslarge*1.3)
 
-letter = ord('a')
 for axrow in axs:
     for ax, title in zip(axrow, titles):
-        if title == 'Games':
-            ax.text(0, 
-                    num*1.035,
+        if 'Sensitivity' not in title:
+            ax.set(xticks=xticks,
+                    yticks=yticks,
+                    xticklabels=[],
+                    yticklabels=[])
+            ax.text(0,
+                    letterposition,
                     chr(letter),
                     fontsize=fslarge*0.8,
                     weight='bold')
         else:
-            ax.text(0, 
-                    nr*1.035,
+            ax.set(xticks=xticksr,
+                    yticks=yticksr,
+                    xticklabels=[],
+                    yticklabels=[])
+            ax.text(0,
+                    letterpositionr,
                     chr(letter),
                     fontsize=fslarge*0.8,
                     weight='bold')
         letter += 1
-        if ax.get_subplotspec().is_first_col():
-            ax.set(xticks=[0, num/2, num],
-                    yticks=[0, num/2, num],
-                    xticklabels=[])
-            ax.set_yticklabels(yticklabels, fontsize=fssmall) 
-        else:
-            ax.set(xticks=[0, nc/2, nc],
-                            yticks=[0, nr/2, nr],
-                            xticklabels=[],
-                            yticklabels=[])
         if ax.get_subplotspec().is_first_row():
             ax.set_title(title, pad=40.0, fontsize=fslarge)
+        if ax.get_subplotspec().is_first_col():
+            ax.set_yticklabels(yticklabels, fontsize=fssmall) 
         if ax.get_subplotspec().is_last_row():
             ax.set_xticklabels(xticklabels, fontsize=fssmall)
 
@@ -124,30 +137,30 @@ for axrow, a2low in zip(axs, a2lows):
     S = mymodule.fitness(low, high, given, AA, RR)
     Z = np.full([num, num, 4], mymodule.colormap['red'])
     mymodule.gamecolors(T, R, P, S, Z)
-    axrow[0].imshow(Z, extent=extent2)
-
-    #mask = mymodule.snowdrift(T, R, P, S) | mymodule.prisoner(T, R, P, S) | (R == P)
-    #Z[mask] = 1.0 - (P[mask] - S[mask])
+    axrow[0].imshow(Z, extent=extentnum)
 
     Z = np.zeros([num, num])
-    mask = mymodule.prisoner(T, R, P, S) | (mymodule.deadlock(T, R, P, S) & (2.0*P < T + S)) | (R == P)
+    mask = mymodule.dilemma(T, R, P, S)
+    Z[mask] = R[mask] - P[mask]
+    Z = np.ma.masked_where(Z == 0.0, Z)
+    axrow[1].imshow(Z, extent=extentnum, cmap=cmap)
+
+    Z = np.zeros([num, num])
+    mask = mymodule.dilemma(T, R, P, S)
     Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
     Z = np.ma.masked_where(Z == 0.0, Z)
-    cmap = plt.cm.viridis
-    cmap.set_bad(color='white')
-    axrow[1].imshow(Z, extent=extent, cmap=cmap, vmin=0, vmax=traitvmaxs[0])
+    axrow[2].imshow(Z, extent=extentnum, cmap=cmap)
 
 for t in ts:
     for axrow, df in zip(axs, dfs):
-        for ax, trait, traitvmax in zip(axrow[-2:], traits, traitvmaxs):
+        for ax, trait, traitvmax in zip(axrow[-(len(titles) - 3):], traits, traitvmaxs):
             Z = pd.pivot_table(df.loc[df.Time == t],
                                 values=trait,
                                 index=[rowindex],
                                 columns=['logES']).sort_index(axis=0,
                                                             ascending=False)
             ax.imshow(Z,
-                    extent=extent,
-                    cmap='viridis',
+                    extent=extentr,
                     vmin=0,
                     vmax=traitvmax)
     if movie:

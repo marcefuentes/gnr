@@ -13,17 +13,22 @@ start_time = time.perf_counter ()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
+titles = ['Games',
+                '$\it{R}$ - $\it{P}$',
+                '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 traits = ['a2Seenmean',
             'ChooseGrainmean',
             'MimicGrainmean',
             'wmean']
-titles = ['Effort to get $\it{B}$',
+titletraits = ['Effort to get $\it{B}$',
                 'Sensitivity for\nchoosing partner',
                 'Sensitivity for\nmimicking partner',
                 'Fitness']
 folders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
 
 movie = False
+
+num = 1001
 
 fslarge = 32 # Label font size
 fssmall = 24 # Tick font size
@@ -36,7 +41,6 @@ for folder in folders:
                     ignore_index=True)
     df.ChooseGrainmean = 1.0 - df.ChooseGrainmean
     df.MimicGrainmean = 1.0 - df.MimicGrainmean
-    #df['help'] = df.a2Seenmean*mymodule.R2*df.Given
     dfs.append(df)
 
 df = dfs[1]
@@ -45,29 +49,53 @@ if movie:
     frames = []
 else:
     ts = [ts[-1]]
-
-given = pd.unique(df.Given)
+given = df.Given[0]
+if given > 0.9999999:
+    given = 0.9999999
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 rowindex = 'alpha'
 logess = np.sort(pd.unique(df.logES))
-rhos = 1.0 - 1.0/pow(2.0, logess)
 nr = len(alphas)
 nc = len(logess)
-low = np.full([nr, nc], mymodule.a2low)
-high = np.full([nr, nc], mymodule.a2high)
+alphas = np.linspace(alphas[0], alphas[-1], num=num)
+logess = np.linspace(logess[0], logess[-1], num=num)
+rhos = 1.0 - 1.0/pow(2.0, logess)
 RR, AA = np.meshgrid(rhos, alphas)
-R = mymodule.fitness(high, high, 0.0, AA, RR)
-P = mymodule.fitness(low, low, 0.0, AA, RR)
-T = mymodule.fitness(high, low, given, AA, RR)
-S = mymodule.fitness(low, high, given, AA, RR)
+MRT0 = mymodule.b*mymodule.Rq
+Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
+a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
+MRT = MRT0*(1.0 - given)
+Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
+a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
+#a2lows = [0.01*a2eq, 0.99*a2eq]
+#a2highs = [0.99*a2social + 0.01*mymodule.a2max,
+#            0.01*a2social + 0.99*mymodule.a2max]
+a2lows = [0.25]
+a2highs = [0.75]
 
+xlabel = 'Substitutability of $\it{B}$'
+ylabel = 'Value of $\it{B}$'
+letter = ord('a')
+letterposition = num*1.035
+letterpositionr = nr*1.035
 xmin = logess[0]
 xmax = logess[-1]
-xlabel = 'Substitutability of $\it{B}$'
 ymin = alphas[-1]
 ymax = alphas[0]
-ylabel = 'Value of $\it{B}$'
-
+xticks = [0, num/2, num]
+yticks = [0, num/2, num]
+xticksr = [0, nc/2, nc]
+yticksr = [0, nr/2, nr]
+xticklabels = [f'{xmin:2.0f}',
+                f'{(xmin + xmax)/2.0:2.0f}',
+                f'{xmax:2.0f}']
+yticklabels = [f'{ymin:3.1f}',
+                f'{(ymin + ymax)/2.0:3.1f}',
+                f'{ymax:3.1f}']
+extentnum = 0, num, 0, num
+extentr= 0, nc, 0, nr
+cmap = plt.cm.viridis
+cmap.set_bad(color='white')
 traitvmaxs = [mymodule.a2max,
                 mymodule.a2max,
                 mymodule.a2max,
@@ -76,70 +104,83 @@ traitvmaxs = [mymodule.a2max,
                                     np.array([0.0]),
                                     np.array([0.9]),
                                     np.array([5.0]))]
-xticklabels = [round(xmin),
-                round((xmin + xmax)/2),
-                round(xmax)]
-yticklabels = [round(ymin, 1),
-                round((ymin + ymax)/2, 1),
-                round(ymax, 1)]
-extent = 0, nc, 0, nr
-
 
 fig, axs = plt.subplots(nrows=len(folders)+1,
                         ncols=len(traits),
                         figsize=(6*len(traits), 6*(len(folders)+1)))
-fig.delaxes(axs[0, 1])
-fig.delaxes(axs[0, 2])
-fig.delaxes(axs[0, 3])
-fig.supxlabel(xlabel, x=0.513, y=0.06, fontsize=fslarge*1.5)
-fig.supylabel(ylabel, x=0.05, y=0.493, fontsize=fslarge*1.5)
+fig.supxlabel(xlabel,
+                x=0.513,
+                y=0.06,
+                fontsize=fslarge*1.5)
+fig.supylabel(ylabel,
+                x=0.05,
+                y=0.493,
+                fontsize=fslarge*1.5)
 
-letter = ord('b')
 for axrow in axs:
     for ax in axrow:
+        if letter <= ord('z'): 
+            textl = chr(letter)
+        else:
+            textl = 'a' + chr(letter - 26)
+        letter += 1
         if ax.get_subplotspec().is_first_row():
-            ax.text(0,
-                    nr*1.035,
-                    'a',
-                    fontsize=fslarge,
-                    weight='bold')
-            ax.set(xticks=[0, nc/2, nc],
-                    yticks=[0, nr/2, nr],
-                    xticklabels=[],
-                    yticklabels=[])
             pos = ax.get_position()
             newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
             ax.set_position(newpos)
+            ax.set(xticks=xticks,
+                    yticks=yticks,
+                    xticklabels=[],
+                    yticklabels=[])
+            ax.text(0,
+                    letterposition,
+                    textl,
+                    fontsize=fslarge,
+                    weight='bold')
         else:
-            ax.set(xticks=[0, nc/2, nc],
-                            yticks=[0, nr/2, nr],
-                            xticklabels=[],
-                            yticklabels=[])
-            if letter<= ord('z'):
-                ax.text(0, 
-                        nr*1.035,
-                        chr(letter),
-                        fontsize=fslarge,
-                        weight='bold')
-            else:
-                ax.text(0,
-                        nr*1.035,
-                        'a' + chr(letter - 26),
-                        fontsize=fslarge,
-                        weight='bold')
-            if ax.get_subplotspec().is_first_col():
-                ax.set_yticklabels(yticklabels, fontsize=fssmall) 
-            letter += 1
+            ax.set(xticks=xticksr,
+                    yticks=yticksr,
+                    xticklabels=[],
+                    yticklabels=[])
+            ax.text(0,
+                    letterpositionr,
+                    textl,
+                    fontsize=fslarge,
+                    weight='bold')
+            
+        if ax.get_subplotspec().is_first_col():
+            ax.set_yticklabels(yticklabels, fontsize=fssmall) 
         if ax.get_subplotspec().is_last_row():
             ax.set_xticklabels(xticklabels, fontsize=fssmall)
-for ax, title in zip(axs[1], titles):
+for ax, title in zip(axs[0], titles):
+    ax.set_title(title, pad=50.0, fontsize=fslarge)
+for ax, title in zip(axs[1], titletraits):
     ax.set_title(title, pad=50.0, fontsize=fslarge)
 
-Z = np.full([nr, nc, 4], mymodule.colormap['white'])
-mymodule.gamecolors(T, R, P, S, Z)
-ax = axs[0, 0]
-ax.imshow(Z, extent=extent)
-ax.set_title('Games', pad=50.0, fontsize=fslarge)
+for i, (a2low, a2high) in enumerate(zip(a2lows, a2highs)):
+
+    low = np.full([num, num], a2low)
+    high = np.full([num, num], a2high)
+    T = mymodule.fitness(high, low, given, AA, RR)
+    R = mymodule.fitness(high, high, given, AA, RR)
+    P = mymodule.fitness(low, low, given, AA, RR)
+    S = mymodule.fitness(low, high, given, AA, RR)
+    Z = np.full([num, num, 4], mymodule.colormap['red'])
+    mymodule.gamecolors(T, R, P, S, Z)
+    axs[0, 2*i].imshow(Z, extent=extentnum)
+
+    if i == 0:
+        Z = np.zeros([num, num])
+        mask = mymodule.dilemma(T, R, P, S)
+        Z[mask] = R[mask] - P[mask]
+        Z = np.ma.masked_where(Z == 0.0, Z)
+        axs[0, 2*i+1].imshow(Z, extent=extentnum, cmap=cmap)
+    else:
+        Z = np.zeros([num, num])
+        mask = mymodule.dilemma(T, R, P, S)
+        Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
+        Z = np.ma.masked_where(Z == 0.0, Z)
+        axs[0, 2*i+1].imshow(Z, extent=extentnum, cmap=cmap)
 
 for t in ts:
     for axrow, df in zip(axs[1:], dfs):
@@ -150,13 +191,12 @@ for t in ts:
                                 columns=['logES']).sort_index(axis=0,
                                                             ascending=False)
             ax.imshow(Z,
-                    extent=extent,
-                    cmap='viridis',
+                    extent=extentr,
                     vmin=0,
                     vmax=traitvmax)
     if movie:
         text = fig.text(0.90,
-                        0.93,
+                        0.90,
                         f't\n{t}',
                         fontsize=fssmall+4,
                         color='grey',

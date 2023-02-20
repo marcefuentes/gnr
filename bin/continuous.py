@@ -60,7 +60,7 @@ nr = len(alphas)
 nc = len(logess)
 alphas = np.linspace(alphas[0], alphas[-1], num=num)
 logess = np.linspace(logess[0], logess[-1], num=num)
-rhos = 1.0 - 1.0/pow(2, logess)
+rhos = 1.0 - 1.0/pow(2.0, logess)
 RR, AA = np.meshgrid(rhos, alphas)
 MRT0 = mymodule.b*mymodule.Rq
 Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
@@ -72,21 +72,15 @@ a2lows = [0.01*a2eq, 0.99*a2eq]
 a2highs = [0.99*a2social + 0.01*mymodule.a2max,
             0.01*a2social + 0.99*mymodule.a2max]
 
-traitvmaxs = [mymodule.a2max,
-                mymodule.a2max,
-                mymodule.a2max,
-                mymodule.fitness(np.array([mymodule.a2max]),
-                                    np.array([mymodule.a2max]),
-                                    np.array([0.0]),
-                                    np.array([0.9]),
-                                    np.array([5.0]))]
+xlabel = 'Substitutability of $\it{B}$'
+ylabel = 'Value of $\it{B}$'
+letter = ord('a')
+letterposition = num*1.035
+letterpositionr = nr*1.035
 xmin = logess[0]
 xmax = logess[-1]
-xlabel = 'Substitutability of $\it{B}$'
 ymin = alphas[-1]
 ymax = alphas[0]
-ylabel = 'Value of $\it{B}$'
-
 xticks = [0, num/2, num]
 yticks = [0, num/2, num]
 xticksr = [0, nc/2, nc]
@@ -99,8 +93,16 @@ yticklabels = [f'{ymin:3.1f}',
                 f'{ymax:3.1f}']
 extentnum = 0, num, 0, num
 extentr= 0, nc, 0, nr
-letterposition = num*1.035
-letterpositionr = nr*1.035
+cmap = plt.cm.viridis
+cmap.set_bad(color='white')
+traitvmaxs = [mymodule.a2max,
+                mymodule.a2max,
+                mymodule.a2max,
+                mymodule.fitness(np.array([mymodule.a2max]),
+                                    np.array([mymodule.a2max]),
+                                    np.array([0.0]),
+                                    np.array([0.9]),
+                                    np.array([5.0]))]
 
 fig, axs = plt.subplots(nrows=len(folders)+1,
                         ncols=len(traits),
@@ -114,7 +116,6 @@ fig.supylabel(ylabel,
                 y=0.493,
                 fontsize=fslarge*1.5)
 
-letter = ord('a')
 for axrow in axs:
     for ax in axrow:
         if letter <= ord('z'): 
@@ -131,7 +132,7 @@ for axrow in axs:
                     xticklabels=[],
                     yticklabels=[])
             ax.text(0,
-                    position,
+                    letterposition,
                     textl,
                     fontsize=fslarge,
                     weight='bold')
@@ -141,11 +142,10 @@ for axrow in axs:
                     xticklabels=[],
                     yticklabels=[])
             ax.text(0,
-                    positionr,
+                    letterpositionr,
                     textl,
                     fontsize=fslarge,
                     weight='bold')
-            
         if ax.get_subplotspec().is_first_col():
             ax.set_yticklabels(yticklabels, fontsize=fssmall) 
         if ax.get_subplotspec().is_last_row():
@@ -172,16 +172,12 @@ for i, (a2low, a2high) in enumerate(zip(a2lows, a2highs)):
         mask = mymodule.dilemma(T, R, P, S)
         Z[mask] = R[mask] - P[mask]
         Z = np.ma.masked_where(Z == 0.0, Z)
-        cmap = plt.cm.viridis
-        cmap.set_bad(color='white')
         axs[0, 2*i+1].imshow(Z, extent=extentnum, cmap=cmap)
     else:
         Z = np.zeros([num, num])
         mask = mymodule.dilemma(T, R, P, S)
         Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
         Z = np.ma.masked_where(Z == 0.0, Z)
-        cmap = plt.cm.viridis
-        cmap.set_bad(color='white')
         axs[0, 2*i+1].imshow(Z, extent=extentnum, cmap=cmap)
 
 for t in ts:
@@ -193,8 +189,7 @@ for t in ts:
                                 columns=['logES']).sort_index(axis=0,
                                                             ascending=False)
             ax.imshow(Z,
-                    extent=extent,
-                    cmap='viridis',
+                    extent=extentr,
                     vmin=0,
                     vmax=traitvmax)
     if movie:

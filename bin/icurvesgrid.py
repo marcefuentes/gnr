@@ -12,7 +12,6 @@ thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
 givens = [0.0, 0.5, 0.95]
-
 num = 3    # Number of subplot rows & columns
 numa2 = 128
 n_ic = 5    # Number of indifference curves
@@ -66,7 +65,6 @@ every = int(num/2)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 letter = ord('a')
-letterposition = num*1.035
 xlim=[0.0, mymodule.a1max*mymodule.R1]
 ylim=[0.0, mymodule.a2max*mymodule.R2]
 traitvmax = mymodule.fitness(np.array([mymodule.a2max]),
@@ -75,7 +73,7 @@ traitvmax = mymodule.fitness(np.array([mymodule.a2max]),
                                 np.array([0.9]),
                                 np.array([5.0]))
 
-fig = plt.figure(figsize=(len(givens)*6, 6))
+fig = plt.figure(figsize=(6*len(givens), 6))
 fig.supxlabel(xlabel,
                 x=0.525,
                 y=0.0,
@@ -114,7 +112,7 @@ for outer, given in zip(outergrid, givens):
                     xlim=xlim,
                     ylim=ylim)
     for ax, loges in zip(axs[-1, ::every], logess[::every]):
-        ax.set_xlabel(round(loges), fontsize=fssmall)
+        ax.set_xlabel(f'{loges:2.0f}', fontsize=fssmall)
     if given == 0.0:
         for ax, alpha in zip(axs[::every, 0], alphas[::every]):
             ax.set_ylabel(f'{alpha:1.1f}',
@@ -125,9 +123,9 @@ for outer, given in zip(outergrid, givens):
 
     MRT = MRT0*(1.0 - given)
     Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
-    a2ss = mymodule.a2max/(1.0 + Q*mymodule.b)
-    wss = mymodule.fitness(a2ss, a2ss, given, AA, RR)
-    q2ss = a2ss*mymodule.R2
+    a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
+    wss = mymodule.fitness(a2eq, a2eq, given, AA, RR)
+    q2ss = a2eq*mymodule.R2
 
     for row, alpha, q2s, ws, icss in zip(axs, alphas, q2ss, wss, icsss):
         budget0 = q2_budget*(1.0 - given)

@@ -124,6 +124,7 @@ for given in givens:
     a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
     w = mymodule.fitness(a2eq, a2eq, given, AA, RR)
     q2 = a2eq*mymodule.R2
+    q2b = q2_budget*(1.0 - given)
 
     for i in range(num):
         for j in range(num):
@@ -131,7 +132,7 @@ for given in givens:
                 line.remove()
             for n in range(n_ic): 
                 axs[i, j].plot(q1_ic, icsss[i][j][n], c='0.850')
-            budget = q2_budget*(1.0 - given) + q2[i, j]*given
+            budget = q2b + q2[i, j]*given
             axs[i, j].plot(q1_budget, budget, c='black', alpha=0.8)
             y = []
             for q1 in q1_ic:

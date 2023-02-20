@@ -23,20 +23,23 @@ plt.rcParams['ps.fonttype'] = 42
 
 def indifference(q, w, alpha, rho):
     if rho == 0.0:
-        q2 = np.piecewise(q,
-                        [q == 0.0,
-                            q > 0.0],
-                        [1000.0,
-                            lambda i: pow(w/pow(i, 1.0 - alpha), 1.0/alpha)])
+        if q == 0.0:
+            q2 = 1000.0
+        else:
+            q2 = pow(w/pow(q, 1.0 - alpha), 1.0/alpha)
     elif rho < 0.0:
-        q2 = np.piecewise(q,
-                        [q == 0.0,
-                            q > 0.0],
-                        [1000.0,
-                            lambda i: np.piecewise(i, [pow(w, rho) <= (1.0 - alpha)*pow(i, rho), pow(w, rho) > (1.0 - alpha)*pow(i, rho)], [1000.0, lambda j: pow((pow(w, rho) - (1.0 - alpha)*pow(j, rho))/alpha, 1.0/rho)])])
+        if q == 0.0:
+            q2 = 1000.0
+        else:
+            if pow(w, rho) <= (1.0 - alpha)*pow(q, rho):
+                q2 = 1000.0
+            else:
+                q2 = pow((pow(w, rho) - (1.0 - alpha)*pow(q, rho))/alpha, 1.0/rho)
     else:
-        q2 = np.piecewise(q,
-                        [pow(w, rho) <= (1.0 - alpha)*pow(q, rho), pow(w, rho) > (1.0 - alpha)*pow(q, rho)], [-0.1, lambda i: pow((pow(w, rho) - (1.0 - alpha)*pow(i, rho))/alpha, 1.0/rho)])
+        if pow(w, rho) <= (1.0 - alpha)*pow(q, rho):
+            q2 = -0.1
+        else:
+            q2 = pow((pow(w, rho) - (1.0 - alpha)*pow(q, rho))/alpha, 1.0/rho)
     return q2
 
 if givens[-1] > 0.9999999:
@@ -51,27 +54,30 @@ q1_ic = np.linspace(0.0, mymodule.a1max*mymodule.R1, num=numa2)
 RR, AA = np.meshgrid(rhos, alphas)
 MRT0 = mymodule.b*mymodule.Rq
 wis = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
+
+xlim=[0.0, mymodule.a1max*mymodule.R1]
+ylim=[0.0, mymodule.a2max*mymodule.R2]
+every = int(num/2)
+xlabel = 'Substitutability of $\it{B}$'
+ylabel = 'Value of $\it{B}$'
+letter = ord('a')
+traitvmax = mymodule.fitness(np.array([mymodule.a2max]),
+                                np.array([mymodule.a2max]),
+                                np.array([0.0]),
+                                np.array([0.9]),
+                                np.array([5.0]))
 icsss = []
 for alpha in alphas:
     icss = []
     for rho in rhos:
         ics = []
         for w in wis:
-            ics.append(indifference(q1_ic, w, alpha, rho))
+            ic = []
+            for q1 in q1_ic:
+                ic.append(indifference(q1, w, alpha, rho))
+            ics.append(ic)
         icss.append(ics)
     icsss.append(icss)
-
-every = int(num/2)
-xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Value of $\it{B}$'
-letter = ord('a')
-xlim=[0.0, mymodule.a1max*mymodule.R1]
-ylim=[0.0, mymodule.a2max*mymodule.R2]
-traitvmax = mymodule.fitness(np.array([mymodule.a2max]),
-                                np.array([mymodule.a2max]),
-                                np.array([0.0]),
-                                np.array([0.9]),
-                                np.array([5.0]))
 
 fig = plt.figure(figsize=(6*len(givens), 6))
 fig.supxlabel(xlabel,
@@ -124,23 +130,25 @@ for outer, given in zip(outergrid, givens):
     MRT = MRT0*(1.0 - given)
     Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
     a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
-    wss = mymodule.fitness(a2eq, a2eq, given, AA, RR)
-    q2ss = a2eq*mymodule.R2
+    w = mymodule.fitness(a2eq, a2eq, given, AA, RR)
+    q2 = a2eq*mymodule.R2
 
-    for row, alpha, q2s, ws, icss in zip(axs, alphas, q2ss, wss, icsss):
-        budget0 = q2_budget*(1.0 - given)
-        for ax, rho, ics, q2eq, weq in zip(row, rhos, icss, q2s, ws):
-            for line in ax.get_lines():
+    for i in range(num):
+        for j in range(num):
+            for line in axs[i, j].get_lines():
                 line.remove()
-            for ic in ics:
-                ax.plot(q1_ic, ic, c='0.850')
-            budget = budget0 + q2eq*given
-            ax.plot(q1_budget, budget, c='black', alpha=0.8)
-            ax.plot(q1_ic,
-                    indifference(q1_ic, weq, alpha, rho),
-                    linewidth=4,
-                    alpha= 0.8,
-                    c=cm.viridis(weq/traitvmax))
+            for n in range(n_ic): 
+                axs[i, j].plot(q1_ic, icsss[i][j][n], c='0.850')
+            budget = q2_budget*(1.0 - given) + q2[i, j]*given
+            axs[i, j].plot(q1_budget, budget, c='black', alpha=0.8)
+            y = []
+            for q1 in q1_ic:
+                y.append(indifference(q1, w[i, j], alphas[i], rhos[j]))
+            axs[i, j].plot(q1_ic,
+                            y,
+                            linewidth=4,
+                            alpha=0.8,
+                            c=cm.viridis(w[i, j]/traitvmax))
 
 plt.savefig(filename + '.png', transparent=False)
 

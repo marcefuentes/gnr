@@ -25,20 +25,23 @@ plt.rcParams['ps.fonttype'] = 42
 
 def indifference(q, w, alpha, rho):
     if rho == 0.0:
-        q2 = np.piecewise(q,
-                        [q == 0.0,
-                            q > 0.0],
-                        [1000.0,
-                            lambda i: pow(w/pow(i, 1.0 - alpha), 1.0/alpha)])
+        if q == 0.0:
+            q2 = 1000.0
+        else:
+            q2 = pow(w/pow(q, 1.0 - alpha), 1.0/alpha)
     elif rho < 0.0:
-        q2 = np.piecewise(q,
-                        [q == 0.0,
-                            q > 0.0],
-                        [1000.0,
-                            lambda i: np.piecewise(i, [pow(w, rho) <= (1.0 - alpha)*pow(i, rho), pow(w, rho) > (1.0 - alpha)*pow(i, rho)], [1000.0, lambda j: pow((pow(w, rho) - (1.0 - alpha)*pow(j, rho))/alpha, 1.0/rho)])])
+        if q == 0.0:
+            q2 = 1000.0
+        else:
+            if pow(w, rho) <= (1.0 - alpha)*pow(q, rho):
+                q2 = 1000.0
+            else:
+                q2 = pow((pow(w, rho) - (1.0 - alpha)*pow(q, rho))/alpha, 1.0/rho)
     else:
-        q2 = np.piecewise(q,
-                        [pow(w, rho) <= (1.0 - alpha)*pow(q, rho), pow(w, rho) > (1.0 - alpha)*pow(q, rho)], [-0.1, lambda i: pow((pow(w, rho) - (1.0 - alpha)*pow(i, rho))/alpha, 1.0/rho)])
+        if pow(w, rho) <= (1.0 - alpha)*pow(q, rho):
+            q2 = -0.1
+        else:
+            q2 = pow((pow(w, rho) - (1.0 - alpha)*pow(q, rho))/alpha, 1.0/rho)
     return q2
 
 if givens[-1] > 0.9999999:
@@ -71,7 +74,10 @@ for alpha in alphas:
     for rho in rhos:
         ics = []
         for w in wis:
-            ics.append(indifference(q1_ic, w, alpha, rho))
+            ic = []
+            for q1 in q1_ic:
+                ic.append(indifference(q1, w, alpha, rho))
+            ics.append(ic)
         icss.append(ics)
     icsss.append(icss)
 
@@ -115,25 +121,26 @@ for given in givens:
 
     MRT = MRT0*(1.0 - given)
     Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
-    a2ss = mymodule.a2max/(1.0 + Q*mymodule.b)
-    wss = mymodule.fitness(a2ss, a2ss, given, AA, RR)
-    q2ss = a2ss*mymodule.R2
+    a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
+    w = mymodule.fitness(a2eq, a2eq, given, AA, RR)
+    q2 = a2eq*mymodule.R2
 
-    for row, alpha, q2s, ws, icss in zip(axs, alphas, q2ss, wss, icsss):
-        budget0 = q2_budget*(1.0 - given)
-        for ax, rho, ics, q2eq, weq in zip(row, rhos, icss, q2s, ws):
-            for line in ax.get_lines():
+    for i in range(num):
+        for j in range(num):
+            for line in axs[i, j].get_lines():
                 line.remove()
-            for ic in ics:
-                ax.plot(q1_ic, ic, c='0.850')
-            budget = budget0 + q2eq*given
-            ax.plot(q1_budget, budget, c='black', alpha=0.8)
-            ax.plot(q1_ic,
-                    indifference(q1_ic, weq, alpha, rho),
-                    linewidth=4,
-                    alpha= 0.8,
-                    c=cm.viridis(weq/traitvmax))
-
+            for n in range(n_ic): 
+                axs[i, j].plot(q1_ic, icsss[i][j][n], c='0.850')
+            budget = q2_budget*(1.0 - given) + q2[i, j]*given
+            axs[i, j].plot(q1_budget, budget, c='black', alpha=0.8)
+            y = []
+            for q1 in q1_ic:
+                y.append(indifference(q1, w[i, j], alphas[i], rhos[j]))
+            axs[i, j].plot(q1_ic,
+                            y,
+                            linewidth=4,
+                            alpha=0.8,
+                            c=cm.viridis(w[i, j]/traitvmax))
     text = fig.text(0.90,
                     0.90,
                     'Given: ' + f'{given:4.2f}',

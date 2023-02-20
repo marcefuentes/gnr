@@ -35,8 +35,6 @@ ymax = mymodule.a2max
 
 X, Y = np.meshgrid(np.linspace(xmin, xmax, num=numa2),
                     np.linspace(ymax, ymin, num=numa2))
-RRR, AAA = np.meshgrid(np.repeat(rhos, numa2),
-                        np.repeat(alphas, numa2))
 
 every = int(num/2)
 xlabel = 'Substitutability of $\it{B}$'
@@ -96,10 +94,12 @@ for outer, given in zip(outergrid, givens):
 
     for i in range(num): 
         for j in range(num):
-            T = mymodule.fitness(Y, X, given, np.full([numa2, numa2], alphas[i]), np.full([numa2, numa2], rhos[j]))
-            R = mymodule.fitness(Y, Y, given, np.full([numa2, numa2], alphas[i]), np.full([numa2, numa2], rhos[j]))
-            P = mymodule.fitness(X, X, given, np.full([numa2, numa2], alphas[i]), np.full([numa2, numa2], rhos[j]))
-            S = mymodule.fitness(X, Y, given, np.full([numa2, numa2], alphas[i]), np.full([numa2, numa2], rhos[j]))
+            AAA = np.full([numa2, numa2], alphas[i])
+            RRR = np.full([numa2, numa2], rhos[j])
+            T = mymodule.fitness(Y, X, given, AAA, RRR)
+            R = mymodule.fitness(Y, Y, given, AAA, RRR)
+            P = mymodule.fitness(X, X, given, AAA, RRR)
+            S = mymodule.fitness(X, Y, given, AAA, RRR)
             Z = np.full([numa2, numa2, 4], mymodule.colormap['white'])
             mymodule.gamecolors(T, R, P, S, Z)
             mask = (X > Y)

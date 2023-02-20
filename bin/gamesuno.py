@@ -96,8 +96,18 @@ mymodule.gamecolors(T, R, P, S, Z)
 mask = (X > Y)
 Z[mask] = [0.7, 0.7, 0.7, 1.0]
 axs[0].imshow(Z, extent=extent2)
-axs[0].plot(0.01*a2eq*numa2, (0.99*a2social + 0.01*mymodule.a2max)*numa2, marker='o', color=[0.0, 0.0, 0.0, 0.5], markersize=10)
-axs[0].plot(0.99*a2eq*numa2, (0.01*a2social + 0.99*mymodule.a2max)*numa2, marker='o', color=[0.0, 0.0, 0.0, 0.5], markersize=10)
+axs[0].plot(0.01*a2eq*numa2,
+            (0.99*a2social + 0.01*mymodule.a2max)*numa2,
+            marker=4,
+            markeredgecolor='white',
+            markerfacecolor='black',
+            markersize=10)
+axs[0].plot(0.99*a2eq*numa2,
+            (0.01*a2social + 0.99*mymodule.a2max)*numa2,
+            marker=6,
+            markeredgecolor='white',
+            markerfacecolor='black',
+            markersize=10)
 
 Z = np.zeros([numa2, numa2])
 mask = mymodule.dilemma(T, R, P, S)

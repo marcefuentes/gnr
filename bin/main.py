@@ -24,8 +24,8 @@ plt.rcParams['ps.fonttype'] = 42
 
 height = 6.0*len(module.folders)
 width = 6.0*len(module.top_traits)
-fslabel = 26 # Label font size
-fstick = 18 # Tick font size
+fslarge = 26 # Label font size
+fssmall = 18 # Tick font size
 red = 0.97
 green = 0.97
 blue = 0.97
@@ -87,10 +87,10 @@ class Bubbles:
     def chart(self, dfts):
 
         fig, axs = plt.subplots(nrows=len(module.folders), ncols=len(module.top_traits), figsize=(width-1, height), sharex=True, sharey=True, constrained_layout=False, squeeze=False)
-        fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], y=0.02, x=0.513, fontsize=fslabel)
-        fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.06, fontsize=fslabel, ha='center')
+        fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], y=0.02, x=0.513, fontsize=fslarge)
+        fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.06, fontsize=fslarge, ha='center')
 
-        if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=fstick, color='grey', ha='right')
+        if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=fssmall, color='grey', ha='right')
 
         [dfts[folder].sort_values(by=[module.glos['x'], module.glos['y']], inplace=True) for folder in folderlist]
 
@@ -101,10 +101,10 @@ class Bubbles:
                 x = df[module.glos['x']]
                 if dfglos.loc[module.glos['x'], 'log']: x = x.apply(lambda i: log(i, 2))
                 y = df[module.glos['y']]
-                #if traits == module.top_traits: ax.set_title(dftraits.loc[trait, 'label'], pad=10.0, fontsize=fslabel)
-                ax.set_title(dftraits.loc[trait, 'label'], pad=10.0, fontsize=fslabel)
-                ax.tick_params(axis='x', labelsize=fstick)
-                ax.tick_params(axis='y', labelsize=fstick)
+                #if traits == module.top_traits: ax.set_title(dftraits.loc[trait, 'label'], pad=10.0, fontsize=fslarge)
+                ax.set_title(dftraits.loc[trait, 'label'], pad=10.0, fontsize=fslarge)
+                ax.tick_params(axis='x', labelsize=fssmall)
+                ax.tick_params(axis='y', labelsize=fssmall)
                 ax.set_xticks([-5, 0, 5])
                 ax.set_xticklabels([-5, 0, 5])
                 #if dfglos.loc[module.glos['x'], 'log']: ax.set_xscale('log', base=2)
@@ -120,7 +120,7 @@ class Bubbles:
                     ax.set_xlim(self.glosx_min, self.glosx_max)
                     ax.set_ylim(self.glosy_min, self.glosy_max)
                     ax.set_box_aspect(1)
-                ax.text(-6.6, 1.09, letter[count], fontsize=fslabel, weight='bold')
+                ax.text(-6.6, 1.09, letter[count], fontsize=fslarge, weight='bold')
                 count = count + 1
 
         plt.savefig(outfile, transparent=False)
@@ -158,10 +158,10 @@ class BarsAll:
     def chart(self, dfts):
  
         fig = plt.figure(figsize=(width + 3.9, height + 1.0))
-        fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], y=0.00, fontsize=fslabel)
-        fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.003*width, fontsize=fslabel, ha='center')
+        fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], y=0.00, fontsize=fslarge)
+        fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.003*width, fontsize=fslarge, ha='center')
 
-        if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=fstick, color='grey', ha='right')
+        if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=fssmall, color='grey', ha='right')
 
         outergrids = fig.add_gridspec(nrows=1, ncols=len(module.top_traits), wspace=0.1)
 
@@ -170,7 +170,7 @@ class BarsAll:
         for trait, outergrid in zip(self.traits, outergrids):
             innergrid = outergrid.subgridspec(nrows=len(self.innerrows), ncols=len(self.innercols), wspace=0.0, hspace=0.0)
             axs = innergrid.subplots()
-            axs[0, int(len(self.innercols)/2)].set_title(trait['title'], pad=1.0, fontsize=fslabel) # Prints the title of the middle column. Bad if there are even columns
+            axs[0, int(len(self.innercols)/2)].set_title(trait['title'], pad=1.0, fontsize=fslarge) # Prints the title of the middle column. Bad if there are even columns
             for row, (rowax, innerrow) in enumerate(zip(axs, self.innerrows)): 
                 for column, (ax, innercol) in enumerate(zip(rowax, self.innercols)):
                     medians = []
@@ -214,12 +214,12 @@ class BarsOne:
     def chart(self, dfts):
 
         fig, axs = plt.subplots(nrows=len(module.folders), ncols=len(module.top_traits), figsize=(width, height), sharey=True, constrained_layout=False, squeeze=False)
-        fig.supylabel('Frequency', fontsize=fslabel, ha='center')
-        if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=fstick, color='grey', ha='right')
+        fig.supylabel('Frequency', fontsize=fslarge, ha='center')
+        if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=fssmall, color='grey', ha='right')
 
         for rowax, folders in zip(axs, module.folders):
             for ax, trait, folder in zip(rowax, self.traits, folders):
-                if folders == module.bottom_folders: ax.set_xlabel(trait['label'], fontsize=fslabel)
+                if folders == module.bottom_folders: ax.set_xlabel(trait['label'], fontsize=fslarge)
                 dif = dfts[folder['control']][trait['name'] + 'median'].values[0]/dfts[folder['treatment']][trait['name'] + 'median'].values[0]
                 if 'Sensitivity' in trait['label']: dif = 1.0/dif
                 color = dif_color(dif)
@@ -230,8 +230,8 @@ class BarsOne:
                     ax.bar(x=b, height=barheightsd, align='edge', color=color, linewidth=0.0, width=trait['barwidth'], bottom=barheight, alpha=0.2)
                 ax.set(ylim=(0.0, module.ylim), yticks=(0.0, module.ylim), yticklabels=(0.0, module.ylim))
                 ax.set(xlim=(0.0, trait['max']), xticks=(0.0, trait['max']), xticklabels=(0.0, trait['max']))
-                ax.tick_params(axis='x', labelsize=fstick)
-                ax.tick_params(axis='y', labelsize=fstick)
+                ax.tick_params(axis='x', labelsize=fssmall)
+                ax.tick_params(axis='y', labelsize=fssmall)
                 if (len(module.folders) > 1) & (folders != module.bottom_folders): ax.set(xticks=[])
                 ax.set_box_aspect(1)
 
@@ -258,9 +258,9 @@ class ScatterAll:
     def chart(self, dfts):
  
         fig = plt.figure(figsize=(width + 0.0, height))
-        fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], y=0.00, fontsize=fslabel)
-        fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.003*width, fontsize=fslabel, ha='center')
-        if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=fstick, color='grey', ha='right')
+        fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], y=0.00, fontsize=fslarge)
+        fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.003*width, fontsize=fslarge, ha='center')
+        if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=fssmall, color='grey', ha='right')
         outer_grid = fig.add_gridspec(nrows=len(module.folders), ncols=len(module.top_traits), hspace=0.1, wspace=0.1)
 
         for nr, row in enumerate(module.folders):
@@ -268,7 +268,7 @@ class ScatterAll:
             for nc, trait in enumerate(self.traits):
                 innergrid = outer_grid[nr, nc].subgridspec(nrows=len(self.innerrows), ncols=len(self.innercols), wspace=0.0, hspace=0.0)
                 axs = innergrid.subplots()
-                if nr == 0: axs[0, int(len(self.innercols)/2)].set_title(trait['title'], fontsize=fslabel) # Prints the title of the middle column
+                if nr == 0: axs[0, int(len(self.innercols)/2)].set_title(trait['title'], fontsize=fslarge) # Prints the title of the middle column
                 for row, (rowax, innerrow) in enumerate(zip(axs, self.innerrows)): 
                     for column, (ax, innercol) in enumerate(zip(rowax, self.innercols)):
                         x = dft.loc[(dft[module.glos['x']] == innercol) & (dft[module.glos['y']] == innerrow), trait['x']]
@@ -278,8 +278,8 @@ class ScatterAll:
                         ax.scatter(x, y, c='k', alpha=alphas, s=0.00001)
                         ax.set_xlim(0.0, trait['xlimit'])
                         ax.set_ylim(0.0, trait['ylimit'])
-                        ax.tick_params(axis='x', labelsize=fstick)
-                        ax.tick_params(axis='y', labelsize=fstick)
+                        ax.tick_params(axis='x', labelsize=fssmall)
+                        ax.tick_params(axis='y', labelsize=fssmall)
                         ax.set(xticks=[], yticks=[])
                         if (nc == 0) & (column == 0):
                             y = '$2^{{{}}}$'.format(round(log(innerrow, 2))) if dfglos.loc[module.glos['y'], 'log'] else innerrow
@@ -306,7 +306,7 @@ class ScatterOne:
     def chart(self, dfts):
 
         fig, axs = plt.subplots(nrows=len(module.folders), ncols=len(module.top_traits), figsize=(width, height), constrained_layout=False, squeeze=False)
-        if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=fstick, color='grey', ha='right')
+        if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=fssmall, color='grey', ha='right')
 
         for rowax, row in zip(axs, module.folders):
             dft = dfts[row]
@@ -316,10 +316,10 @@ class ScatterOne:
                 ax.scatter(dft[trait['x']], dft[trait['y']], c='k', alpha=alphas, s=0.01)
                 ax.set(xlim=(0.0, trait['xlimit']), xticks=(0.0, trait['xlimit']), xticklabels=(0.0, trait['xlimit']))
                 ax.set(ylim=(0.0, trait['ylimit']), yticks=(0.0, trait['ylimit']), yticklabels=(0.0, trait['ylimit']))
-                ax.tick_params(axis='x', labelsize=fstick)
-                ax.tick_params(axis='y', labelsize=fstick)
+                ax.tick_params(axis='x', labelsize=fssmall)
+                ax.tick_params(axis='y', labelsize=fssmall)
                 if row == module.top_row:    
-                    ax.set_title(trait['title'], fontsize=fslabel)
+                    ax.set_title(trait['title'], fontsize=fslarge)
                     ax.set(xticks=[])
                 ax.set_box_aspect(1)
 

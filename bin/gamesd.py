@@ -11,7 +11,7 @@ start_time = time.perf_counter ()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
-traitlabels = ['Games',
+titles = ['Games',
                 '$\it{T}$ + $\it{S}$ - 2$\it{R}$',
                 'Effort to get $\it{B}$',
                 'Fitness']
@@ -21,8 +21,8 @@ title = 'a2: '
 
 num = 1001    # Number of subplot rows and columns
 
-fslabel = 32 # Label font size
-fstick = 18 # Tick font size
+fslarge = 32 # Label font size
+fssmall = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -53,17 +53,17 @@ yticklabels = [round(ymin, 1),
 extent2 = 0, num, 0, num
 
 fig, axs = plt.subplots(nrows=1,
-                        ncols=len(traitlabels),
-                        figsize=(6*len(traitlabels), 6))
-fig.supxlabel(xlabel, x=0.513, y=0.01, fontsize=fslabel*1.2)
-fig.supylabel(ylabel, x=0.03, y=0.493, fontsize=fslabel*1.2)
+                        ncols=len(titles),
+                        figsize=(6*len(titles), 6))
+fig.supxlabel(xlabel, x=0.513, y=0.01, fontsize=fslarge*1.2)
+fig.supylabel(ylabel, x=0.03, y=0.493, fontsize=fslarge*1.2)
 
 letter = ord('a')
-for ax, traitlabel in zip(axs, traitlabels):
+for ax, title in zip(axs, titles):
     ax.text(0, 
             num*1.035,
             chr(letter),
-            fontsize=fslabel*0.8,
+            fontsize=fslarge*0.8,
             weight='bold')
     letter += 1
     ax.set(xticks=[0, num/2, num],
@@ -71,9 +71,9 @@ for ax, traitlabel in zip(axs, traitlabels):
             xticklabels=[],
             yticklabels=[])
     if ax.get_subplotspec().is_first_col():
-        ax.set_yticklabels(yticklabels, fontsize=fstick) 
-    ax.set_title(traitlabel, pad=40.0, fontsize=fslabel*0.9)
-    ax.set_xticklabels(xticklabels, fontsize=fstick)
+        ax.set_yticklabels(yticklabels, fontsize=fssmall) 
+    ax.set_title(title, pad=40.0, fontsize=fslarge*0.9)
+    ax.set_xticklabels(xticklabels, fontsize=fssmall)
 
 frames = []
 for a2low in a2lows:
@@ -111,7 +111,7 @@ for a2low in a2lows:
     text = fig.text(0.90,
                     0.02,
                     title + f'{movieframe:4.2f}',
-                    fontsize=fslabel,
+                    fontsize=fslarge,
                     color='grey',
                     ha='right')
     plt.savefig('temp.png', transparent=False)

@@ -13,12 +13,12 @@ filename = thisscript.split('.')[0]
 
 #givens = [0.95]
 givens = np.linspace(0.0, 1.0, num=21)
-title = 'Given: '
+frametitle = 'Given: '
 
 num = 21    # Number of subplot rows and columns
 
-fslabel = 32 # Label font size
-fstick = 18 # Tick font size
+fslarge = 32 # Label font size
+fssmall = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -41,11 +41,11 @@ fig = plt.figure(figsize=(16, 8))
 fig.supxlabel(xlabel,
                 x=0.525,
                 y=0.03,
-                fontsize=fslabel)
+                fontsize=fslarge)
 fig.supylabel(ylabel,
                 x=0.05,
                 y=0.52,
-                fontsize=fslabel)
+                fontsize=fslarge)
 
 outergrid = fig.add_gridspec(nrows=1,
                                 ncols=2,
@@ -69,13 +69,13 @@ for axs in axss:
                     xlim=(0, 5),
                     ylim=(0.0, 2.0))
     for ax, loges in zip(axs[-1, ::every], logess[::every]):
-        ax.set_xlabel(round(loges), fontsize=fstick)
+        ax.set_xlabel(round(loges), fontsize=fssmall)
 for ax, alpha in zip(axss[0][::every, 0], alphas[::every]):
     ax.set_ylabel(f'{alpha:1.1f}',
                     rotation='horizontal',
                     horizontalalignment='right',
                     verticalalignment='center',
-                    fontsize=fstick)
+                    fontsize=fssmall)
 
 frames = []
 for given in givens:
@@ -107,8 +107,8 @@ for given in givens:
     movieframe = given
     text = fig.text(0.90,
                     0.043,
-                    title + f'{movieframe:4.2f}',
-                    fontsize=fslabel,
+                    frametitle + f'{movieframe:4.2f}',
+                    fontsize=fslarge,
                     color='grey',
                     ha='right')
     plt.savefig('temp.png', transparent=False)

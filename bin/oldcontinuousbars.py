@@ -12,7 +12,7 @@ import time
 start_time = time.perf_counter ()
 
 traitroots = ['a2Seen', 'w']
-traitlabels = ['Effort to get $\it{B}$', 'Fitness']
+titles = ['Effort to get $\it{B}$', 'Fitness']
 folders = ['none', 'r']
 
 movie = False
@@ -20,8 +20,8 @@ movie = False
 nbins = 64
 filename = 'output'
 
-fslabel = 32 # Label font size
-fstick = 24 # Tick font size
+fslarge = 32 # Label font size
+fssmall = 24 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -61,8 +61,8 @@ everyy = int(nr/2)
 extent = 0, nc, 0, nr
 
 fig = plt.figure(figsize=(len(traitroots)*6, len(folders)*6))
-fig.supxlabel(xlabel, x=0.513, y=0.06, fontsize=fslabel*1.50)
-fig.supylabel(ylabel, x=0.05, y=0.493, fontsize=fslabel*1.50, ha='center')
+fig.supxlabel(xlabel, x=0.513, y=0.06, fontsize=fslarge*1.50)
+fig.supylabel(ylabel, x=0.05, y=0.493, fontsize=fslarge*1.50, ha='center')
 
 bins = np.arange(start=0, stop=nbins, step=1)
 my_cmap = plt.get_cmap('viridis')
@@ -75,17 +75,17 @@ letter = ord('a')
 for axrow in axs:
     for ax in axrow:
         if letter <= ord('z'): 
-            ax.text(0, nr*1.035, chr(letter), fontsize=fslabel, weight='bold')
+            ax.text(0, nr*1.035, chr(letter), fontsize=fslarge, weight='bold')
         else:
-            ax.text(0, nr*1.035, 'a' + chr(letter - 26), fontsize=fslabel, weight='bold')
+            ax.text(0, nr*1.035, 'a' + chr(letter - 26), fontsize=fslarge, weight='bold')
         ax.set(xticks=[0, nc/2, nc], yticks=[0, nr/2, nr], xticklabels=[], yticklabels=[])
         if ax.get_subplotspec().is_first_col():
-            ax.set_yticklabels(yticklabels, fontsize=fstick) 
+            ax.set_yticklabels(yticklabels, fontsize=fssmall) 
         if ax.get_subplotspec().is_last_row():
-            ax.set_xticklabels(xticklabels, fontsize=fstick)
+            ax.set_xticklabels(xticklabels, fontsize=fssmall)
         letter += 1
-for ax, traitlabel in zip(axs[0], traitlabels):
-    ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
+for ax, title in zip(axs[0], titles):
+    ax.set_title(title, pad=50.0, fontsize=fslarge)
 
 for t in ts:
     for outerrow, df in enumerate(dfs):
@@ -104,7 +104,7 @@ for t in ts:
                         ax.bar(x=0.5, height=barheight, bottom=bottom, width=1.0, color=color)
                         bottom = bottom + barheight
     if movie:
-        text = fig.text(0.90, 0.90, f't\n{t}', fontsize=fstick+4, color='grey', ha='right')
+        text = fig.text(0.90, 0.90, f't\n{t}', fontsize=fssmall+4, color='grey', ha='right')
         plt.savefig('temp.png', transparent=False)
         text.remove()
         frames.append(iio.imread('temp.png'))

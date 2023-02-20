@@ -11,17 +11,17 @@ start_time = time.perf_counter ()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
-gameslabels = ['Games (lower)',
+titles = ['Games (lower)',
                 '$\it{R}$ - $\it{P}$',
                 'Games (upper)',
                 '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 givens = np.linspace(0.0, 1.0, num=21)
-title = 'Given: '
+frametitle = 'Given: '
 
-num = 1001    # Number of subplot rows and columns
+num = 1001
 
-fslabel = 32 # Label font size
-fstick = 18 # Tick font size
+fslarge = 32 # Label font size
+fssmall = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -42,42 +42,44 @@ ymin = alphas[-1]
 ymax = alphas[0]
 ylabel = 'Value of $\it{B}$'
 
-xticklabels = [round(xmin),
-                round((xmin + xmax)/2),
-                round(xmax)]
-yticklabels = [round(ymin, 1),
-                round((ymin + ymax)/2, 1),
-                round(ymax, 1)]
-extent2 = 0, num, 0, num
+xticks = [0, num/2, num]
+yticks = [0, num/2, num]
+xticklabels = [f'{xmin:2.0f}',
+                f'{(xmin + xmax)/2.0:2.0f}',
+                f'{xmax:2.0f}']
+yticklabels = [f'{ymin:3.1f}',
+                f'{(ymin + ymax)/2.0:3.1f}',
+                f'{ymax:3.1f}']
+extentnum = 0, num, 0, num
+letterposition = num*1.035
 
 fig, axs = plt.subplots(nrows=1,
-                        ncols=len(gameslabels),
-                        figsize=(6*len(gameslabels), 6))
+                        ncols=len(titles),
+                        figsize=(6*len(titles), 6))
 fig.supxlabel(xlabel,
                 x=0.513,
                 y=0.01,
-                fontsize=fslabel*1.2)
+                fontsize=fslarge*1.2)
 fig.supylabel(ylabel,
                 x=0.03,
                 y=0.493,
-                fontsize=fslabel*1.2)
+                fontsize=fslarge*1.2)
 
 letter = ord('a')
-for ax, gameslabel in zip(axs, gameslabels):
+for ax, title in zip(axs, titles):
     ax.text(0, 
-            num*1.035,
+            letterposition,
             chr(letter),
-            fontsize=fslabel*0.8,
+            fontsize=fslarge*0.8,
             weight='bold')
     letter += 1
-    ax.set(xticks=[0, num/2, num],
-            yticks=[0, num/2, num],
-            xticklabels=[],
-            yticklabels=[])
+    ax.set(xticks=xticks, yticks=yticks)
     if ax.get_subplotspec().is_first_col():
-        ax.set_yticklabels(yticklabels, fontsize=fstick) 
-    ax.set_title(gameslabel, pad=40.0, fontsize=fslabel*0.9)
-    ax.set_xticklabels(xticklabels, fontsize=fstick)
+        ax.set_yticklabels(yticklabels, fontsize=fssmall)
+    else:
+        ax.set_yticklabels([])
+    ax.set_title(title, pad=40.0, fontsize=fslarge*0.9)
+    ax.set_xticklabels(xticklabels, fontsize=fssmall)
 
 frames = []
 for given in givens:
@@ -99,7 +101,7 @@ for given in givens:
         S = mymodule.fitness(low, high, given, AA, RR)
         Z = np.full([num, num, 4], mymodule.colormap['red'])
         mymodule.gamecolors(T, R, P, S, Z)
-        axs[2*i].imshow(Z, extent=extent2)
+        axs[2*i].imshow(Z, extent=extentnum)
 
         if i == 0:
             Z = np.zeros([num, num])
@@ -108,7 +110,7 @@ for given in givens:
             Z = np.ma.masked_where(Z == 0.0, Z)
             cmap = plt.cm.viridis
             cmap.set_bad(color='white')
-            axs[2*i+1].imshow(Z, extent=extent2, cmap=cmap)
+            axs[2*i+1].imshow(Z, extent=extentnum, cmap=cmap)
         else:
             Z = np.zeros([num, num])
             mask = mymodule.dilemma(T, R, P, S)
@@ -116,13 +118,13 @@ for given in givens:
             Z = np.ma.masked_where(Z == 0.0, Z)
             cmap = plt.cm.viridis
             cmap.set_bad(color='white')
-            axs[2*i+1].imshow(Z, extent=extent2, cmap=cmap)
+            axs[2*i+1].imshow(Z, extent=extentnum, cmap=cmap)
 
     movieframe = given
     text = fig.text(0.90,
                     0.02,
-                    title + f'{movieframe:4.2f}',
-                    fontsize=fslabel,
+                    frametitle + f'{movieframe:4.2f}',
+                    fontsize=fslarge,
                     color='grey',
                     ha='right')
     plt.savefig('temp.png', transparent=False)

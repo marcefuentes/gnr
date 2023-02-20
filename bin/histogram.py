@@ -16,8 +16,8 @@ traits = ['a2Seen0', 'a2Seen31', 'a2Seen63']
 folders = ['none', 'r']
 movie = False
 
-fslabel = 32 # Label font size
-fstick = 18 # Tick font size
+fslarge = 32 # Label font size
+fssmall = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -57,11 +57,11 @@ fig = plt.figure(figsize=(16, 8))
 fig.supxlabel(xlabel,
                 x=0.525,
                 y=0.03,
-                fontsize=fslabel)
+                fontsize=fslarge)
 fig.supylabel(ylabel,
                 x=0.05,
                 y=0.52,
-                fontsize=fslabel)
+                fontsize=fslarge)
 
 bins = [0.0, 0.5, 1.0]
 my_cmap = plt.get_cmap('viridis')
@@ -77,13 +77,13 @@ for axs in axss:
         for ax in axrow:
             ax.set(xticks=[], yticks=[], xlim=(0.0, 1.0), ylim=(0.0, 1.0))
     for ax, loges in zip(axs[-1, ::everyx], logess[::everyx]):
-        ax.set_xlabel(round(loges), fontsize=fstick)
+        ax.set_xlabel(round(loges), fontsize=fssmall)
 for ax, alpha in zip(axss[0][::everyy, 0], alphas[::everyy]):
     ax.set_ylabel(f'{alpha:1.1f}',
                     rotation='horizontal',
                     horizontalalignment='right',
                     verticalalignment='center',
-                    fontsize=fstick)
+                    fontsize=fssmall)
 
 for t in ts:
     for df, axs in zip(dfs, axss):
@@ -98,7 +98,7 @@ for t in ts:
         text = fig.text(0.90,
                         0.90,
                         f't\n{t}',
-                        fontsize=fstick+4,
+                        fontsize=fssmall+4,
                         color='grey',
                         ha='right')
         plt.savefig('temp.png', transparent=False)

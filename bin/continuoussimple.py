@@ -15,7 +15,7 @@ filename = thisscript.split('.')[0]
 
 traits = ['ChooseGrainmean',
             'MimicGrainmean']
-traitlabels = ['Games',
+titles = ['Games',
                 'Sensitivity for\nchoosing partner',
                 'Sensitivity for\nmimicking partner']
 folders = ['given95', 'given50']
@@ -26,8 +26,8 @@ numa2 = 64
 
 movie = False
 
-fslabel = 32 # Label font size
-fstick = 24 # Tick font size
+fslarge = 32 # Label font size
+fssmall = 24 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -83,41 +83,41 @@ extent = 0, nc, 0, nr
 extenta2 = 0, nc*numa2, 0, nr*numa2
 
 fig, axs = plt.subplots(nrows=len(givens),
-                        ncols=len(traitlabels),
-                        figsize=(6*len(traitlabels), 6*(len(givens))))
-fig.supxlabel(xlabel, x=0.513, y=0.01, fontsize=fslabel*1.2)
-fig.supylabel(ylabel, x=0.03, y=0.493, fontsize=fslabel*1.2)
+                        ncols=len(titles),
+                        figsize=(6*len(titles), 6*(len(givens))))
+fig.supxlabel(xlabel, x=0.513, y=0.01, fontsize=fslarge*1.2)
+fig.supylabel(ylabel, x=0.03, y=0.493, fontsize=fslarge*1.2)
 
 letter = ord('a')
 for axrow in axs:
-    for ax, traitlabel in zip(axrow, traitlabels):
-        if traitlabel == 'Games':
+    for ax, title in zip(axrow, titles):
+        if title == 'Games':
             ax.text(0, 
                     nr*numa2*1.035,
                     chr(letter),
-                    fontsize=fslabel*0.8,
+                    fontsize=fslarge*0.8,
                     weight='bold')
         else:
             ax.text(0, 
                     nr*1.035,
                     chr(letter),
-                    fontsize=fslabel*0.8,
+                    fontsize=fslarge*0.8,
                     weight='bold')
         letter += 1
         if ax.get_subplotspec().is_first_col():
             ax.set(xticks=[0, nc*numa2/2, nc*numa2],
                     yticks=[0, nr*numa2/2, nr*numa2],
                     xticklabels=[])
-            ax.set_yticklabels(yticklabels, fontsize=fstick) 
+            ax.set_yticklabels(yticklabels, fontsize=fssmall) 
         else:
             ax.set(xticks=[0, nc/2, nc],
                             yticks=[0, nr/2, nr],
                             xticklabels=[],
                             yticklabels=[])
         if ax.get_subplotspec().is_first_row():
-            ax.set_title(traitlabel, pad=40.0, fontsize=fslabel*0.9)
+            ax.set_title(title, pad=40.0, fontsize=fslarge*0.9)
         if ax.get_subplotspec().is_last_row():
-            ax.set_xticklabels(xticklabels, fontsize=fstick)
+            ax.set_xticklabels(xticklabels, fontsize=fssmall)
 
 if givens[0] > 0.9999999:
     given = 0.9999999
@@ -146,7 +146,7 @@ for t in ts:
         text = fig.text(0.90,
                         0.93,
                         f't\n{t}',
-                        fontsize=fstick+4,
+                        fontsize=fssmall+4,
                         color='grey',
                         ha='right')
         plt.savefig('temp.png', transparent=False)

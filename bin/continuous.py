@@ -13,7 +13,7 @@ start_time = time.perf_counter ()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
-gameslabels = ['Games (lower)',
+titles = ['Games (lower)',
                 '$\it{R}$ - $\it{P}$',
                 'Games (upper)',
                 '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
@@ -21,7 +21,7 @@ traits = ['a2Seenmean',
             'ChooseGrainmean',
             'MimicGrainmean',
             'wmean']
-traitlabels = ['Effort to get $\it{B}$',
+titletraits = ['Effort to get $\it{B}$',
                 'Sensitivity for\nchoosing partner',
                 'Sensitivity for\nmimicking partner',
                 'Fitness']
@@ -29,10 +29,10 @@ folders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
 
 movie = False
 
-num = 512
+num = 1001
 
-fslabel = 32 # Label font size
-fstick = 24 # Tick font size
+fslarge = 32 # Label font size
+fssmall = 24 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -72,13 +72,6 @@ a2lows = [0.01*a2eq, 0.99*a2eq]
 a2highs = [0.99*a2social + 0.01*mymodule.a2max,
             0.01*a2social + 0.99*mymodule.a2max]
 
-xmin = logess[0]
-xmax = logess[-1]
-xlabel = 'Substitutability of $\it{B}$'
-ymin = alphas[-1]
-ymax = alphas[0]
-ylabel = 'Value of $\it{B}$'
-
 traitvmaxs = [mymodule.a2max,
                 mymodule.a2max,
                 mymodule.a2max,
@@ -87,14 +80,27 @@ traitvmaxs = [mymodule.a2max,
                                     np.array([0.0]),
                                     np.array([0.9]),
                                     np.array([5.0]))]
-xticklabels = [round(xmin),
-                round((xmin + xmax)/2),
-                round(xmax)]
-yticklabels = [round(ymin, 1),
-                round((ymin + ymax)/2, 1),
-                round(ymax, 1)]
-extent = 0, nc, 0, nr
-extent2 = 0, num, 0, num
+xmin = logess[0]
+xmax = logess[-1]
+xlabel = 'Substitutability of $\it{B}$'
+ymin = alphas[-1]
+ymax = alphas[0]
+ylabel = 'Value of $\it{B}$'
+
+xticks = [0, num/2, num]
+yticks = [0, num/2, num]
+xticksr = [0, nc/2, nc]
+yticksr = [0, nr/2, nr]
+xticklabels = [f'{xmin:2.0f}',
+                f'{(xmin + xmax)/2.0:2.0f}',
+                f'{xmax:2.0f}']
+yticklabels = [f'{ymin:3.1f}',
+                f'{(ymin + ymax)/2.0:3.1f}',
+                f'{ymax:3.1f}']
+extentnum = 0, num, 0, num
+extentr= 0, nc, 0, nr
+letterposition = num*1.035
+letterpositionr = nr*1.035
 
 fig, axs = plt.subplots(nrows=len(folders)+1,
                         ncols=len(traits),
@@ -102,11 +108,11 @@ fig, axs = plt.subplots(nrows=len(folders)+1,
 fig.supxlabel(xlabel,
                 x=0.513,
                 y=0.06,
-                fontsize=fslabel*1.5)
+                fontsize=fslarge*1.5)
 fig.supylabel(ylabel,
                 x=0.05,
                 y=0.493,
-                fontsize=fslabel*1.5)
+                fontsize=fslarge*1.5)
 
 letter = ord('a')
 for axrow in axs:
@@ -117,25 +123,37 @@ for axrow in axs:
             textl = 'a' + chr(letter - 26)
         letter += 1
         if ax.get_subplotspec().is_first_row():
-            pixels = num
             pos = ax.get_position()
             newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
             ax.set_position(newpos)
+            ax.set(xticks=xticks,
+                    yticks=yticks,
+                    xticklabels=[],
+                    yticklabels=[])
+            ax.text(0,
+                    position,
+                    textl,
+                    fontsize=fslarge,
+                    weight='bold')
         else:
-            pixels = nc
-        ax.set(xticks=[0, pixels/2, pixels],
-                yticks=[0, pixels/2, pixels],
-                xticklabels=[],
-                yticklabels=[])
-        ax.text(0, pixels*1.035, textl, fontsize=fslabel, weight='bold')
+            ax.set(xticks=xticksr,
+                    yticks=yticksr,
+                    xticklabels=[],
+                    yticklabels=[])
+            ax.text(0,
+                    positionr,
+                    textl,
+                    fontsize=fslarge,
+                    weight='bold')
+            
         if ax.get_subplotspec().is_first_col():
-            ax.set_yticklabels(yticklabels, fontsize=fstick) 
+            ax.set_yticklabels(yticklabels, fontsize=fssmall) 
         if ax.get_subplotspec().is_last_row():
-            ax.set_xticklabels(xticklabels, fontsize=fstick)
-for ax, gameslabel in zip(axs[0], gameslabels):
-    ax.set_title(gameslabel, pad=50.0, fontsize=fslabel)
-for ax, traitlabel in zip(axs[1], traitlabels):
-    ax.set_title(traitlabel, pad=50.0, fontsize=fslabel)
+            ax.set_xticklabels(xticklabels, fontsize=fssmall)
+for ax, title in zip(axs[0], titles):
+    ax.set_title(title, pad=50.0, fontsize=fslarge)
+for ax, title in zip(axs[1], titletraits):
+    ax.set_title(title, pad=50.0, fontsize=fslarge)
 
 for i, (a2low, a2high) in enumerate(zip(a2lows, a2highs)):
 
@@ -147,7 +165,7 @@ for i, (a2low, a2high) in enumerate(zip(a2lows, a2highs)):
     S = mymodule.fitness(low, high, given, AA, RR)
     Z = np.full([num, num, 4], mymodule.colormap['red'])
     mymodule.gamecolors(T, R, P, S, Z)
-    axs[0, 2*i].imshow(Z, extent=extent2)
+    axs[0, 2*i].imshow(Z, extent=extentnum)
 
     if i == 0:
         Z = np.zeros([num, num])
@@ -156,7 +174,7 @@ for i, (a2low, a2high) in enumerate(zip(a2lows, a2highs)):
         Z = np.ma.masked_where(Z == 0.0, Z)
         cmap = plt.cm.viridis
         cmap.set_bad(color='white')
-        axs[0, 2*i+1].imshow(Z, extent=extent2, cmap=cmap)
+        axs[0, 2*i+1].imshow(Z, extent=extentnum, cmap=cmap)
     else:
         Z = np.zeros([num, num])
         mask = mymodule.dilemma(T, R, P, S)
@@ -164,7 +182,7 @@ for i, (a2low, a2high) in enumerate(zip(a2lows, a2highs)):
         Z = np.ma.masked_where(Z == 0.0, Z)
         cmap = plt.cm.viridis
         cmap.set_bad(color='white')
-        axs[0, 2*i+1].imshow(Z, extent=extent2, cmap=cmap)
+        axs[0, 2*i+1].imshow(Z, extent=extentnum, cmap=cmap)
 
 for t in ts:
     for axrow, df in zip(axs[1:], dfs):
@@ -183,7 +201,7 @@ for t in ts:
         text = fig.text(0.90,
                         0.90,
                         f't\n{t}',
-                        fontsize=fstick+4,
+                        fontsize=fssmall+4,
                         color='grey',
                         ha='right')
         plt.savefig('temp.png', transparent=False)

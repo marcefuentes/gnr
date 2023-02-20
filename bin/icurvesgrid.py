@@ -17,8 +17,8 @@ num = 3    # Number of subplot rows & columns
 numa2 = 128
 n_ic = 5    # Number of indifference curves
 
-fslabel = 32 # Label font size
-fstick = 18 # Tick font size
+fslarge = 32 # Label font size
+fssmall = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -76,11 +76,11 @@ fig = plt.figure(figsize=(len(givens)*6, 6))
 fig.supxlabel(xlabel,
                 x=0.525,
                 y=0.0,
-                fontsize=fslabel)
+                fontsize=fslarge)
 fig.supylabel(ylabel,
                 x=0.08,
                 y=0.52,
-                fontsize=fslabel)
+                fontsize=fslarge)
 
 outergrid = fig.add_gridspec(nrows=1,
                                 ncols=len(givens),
@@ -98,9 +98,9 @@ for outer, given in zip(outergrid, givens):
     axs = grid.subplots()
     axs[0, int(num/2)].set_title(f'{given*100:2.0f}%',
                                     pad=30.0,
-                                    fontsize=fslabel*0.8)
+                                    fontsize=fslarge*0.8)
     axs[0, 0].set_title(chr(letter),
-                        fontsize=fslabel*0.8,
+                        fontsize=fslarge*0.8,
                         weight='bold',
                         loc='left')
     letter += 1
@@ -112,14 +112,14 @@ for outer, given in zip(outergrid, givens):
                     xlim=(0.0, mymodule.a1max*mymodule.R1),
                     ylim=(0.0, mymodule.a2max*mymodule.R2))
     for ax, loges in zip(axs[-1, ::every], logess[::every]):
-        ax.set_xlabel(round(loges), fontsize=fstick)
+        ax.set_xlabel(round(loges), fontsize=fssmall)
     if outer == 0:
         for ax, alpha in zip(axs[::every, 0], alphas[::every]):
             ax.set_ylabel(f'{alpha:1.1f}',
                             rotation='horizontal',
                             horizontalalignment='right',
                             verticalalignment='center',
-                            fontsize=fstick)
+                            fontsize=fssmall)
 
     MRT = MRT0*(1.0 - given)
     Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))

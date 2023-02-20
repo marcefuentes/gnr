@@ -24,8 +24,8 @@ plt.rcParams['ps.fonttype'] = 42
 
 height = 6.0*len(module.folders)
 width = 6.0*len(module.top_traits)
-fslabel = 26 # Label font size
-fstick = 18 # Tick font size
+fslarge = 26 # Label font size
+fssmall = 18 # Tick font size
 red = 0.97
 green = 0.97
 blue = 0.97
@@ -107,8 +107,8 @@ class Bubbles:
     def chart(self, dfts):
 
         fig, axs = plt.subplots(nrows=1, ncols=1, figsize=(width-1, height), sharex=True, sharey=True, constrained_layout=False, squeeze=False)
-        fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], y=0.02, x=0.513, fontsize=fslabel)
-        fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.06, fontsize=fslabel, ha='center')
+        fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], y=0.02, x=0.513, fontsize=fslarge)
+        fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.06, fontsize=fslarge, ha='center')
 
         axs = axs.flatten()
         #rho = 1.0 - 1.0/es if module.ic == 'ces' else es
@@ -123,16 +123,16 @@ class Bubbles:
         #Z2 = fitness(X, Y, given, rho)
         
         for ax, letter, trait in zip(axs, letters, module.traits):
-            fig.text(0.125, 0.86, letter, fontsize=fslabel, weight='bold')
-            #ax.set_title(dftraits.loc[trait, 'label'], pad=10.0, fontsize=fslabel)
-            ax.tick_params(axis='x', labelsize=fstick)
-            ax.tick_params(axis='y', labelsize=fstick)
+            fig.text(0.125, 0.86, letter, fontsize=fslarge, weight='bold')
+            #ax.set_title(dftraits.loc[trait, 'label'], pad=10.0, fontsize=fslarge)
+            ax.tick_params(axis='x', labelsize=fssmall)
+            ax.tick_params(axis='y', labelsize=fssmall)
             ax.set_xticks([-5, 0, 5])
             ax.set_xticklabels([-5, 0, 5])
             ax.set_xlim(self.glosx_min, self.glosx_max)
             ax.set_ylim(self.glosy_min, self.glosy_max)
             ax.set_box_aspect(1)
-            ax.text(-6.6, 1.09, letter, fontsize=fslabel, weight='bold')
+            ax.text(-6.6, 1.09, letter, fontsize=fslarge, weight='bold')
 
         plt.savefig(outfile, transparent=False)
         plt.close()
@@ -174,17 +174,17 @@ class BarsAll:
         bo=0.16
 
         fig = plt.figure(figsize=(width*2.0-0.8, height))
-        fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.04, fontsize=fslabel, ha='center')
-        fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], x=0.51, y=0.00, fontsize=fslabel)
+        fig.supylabel(t=dfglos.loc[module.glos['y'], 'label'], x=0.04, fontsize=fslarge, ha='center')
+        fig.supxlabel(t=dfglos.loc[module.glos['x'], 'label'], x=0.51, y=0.00, fontsize=fslarge)
 
-        if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=fstick, color='grey', ha='right')
+        if module.movie: fig.text(0.93, 0.02, f'Time = {t}', fontsize=fssmall, color='grey', ha='right')
 
         outergrids = fig.add_gridspec(nrows=1, ncols=2, wspace=0.1)
 
         innergrid = outergrids[0].subgridspec(nrows=len(self.innerrows), ncols=len(self.innercols))
         plt.subplots_adjust(hspace=hs, wspace=ws, top=to, bottom=bo)
         axs = innergrid.subplots()
-        axs[0, int(len(self.innercols)/2)].set_title('Fitness', pad=1.0, fontsize=fslabel) # Prints the title of the middle column. Bad if there are even columns
+        axs[0, int(len(self.innercols)/2)].set_title('Fitness', pad=1.0, fontsize=fslarge) # Prints the title of the middle column. Bad if there are even columns
         
         for row, given in zip(axs, givens):
             for ax, rho, log_es in zip(row, rhos, log_ess):
@@ -197,16 +197,16 @@ class BarsAll:
                 ax.set(xticks=[], yticks=[], xlim=(0, npoints-1), ylim=(npoints-1, 0))
                 ax.set_box_aspect(1)
                 if given == 0.0:
-                    ax.set_xlabel(round(log_es), fontsize=fstick)
+                    ax.set_xlabel(round(log_es), fontsize=fssmall)
                 if log_es == -5:
-                    ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fstick)
-        fig.text(0.125, 0.86, 'a', fontsize=fslabel, weight='bold')
+                    ax.set_ylabel(round(given, 1), rotation='horizontal', horizontalalignment='right', verticalalignment='center', fontsize=fssmall)
+        fig.text(0.125, 0.86, 'a', fontsize=fslarge, weight='bold')
 
         innergrid = outergrids[1].subgridspec(nrows=len(self.innerrows), ncols=len(self.innercols))
         plt.subplots_adjust(hspace=hs, wspace=ws, top=to, bottom=bo)
         axs = innergrid.subplots()
         trait = self.traits[0]
-        axs[0, int(len(self.innercols)/2)].set_title(trait['title'], pad=1.0, fontsize=fslabel) # Prints the title of the middle column. Bad if there are even columns
+        axs[0, int(len(self.innercols)/2)].set_title(trait['title'], pad=1.0, fontsize=fslarge) # Prints the title of the middle column. Bad if there are even columns
         ds = [dfts[module.folders[0][0]['control']], dfts[module.folders[0][0]['treatment']]]
 
         for row, (rowax, innerrow) in enumerate(zip(axs, self.innerrows)): 
@@ -224,8 +224,8 @@ class BarsAll:
                     ax.set_box_aspect(1)
                 if row == len(self.innerrows) - 1:
                     xlabel = round(log(innercol, 2)) if dfglos.loc[module.glos['x'], 'log'] else innercol
-                    ax.set_xlabel(xlabel, fontsize=fstick)
-        fig.text(0.53, 0.86, 'b', fontsize=fslabel, weight='bold')
+                    ax.set_xlabel(xlabel, fontsize=fssmall)
+        fig.text(0.53, 0.86, 'b', fontsize=fslarge, weight='bold')
 
         plt.savefig(outfile, dpi=100)
         plt.close()

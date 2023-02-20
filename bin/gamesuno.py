@@ -12,14 +12,12 @@ filename = thisscript.split('.')[0]
 
 titles = ['Games (lower)',
                 '$\it{R}$ - $\it{P}$',
-                'Games (upper)',
                 '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 givens = np.linspace(0.0, 1.0, num=21)
-title = 'Given: '
 
 given = 0.95
-alpha = 0.9
-loges = -5.0
+alpha = 0.5
+loges = -1.0
 numa2 = 1025
 
 fslarge = 32 # Label font size
@@ -36,17 +34,13 @@ a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
 MRT = MRT0*(1.0 - given)
 Q = mymodule.Rq*pow(MRT*alpha/(1.0 - alpha), 1.0/(rho - 1.0))
 a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
-xmin = 0.01*a2eq
-xmax = 0.99*a2social + 0.01*mymodule.a2max
-ymin = 0.01*a2eq
-#ymax = mymodule.a2max
-ymax = 0.99*a2social + 0.01*mymodule.a2max
+xmin = 0.0
+xmax = mymodule.a2max
+ymin = 0.0
+ymax = mymodule.a2max
 
 X, Y = np.meshgrid(np.linspace(xmin, xmax, num=numa2),
                     np.linspace(ymax, ymin, num=numa2))
-H = np.copy(Y)
-Y[(X > Y)] = X[(X > Y)] 
-X[(X > H)] = H[(X > H)] 
 RRR, AAA = np.meshgrid(np.repeat(rho, numa2),
                         np.repeat(alpha, numa2))
 T = mymodule.fitness(Y, X, given, AAA, RRR)
@@ -56,7 +50,6 @@ S = mymodule.fitness(X, Y, given, AAA, RRR)
 
 cmap = plt.cm.viridis
 cmap.set_bad(color='white')
-
 xlabel = 'Effort to get $\it{B}$'
 ylabel = 'Effort to get $\it{B}$'
 xticks = [0, numa2/2, numa2]
@@ -100,7 +93,11 @@ for ax, title in zip(axs, titles):
 
 Z = np.full([numa2, numa2, 4], mymodule.colormap['white'])
 mymodule.gamecolors(T, R, P, S, Z)
+mask = (X > Y)
+Z[mask] = [0.7, 0.7, 0.7, 1.0]
 axs[0].imshow(Z, extent=extent2)
+axs[0].plot(a2eq*numa2, a2social*numa2, marker='o', color='white')
+axs[0].plot(a2eq*numa2, a2social*numa2, marker='+', color='black')
 
 Z = np.zeros([numa2, numa2])
 mask = mymodule.dilemma(T, R, P, S)

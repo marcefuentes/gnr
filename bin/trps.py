@@ -13,7 +13,6 @@ filename = thisscript.split('.')[0]
 
 #givens = [0.95]
 givens = np.linspace(0.0, 1.0, num=21)
-frametitle = 'Given: '
 
 num = 21    # Number of subplot rows and columns
 
@@ -32,6 +31,8 @@ MRT0 = mymodule.b*mymodule.Rq
 Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
 a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
 
+xlim=[0, 5]
+ylim=[0.0, 2.0]
 every = int(num/2)
 xaxis = [1, 2, 3, 4]
 xlabel = 'Substitutability of $\it{B}$'
@@ -66,8 +67,8 @@ for axs in axss:
         for ax in axrow:
             ax.set(xticks=[],
                     yticks=[],
-                    xlim=(0, 5),
-                    ylim=(0.0, 2.0))
+                    xlim=xlim,
+                    ylim=ylim)
     for ax, loges in zip(axs[-1, ::every], logess[::every]):
         ax.set_xlabel(round(loges), fontsize=fssmall)
 for ax, alpha in zip(axss[0][::every, 0], alphas[::every]):
@@ -104,10 +105,9 @@ for given in givens:
                     line.remove()
                 ax.plot(xaxis, y, c=zz, linewidth=3, marker='o', markerfacecolor='white', markersize=3)
 
-    movieframe = given
     text = fig.text(0.90,
                     0.043,
-                    frametitle + f'{movieframe:4.2f}',
+                    'Given: ' + f'{given:4.2f}',
                     fontsize=fslarge,
                     color='grey',
                     ha='right')

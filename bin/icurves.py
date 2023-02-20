@@ -13,7 +13,6 @@ thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
 givens = np.linspace(0.0, 1.0, num=21)
-frametitle = 'Given: '
 
 num = 3    # Number of subplot rows & columns
 numa2 = 128
@@ -55,6 +54,8 @@ RR, AA = np.meshgrid(rhos, alphas)
 MRT0 = mymodule.b*mymodule.Rq
 wis = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
 
+xlim=[0.0, mymodule.a1max*mymodule.R1]
+ylim=[0.0, mymodule.a2max*mymodule.R2]
 every = int(num/2)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
@@ -98,8 +99,8 @@ for row in axs:
     for ax in row:
         ax.set(xticks=[],
                 yticks=[],
-                xlim=(0.0, mymodule.a1max*mymodule.R1),
-                ylim=(0.0, mymodule.a2max*mymodule.R2))
+                xlim=xlim,
+                ylim=ylim)
 for ax, loges in zip(axs[-1, ::every], logess[::every]):
     ax.set_xlabel(round(loges), fontsize=fssmall)
 for ax, alpha in zip(axs[::every, 0], alphas[::every]):
@@ -133,10 +134,9 @@ for given in givens:
                     alpha= 0.8,
                     c=cm.viridis(weq/traitvmax))
 
-    movieframe = given
     text = fig.text(0.90,
                     0.02,
-                    frametitle + f'{movieframe:4.2f}',
+                    'Given: ' + f'{given:4.2f}',
                     fontsize=fslarge,
                     color='grey',
                     ha='right')

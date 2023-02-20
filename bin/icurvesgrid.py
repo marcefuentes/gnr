@@ -52,16 +52,6 @@ q1_ic = np.linspace(0.0, mymodule.a1max*mymodule.R1, num=numa2)
 RR, AA = np.meshgrid(rhos, alphas)
 MRT0 = mymodule.b*mymodule.Rq
 wis = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
-
-every = int(num/2)
-xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Value of $\it{B}$'
-
-traitvmax = mymodule.fitness(np.array([mymodule.a2max]),
-                                np.array([mymodule.a2max]),
-                                np.array([0.0]),
-                                np.array([0.9]),
-                                np.array([5.0]))
 icsss = []
 for alpha in alphas:
     icss = []
@@ -71,6 +61,19 @@ for alpha in alphas:
             ics.append(indifference(q1_ic, w, alpha, rho))
         icss.append(ics)
     icsss.append(icss)
+
+every = int(num/2)
+xlabel = 'Substitutability of $\it{B}$'
+ylabel = 'Value of $\it{B}$'
+letter = ord('a')
+letterposition = num*1.035
+xlim=[0.0, mymodule.a1max*mymodule.R1]
+ylim=[0.0, mymodule.a2max*mymodule.R2]
+traitvmax = mymodule.fitness(np.array([mymodule.a2max]),
+                                np.array([mymodule.a2max]),
+                                np.array([0.0]),
+                                np.array([0.9]),
+                                np.array([5.0]))
 
 fig = plt.figure(figsize=(len(givens)*6, 6))
 fig.supxlabel(xlabel,
@@ -89,7 +92,6 @@ outergrid = fig.add_gridspec(nrows=1,
                                 top=0.86,
                                 bottom=0.176)
 
-letter = ord('a')
 for outer, given in zip(outergrid, givens):
     grid = outer.subgridspec(nrows=num,
                                 ncols=num,
@@ -109,8 +111,8 @@ for outer, given in zip(outergrid, givens):
         for ax in row:
             ax.set(xticks=[],
                     yticks=[],
-                    xlim=(0.0, mymodule.a1max*mymodule.R1),
-                    ylim=(0.0, mymodule.a2max*mymodule.R2))
+                    xlim=xlim,
+                    ylim=ylim)
     for ax, loges in zip(axs[-1, ::every], logess[::every]):
         ax.set_xlabel(round(loges), fontsize=fssmall)
     if outer == 0:

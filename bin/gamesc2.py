@@ -74,15 +74,15 @@ for outer, given in zip(outergrid, givens):
                         loc='left')
     letter += 1
 
-    for row in axs:
-        for ax in row:
-            ax.set(xticks=[],
+    for i in range(num):
+        for j in range(num):
+            axs[i, j].set(xticks=[],
                     yticks=[])
     for ax, loges in zip(axs[-1, ::every], logess[::every]):
         ax.set_xlabel(f'{loges:2.0f}', fontsize=fssmall)
-    if given == 0.0:
+    if given == 0.5:
         for ax, alpha in zip(axs[::every, 0], alphas[::every]):
-            ax.set_ylabel(f'{alpha:1.1f}',
+            ax.set_ylabel(f'{alpha:3.1f}',
                             rotation='horizontal',
                             horizontalalignment='right',
                             verticalalignment='center',

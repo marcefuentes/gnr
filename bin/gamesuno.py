@@ -54,12 +54,12 @@ xlabel = 'Effort to get $\it{B}$'
 ylabel = 'Effort to get $\it{B}$'
 xticks = [0, numa2/2, numa2]
 yticks = [0, numa2/2, numa2]
-xticklabels = [f'{xmin:4.2f}',
-                f'{(xmin + xmax)/2.0:4.2f}',
-                f'{xmax:4.2f}']
-yticklabels = [f'{ymin:4.2f}',
-                f'{(ymin + ymax)/2.0:4.2f}',
-                f'{ymax:4.2f}']
+xticklabels = [f'{xmin:3.1f}',
+                f'{(xmin + xmax)/2.0:3.1f}',
+                f'{xmax:3.1f}']
+yticklabels = [f'{ymin:3.1f}',
+                f'{(ymin + ymax)/2.0:3.1f}',
+                f'{ymax:3.1f}']
 extent2 = 0, numa2, 0, numa2
 letterposition = numa2*1.035
 

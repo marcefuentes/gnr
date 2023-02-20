@@ -262,7 +262,7 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 			a2low = 0.01*a2eq;
 			a2high = 0.99*a2social + 0.01*ga2Max;
 		}
-		else if ( ga2init == 0.5 )
+		else if ( ga2Init == 0.5 )
 		{
 			a2low = a2eq;
 			a2high = a2social;

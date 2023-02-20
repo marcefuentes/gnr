@@ -135,7 +135,7 @@ for given in givens:
                     c=cm.viridis(weq/traitvmax))
 
     text = fig.text(0.90,
-                    0.02,
+                    0.90,
                     'Given: ' + f'{given:4.2f}',
                     fontsize=fslarge,
                     color='grey',

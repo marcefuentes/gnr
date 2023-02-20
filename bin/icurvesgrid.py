@@ -115,7 +115,7 @@ for outer, given in zip(outergrid, givens):
                     ylim=ylim)
     for ax, loges in zip(axs[-1, ::every], logess[::every]):
         ax.set_xlabel(round(loges), fontsize=fssmall)
-    if outer == 0:
+    if given == 0.0:
         for ax, alpha in zip(axs[::every, 0], alphas[::every]):
             ax.set_ylabel(f'{alpha:1.1f}',
                             rotation='horizontal',

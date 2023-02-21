@@ -12,6 +12,9 @@ alphamin = 0.1
 alphamax = 0.9
 logesmin = -5.0
 logesmax = 5.0
+cost = pow(2, -14)
+deathrate = pow(2, -7)
+repeats = 1.0/(1.0 - pow(1.0 - deathrate, 2.0))
 
 colormap = {
     'white' :       [1.0, 1.0, 1.0, 1.0],

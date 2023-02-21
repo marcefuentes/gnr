@@ -32,6 +32,8 @@ RR, AA = np.meshgrid(rhos, alphas)
 MRT0 = mymodule.b*mymodule.Rq
 Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
 a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
+highs = [np.full([num, num], 0.01*a2social + 0.99*mymodule.a2max), 
+        np.full([num, num], 0.99*a2social + 0.01*mymodule.a2max] 
 
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
@@ -53,9 +55,9 @@ extentnum = 0, num, 0, num
 cmap = plt.cm.viridis
 cmap.set_bad(color='white')
 
-fig, axs = plt.subplots(nrows=2,
+fig, axs = plt.subplots(nrows=len(highs),
                         ncols=len(titles),
-                        figsize=(6*len(titles), 12))
+                        figsize=(6*len(titles), 6*len(highs)))
 fig.supxlabel(xlabel,
                 x=0.513,
                 y=0.01,
@@ -92,15 +94,11 @@ for given in givens:
     MRT = MRT0*(1.0 - given)
     Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
     a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
-    a2lows = [0.99*a2eq,
-                0.01*a2eq]
-    a2highs = [0.01*a2social + 0.99*mymodule.a2max,
-                0.99*a2social + 0.01*mymodule.a2max,]
+    lows = [np.full([num, num], 0.99*a2eq),
+            np.full([num, num], 0.01*a2eq)]
 
-    for i, (a2low, a2high) in enumerate(zip(a2lows, a2highs)):
+    for i, (low, high) in enumerate(zip(lows, highs)):
 
-        low = np.full([num, num], a2low)
-        high = np.full([num, num], a2high)
         T = mymodule.fitness(high, low, given, AA, RR)
         R = mymodule.fitness(high, high, given, AA, RR)
         P = mymodule.fitness(low, low, given, AA, RR)

@@ -32,7 +32,6 @@ xmin = 0.0
 xmax = mymodule.a2max
 ymin = 0.0
 ymax = mymodule.a2max
-
 X, Y = np.meshgrid(np.linspace(xmin, xmax, num=numa2),
                     np.linspace(ymax, ymin, num=numa2))
 
@@ -93,8 +92,8 @@ for outer, given in zip(outergrid, givens):
     a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
 
     for i in range(num): 
+        AAA = np.full([numa2, numa2], alphas[i])
         for j in range(num):
-            AAA = np.full([numa2, numa2], alphas[i])
             RRR = np.full([numa2, numa2], rhos[j])
             T = mymodule.fitness(Y, X, given, AAA, RRR)
             R = mymodule.fitness(Y, Y, given, AAA, RRR)

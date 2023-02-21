@@ -11,8 +11,8 @@ start_time = time.perf_counter ()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
-#givens = [0.95]
-givens = np.linspace(0.0, 1.0, num=21)
+givens = [0.95]
+#givens = np.linspace(0.0, 1.0, num=21)
 
 num = 21    # Number of subplot rows and columns
 
@@ -98,14 +98,14 @@ for given in givens:
         Z = np.full([num, num, 4], mymodule.colormap['red'])
         mymodule.gamecolors(T, R, P, S, Z)
 
-        for row, rowT, rowR, rowP, rowS, rowZ in zip(axs, T, R, P, S, Z):
-            for ax, tt, rr, pp, ss, zz in zip(row, rowT, rowR, rowP, rowS, rowZ):
-                y = [tt, rr, pp, ss]
+        for i in range(num):
+            for j in range(num):
+                y = [T[i, j], R[i, j], P[i, j], S[i, j]]
                 for line in ax.get_lines():
                     line.remove()
-                ax.plot(xaxis,
+                axs[i, j].plot(xaxis,
                         y,
-                        c=zz,
+                        c=Z[i, j],
                         linewidth=3,
                         marker='o',
                         markerfacecolor='white',

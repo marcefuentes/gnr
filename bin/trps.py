@@ -103,7 +103,13 @@ for given in givens:
                 y = [tt, rr, pp, ss]
                 for line in ax.get_lines():
                     line.remove()
-                ax.plot(xaxis, y, c=zz, linewidth=3, marker='o', markerfacecolor='white', markersize=3)
+                ax.plot(xaxis,
+                        y,
+                        c=zz,
+                        linewidth=3,
+                        marker='o',
+                        markerfacecolor='white',
+                        markersize=3)
 
     text = fig.text(0.90,
                     0.043,

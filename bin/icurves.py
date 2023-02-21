@@ -36,12 +36,14 @@ def indifference(q, w, alpha, rho):
             if pow(w, rho) <= (1.0 - alpha)*pow(q, rho):
                 q2 = 1000.0
             else:
-                q2 = pow((pow(w, rho) - (1.0 - alpha)*pow(q, rho))/alpha, 1.0/rho)
+                q2 = pow((pow(w, rho) - (1.0 - alpha)*pow(q, rho))/
+                        alpha, 1.0/rho)
     else:
         if pow(w, rho) <= (1.0 - alpha)*pow(q, rho):
             q2 = -0.1
         else:
-            q2 = pow((pow(w, rho) - (1.0 - alpha)*pow(q, rho))/alpha, 1.0/rho)
+            q2 = pow((pow(w, rho) - (1.0 - alpha)*pow(q, rho))/
+                    alpha, 1.0/rho)
     return q2
 
 if givens[-1] > 0.9999999:
@@ -56,18 +58,6 @@ q1_ic = np.linspace(0.0, mymodule.a1max*mymodule.R1, num=numa2)
 RR, AA = np.meshgrid(rhos, alphas)
 MRT0 = mymodule.b*mymodule.Rq
 wis = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
-
-xlim=[0.0, mymodule.a1max*mymodule.R1]
-ylim=[0.0, mymodule.a2max*mymodule.R2]
-every = int(num/2)
-xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Value of $\it{B}$'
-
-traitvmax = mymodule.fitness(np.array([mymodule.a2max]),
-                                np.array([mymodule.a2max]),
-                                np.array([0.0]),
-                                np.array([0.9]),
-                                np.array([5.0]))
 icsss = []
 for alpha in alphas:
     icss = []
@@ -81,6 +71,17 @@ for alpha in alphas:
         icss.append(ics)
     icsss.append(icss)
 
+xlim=[0.0, mymodule.a1max*mymodule.R1]
+ylim=[0.0, mymodule.a2max*mymodule.R2]
+every = int(num/2)
+xlabel = 'Substitutability of $\it{B}$'
+ylabel = 'Value of $\it{B}$'
+
+traitvmax = mymodule.fitness(np.array([mymodule.a2max]),
+                                np.array([mymodule.a2max]),
+                                np.array([0.0]),
+                                np.array([0.9]),
+                                np.array([5.0]))
 fig = plt.figure(figsize=(8, 8))
 fig.supxlabel(xlabel,
                 x=0.56,

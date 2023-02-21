@@ -30,6 +30,8 @@ RR, AA = np.meshgrid(rhos, alphas)
 MRT0 = mymodule.b*mymodule.Rq
 Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
 a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
+highs = [np.full([num, num], (99.0*a2social + mymodule.a2max)/100.0), 
+        np.full([num, num], (a2social + 99.0*mymodule.a2max)/100.0)] 
 
 xlim=[0, 5]
 ylim=[0.0, 2.0]
@@ -84,13 +86,10 @@ for given in givens:
     MRT = MRT0*(1.0 - given)
     Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
     a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
-    a2lows = [0.01*a2eq, 0.99*a2eq]
-    a2highs = [(99.0*a2social + mymodule.a2max)/100.0,
-                (a2social + 99.0*mymodule.a2max)/100.0]
+    lows = [np.full([num, num], 0.01*a2eq),
+            np.full([num, num], 0.99*a2eq)]
 
-    for axs, a2low, a2high in zip(axss, a2lows, a2highs): 
-        low = np.full([num, num], a2low)
-        high = np.full([num, num], a2high)
+    for axs, low, high in zip(axss, lows, highs): 
         T = mymodule.fitness(high, low, given, AA, RR)
         R = mymodule.fitness(high, high, given, AA, RR)
         P = mymodule.fitness(low, low, given, AA, RR)
@@ -104,12 +103,12 @@ for given in givens:
                 for line in ax.get_lines():
                     line.remove()
                 axs[i, j].plot(xaxis,
-                        y,
-                        c=Z[i, j],
-                        linewidth=3,
-                        marker='o',
-                        markerfacecolor='white',
-                        markersize=3)
+                                y,
+                                c=Z[i, j],
+                                linewidth=3,
+                                marker='o',
+                                markerfacecolor='white',
+                                markersize=3)
 
     text = fig.text(0.90,
                     0.043,

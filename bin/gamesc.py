@@ -35,11 +35,11 @@ ymax = mymodule.a2max
 X, Y = np.meshgrid(np.linspace(xmin, xmax, num=numa2),
                     np.linspace(ymax, ymin, num=numa2))
 
-every = int(num/2)
+step = int(num/2)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 letter = ord('a')
-extent2 = 0, numa2, 0, numa2
+extenta2 = 0, numa2, 0, numa2
 
 fig = plt.figure(figsize=(6*len(givens), 6))
 fig.supxlabel(xlabel,
@@ -76,22 +76,22 @@ for outer, given in zip(outergrid, givens):
     for i in range(num):
         for j in range(num):
             axs[i, j].set(xticks=[],
-                    yticks=[])
-    for ax, loges in zip(axs[-1, ::every], logess[::every]):
-        ax.set_xlabel(f'{loges:2.0f}', fontsize=fssmall)
+                             yticks=[])
+    for j in range(0, num, step):
+        axs[-1, j].set_xlabel(f'{logess[i]:2.0f}', fontsize=fssmall)
     if given == 0.5:
-        for ax, alpha in zip(axs[::every, 0], alphas[::every]):
-            ax.set_ylabel(f'{alpha:3.1f}',
-                            rotation='horizontal',
-                            horizontalalignment='right',
-                            verticalalignment='center',
-                            fontsize=fssmall)
+        for i in range(0, num, step):
+            axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
+                                    rotation='horizontal',
+                                    horizontalalignment='right',
+                                    verticalalignment='center',
+                                    fontsize=fssmall)
 
     MRT = MRT0*(1.0 - given)
     Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
     a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
 
-    for i in range(num): 
+    for i in range(num):
         AAA = np.full([numa2, numa2], alphas[i])
         for j in range(num):
             RRR = np.full([numa2, numa2], rhos[j])
@@ -103,7 +103,7 @@ for outer, given in zip(outergrid, givens):
             mymodule.gamecolors(T, R, P, S, Z)
             mask = (X > Y)
             Z[mask] = [0.9, 0.9, 0.9, 1.0]
-            axs[i, j].imshow(Z, extent=extent2)
+            axs[i, j].imshow(Z, extent=extenta2)
             axs[i, j].plot(0.01*a2eq[i, j]*numa2,
                         (0.99*a2social[i, j] + 0.01*mymodule.a2max)*numa2,
                         marker='o',

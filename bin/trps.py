@@ -30,12 +30,12 @@ RR, AA = np.meshgrid(rhos, alphas)
 MRT0 = mymodule.b*mymodule.Rq
 Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
 a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
-highs = [np.full([num, num], (0.99*a2social + 0.01*mymodule.a2max), 
+highs = [np.full([num, num], 0.99*a2social + 0.01*mymodule.a2max), 
         np.full([num, num], 0.01*a2social + 0.99*mymodule.a2max)] 
 
 xlim=[0, 5]
 ylim=[0.0, 2.0]
-every = int(num/2)
+step = int(num/2)
 xaxis = [1, 2, 3, 4]
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
@@ -51,34 +51,35 @@ fig.supylabel(ylabel,
                 fontsize=fslarge)
 
 outergrid = fig.add_gridspec(nrows=1,
-                                ncols=2,
+                                ncols=len(highs),
                                 left=0.15,
                                 right=0.9,
                                 top=0.86,
                                 bottom=0.176)
 axss = []
-for outer in outergrid:
+for l, outer in enumerate(outergrid):
     grid = outer.subgridspec(nrows=num,
                                 ncols=num,
                                 wspace=0,
                                 hspace=0)
-    axss.append(grid.subplots())
+    axs = grid.subplots()
+    for i in range(num):
+        for j in range(num):
+            axs[i, j].set(xticks=[],
+                            yticks=[],
+                            xlim=xlim,
+                            ylim=ylim)
+    for j in range(0, num, step):
+        axs[-1, j].set_xlabel(f'{logess[i]:2.0f}', fontsize=fssmall)
+    if l == 0:
+        for i in range(0, num, step):
+            axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
+                                    rotation='horizontal',
+                                    horizontalalignment='right',
+                                    verticalalignment='center',
+                                    fontsize=fssmall)
 
-for axs in axss:
-    for axrow in axs:
-        for ax in axrow:
-            ax.set(xticks=[],
-                    yticks=[],
-                    xlim=xlim,
-                    ylim=ylim)
-    for ax, loges in zip(axs[-1, ::every], logess[::every]):
-        ax.set_xlabel(round(loges), fontsize=fssmall)
-for ax, alpha in zip(axss[0][::every, 0], alphas[::every]):
-    ax.set_ylabel(f'{alpha:1.1f}',
-                    rotation='horizontal',
-                    horizontalalignment='right',
-                    verticalalignment='center',
-                    fontsize=fssmall)
+    axss.append(axs)
 
 frames = []
 for given in givens:
@@ -100,7 +101,7 @@ for given in givens:
         for i in range(num):
             for j in range(num):
                 y = [T[i, j], R[i, j], P[i, j], S[i, j]]
-                for line in ax.get_lines():
+                for line in axs[i, j].get_lines():
                     line.remove()
                 axs[i, j].plot(xaxis,
                                 y,

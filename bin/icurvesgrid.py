@@ -71,7 +71,7 @@ for alpha in alphas:
 
 xlim=[0.0, mymodule.a1max*mymodule.R1]
 ylim=[0.0, mymodule.a2max*mymodule.R2]
-every = int(num/2)
+step = int(num/2)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 letter = ord('a')
@@ -113,21 +113,21 @@ for outer, given in zip(outergrid, givens):
                         loc='left')
     letter += 1
 
-    for row in axs:
-        for ax in row:
-            ax.set(xticks=[],
+    for i in range(num):
+        for j in range(num):
+            axs[i, j].set(xticks=[],
                     yticks=[],
                     xlim=xlim,
                     ylim=ylim)
-    for ax, loges in zip(axs[-1, ::every], logess[::every]):
+    for ax, loges in zip(axs[-1, ::step], logess[::step]):
         ax.set_xlabel(f'{loges:2.0f}', fontsize=fssmall)
     if given == 0.0:
-        for ax, alpha in zip(axs[::every, 0], alphas[::every]):
-            ax.set_ylabel(f'{alpha:1.1f}',
-                            rotation='horizontal',
-                            horizontalalignment='right',
-                            verticalalignment='center',
-                            fontsize=fssmall)
+        for i in range(0, num, step):
+            axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
+                                    rotation='horizontal',
+                                    horizontalalignment='right',
+                                    verticalalignment='center',
+                                    fontsize=fssmall)
 
     MRT = MRT0*(1.0 - given)
     Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))

@@ -73,7 +73,7 @@ for alpha in alphas:
 
 xlim=[0.0, mymodule.a1max*mymodule.R1]
 ylim=[0.0, mymodule.a2max*mymodule.R2]
-every = int(num/2)
+step = int(num/2)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 
@@ -102,20 +102,20 @@ grid = fig.add_gridspec(nrows=num,
                         hspace=0)
 axs = grid.subplots()
 
-for row in axs:
-    for ax in row:
-        ax.set(xticks=[],
+for i in range(num):
+    for j in range(num):
+        axs[i, j].set(xticks=[],
                 yticks=[],
                 xlim=xlim,
                 ylim=ylim)
-for ax, loges in zip(axs[-1, ::every], logess[::every]):
-    ax.set_xlabel(round(loges), fontsize=fssmall)
-for ax, alpha in zip(axs[::every, 0], alphas[::every]):
-    ax.set_ylabel(f'{alpha:1.1f}',
-                    rotation='horizontal',
-                    horizontalalignment='right',
-                    verticalalignment='center',
-                    fontsize=fssmall)
+for i in range(0, num, step):
+    axs[-1, i].set_xlabel(f'{logess[i]:2.0f}', fontsize=fssmall)
+for i in range(0, num, step):
+    axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
+                            rotation='horizontal',
+                            horizontalalignment='right',
+                            verticalalignment='center',
+                            fontsize=fssmall)
 
 frames = []
 for given in givens:

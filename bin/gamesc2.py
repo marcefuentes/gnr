@@ -48,7 +48,7 @@ fig.supxlabel(xlabel,
                 y=0.0,
                 fontsize=fslarge)
 fig.supylabel(ylabel,
-                x=0.08,
+                x=0.05,
                 y=0.52,
                 fontsize=fslarge)
 
@@ -107,16 +107,14 @@ for outer, given in zip(outergrid, givens):
             axs[i, j].imshow(Z, extent=extent2)
             axs[i, j].plot(0.01*a2eq[i, j]*numa2,
                         (0.99*a2social[i, j] + 0.01*mymodule.a2max)*numa2,
-                        marker=4,
-                        markeredgecolor='white',
-                        markerfacecolor='black',
-                        markersize=6)
+                        marker='o',
+                        color='orange',
+                        markersize=4)
             axs[i, j].plot(0.99*a2eq[i, j]*numa2,
                         (0.01*a2social[i, j] + 0.99*mymodule.a2max)*numa2,
-                        marker=6,
-                        markeredgecolor='white',
-                        markerfacecolor='black',
-                        markersize=6)
+                        marker='o',
+                        color='red',
+                        markersize=4)
 
 plt.savefig(filename + '.png', transparent=False)
 

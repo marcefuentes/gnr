@@ -22,8 +22,7 @@ traits = ['ChooseGrainmean',
             'MimicGrainmean']
 folders = ['a2init75', 'a2init50', 'a2init25']
 subfolder = 'pr'
-a2lows = np.array([0.50, 0.25, 0.00])
-a2highs = a2lows + 0.5
+#a2lows = [0.50, 0.25, 0.00]
 given = 0.95
 
 movie = False
@@ -65,12 +64,12 @@ a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
 MRT = MRT0*(1.0 - given)
 Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
 a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
-lows = [np.full([num, num], a2lows[0]),
-        np.full([num, num], a2lows[1]),
-        np.full([num, num], a2lows[2])]
-highs = [np.full([num, num], a2highs[0]), 
-        np.full([num, num], a2highs[1]), 
-        np.full([num, num], a2highs[2])] 
+lows = [np.full([num, num], 0.99*a2eq),
+        np.full([num, num], a2eq),
+        np.full([num, num], 0.01*a2eq)]
+highs = [np.full([num, num], 0.01*a2social + 0.99*mymodule.a2max), 
+        np.full([num, num], a2social), 
+        np.full([num, num], 0.99*a2social + 0.01*mymodule.a2max)] 
 
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'

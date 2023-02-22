@@ -63,14 +63,12 @@ for l, outer in enumerate(outergrid):
                                 wspace=0,
                                 hspace=0)
     axs = grid.subplots()
-    for i in range(num):
-        for j in range(num):
+    for i in enumerate(alphas):
+        for j in enumerate(rhos):
             axs[i, j].set(xticks=[],
                             yticks=[],
                             xlim=xlim,
                             ylim=ylim)
-    for j in range(0, num, step):
-        axs[-1, j].set_xlabel(f'{logess[i]:2.0f}', fontsize=fssmall)
     if l == 0:
         for i in range(0, num, step):
             axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
@@ -78,6 +76,8 @@ for l, outer in enumerate(outergrid):
                                     horizontalalignment='right',
                                     verticalalignment='center',
                                     fontsize=fssmall)
+    for j in range(0, num, step):
+        axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=fssmall)
 
     axss.append(axs)
 
@@ -98,8 +98,8 @@ for given in givens:
         Z = np.full([num, num, 4], mymodule.colormap['red'])
         mymodule.gamecolors(T, R, P, S, Z)
 
-        for i in range(num):
-            for j in range(num):
+        for i in enumerate(alphas):
+            for j in enumerate(rhos):
                 y = [T[i, j], R[i, j], P[i, j], S[i, j]]
                 for line in axs[i, j].get_lines():
                     line.remove()

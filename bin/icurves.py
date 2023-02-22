@@ -102,20 +102,20 @@ grid = fig.add_gridspec(nrows=num,
                         hspace=0)
 axs = grid.subplots()
 
-for i in range(num):
-    for j in range(num):
+for i in enumerate(alphas):
+    for j in enumerate(rhos):
         axs[i, j].set(xticks=[],
                 yticks=[],
                 xlim=xlim,
                 ylim=ylim)
-for i in range(0, num, step):
-    axs[-1, i].set_xlabel(f'{logess[i]:2.0f}', fontsize=fssmall)
 for i in range(0, num, step):
     axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
                             rotation='horizontal',
                             horizontalalignment='right',
                             verticalalignment='center',
                             fontsize=fssmall)
+for j in range(0, num, step):
+    axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=fssmall)
 
 frames = []
 for given in givens:
@@ -127,8 +127,8 @@ for given in givens:
     q2 = a2eq*mymodule.R2
     q2b = q2_budget*(1.0 - given)
 
-    for i in range(num):
-        for j in range(num):
+    for i in enumerate(alphas):
+        for j in enumerate(rhos):
             for line in axs[i, j].get_lines():
                 line.remove()
             for n in range(n_ic): 

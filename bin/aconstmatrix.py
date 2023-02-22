@@ -61,7 +61,7 @@ fig.supylabel(ylabel,
                 y=0.493,
                 fontsize=fslarge*1.2)
 
-for i in range(len(axs)):
+for i in enumerate(givens):
     for j, title in enumerate(titles):
         ax = axs[i, j]
         ax.text(0, 

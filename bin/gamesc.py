@@ -73,8 +73,8 @@ for outer, given in zip(outergrid, givens):
                         loc='left')
     letter += 1
 
-    for i in range(num):
-        for j in range(num):
+    for i in enumerate(alphas):
+        for j in enumerate(rhos):
             axs[i, j].set(xticks=[],
                              yticks=[])
     for j in range(0, num, step):
@@ -91,9 +91,9 @@ for outer, given in zip(outergrid, givens):
     Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
     a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
 
-    for i in range(num):
+    for i in enumerate(alphas):
         AAA = np.full([numa2, numa2], alphas[i])
-        for j in range(num):
+        for j in enumerate(rhos):
             RRR = np.full([numa2, numa2], rhos[j])
             T = mymodule.fitness(Y, X, given, AAA, RRR)
             R = mymodule.fitness(Y, Y, given, AAA, RRR)

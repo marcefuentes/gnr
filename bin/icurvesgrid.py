@@ -113,14 +113,12 @@ for outer, given in zip(outergrid, givens):
                         loc='left')
     letter += 1
 
-    for i in range(num):
-        for j in range(num):
+    for i in enumerate(alphas):
+        for j in enumerate(rhos):
             axs[i, j].set(xticks=[],
                     yticks=[],
                     xlim=xlim,
                     ylim=ylim)
-    for ax, loges in zip(axs[-1, ::step], logess[::step]):
-        ax.set_xlabel(f'{loges:2.0f}', fontsize=fssmall)
     if given == 0.0:
         for i in range(0, num, step):
             axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
@@ -128,6 +126,8 @@ for outer, given in zip(outergrid, givens):
                                     horizontalalignment='right',
                                     verticalalignment='center',
                                     fontsize=fssmall)
+    for j in range(0, num, step):
+        axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=fssmall)
 
     MRT = MRT0*(1.0 - given)
     Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
@@ -136,8 +136,8 @@ for outer, given in zip(outergrid, givens):
     q2 = a2eq*mymodule.R2
     q2b = q2_budget*(1.0 - given)
 
-    for i in range(num):
-        for j in range(num):
+    for i in enumerate(alphas):
+        for j in enumerate(rhos):
             for line in axs[i, j].get_lines():
                 line.remove()
             for n in range(n_ic): 

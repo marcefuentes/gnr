@@ -116,8 +116,8 @@ fig.supylabel(ylabel,
                 y=0.493,
                 fontsize=fslarge*1.5)
 
-for i in range(axs):
-    for j in range(traits):
+for i in range(len(folders) + 1):
+    for j in range(len(traits)):
         ax = axs[i, j]
         if letter <= ord('z'): 
             textl = chr(letter)
@@ -151,9 +151,9 @@ for i in range(axs):
             ax.set_yticklabels(yticklabels, fontsize=fssmall) 
         if ax.get_subplotspec().is_last_row():
             ax.set_xticklabels(xticklabels, fontsize=fssmall)
-for j in enumerate(titles):
+for j, title in enumerate(titles):
     axs[0, j].set_title(title, pad=50.0, fontsize=fslarge)
-for j in enumerate(titletraits):
+for j, title in enumerate(titletraits):
     axs[1, j].set_title(title, pad=50.0, fontsize=fslarge)
 
 for i, (a2low, a2high) in enumerate(zip(a2lows, a2highs)):

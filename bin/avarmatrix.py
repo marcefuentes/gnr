@@ -33,7 +33,7 @@ MRT0 = mymodule.b*mymodule.Rq
 Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
 a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
 highs = [np.full([num, num], 0.01*a2social + 0.99*mymodule.a2max), 
-        np.full([num, num], 0.99*a2social + 0.01*mymodule.a2max] 
+        np.full([num, num], 0.99*a2social + 0.01*mymodule.a2max)] 
 
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'

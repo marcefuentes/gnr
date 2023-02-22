@@ -173,13 +173,13 @@ for i, (a2low, a2high) in enumerate(zip(a2lows, a2highs)):
         mask = mymodule.dilemma(T, R, P, S)
         Z[mask] = R[mask] - P[mask]
         Z = np.ma.masked_where(Z == 0.0, Z)
-        axs[0, 2*i+1].imshow(Z, extent=extentnum, cmap=cmap)
+        axs[0, 2*i+1].imshow(Z, extent=extentnum, cmap=cmap, vmin=0, vmax=1)
     else:
         Z = np.zeros([num, num])
         mask = mymodule.dilemma(T, R, P, S)
         Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
         Z = np.ma.masked_where(Z == 0.0, Z)
-        axs[0, 2*i+1].imshow(Z, extent=extentnum, cmap=cmap)
+        axs[0, 2*i+1].imshow(Z, extent=extentnum, cmap=cmap, vmin=0, vmax=1)
 
 for t in ts:
     for axrow, df in zip(axs[1:], dfs):

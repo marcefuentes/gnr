@@ -15,7 +15,7 @@ titles = ['Games',
             '$\it{R}$ - $\it{P}$',
             '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 givens = [0.95, 0.50]
-a2lows = np.linspace(0.0, 0.1, num=10)
+a2lows = np.linspace(0.0, 0.5, num=1)
 
 num = 1024
 
@@ -101,13 +101,13 @@ for a2low in a2lows:
         mask = mymodule.dilemma(T, R, P, S)
         Z[mask] = R[mask] - P[mask]
         Z = np.ma.masked_where(Z == 0.0, Z)
-        axs[i, 1].imshow(Z, extent=extentnum, cmap=cmap)
+        axs[i, 1].imshow(Z, extent=extentnum, cmap=cmap, vmin=0, vmax=1)
 
         Z = np.zeros([num, num])
         mask = mymodule.dilemma(T, R, P, S)
         Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
         Z = np.ma.masked_where(Z == 0.0, Z)
-        axs[i, 2].imshow(Z, extent=extentnum, cmap=cmap)
+        axs[i, 2].imshow(Z, extent=extentnum, cmap=cmap, vmin=0, vmax=1)
 
     text = fig.text(0.90,
                     0.02,

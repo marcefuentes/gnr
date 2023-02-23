@@ -14,7 +14,7 @@ filename = thisscript.split('.')[0]
 titles = ['Games',
             '$\it{R}$ - $\it{P}$',
             '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
-givens = np.linspace(0.0, 1.0, num=21)
+givens = np.linspace(0.95, 1.0, num=1)
 
 num = 1024
 
@@ -32,8 +32,8 @@ RR, AA = np.meshgrid(rhos, alphas)
 MRT0 = mymodule.b*mymodule.Rq
 Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
 a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
-highs = [np.full([num, num], 0.01*a2social + 0.99*mymodule.a2max), 
-        np.full([num, num], 0.99*a2social + 0.01*mymodule.a2max)] 
+highs = [np.full([num, num], mymodule.a2max), 
+        np.full([num, num], a2social)] 
 
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
@@ -94,8 +94,8 @@ for given in givens:
     MRT = MRT0*(1.0 - given)
     Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
     a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
-    lows = [np.full([num, num], 0.99*a2eq),
-            np.full([num, num], 0.01*a2eq)]
+    lows = [np.full([num, num], a2eq),
+            np.full([num, num], 0.0)]
 
     for i, (low, high) in enumerate(zip(lows, highs)):
 
@@ -111,13 +111,13 @@ for given in givens:
         mask = mymodule.dilemma(T, R, P, S)
         Z[mask] = R[mask] - P[mask]
         Z = np.ma.masked_where(Z == 0.0, Z)
-        axs[i, 1].imshow(Z, extent=extentnum, cmap=cmap)
+        axs[i, 1].imshow(Z, extent=extentnum, cmap=cmap, vmin=0, vmax=1)
 
         Z = np.zeros([num, num])
         mask = mymodule.dilemma(T, R, P, S)
         Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
         Z = np.ma.masked_where(Z == 0.0, Z)
-        axs[i, 2].imshow(Z, extent=extentnum, cmap=cmap)
+        axs[i, 2].imshow(Z, extent=extentnum, cmap=cmap, vmin=0, vmax=1)
 
     text = fig.text(0.90,
                     0.02,

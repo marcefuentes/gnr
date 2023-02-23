@@ -68,9 +68,10 @@ a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
 MRT = MRT0*(1.0 - given)
 Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
 a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
-a2lows = [0.01*a2eq, 0.99*a2eq]
-a2highs = [0.99*a2social + 0.01*mymodule.a2max,
-            0.01*a2social + 0.99*mymodule.a2max]
+lows = [np.full([num, num], 0.0),
+        np.full([num, num], a2eq)]
+highs = [np.full([num, num], a2social),
+        np.full([num, num], mymodule.a2max)]
 
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
@@ -156,10 +157,8 @@ for j, title in enumerate(titles):
 for j, title in enumerate(titletraits):
     axs[1, j].set_title(title, pad=50.0, fontsize=fslarge)
 
-for i, (a2low, a2high) in enumerate(zip(a2lows, a2highs)):
+for i, (low, high) in enumerate(zip(lows, highs)):
 
-    low = np.full([num, num], a2low)
-    high = np.full([num, num], a2high)
     T = mymodule.fitness(high, low, given, AA, RR)
     R = mymodule.fitness(high, high, given, AA, RR)
     P = mymodule.fitness(low, low, given, AA, RR)

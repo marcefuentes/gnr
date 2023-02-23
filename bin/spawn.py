@@ -36,7 +36,7 @@ for alpha in alphas:
         f.write('Discrete,1\n')
         f.write('IndirectR,0\n')
         f.write(f'alpha,{alpha}\n')
-        f.write(f'ES,{loges}\n')
+        f.write(f'logES,{loges}\n')
         f.write(f'Given,{given}\n')
 
         f.close()

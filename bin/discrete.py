@@ -75,7 +75,7 @@ cmap.set_bad(color='white')
 traitvmaxs = [mymodule.a2max,
                 mymodule.a2max]
 
-fig, axs = plt.subplots(nrows=len(dfs),
+fig, axs = plt.subplots(nrows=len(folders),
                         ncols=len(titles),
                         figsize=(6*len(titles), 6*len(dfs)))
 fig.supxlabel(xlabel,
@@ -87,7 +87,7 @@ fig.supylabel(ylabel,
                 y=0.493,
                 fontsize=fslarge*1.3)
 
-for i in range(len(dfs)):
+for i in range(len(folders)):
     for j, title in enumerate(titles):
         ax = axs[i, j]
         ax.set(xticks=xticks,

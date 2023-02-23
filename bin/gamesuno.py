@@ -96,28 +96,38 @@ mymodule.gamecolors(T, R, P, S, Z)
 mask = (X > Y)
 Z[mask] = [0.7, 0.7, 0.7, 1.0]
 axs[0].imshow(Z, extent=extent2)
-axs[0].plot(0.01*a2eq*numa2,
-            (0.99*a2social + 0.01*mymodule.a2max)*numa2,
-            marker='o',
-            color='orange',
-            markersize=10)
-axs[0].plot(0.99*a2eq*numa2,
-            (0.01*a2social + 0.99*mymodule.a2max)*numa2,
-            marker='o',
-            color='orange',
-            markersize=10)
 
 Z = np.zeros([numa2, numa2])
 mask = mymodule.dilemma(T, R, P, S)
-Z[mask] = R[mask] - P[mask]
+Z[mask] = R[mask] - P[mask] + 0.000001
 Z = np.ma.masked_where(Z == 0.0, Z)
-axs[1].imshow(Z, extent=extent2, cmap=cmap)
+axs[1].imshow(Z, extent=extent2, cmap=cmap, vmin=-1, vmax=1)
+axs[1].plot(0.0,
+            a2social*numa2,
+            marker='o',
+            color='orange',
+            markersize=10)
+axs[1].plot(a2eq*numa2,
+            mymodule.a2max*numa2,
+            marker='o',
+            color='orange',
+            markersize=10)
 
 Z = np.zeros([numa2, numa2])
 mask = mymodule.dilemma(T, R, P, S)
 Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
 Z = np.ma.masked_where(Z == 0.0, Z)
-axs[2].imshow(Z, extent=extent2, cmap=cmap)
+axs[2].imshow(Z, extent=extent2, cmap=cmap, vmin=-1, vmax=1)
+axs[2].plot(0.0,
+            a2social*numa2,
+            marker='o',
+            color='orange',
+            markersize=10)
+axs[2].plot(a2eq*numa2,
+            mymodule.a2max*numa2,
+            marker='o',
+            color='orange',
+            markersize=10)
 
 plt.savefig(filename + '.png', transparent=False)
 

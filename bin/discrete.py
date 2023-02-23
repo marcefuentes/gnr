@@ -28,7 +28,7 @@ given = 0.95
 
 movie = False
 
-num = 1001
+num = 21
 
 fslarge = 32 # Label font size
 fssmall = 24 # Tick font size
@@ -153,15 +153,15 @@ for i, (low, high) in enumerate(zip(lows, highs)):
 
     Z = np.zeros([num, num])
     mask = mymodule.dilemma(T, R, P, S)
-    Z[mask] = R[mask] - P[mask]
+    Z[mask] = R[mask] - P[mask] + 0.000001
     Z = np.ma.masked_where(Z == 0.0, Z)
-    axs[i, 1].imshow(Z, extent=extentnum, cmap=cmap, vmin=0, vmax=1)
+    axs[i, 1].imshow(Z, extent=extentnum, cmap=cmap, vmin=-1, vmax=1)
 
     Z = np.zeros([num, num])
     mask = mymodule.dilemma(T, R, P, S)
     Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
     Z = np.ma.masked_where(Z == 0.0, Z)
-    axs[i, 2].imshow(Z, extent=extentnum, cmap=cmap, vmin=0, vmax=1)
+    axs[i, 2].imshow(Z, extent=extentnum, cmap=cmap, vmin=-1, vmax=1)
 
 for t in ts:
     for i, df in enumerate(dfs):

@@ -13,17 +13,19 @@ start_time = time.perf_counter ()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
-titles = ['Games',
-            '$\it{R}$ - $\it{P}$',
-            '$\it{T}$ + $\it{S}$ - 2$\it{R}$',
-            'Sensitivity for\nchoosing partner',
-            'Sensitivity for\nmimicking partner']
-traits = ['ChooseGrainmean',
-            'MimicGrainmean']
-folders = ['a2init75', 'a2init50', 'a2init25']
-subfolder = 'pr'
-#a2lows = [0.50, 0.25, 0.00]
-given = 0.95
+titles = ['Games (lower)',
+                '$\it{R}$ - $\it{P}$',
+                'Games (upper)',
+                '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
+traits = ['a2Seenmean',
+            'ChooseGrainmean',
+            'MimicGrainmean',
+            'wmean']
+titletraits = ['Effort to get $\it{B}$',
+                'Sensitivity for\nchoosing partner',
+                'Sensitivity for\nmimicking partner',
+                'Fitness']
+folders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
 
 movie = False
 
@@ -36,19 +38,21 @@ plt.rcParams['ps.fonttype'] = 42
 
 dfs = []
 for folder in folders:
-    df = pd.concat(map(pd.read_csv, glob(os.path.join(folder, subfolder, '*.csv'))),
+    df = pd.concat(map(pd.read_csv, glob(os.path.join(folder, '*.csv'))),
                     ignore_index=True)
     df.ChooseGrainmean = 1.0 - df.ChooseGrainmean
     df.MimicGrainmean = 1.0 - df.MimicGrainmean
     dfs.append(df)
 
-df = dfs[0]
+df = dfs[1]
 ts = df.Time.unique()
 if movie:
     frames = []
 else:
     ts = [ts[-1]]
-
+given = df.Given[0]
+if given > 0.9999999:
+    given = 0.9999999
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 rowindex = 'alpha'
 logess = np.sort(pd.unique(df.logES))
@@ -64,12 +68,10 @@ a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
 MRT = MRT0*(1.0 - given)
 Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
 a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
-lows = [np.full([num, num], 0.99*a2eq),
-        np.full([num, num], a2eq),
-        np.full([num, num], 0.01*a2eq)]
-highs = [np.full([num, num], 0.01*a2social + 0.99*mymodule.a2max), 
-        np.full([num, num], a2social), 
-        np.full([num, num], 0.99*a2social + 0.01*mymodule.a2max)] 
+lows = [np.full([num, num], 0.0),
+        np.full([num, num], a2eq)]
+highs = [np.full([num, num], a2social),
+        np.full([num, num], mymodule.a2max)]
 
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
@@ -95,32 +97,46 @@ extentr= 0, nc, 0, nr
 cmap = plt.cm.viridis
 cmap.set_bad(color='white')
 traitvmaxs = [mymodule.a2max,
-                mymodule.a2max]
+                mymodule.a2max,
+                mymodule.a2max,
+                mymodule.fitness(np.array([mymodule.a2max]),
+                                    np.array([mymodule.a2max]),
+                                    np.array([0.0]),
+                                    np.array([0.9]),
+                                    np.array([5.0]))]
 
-fig, axs = plt.subplots(nrows=len(highs),
-                        ncols=len(titles),
-                        figsize=(6*len(titles), 6*len(highs)))
+fig, axs = plt.subplots(nrows=len(folders)+1,
+                        ncols=len(traits),
+                        figsize=(6*len(traits), 6*(len(folders)+1)))
 fig.supxlabel(xlabel,
                 x=0.513,
-                y=0.02,
-                fontsize=fslarge*1.3)
+                y=0.06,
+                fontsize=fslarge*1.5)
 fig.supylabel(ylabel,
-                x=0.03,
+                x=0.05,
                 y=0.493,
-                fontsize=fslarge*1.3)
+                fontsize=fslarge*1.5)
 
-for i in range(len(highs)):
-    for j, title in enumerate(titles):
+for i in range(len(folders) + 1):
+    for j in range(len(traits)):
         ax = axs[i, j]
-        if 'Sensitivity' not in title:
+        if letter <= ord('z'): 
+            textl = chr(letter)
+        else:
+            textl = 'a' + chr(letter - 26)
+        letter += 1
+        if ax.get_subplotspec().is_first_row():
+            pos = ax.get_position()
+            newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
+            ax.set_position(newpos)
             ax.set(xticks=xticks,
                     yticks=yticks,
                     xticklabels=[],
                     yticklabels=[])
             ax.text(0,
                     letterposition,
-                    chr(letter),
-                    fontsize=fslarge*0.8,
+                    textl,
+                    fontsize=fslarge,
                     weight='bold')
         else:
             ax.set(xticks=xticksr,
@@ -129,16 +145,17 @@ for i in range(len(highs)):
                     yticklabels=[])
             ax.text(0,
                     letterpositionr,
-                    chr(letter),
-                    fontsize=fslarge*0.8,
+                    textl,
+                    fontsize=fslarge,
                     weight='bold')
-        letter += 1
-        if ax.get_subplotspec().is_first_row():
-            ax.set_title(title, pad=40.0, fontsize=fslarge)
         if ax.get_subplotspec().is_first_col():
-            ax.set_yticklabels(yticklabels, fontsize=fssmall)
+            ax.set_yticklabels(yticklabels, fontsize=fssmall) 
         if ax.get_subplotspec().is_last_row():
             ax.set_xticklabels(xticklabels, fontsize=fssmall)
+for j, title in enumerate(titles):
+    axs[0, j].set_title(title, pad=50.0, fontsize=fslarge)
+for j, title in enumerate(titletraits):
+    axs[1, j].set_title(title, pad=50.0, fontsize=fslarge)
 
 for i, (low, high) in enumerate(zip(lows, highs)):
 
@@ -148,35 +165,36 @@ for i, (low, high) in enumerate(zip(lows, highs)):
     S = mymodule.fitness(low, high, given, AA, RR)
     Z = np.full([num, num, 4], mymodule.colormap['red'])
     mymodule.gamecolors(T, R, P, S, Z)
-    axs[i, 0].imshow(Z, extent=extentnum)
+    axs[0, 2*i].imshow(Z, extent=extentnum)
 
-    Z = np.zeros([num, num])
-    mask = mymodule.dilemma(T, R, P, S)
-    Z[mask] = R[mask] - P[mask]
-    Z = np.ma.masked_where(Z == 0.0, Z)
-    axs[i, 1].imshow(Z, extent=extentnum, cmap=cmap, vmin=0, vmax=1)
-
-    Z = np.zeros([num, num])
-    mask = mymodule.dilemma(T, R, P, S)
-    Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
-    Z = np.ma.masked_where(Z == 0.0, Z)
-    axs[i, 2].imshow(Z, extent=extentnum, cmap=cmap, vmin=0, vmax=1)
+    if i == 0:
+        Z = np.zeros([num, num])
+        mask = mymodule.dilemma(T, R, P, S)
+        Z[mask] = R[mask] - P[mask]
+        Z = np.ma.masked_where(Z == 0.0, Z)
+        axs[0, 2*i+1].imshow(Z, extent=extentnum, cmap=cmap, vmin=0, vmax=1)
+    else:
+        Z = np.zeros([num, num])
+        mask = mymodule.dilemma(T, R, P, S)
+        Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
+        Z = np.ma.masked_where(Z == 0.0, Z)
+        axs[0, 2*i+1].imshow(Z, extent=extentnum, cmap=cmap, vmin=0, vmax=1)
 
 for t in ts:
-    for i, df in enumerate(dfs):
-        for j, (trait, vmax) in enumerate(zip(traits, traitvmaxs)):
+    for axrow, df in zip(axs[1:], dfs):
+        for ax, trait, traitvmax in zip(axrow, traits, traitvmaxs):
             Z = pd.pivot_table(df.loc[df.Time == t],
-                        values=trait,
-                        index=[rowindex],
-                        columns=['logES']).sort_index(axis=0,
-                                                    ascending=False)
-            axs[i, j + 3].imshow(Z,
-                                extent=extentr,
-                                vmin=0,
-                                vmax=vmax)
+                                values=trait,
+                                index=[rowindex],
+                                columns=['logES']).sort_index(axis=0,
+                                                            ascending=False)
+            ax.imshow(Z,
+                    extent=extentr,
+                    vmin=0,
+                    vmax=traitvmax)
     if movie:
         text = fig.text(0.90,
-                        0.93,
+                        0.90,
                         f't\n{t}',
                         fontsize=fssmall+4,
                         color='grey',

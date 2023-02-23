@@ -45,7 +45,7 @@ xticklabels = [f'{xmin:2.0f}',
 yticklabels = [f'{ymin:3.1f}',
                 f'{(ymin + ymax)/2.0:3.1f}',
                 f'{ymax:3.1f}']
-extentnum = 0, num, 0, num
+extent = 0, num, 0, num
 cmap = plt.cm.viridis
 cmap.set_bad(color='white')
 
@@ -95,19 +95,19 @@ for a2low in a2lows:
         S = mymodule.fitness(low, high, given, AA, RR)
         Z = np.full([num, num, 4], mymodule.colormap['red'])
         mymodule.gamecolors(T, R, P, S, Z)
-        axs[i, 0].imshow(Z, extent=extentnum)
+        axs[i, 0].imshow(Z, extent=extent)
 
         Z = np.zeros([num, num])
         mask = mymodule.dilemma(T, R, P, S)
         Z[mask] = R[mask] - P[mask]
         Z = np.ma.masked_where(Z == 0.0, Z)
-        axs[i, 1].imshow(Z, extent=extentnum, cmap=cmap, vmin=-1, vmax=1)
+        axs[i, 1].imshow(Z, extent=extent, cmap=cmap, vmin=-1, vmax=1)
 
         Z = np.zeros([num, num])
         mask = mymodule.dilemma(T, R, P, S)
         Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
         Z = np.ma.masked_where(Z == 0.0, Z)
-        axs[i, 2].imshow(Z, extent=extentnum, cmap=cmap, vmin=-1, vmax=1)
+        axs[i, 2].imshow(Z, extent=extent, cmap=cmap, vmin=-1, vmax=1)
 
     text = fig.text(0.90,
                     0.02,

@@ -39,9 +39,10 @@ double	gMimicCost;
 int	gPartnerChoice;
 int	gReciprocity;
 int	gDiscrete;
+double	ga2low, ga2high;
 int	gIndirectR;
 double	galpha;			
-double	gES;					// Elasticity of substitution. ES = 1/(1 - rho)
+double	glogES, grho;					// Elasticity of substitution. ES = 1/(1 - rho)
 						// CES fitness function: w = (alpha*q1^rho + (1 - alpha)*q2^rho)^(1/rho)
 double	gGiven;					// Effect on partner: q2 = a2*R2*Given
 
@@ -50,9 +51,9 @@ double	gGiven;					// Effect on partner: q2 = a2*R2*Given
 void	read_globals (char *filename);
 void	write_globals (char *filename);
 void	caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first); 
-void	start_population (struct itype *i, struct itype *i_last, double a2low);
+void	start_population (struct itype *i, struct itype *i_last);
 double	fitness (struct itype *i, struct itype *i_last);	
-double	ces (double q1, double q2);				// gES, galpha
+double	ces (double q1, double q2);				// glogES, galpha
 //double	macromutate (double trait, double sum);			// gDiscrete
 double	calculate_cost	(double choose, double mimic);		// gChooseCost, gMimicCost
 void	update_for_stats (struct itype *i, struct itype *i_last);
@@ -128,7 +129,7 @@ int main (int argc, char *argv[])
 
 	if ( gRuns == 1 )
 	{
-		write_i (ics, (float)galpha, (float)log(gES)/log(2.0), (float)gGiven, i_first, i_last);
+		write_i (ics, (float)galpha, (float)glogES, (float)gGiven, (float)ga2low, (float)ga2high, i_first, i_last);
 	}
 
 	free (i_first);
@@ -180,7 +181,7 @@ void read_globals (char *filename)
 	fscanf (fp, "Discrete,%i\n", &gDiscrete);
 	fscanf (fp, "IndirectR,%i\n", &gIndirectR);
 	fscanf (fp, "alpha,%lf\n", &galpha);
-	fscanf (fp, "ES,%lf\n", &gES);
+	fscanf (fp, "logES,%lf\n", &glogES);
 	fscanf (fp, "Given,%lf\n", &gGiven);
 	
 	fclose (fp);
@@ -194,7 +195,29 @@ void read_globals (char *filename)
 	gGroupSize = pow(2.0, gGroupSize);
 	gChooseCost = pow(2.0, gChooseCost);
 	gMimicCost = pow(2.0, gMimicCost);
-	gES = pow(2.0, gES);
+	grho = 1.0 - 1.0/pow(2.0, glogES);
+	double MRT = (ga2Max/ga1Max)*(gR2/gR1);
+	double Q = (gR2/gR1)*pow(MRT*galpha/(1.0 - galpha), 1.0/(grho - 1));
+	double a2social = ga2Max/(1.0 + Q*ga2Max/ga1Max);
+	MRT = MRT*(1.0 - gGiven);
+	Q = (gR2/gR1)*pow(MRT*galpha/(1.0 - galpha), 1.0/(grho - 1));
+	double a2eq = ga2Max/(1.0 + Q*ga2Max/ga1Max);
+
+	if ( ga2Init < 0.5 )
+	{
+		ga2low = ga2Min;
+		ga2high = a2social;
+	}
+	else if ( ga2Init == 0.5 )
+	{
+		ga2low = a2eq;
+		ga2high = a2social;
+	}
+	else
+	{
+		ga2low = a2eq;
+		ga2high = ga2Max;
+	}
 }
 
 void write_globals (char *filename)
@@ -235,7 +258,6 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 {
 	struct pruntype	*prun_first, *prun_last, *prun;
 	double		wmax = ces(ga1Max*gR1, ga2Max*gR2);
-	double		a2low, a2high;
 
 	for ( int r = 0; r < gRuns; r++ ) 
 	{
@@ -249,31 +271,7 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 		prun_last = prun_first + gPeriods + 1;
 		prun = prun_first;
 
-		double rho = 1.0 - 1.0/gES;
-		double MRT = (ga2Max/ga1Max)*(gR2/gR1);
-		double Q = (gR2/gR1)*pow(MRT*galpha/(1.0 - galpha), 1.0/(rho - 1.0));
-		double a2social = ga2Max/(1.0 + Q*ga2Max/ga1Max);
-		MRT = MRT*(1.0 - gGiven);
-		Q = (gR2/gR1)*pow(MRT*galpha/(1.0 - galpha), 1.0/(rho - 1.0));
-		double a2eq = ga2Max/(1.0 + Q*ga2Max/ga1Max);
-
-		if ( ga2Init < 0.5 )
-		{
-			a2low = 0.01*a2eq;
-			a2high = 0.99*a2social + 0.01*ga2Max;
-		}
-		else if ( ga2Init == 0.5 )
-		{
-			a2low = a2eq;
-			a2high = a2social;
-		}
-		else
-		{
-			a2low = 0.99*a2eq;
-			a2high = 0.01*a2social + 0.99*ga2Max;
-		}
-
-		start_population (i_first, i_last, a2low);
+		start_population (i_first, i_last);
 
 		for ( int t = 0; t < gTime; t++ ) 
 		{
@@ -283,8 +281,10 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 				|| (t + 1) % (gTime/gPeriods) == 0 )
 			{
 				prun->alpha = galpha;
-				prun->logES = log(gES)/log(2.0);
+				prun->logES = glogES;
 				prun->Given = gGiven;
+				prun->a2low = ga2low;
+				prun->a2high = ga2high;
 				prun->time = t + 1;
 				prun->wmax = wmax;
 				stats_period (i_first, i_last, prun, gN, ga2Min, ga2Max);
@@ -323,13 +323,13 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 					recruit->cost = calculate_cost (recruit->ChooseGrain, recruit->MimicGrain);
 				}
 
-				kill (recruit_first, i_first, gN, gDiscrete, a2low, a2high);
+				kill (recruit_first, i_first, gN, gDiscrete, ga2low, ga2high);
 				free_recruits (recruit_first);
 			}
 			
 			if ( gReciprocity == 1 )
 			{
-				decide_a2 (i_first, i_last, ga2Max, gIndirectR, gDiscrete, a2low, a2high);
+				decide_a2 (i_first, i_last, ga2Max, gIndirectR, gDiscrete, ga2low, ga2high);
 			}
 		}
 
@@ -338,7 +338,7 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 	} 
 }
 
-void start_population (struct itype *i, struct itype *i_last, double a2low)
+void start_population (struct itype *i, struct itype *i_last)
 {
 	struct itype *j;
 
@@ -348,7 +348,7 @@ void start_population (struct itype *i, struct itype *i_last, double a2low)
 	}
 	else
 	{
-		i->a2Decided = i->a2Default = a2low;
+		i->a2Decided = i->a2Default = ga2low;
 	}
 	i->a2SeenSum = 0.0;
 	i->ChooseGrain = gChooseGrainInit;
@@ -405,14 +405,13 @@ double ces (double q1, double q2)
 {
 	double w;
 
-	if ( gES >= 0.99 && gES <= 1.01 )
+	if ( grho > -0.001 && grho < 0.001 )
 	{
 		w = pow(q1, 1.0 - galpha)*pow(q2, galpha); // Cobb-Douglas
 	}
 	else
 	{
-		double rho = 1.0 - 1.0/gES;
-		w = pow((1.0 - galpha)*pow(q1, rho) + galpha*pow(q2, rho), 1.0/rho);
+		w = pow((1.0 - galpha)*pow(q1, grho) + galpha*pow(q2, grho), 1.0/grho);
 	}
 
 	return w;

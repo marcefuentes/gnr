@@ -24,7 +24,6 @@ folders = ['a2init75', 'a2init50', 'a2init25']
 subfolder = 'pr'
 a2lows = np.array([0.50, 0.25, 0.00])
 a2highs = a2lows + 0.5
-given = 0.95
 
 movie = False
 
@@ -49,7 +48,7 @@ if movie:
     frames = []
 else:
     ts = [ts[-1]]
-
+given = df.Given[0]
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 rowindex = 'alpha'
 logess = np.sort(pd.unique(df.logES))

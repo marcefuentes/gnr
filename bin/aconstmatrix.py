@@ -14,8 +14,8 @@ filename = thisscript.split('.')[0]
 titles = ['Games',
             '$\it{R}$ - $\it{P}$',
             '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
-givens = [0.95, 0.5]
-a2lows = np.linspace(0.0, 0.5, num=21)
+givens = [0.95, 0.50]
+a2lows = np.linspace(0.0, 0.1, num=10)
 
 num = 1024
 
@@ -61,7 +61,7 @@ fig.supylabel(ylabel,
                 y=0.493,
                 fontsize=fslarge*1.2)
 
-for i in enumerate(givens):
+for i in range(len(givens)):
     for j, title in enumerate(titles):
         ax = axs[i, j]
         ax.text(0, 

@@ -113,12 +113,11 @@ for g, given in enumerate(givens):
                         loc='left')
     letter += 1
 
-    for i, alpha in enumerate(alphas):
-        for j, rho in enumerate(rhos):
-            axs[i, j].set(xticks=[],
-                            yticks=[],
-                            xlim=xlim,
-                            ylim=ylim)
+    for ax in fig.get_axes():
+        ax.set(xticks=[],
+                yticks=[],
+                xlim=xlim,
+                ylim=ylim)
     if given == 0.0:
         for i in range(0, num, step):
             axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',

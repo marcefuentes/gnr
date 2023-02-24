@@ -10,7 +10,7 @@ start_time = time.perf_counter ()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
-titles = ['Games (lower)',
+titles = ['Games',
                 '$\it{R}$ - $\it{P}$',
                 '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 givens = np.linspace(0.0, 1.0, num=21)
@@ -18,7 +18,7 @@ givens = np.linspace(0.0, 1.0, num=21)
 given = 0.95
 alpha = 0.5
 loges = -1.0
-numa2 = 1025
+num = 1025
 
 fslarge = 32 # Label font size
 fssmall = 18 # Tick font size
@@ -39,10 +39,10 @@ xmax = mymodule.a2max
 ymin = 0.0
 ymax = mymodule.a2max
 
-X, Y = np.meshgrid(np.linspace(xmin, xmax, num=numa2),
-                    np.linspace(ymax, ymin, num=numa2))
-RRR, AAA = np.meshgrid(np.repeat(rho, numa2),
-                        np.repeat(alpha, numa2))
+X, Y = np.meshgrid(np.linspace(xmin, xmax, num=num),
+                    np.linspace(ymax, ymin, num=num))
+RRR, AAA = np.meshgrid(np.repeat(rho, num),
+                        np.repeat(alpha, num))
 T = mymodule.fitness(Y, X, given, AAA, RRR)
 R = mymodule.fitness(Y, Y, given, AAA, RRR)
 P = mymodule.fitness(X, X, given, AAA, RRR)
@@ -52,16 +52,16 @@ cmap = plt.cm.viridis
 cmap.set_bad(color='white')
 xlabel = 'Effort to get $\it{B}$'
 ylabel = 'Effort to get $\it{B}$'
-xticks = [0, numa2/2, numa2]
-yticks = [0, numa2/2, numa2]
+xticks = [0, num/2, num]
+yticks = [0, num/2, num]
 xticklabels = [f'{xmin:3.1f}',
                 f'{(xmin + xmax)/2.0:3.1f}',
                 f'{xmax:3.1f}']
 yticklabels = [f'{ymin:3.1f}',
                 f'{(ymin + ymax)/2.0:3.1f}',
                 f'{ymax:3.1f}']
-extent2 = 0, numa2, 0, numa2
-letterposition = numa2*1.035
+extent2 = 0, num, 0, num
+letterposition = num*1.035
 
 fig, axs = plt.subplots(nrows=1,
                         ncols=len(titles),
@@ -76,7 +76,8 @@ fig.supylabel(ylabel,
                 fontsize=fslarge*1.2)
 
 letter = ord('a')
-for ax, title in zip(axs, titles):
+for i, title in enumerate(titles):
+    ax = axs[i]
     ax.text(0, 
             letterposition,
             chr(letter),
@@ -91,43 +92,29 @@ for ax, title in zip(axs, titles):
     ax.set_title(title, pad=40.0, fontsize=fslarge*0.9)
     ax.set_xticklabels(xticklabels, fontsize=fssmall)
 
-Z = np.full([numa2, numa2, 4], mymodule.colormap['white'])
+Z = np.full([num, num, 4], mymodule.colormap['white'])
 mymodule.gamecolors(T, R, P, S, Z)
-mask = (X > Y)
-Z[mask] = [0.7, 0.7, 0.7, 1.0]
+Z[X > Y] = [0.7, 0.7, 0.7, 1.0]
 axs[0].imshow(Z, extent=extent2)
 
-Z = np.zeros([numa2, numa2])
+Z = np.zeros([num, num])
 mask = mymodule.dilemma(T, R, P, S)
 Z[mask] = R[mask] - P[mask] + 0.000001
 Z = np.ma.masked_where(Z == 0.0, Z)
 axs[1].imshow(Z, extent=extent2, cmap=cmap, vmin=-1, vmax=1)
-axs[1].plot(0.0,
-            a2social*numa2,
-            marker='o',
-            color='orange',
-            markersize=10)
-axs[1].plot(a2eq*numa2,
-            mymodule.a2max*numa2,
-            marker='o',
-            color='orange',
-            markersize=10)
 
-Z = np.zeros([numa2, numa2])
+Z = np.zeros([num, num])
 mask = mymodule.dilemma(T, R, P, S)
 Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
 Z = np.ma.masked_where(Z == 0.0, Z)
 axs[2].imshow(Z, extent=extent2, cmap=cmap, vmin=-1, vmax=1)
-axs[2].plot(0.0,
-            a2social*numa2,
-            marker='o',
-            color='orange',
-            markersize=10)
-axs[2].plot(a2eq*numa2,
-            mymodule.a2max*numa2,
-            marker='o',
-            color='orange',
-            markersize=10)
+
+#for i, title in enumerate(titles):
+#    axs[i].plot(0.0,
+#                a2social*num,
+#                marker='o',
+#                color='orange',
+#                markersize=10)
 
 plt.savefig(filename + '.png', transparent=False)
 

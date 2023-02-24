@@ -13,8 +13,6 @@ filename = thisscript.split('.')[0]
 titles = ['Games',
                 '$\it{R}$ - $\it{P}$',
                 '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
-givens = np.linspace(0.0, 1.0, num=21)
-
 given = 0.95
 alpha = 0.7
 loges = 5.0
@@ -25,15 +23,9 @@ fssmall = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-if givens[-1] > 0.9999999:
-    givens[-1] = 0.9999999
 rho = 1.0 - 1.0/pow(2, loges)
-#MRT0 = mymodule.b*mymodule.Rq
-#Q0 = mymodule.Rq*pow(MRT0*alpha/(1.0 - alpha), 1.0/(rho - 1.0))
-#a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
-#MRT = MRT0*(1.0 - given)
-#Q = mymodule.Rq*pow(MRT*alpha/(1.0 - alpha), 1.0/(rho - 1.0))
-#a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
+RRR, AAA = np.meshgrid(np.repeat(rho, ext),
+                        np.repeat(alpha, ext))
 xmin = 0.0
 xmax = mymodule.a2max
 ymin = 0.0
@@ -41,17 +33,15 @@ ymax = mymodule.a2max
 x = np.linspace(xmin, xmax, num=ext)
 y = np.flip(x)
 X, Y = np.meshgrid(x, y)
-RRR, AAA = np.meshgrid(np.repeat(rho, ext),
-                        np.repeat(alpha, ext))
 T = mymodule.fitness(Y, X, given, AAA, RRR)
 R = mymodule.fitness(Y, Y, given, AAA, RRR)
 P = mymodule.fitness(X, X, given, AAA, RRR)
 S = mymodule.fitness(X, Y, given, AAA, RRR)
 
-cmap = plt.cm.viridis
-cmap.set_bad(color='white')
 xlabel = 'Effort to get $\it{B}$'
 ylabel = 'Effort to get $\it{B}$'
+letter = ord('a')
+letterposition = ext*1.035
 xticks = [0, ext/2, ext]
 yticks = [0, ext/2, ext]
 xticklabels = [f'{xmin:3.1f}',
@@ -60,8 +50,6 @@ xticklabels = [f'{xmin:3.1f}',
 yticklabels = [f'{ymin:3.1f}',
                 f'{(ymin + ymax)/2.0:3.1f}',
                 f'{ymax:3.1f}']
-letter = ord('a')
-letterposition = ext*1.035
 extent = 0, ext, 0, ext
 
 fig, axs = plt.subplots(nrows=1,
@@ -69,7 +57,7 @@ fig, axs = plt.subplots(nrows=1,
                         figsize=(6*len(titles), 6))
 fig.supxlabel(xlabel,
                 x=0.513,
-                y=0.01,
+                y=0.0,
                 fontsize=fslarge*1.2)
 fig.supylabel(ylabel,
                 x=0.03,

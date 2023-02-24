@@ -1,6 +1,5 @@
 #! /usr/bin/env python
 
-from math import log
 import matplotlib.pyplot as plt
 import mymodule
 import numpy as np
@@ -59,23 +58,19 @@ xticklabels = [f'{xmin:2.0f}',
 yticklabels = [f'{ymin:3.1f}',
                 f'{(ymin + ymax)/2.0:3.1f}',
                 f'{ymax:3.1f}']
-extent= 0, ext, 0, ext
-cmap = plt.cm.viridis
-cmap.set_bad(color='white')
-
 extent = 0, ext, 0, ext
 
 fig, axs = plt.subplots(nrows=1,
                         ncols=len(titles),
                         figsize=(6*len(titles), 6))
 fig.supxlabel(xlabel,
-                x=0.525,
+                x=0.513,
                 y=0.0,
-                fontsize=fslarge)
+                fontsize=fslarge*1.2)
 fig.supylabel(ylabel,
-                x=0.04,
-                y=0.52,
-                fontsize=fslarge)
+                x=0.03,
+                y=0.493,
+                fontsize=fslarge*1.2)
 
 for ax, title in zip(axs, titles):
     ax.set(xticks=xticks, yticks=yticks)

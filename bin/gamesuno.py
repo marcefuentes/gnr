@@ -76,43 +76,45 @@ fig.supylabel(ylabel,
                 y=0.493,
                 fontsize=fslarge*1.2)
 
-for i, title in enumerate(titles):
-    ax = axs[i]
-    ax.text(0, 
+for ax, title in zip(axs, titles):
+    ax.set(xticks=xticks, yticks=yticks)
+    ax.set_xticklabels(xticklabels, fontsize=fssmall)
+    ax.text(0,
             letterposition,
             chr(letter),
             fontsize=fslarge*0.8,
             weight='bold')
     letter += 1
-    ax.set(xticks=xticks, yticks=yticks)
+    ax.set_title(title, pad=30.0, fontsize=fslarge)
     if ax.get_subplotspec().is_first_col():
         ax.set_yticklabels(yticklabels, fontsize=fssmall)
     else:
         ax.set_yticklabels([])
-    ax.set_title(title, pad=40.0, fontsize=fslarge*0.9)
-    ax.set_xticklabels(xticklabels, fontsize=fssmall)
 
-maskxy = (X >= Y) 
-G = np.full([ext, ext, 4], [0.0, 0.0, 0.0, 0.0])
+maskxy = (X >= Y)
+N = np.full([ext, ext, 4], [1.0, 1.0, 1.0, 0.0])
+masknodilemma = (mymodule.harmony(T, R, P, S) | (mymodule.deadlock(T, R, P, S) & (2.0*P > T + S)))
+N[masknodilemma] = [1.0, 1.0, 1.0, 1.0]
+G = np.full([ext, ext, 4], [1.0, 1.0, 1.0, 0.0])
 G[maskxy] = [0.9, 0.9, 0.9, 1.0]
 
 Z = np.full([ext, ext, 4], mymodule.colormap['white'])
 mymodule.gamecolors(T, R, P, S, Z)
-Z[maskxy] = [0.7, 0.7, 0.7, 1.0]
+Z[maskxy] = [0.9, 0.9, 0.9, 1.0]
 axs[0].imshow(Z, extent=extent)
 
 Z = np.full([ext, ext], -3.0)
-mask = mymodule.dilemma(T, R, P, S)
-Z[mask] = R[mask] - P[mask]
-Z = np.ma.masked_where(Z == -3.0, Z)
-axs[1].imshow(Z, extent=extent, cmap=cmap, vmin=-1, vmax=1)
+Z = R - P
+axs[1].imshow(Z, extent=extent, vmin=-1, vmax=1)
+axs[1].imshow(N, extent=extent)
 axs[1].imshow(G, extent=extent)
 
 Z = np.full([ext, ext], -3.0)
 mask = mymodule.dilemma(T, R, P, S)
-Z[mask] = T[mask] + S[mask] - 2.0*R[mask]
-Z = np.ma.masked_where(Z == -3.0, Z)
-axs[2].imshow(Z, extent=extent, cmap=cmap, vmin=-1, vmax=1)
+Z = T + S - 2.0*R
+axs[2].imshow(Z, extent=extent, vmin=-1, vmax=1)
+axs[2].imshow(N, extent=extent)
+axs[2].imshow(G, extent=extent)
 
 plt.savefig(filename + '.png', transparent=False)
 

@@ -10,9 +10,12 @@ start_time = time.perf_counter ()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
-givens = [0.5, 0.95]
+titles = ['Games',
+                '$\it{R}$ - $\it{P}$',
+                '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
+given = 0.95
 num = 5    # Number of subplot rows & columns
-numa2 = 512
+ext = 512
 
 fslarge = 32 # Label font size
 fssmall = 18 # Tick font size
@@ -25,21 +28,20 @@ alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=num)
 logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
-MRT0 = mymodule.b*mymodule.Rq
-Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
-a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
 xmin = 0.0
 xmax = mymodule.a2max
 ymin = 0.0
 ymax = mymodule.a2max
-X, Y = np.meshgrid(np.linspace(xmin, xmax, num=numa2),
-                    np.linspace(ymax, ymin, num=numa2))
+X, Y = np.meshgrid(np.linspace(xmin, xmax, num=ext),
+                    np.linspace(ymax, ymin, num=ext))
 
+cmap = plt.cm.viridis
+cmap.set_bad(color='white')
 step = int(num/2)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 letter = ord('a')
-extenta2 = 0, numa2, 0, numa2
+extent = 0, ext, 0, ext
 
 fig = plt.figure(figsize=(6*len(givens), 6))
 fig.supxlabel(xlabel,
@@ -52,7 +54,7 @@ fig.supylabel(ylabel,
                 fontsize=fslarge)
 
 outergrid = fig.add_gridspec(nrows=1,
-                                ncols=len(givens),
+                                ncols=len(titles),
                                 left=0.15,
                                 right=0.9,
                                 top=0.86,
@@ -92,25 +94,25 @@ for outer, given in zip(outergrid, givens):
     a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
 
     for i in enumerate(alphas):
-        AAA = np.full([numa2, numa2], alphas[i])
+        AAA = np.full([ext, ext], alphas[i])
         for j in enumerate(rhos):
-            RRR = np.full([numa2, numa2], rhos[j])
+            RRR = np.full([ext, ext], rhos[j])
             T = mymodule.fitness(Y, X, given, AAA, RRR)
             R = mymodule.fitness(Y, Y, given, AAA, RRR)
             P = mymodule.fitness(X, X, given, AAA, RRR)
             S = mymodule.fitness(X, Y, given, AAA, RRR)
-            Z = np.full([numa2, numa2, 4], mymodule.colormap['white'])
+            Z = np.full([ext, ext, 4], mymodule.colormap['white'])
             mymodule.gamecolors(T, R, P, S, Z)
             mask = (X > Y)
             Z[mask] = [0.9, 0.9, 0.9, 1.0]
-            axs[i, j].imshow(Z, extent=extenta2)
-            #axs[i, j].plot(0.01*a2eq[i, j]*numa2,
-            #            (0.99*a2social[i, j] + 0.01*mymodule.a2max)*numa2,
+            axs[i, j].imshow(Z, extent=extent)
+            #axs[i, j].plot(0.01*a2eq[i, j]*ext,
+            #            (0.99*a2social[i, j] + 0.01*mymodule.a2max)*ext,
             #            marker='o',
             #            color='orange',
             #            markersize=4)
-            #axs[i, j].plot(0.99*a2eq[i, j]*numa2,
-            #            (0.01*a2social[i, j] + 0.99*mymodule.a2max)*numa2,
+            #axs[i, j].plot(0.99*a2eq[i, j]*ext,
+            #            (0.01*a2social[i, j] + 0.99*mymodule.a2max)*ext,
             #            marker='o',
             #            color='red',
             #            markersize=4)

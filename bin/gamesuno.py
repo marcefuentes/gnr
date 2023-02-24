@@ -18,7 +18,7 @@ givens = np.linspace(0.0, 1.0, num=21)
 given = 0.95
 alpha = 0.5
 loges = -1.0
-num = 1025
+ext = 1025
 
 fslarge = 32 # Label font size
 fssmall = 18 # Tick font size
@@ -38,11 +38,10 @@ xmin = 0.0
 xmax = mymodule.a2max
 ymin = 0.0
 ymax = mymodule.a2max
-
-X, Y = np.meshgrid(np.linspace(xmin, xmax, num=num),
-                    np.linspace(ymax, ymin, num=num))
-RRR, AAA = np.meshgrid(np.repeat(rho, num),
-                        np.repeat(alpha, num))
+X, Y = np.meshgrid(np.linspace(xmin, xmax, num=ext),
+                    np.linspace(ymax, ymin, num=ext))
+RRR, AAA = np.meshgrid(np.repeat(rho, ext),
+                        np.repeat(alpha, ext))
 T = mymodule.fitness(Y, X, given, AAA, RRR)
 R = mymodule.fitness(Y, Y, given, AAA, RRR)
 P = mymodule.fitness(X, X, given, AAA, RRR)
@@ -52,16 +51,17 @@ cmap = plt.cm.viridis
 cmap.set_bad(color='white')
 xlabel = 'Effort to get $\it{B}$'
 ylabel = 'Effort to get $\it{B}$'
-xticks = [0, num/2, num]
-yticks = [0, num/2, num]
+xticks = [0, ext/2, ext]
+yticks = [0, ext/2, ext]
 xticklabels = [f'{xmin:3.1f}',
                 f'{(xmin + xmax)/2.0:3.1f}',
                 f'{xmax:3.1f}']
 yticklabels = [f'{ymin:3.1f}',
                 f'{(ymin + ymax)/2.0:3.1f}',
                 f'{ymax:3.1f}']
-extent2 = 0, num, 0, num
-letterposition = num*1.035
+letter = ord('a')
+letterposition = ext*1.035
+extent = 0, ext, 0, ext
 
 fig, axs = plt.subplots(nrows=1,
                         ncols=len(titles),
@@ -75,7 +75,6 @@ fig.supylabel(ylabel,
                 y=0.493,
                 fontsize=fslarge*1.2)
 
-letter = ord('a')
 for i, title in enumerate(titles):
     ax = axs[i]
     ax.text(0, 
@@ -92,26 +91,26 @@ for i, title in enumerate(titles):
     ax.set_title(title, pad=40.0, fontsize=fslarge*0.9)
     ax.set_xticklabels(xticklabels, fontsize=fssmall)
 
-Z = np.full([num, num, 4], mymodule.colormap['white'])
+Z = np.full([ext, ext, 4], mymodule.colormap['white'])
 mymodule.gamecolors(T, R, P, S, Z)
 Z[X > Y] = [0.7, 0.7, 0.7, 1.0]
-axs[0].imshow(Z, extent=extent2)
+axs[0].imshow(Z, extent=extent)
 
-Z = np.zeros([num, num])
+Z = np.zeros([ext, ext])
 mask = mymodule.dilemma(T, R, P, S)
 Z[mask] = R[mask] - P[mask] + 0.000001
 Z = np.ma.masked_where(Z == 0.0, Z)
-axs[1].imshow(Z, extent=extent2, cmap=cmap, vmin=-1, vmax=1)
+axs[1].imshow(Z, extent=extent, cmap=cmap, vmin=-1, vmax=1)
 
-Z = np.zeros([num, num])
+Z = np.zeros([ext, ext])
 mask = mymodule.dilemma(T, R, P, S)
 Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
 Z = np.ma.masked_where(Z == 0.0, Z)
-axs[2].imshow(Z, extent=extent2, cmap=cmap, vmin=-1, vmax=1)
+axs[2].imshow(Z, extent=extent, cmap=cmap, vmin=-1, vmax=1)
 
 #for i, title in enumerate(titles):
 #    axs[i].plot(0.0,
-#                a2social*num,
+#                a2social*ext,
 #                marker='o',
 #                color='orange',
 #                markersize=10)

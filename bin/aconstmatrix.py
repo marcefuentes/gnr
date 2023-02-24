@@ -17,35 +17,35 @@ titles = ['Games',
 givens = [0.95, 0.50]
 a2lows = np.linspace(0.0, 0.5, num=1)
 
-num = 1024
+ext = 1024
 
 fslarge = 32 # Label font size
 fssmall = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=num)
-logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=num)
+alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=ext)
+logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=ext)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
 
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 letter = ord('a')
-letterposition = num*1.035
+letterposition = ext*1.035
 xmin = logess[0]
 xmax = logess[-1]
 ymin = alphas[-1]
 ymax = alphas[0]
-xticks = [0, num/2, num]
-yticks = [0, num/2, num]
+xticks = [0, ext/2, ext]
+yticks = [0, ext/2, ext]
 xticklabels = [f'{xmin:2.0f}',
                 f'{(xmin + xmax)/2.0:2.0f}',
                 f'{xmax:2.0f}']
 yticklabels = [f'{ymin:3.1f}',
                 f'{(ymin + ymax)/2.0:3.1f}',
                 f'{ymax:3.1f}']
-extent = 0, num, 0, num
+extent = 0, ext, 0, ext
 cmap = plt.cm.viridis
 cmap.set_bad(color='white')
 
@@ -85,7 +85,7 @@ for i, given in enumerate(givens):
 frames = []
 for a2low in a2lows:
 
-    low = np.full([num, num], a2low)
+    low = np.full([ext, ext], a2low)
     high = low + 0.5
 
     for i, given in enumerate(givens): 
@@ -93,17 +93,17 @@ for a2low in a2lows:
         R = mymodule.fitness(high, high, given, AA, RR)
         P = mymodule.fitness(low, low, given, AA, RR)
         S = mymodule.fitness(low, high, given, AA, RR)
-        Z = np.full([num, num, 4], mymodule.colormap['red'])
+        Z = np.full([ext, ext, 4], mymodule.colormap['red'])
         mymodule.gamecolors(T, R, P, S, Z)
         axs[i, 0].imshow(Z, extent=extent)
 
-        Z = np.zeros([num, num])
+        Z = np.zeros([ext, ext])
         mask = mymodule.dilemma(T, R, P, S)
         Z[mask] = R[mask] - P[mask]
         Z = np.ma.masked_where(Z == 0.0, Z)
         axs[i, 1].imshow(Z, extent=extent, cmap=cmap, vmin=-1, vmax=1)
 
-        Z = np.zeros([num, num])
+        Z = np.zeros([ext, ext])
         mask = mymodule.dilemma(T, R, P, S)
         Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
         Z = np.ma.masked_where(Z == 0.0, Z)

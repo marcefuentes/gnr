@@ -59,13 +59,13 @@ outergrid = fig.add_gridspec(nrows=1,
                                 bottom=0.176)
 
 axss = []
-for outer, title in zip(outergrid, titles):
-    grid = outer.subgridspec(nrows=num,
-                                ncols=num,
-                                wspace=0,
-                                hspace=0)
+for g, title in enumerate(titles):
+    grid = outergrid[g].subgridspec(nrows=num,
+                                    ncols=num,
+                                    wspace=0,
+                                    hspace=0)
     axs = grid.subplots()
-    axs[0, int(num/2)].set_title(f'{title}',
+    axs[0, int(num/2)].set_title(title,
                                     pad=30.0,
                                     fontsize=fslarge*0.8)
     axs[0, 0].set_title(chr(letter),
@@ -77,7 +77,7 @@ for outer, title in zip(outergrid, titles):
     for ax in fig.get_axes():
         ax.set(xticks=[],
                 yticks=[])
-    if title == 'Games':
+    if g == 0:
         for i in range(0, num, step):
             axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
                                     rotation='horizontal',

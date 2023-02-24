@@ -14,8 +14,8 @@ titles = ['Games',
                 '$\it{R}$ - $\it{P}$',
                 '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 given = 0.95
-num = 3    # Number of subplot rows & columns
-ext = 300
+num = 5    # Number of subplot rows & columns
+ext = 256
 
 fslarge = 32 # Label font size
 fssmall = 18 # Tick font size

@@ -16,7 +16,7 @@ titles = ['Games',
 given = 0.95
 alpha = 0.7
 loges = 5.0
-ext = 201
+ext = 256
 
 fslarge = 32 # Label font size
 fssmall = 18 # Tick font size

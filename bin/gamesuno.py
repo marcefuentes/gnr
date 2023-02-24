@@ -108,13 +108,6 @@ Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
 Z = np.ma.masked_where(Z == 0.0, Z)
 axs[2].imshow(Z, extent=extent, cmap=cmap, vmin=-1, vmax=1)
 
-#for i, title in enumerate(titles):
-#    axs[i].plot(0.0,
-#                a2social*ext,
-#                marker='o',
-#                color='orange',
-#                markersize=10)
-
 plt.savefig(filename + '.png', transparent=False)
 
 plt.close()

@@ -22,8 +22,6 @@ fssmall = 18 # Tick font size
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-if givens[-1] > 0.9999999:
-    givens[-1] = 0.9999999
 alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=num)
 logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
@@ -43,7 +41,7 @@ ylabel = 'Value of $\it{B}$'
 letter = ord('a')
 extent = 0, ext, 0, ext
 
-fig = plt.figure(figsize=(6*len(givens), 6))
+fig = plt.figure(figsize=(6*len(titles), 6))
 fig.supxlabel(xlabel,
                 x=0.525,
                 y=0.0,
@@ -60,13 +58,14 @@ outergrid = fig.add_gridspec(nrows=1,
                                 top=0.86,
                                 bottom=0.176)
 
+axss = []
 for outer, title in zip(outergrid, titles):
     grid = outer.subgridspec(nrows=num,
                                 ncols=num,
                                 wspace=0,
                                 hspace=0)
     axs = grid.subplots()
-    axs[0, int(num/2)].set_title(f'{given*100:2.0f}%',
+    axs[0, int(num/2)].set_title(f'{title}',
                                     pad=30.0,
                                     fontsize=fslarge*0.8)
     axs[0, 0].set_title(chr(letter),
@@ -75,10 +74,9 @@ for outer, title in zip(outergrid, titles):
                         loc='left')
     letter += 1
 
-    for i, alpha in enumerate(alphas):
-        for j, rho in enumerate(rhos):
-            axs[i, j].set(xticks=[],
-                            yticks=[])
+    for ax in fig.get_axes():
+        ax.set(xticks=[],
+                yticks=[])
     if title == 'Games':
         for i in range(0, num, step):
             axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
@@ -89,30 +87,43 @@ for outer, title in zip(outergrid, titles):
     for j in range(0, num, step):
         axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=fssmall)
 
+    axss.append(axs)
 
-    for i, alpha in enumerate(alphas):
-        AAA = np.full([ext, ext], alpha)
-        for j, rho in enumerate(rhos):
-            RRR = np.full([ext, ext], rho)
-            T = mymodule.fitness(Y, X, given, AAA, RRR)
-            R = mymodule.fitness(Y, Y, given, AAA, RRR)
-            P = mymodule.fitness(X, X, given, AAA, RRR)
-            S = mymodule.fitness(X, Y, given, AAA, RRR)
-            Z = np.full([ext, ext, 4], mymodule.colormap['white'])
-            mymodule.gamecolors(T, R, P, S, Z)
-            mask = (X > Y)
-            Z[mask] = [0.9, 0.9, 0.9, 1.0]
-            axs[i, j].imshow(Z, extent=extent)
-            #axs[i, j].plot(0.01*a2eq[i, j]*ext,
-            #            (0.99*a2social[i, j] + 0.01*mymodule.a2max)*ext,
-            #            marker='o',
-            #            color='orange',
-            #            markersize=4)
-            #axs[i, j].plot(0.99*a2eq[i, j]*ext,
-            #            (0.01*a2social[i, j] + 0.99*mymodule.a2max)*ext,
-            #            marker='o',
-            #            color='red',
-            #            markersize=4)
+for i, alpha in enumerate(alphas):
+    AAA = np.full([ext, ext], alpha)
+    for j, rho in enumerate(rhos):
+        RRR = np.full([ext, ext], rho)
+        T = mymodule.fitness(Y, X, given, AAA, RRR)
+        R = mymodule.fitness(Y, Y, given, AAA, RRR)
+        P = mymodule.fitness(X, X, given, AAA, RRR)
+        S = mymodule.fitness(X, Y, given, AAA, RRR)
+        Z = np.full([ext, ext, 4], mymodule.colormap['white'])
+        mymodule.gamecolors(T, R, P, S, Z)
+        mask = (X > Y)
+        Z[mask] = [0.9, 0.9, 0.9, 1.0]
+        axss[0][i][j].imshow(Z, extent=extent)
+        #axs[i, j].plot(0.01*a2eq[i, j]*ext,
+        #            (0.99*a2social[i, j] + 0.01*mymodule.a2max)*ext,
+        #            marker='o',
+        #            color='orange',
+        #            markersize=4)
+        #axs[i, j].plot(0.99*a2eq[i, j]*ext,
+        #            (0.01*a2social[i, j] + 0.99*mymodule.a2max)*ext,
+        #            marker='o',
+        #            color='red',
+        #            markersize=4)
+
+        Z = np.zeros([ext, ext])
+        mask = mymodule.dilemma(T, R, P, S)
+        Z[mask] = R[mask] - P[mask] + 0.000001
+        Z = np.ma.masked_where(Z == 0.0, Z)
+        axss[1][i][j].imshow(Z, extent=extent, cmap=cmap, vmin=-1, vmax=1)
+
+        Z = np.zeros([ext, ext])
+        mask = mymodule.dilemma(T, R, P, S)
+        Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
+        Z = np.ma.masked_where(Z == 0.0, Z)
+        axss[2][i][j].imshow(Z, extent=extent, cmap=cmap, vmin=-1, vmax=1)
 
 plt.savefig(filename + '.png', transparent=False)
 

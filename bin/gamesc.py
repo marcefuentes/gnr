@@ -49,7 +49,7 @@ fig.supxlabel(xlabel,
                 y=0.0,
                 fontsize=fslarge)
 fig.supylabel(ylabel,
-                x=0.05,
+                x=0.08,
                 y=0.52,
                 fontsize=fslarge)
 
@@ -60,7 +60,7 @@ outergrid = fig.add_gridspec(nrows=1,
                                 top=0.86,
                                 bottom=0.176)
 
-for outer, given in zip(outergrid, givens):
+for outer, title in zip(outergrid, titles):
     grid = outer.subgridspec(nrows=num,
                                 ncols=num,
                                 wspace=0,
@@ -75,28 +75,25 @@ for outer, given in zip(outergrid, givens):
                         loc='left')
     letter += 1
 
-    for i in enumerate(alphas):
-        for j in enumerate(rhos):
+    for i, alpha in enumerate(alphas):
+        for j, rho in enumerate(rhos):
             axs[i, j].set(xticks=[],
-                             yticks=[])
-    for j in range(0, num, step):
-        axs[-1, j].set_xlabel(f'{logess[i]:2.0f}', fontsize=fssmall)
-    if given == 0.5:
+                            yticks=[])
+    if title == 'Games':
         for i in range(0, num, step):
             axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
                                     rotation='horizontal',
                                     horizontalalignment='right',
                                     verticalalignment='center',
                                     fontsize=fssmall)
+    for j in range(0, num, step):
+        axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=fssmall)
 
-    MRT = MRT0*(1.0 - given)
-    Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
-    a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
 
-    for i in enumerate(alphas):
-        AAA = np.full([ext, ext], alphas[i])
-        for j in enumerate(rhos):
-            RRR = np.full([ext, ext], rhos[j])
+    for i, alpha in enumerate(alphas):
+        AAA = np.full([ext, ext], alpha)
+        for j, rho in enumerate(rhos):
+            RRR = np.full([ext, ext], rho)
             T = mymodule.fitness(Y, X, given, AAA, RRR)
             R = mymodule.fitness(Y, Y, given, AAA, RRR)
             P = mymodule.fitness(X, X, given, AAA, RRR)

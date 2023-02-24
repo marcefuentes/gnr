@@ -113,12 +113,12 @@ for outer, given in zip(outergrid, givens):
                         loc='left')
     letter += 1
 
-    for i in enumerate(alphas):
-        for j in enumerate(rhos):
+    for i, alpha in enumerate(alphas):
+        for j, rho in enumerate(rhos):
             axs[i, j].set(xticks=[],
-                    yticks=[],
-                    xlim=xlim,
-                    ylim=ylim)
+                            yticks=[],
+                            xlim=xlim,
+                            ylim=ylim)
     if given == 0.0:
         for i in range(0, num, step):
             axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
@@ -136,8 +136,8 @@ for outer, given in zip(outergrid, givens):
     q2 = a2eq*mymodule.R2
     q2b = q2_budget*(1.0 - given)
 
-    for i in enumerate(alphas):
-        for j in enumerate(rhos):
+    for i, alpha in enumerate(alphas):
+        for j, rho in enumerate(rhos):
             for line in axs[i, j].get_lines():
                 line.remove()
             for n in range(n_ic): 
@@ -146,7 +146,7 @@ for outer, given in zip(outergrid, givens):
             axs[i, j].plot(q1_budget, budget, c='black', alpha=0.8)
             y = []
             for q1 in q1_ic:
-                y.append(indifference(q1, w[i, j], alphas[i], rhos[j]))
+                y.append(indifference(q1, w[i, j], alpha, rho))
             axs[i, j].plot(q1_ic,
                             y,
                             linewidth=4,

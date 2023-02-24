@@ -208,7 +208,7 @@ void read_globals (char *filename)
 		ga2low = ga2Min;
 		ga2high = a2social;
 	}
-	if ( gDiscrete == 1 && ga2Init > 0.6 )
+	else if ( gDiscrete == 1 && ga2Init > 0.6 )
 	{
 		ga2low = a2eq;
 		ga2high = ga2Max;

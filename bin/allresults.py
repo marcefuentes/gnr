@@ -176,7 +176,7 @@ for i, (low, high) in enumerate(zip(lows, highs)):
     else:
         Z = np.zeros([num, num])
         mask = mymodule.dilemma(T, R, P, S)
-        Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
+        Z[mask] = T[mask] + S[mask] - 2.0*R[mask]
         Z = np.ma.masked_where(Z == 0.0, Z)
         axs[0, 2*i+1].imshow(Z, extent=extentnum, cmap=cmap, vmin=-1, vmax=1)
 

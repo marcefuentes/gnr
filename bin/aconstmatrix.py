@@ -105,7 +105,7 @@ for a2low in a2lows:
 
         Z = np.zeros([ext, ext])
         mask = mymodule.dilemma(T, R, P, S)
-        Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
+        Z[mask] = T[mask] + S[mask] - 2.0*R[mask]
         Z = np.ma.masked_where(Z == 0.0, Z)
         axs[i, 2].imshow(Z, extent=extent, cmap=cmap, vmin=-1, vmax=1)
 

@@ -122,7 +122,7 @@ axs[1].imshow(G, extent=extent)
 
 Z = np.full([ext, ext], -3.0)
 mask = mymodule.dilemma(T, R, P, S)
-Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
+Z[mask] = T[mask] + S[mask] - 2.0*R[mask]
 Z = np.ma.masked_where(Z == -3.0, Z)
 axs[2].imshow(Z, extent=extent, cmap=cmap, vmin=-1, vmax=1)
 

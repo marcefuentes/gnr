@@ -111,10 +111,10 @@ axs[0].imshow(Z, extent=extent)
 #            markersize=4)
 
 
-N = np.full([ext, ext, 4], [0.0, 0.0, 0.0, 0.0])
+N = np.full([ext, ext, 4], [1.0, 1.0, 1.0, 0.0])
 masknodilemma = (mymodule.harmony(T, R, P, S) | (mymodule.deadlock(T, R, P, S) & (2.0*P > T + S)))
 N[masknodilemma] = [1.0, 1.0, 1.0, 1.0]
-G = np.full([ext, ext, 4], [0.0, 0.0, 0.0, 0.0])
+G = np.full([ext, ext, 4], [1.0, 1.0, 1.0, 0.0])
 G[maskxy] = [0.9, 0.9, 0.9, 1.0]
 
 Z = np.full([ext, ext], -3.0)

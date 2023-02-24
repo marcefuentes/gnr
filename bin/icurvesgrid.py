@@ -118,7 +118,7 @@ for g, given in enumerate(givens):
                 yticks=[],
                 xlim=xlim,
                 ylim=ylim)
-    if given == 0.0:
+    if g == 0:
         for i in range(0, num, step):
             axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
                                     rotation='horizontal',

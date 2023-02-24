@@ -87,7 +87,7 @@ fig.supylabel(ylabel,
                 y=0.493,
                 fontsize=fslarge*1.3)
 
-for i in range(len(folders)):
+for i, folder in enumerate(folders):
     for j, title in enumerate(titles):
         ax = axs[i, j]
         ax.set(xticks=xticks,

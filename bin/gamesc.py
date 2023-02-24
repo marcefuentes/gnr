@@ -104,16 +104,16 @@ for outer, given in zip(outergrid, givens):
             mask = (X > Y)
             Z[mask] = [0.9, 0.9, 0.9, 1.0]
             axs[i, j].imshow(Z, extent=extenta2)
-            axs[i, j].plot(0.01*a2eq[i, j]*numa2,
-                        (0.99*a2social[i, j] + 0.01*mymodule.a2max)*numa2,
-                        marker='o',
-                        color='orange',
-                        markersize=4)
-            axs[i, j].plot(0.99*a2eq[i, j]*numa2,
-                        (0.01*a2social[i, j] + 0.99*mymodule.a2max)*numa2,
-                        marker='o',
-                        color='red',
-                        markersize=4)
+            #axs[i, j].plot(0.01*a2eq[i, j]*numa2,
+            #            (0.99*a2social[i, j] + 0.01*mymodule.a2max)*numa2,
+            #            marker='o',
+            #            color='orange',
+            #            markersize=4)
+            #axs[i, j].plot(0.99*a2eq[i, j]*numa2,
+            #            (0.01*a2social[i, j] + 0.99*mymodule.a2max)*numa2,
+            #            marker='o',
+            #            color='red',
+            #            markersize=4)
 
 plt.savefig(filename + '.png', transparent=False)
 

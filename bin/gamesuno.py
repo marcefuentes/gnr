@@ -16,9 +16,9 @@ titles = ['Games',
 givens = np.linspace(0.0, 1.0, num=21)
 
 given = 0.95
-alpha = 0.5
-loges = -1.0
-ext = 1025
+alpha = 0.7
+loges = 5.0
+ext = 201
 
 fslarge = 32 # Label font size
 fssmall = 18 # Tick font size
@@ -28,18 +28,19 @@ plt.rcParams['ps.fonttype'] = 42
 if givens[-1] > 0.9999999:
     givens[-1] = 0.9999999
 rho = 1.0 - 1.0/pow(2, loges)
-MRT0 = mymodule.b*mymodule.Rq
-Q0 = mymodule.Rq*pow(MRT0*alpha/(1.0 - alpha), 1.0/(rho - 1.0))
-a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
-MRT = MRT0*(1.0 - given)
-Q = mymodule.Rq*pow(MRT*alpha/(1.0 - alpha), 1.0/(rho - 1.0))
-a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
+#MRT0 = mymodule.b*mymodule.Rq
+#Q0 = mymodule.Rq*pow(MRT0*alpha/(1.0 - alpha), 1.0/(rho - 1.0))
+#a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
+#MRT = MRT0*(1.0 - given)
+#Q = mymodule.Rq*pow(MRT*alpha/(1.0 - alpha), 1.0/(rho - 1.0))
+#a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
 xmin = 0.0
 xmax = mymodule.a2max
 ymin = 0.0
 ymax = mymodule.a2max
-X, Y = np.meshgrid(np.linspace(xmin, xmax, num=ext),
-                    np.linspace(ymax, ymin, num=ext))
+x = np.linspace(xmin, xmax, num=ext)
+y = np.flip(x)
+X, Y = np.meshgrid(x, y)
 RRR, AAA = np.meshgrid(np.repeat(rho, ext),
                         np.repeat(alpha, ext))
 T = mymodule.fitness(Y, X, given, AAA, RRR)
@@ -91,21 +92,26 @@ for i, title in enumerate(titles):
     ax.set_title(title, pad=40.0, fontsize=fslarge*0.9)
     ax.set_xticklabels(xticklabels, fontsize=fssmall)
 
+maskxy = (X >= Y) 
+G = np.full([ext, ext, 4], [0.0, 0.0, 0.0, 0.0])
+G[maskxy] = [0.9, 0.9, 0.9, 1.0]
+
 Z = np.full([ext, ext, 4], mymodule.colormap['white'])
 mymodule.gamecolors(T, R, P, S, Z)
-Z[X > Y] = [0.7, 0.7, 0.7, 1.0]
+Z[maskxy] = [0.7, 0.7, 0.7, 1.0]
 axs[0].imshow(Z, extent=extent)
 
-Z = np.zeros([ext, ext])
+Z = np.full([ext, ext], -3.0)
 mask = mymodule.dilemma(T, R, P, S)
-Z[mask] = R[mask] - P[mask] + 0.000001
-Z = np.ma.masked_where(Z == 0.0, Z)
+Z[mask] = R[mask] - P[mask]
+Z = np.ma.masked_where(Z == -3.0, Z)
 axs[1].imshow(Z, extent=extent, cmap=cmap, vmin=-1, vmax=1)
+axs[1].imshow(G, extent=extent)
 
-Z = np.zeros([ext, ext])
+Z = np.full([ext, ext], -3.0)
 mask = mymodule.dilemma(T, R, P, S)
 Z[mask] = 1.0 - (2.0*R[mask] - T[mask] - S[mask])
-Z = np.ma.masked_where(Z == 0.0, Z)
+Z = np.ma.masked_where(Z == -3.0, Z)
 axs[2].imshow(Z, extent=extent, cmap=cmap, vmin=-1, vmax=1)
 
 plt.savefig(filename + '.png', transparent=False)

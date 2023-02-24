@@ -12,7 +12,7 @@ thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
 givens = [0.0, 0.5, 0.95]
-num = 3    # Number of subplot rows & columns
+num = 5    # Number of subplot rows & columns
 numa2 = 128
 n_ic = 5    # Number of indifference curves
 

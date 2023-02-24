@@ -53,7 +53,7 @@ xticklabels = [f'{xmin:2.0f}',
 yticklabels = [f'{ymin:3.1f}',
                 f'{(ymin + ymax)/2.0:3.1f}',
                 f'{ymax:3.1f}']
-extent = 0, ext, 0, ext
+extent = 0, ext, 0, ext+7.5
 
 fig = plt.figure(figsize=(6*len(titles), 6))
 fig.supxlabel(xlabel,

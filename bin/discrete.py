@@ -70,8 +70,6 @@ yticklabels = [f'{ymin:3.1f}',
                 f'{(ymin + ymax)/2.0:3.1f}',
                 f'{ymax:3.1f}']
 extent= 0, nc, 0, nr
-cmap = plt.cm.viridis
-cmap.set_bad(color='white')
 traitvmaxs = [mymodule.a2max,
                 mymodule.a2max]
 

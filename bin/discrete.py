@@ -85,25 +85,22 @@ fig.supylabel(ylabel,
                 y=0.493,
                 fontsize=fslarge*1.5)
 
+for ax in fig.get_axes():
+    ax.set(xticks=xticks,
+            yticks=yticks,
+            xticklabels=[],
+            yticklabels=[])
+    ax.text(0,
+            letterposition,
+            chr(letter),
+            fontsize=fslarge*0.8,
+            weight='bold')
+    letter += 1
 for i, folder in enumerate(folders):
-    for j, title in enumerate(titles):
-        ax = axs[i, j]
-        ax.set(xticks=xticks,
-                yticks=yticks,
-                xticklabels=[],
-                yticklabels=[])
-        ax.text(0,
-                letterposition,
-                chr(letter),
-                fontsize=fslarge*0.8,
-                weight='bold')
-        letter += 1
-        if ax.get_subplotspec().is_first_row():
-            ax.set_title(title, pad=40.0, fontsize=fslarge)
-        if ax.get_subplotspec().is_first_col():
-            ax.set_yticklabels(yticklabels, fontsize=fssmall)
-        if ax.get_subplotspec().is_last_row():
-            ax.set_xticklabels(xticklabels, fontsize=fssmall)
+    axs[i, 0].set_yticklabels(yticklabels, fontsize=fssmall)
+for j, title in enumerate(titles):
+    axs[0, j].set_title(title, pad=40.0, fontsize=fslarge)
+    axs[-1, j].set_xticklabels(xticklabels, fontsize=fssmall)
 
 for i, df in enumerate(dfs):
 

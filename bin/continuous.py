@@ -89,8 +89,7 @@ for g, title in enumerate(titles):
     letter += 1
 
     for ax in fig.get_axes():
-        ax.set(xticks=[],
-                yticks=[])
+        ax.set(xticks=[], yticks=[])
     if g == 0:
         for i in range(0, num, step):
             axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',

@@ -23,9 +23,11 @@ colormap = {
     'harmonyTS' :   [1.0, 0.0, 0.0, 1.0],
     'snowdrift' :   [0.7, 0.0, 0.7, 1.0],
     'snowdriftTS' : [1.0, 0.3, 1.0, 1.0],
+    'leader' :      [1.0, 0.3, 0.5, 1.0],
     'prisoner' :    [0.0, 0.1, 0.3, 1.0],
     'prisonerTS' :  [0.3, 0.5, 0.8, 1.0],
     'deadlockTS' :  [0.6, 1.0, 0.6, 1.0],
+    'deadlock' :    [0.9, 1.0, 0.9, 1.0],
 }
 
 def fitness(x, y, given, alpha, rho):
@@ -43,7 +45,7 @@ def fitness(x, y, given, alpha, rho):
     return w
 
 def harmony(T, R, P, S):
-    mask = ((T < R) & (R > P) & (P < S)) 
+    mask = ((R > T) & (T >= S) & (S > P)) | ((R >= S) & (S >= T) & (T >= P))
     return mask
 
 def deadlock(T, R, P, S):
@@ -55,11 +57,15 @@ def prisoner(T, R, P, S):
     return mask
 
 def snowdrift(T, R, P, S):
-    mask = (T >= R) & (R > S) & (S >= P)
+    mask = (T > R) & (R >= S) & (S >= P)
+    return mask
+
+def leader(T, R, P, S):
+    mask = (T > S) & (S > R) & (R > P)
     return mask
 
 def dilemma(T, R, P, S):
-    mask = prisoner(T, R, P, S) | snowdrift(T, R, P, S) | (deadlock(T, R, P, S) & (2.0*P < T + S))
+    mask = prisoner(T, R, P, S) | snowdrift(T, R, P, S) | (deadlock(T, R, P, S) & (2.0*P < T + S)) | leader(T, R, P, S)
     return mask
 
 def TS(mask, T, R, S):
@@ -102,6 +108,11 @@ def snowdriftcolors(T, R, P, S, Z):
     Z[diagonal(T, R, P, S)] = colormap['white']
     pass
 
+def leadercolors(T, R, P, S, Z):
+    mask = leader(T, R, P, S)
+    Z[mask] = colormap['leader']
+    Z[diagonal(T, R, P, S)] = colormap['white']
+
 def nodilemmacolors(T, R, P, S):
     Z = np.full([*T.shape, 4], colormap['transparent'])
     mask = harmony(T, R, P, S) | (deadlock(T, R, P, S) & (2.0*P >= T + S)) | diagonal(T, R, P, S)
@@ -114,6 +125,7 @@ def gamecolors(T, R, P, S):
     deadlockcolors(T, R, P, S, Z)
     prisonercolors(T, R, P, S, Z)
     snowdriftcolors(T, R, P, S, Z)
+    leadercolors(T, R, P, S, Z)
     return Z
 
 def equilibrium(T, R, P, S, low, high, a2eq, weq):
@@ -128,7 +140,7 @@ def equilibrium(T, R, P, S, low, high, a2eq, weq):
     a2eq[mask] = low[mask]
     weq[mask] = P[mask]
 
-    # Snowdrift (chicken)
+    # Snowdrift (chicken) or leader
     mask = (T > R) & (S > P)
     weq[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
     a2eq[mask] = high[mask]*weq[mask] + low[mask]*(1.0 - weq[mask])

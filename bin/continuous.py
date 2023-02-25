@@ -111,21 +111,17 @@ for i, alpha in enumerate(alphas):
         P = mymodule.fitness(X, X, given, AA, RR)
         S = mymodule.fitness(X, Y, given, AA, RR)
 
-        Z = np.full([ext, ext, 4], mymodule.colormap['white'])
-        mymodule.gamecolors(T, R, P, S, Z)
+        Z = mymodule.gamecolors(T, R, P, S)
         Z[maskxy] = [0.9, 0.9, 0.9, 1.0]
         axss[0][i][j].imshow(Z, extent=extent)
 
-        N = np.full([ext, ext, 4], mymodule.colormap['transparent'])
-        mymodule.nodilemmacolors(T, R, P, S, N)
+        N = mymodule.nodilemmacolors(T, R, P, S)
 
-        Z = np.zeros([ext, ext])
         Z = R - P
         axss[1][i][j].imshow(Z, extent=extent, vmin=-1, vmax=1)
         axss[1][i][j].imshow(N, extent=extent)
         axss[1][i][j].imshow(G, extent=extent)
 
-        Z = np.zeros([ext, ext])
         Z = T + S - 2.0*R
         axss[2][i][j].imshow(Z, extent=extent, vmin=-1, vmax=1)
         axss[2][i][j].imshow(N, extent=extent)

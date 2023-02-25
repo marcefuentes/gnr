@@ -215,8 +215,8 @@ void read_globals (char *filename)
 	}
 	else
 	{
-		ga2low = a2eq;
-		ga2high = a2social;
+		ga2low = 0.5*a2eq;
+		ga2high = 0.5*a2social + 0.5*a2Max;
 	}
 }
 

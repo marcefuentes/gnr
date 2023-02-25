@@ -53,6 +53,7 @@ nc = len(logess)
 rhos = 1.0 - 1.0/pow(2.0, logess)
 RR, AA = np.meshgrid(rhos, alphas)
 
+rows = folders
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 letter = ord('a')
@@ -73,9 +74,9 @@ extent= 0, nc, 0, nr
 traitvmaxs = [mymodule.a2max,
                 mymodule.a2max]
 
-fig, axs = plt.subplots(nrows=len(folders),
+fig, axs = plt.subplots(nrows=len(rows),
                         ncols=len(titles),
-                        figsize=(6*len(titles), 6*len(dfs)))
+                        figsize=(6*len(titles), 6*len(rows)))
 fig.supxlabel(xlabel,
                 x=0.513,
                 y=0.02,
@@ -96,7 +97,7 @@ for ax in fig.get_axes():
             fontsize=fslarge*0.8,
             weight='bold')
     letter += 1
-for i, folder in enumerate(folders):
+for i, row in enumerate(rows):
     axs[i, 0].set_yticklabels(yticklabels, fontsize=fssmall)
 for j, title in enumerate(titles):
     axs[0, j].set_title(title, pad=40.0, fontsize=fslarge)

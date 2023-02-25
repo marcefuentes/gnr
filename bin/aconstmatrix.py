@@ -70,7 +70,7 @@ for ax in fig.get_axes():
             chr(letter),
             fontsize=fslarge*0.8,
             weight='bold')
-    letter += 1 
+    letter += 1
 for i, row in enumerate(rows):
     axs[i, 0].set_yticklabels(yticklabels, fontsize=fssmall)
 for j, title in enumerate(titles):

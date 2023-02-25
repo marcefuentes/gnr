@@ -136,3 +136,8 @@ def equilibrium(T, R, P, S, low, high, a2eq, weq):
 
     pass
 
+def a2eq(given, alpha, rho):
+    MRT = b*Rq*(1.0 - given)
+    Q = Rq*pow(MRT*alpha/(1.0 - alpha), 1.0/(rho - 1.0))
+    a2 = a2max/(1.0 + Q*b)
+    return a2

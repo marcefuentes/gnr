@@ -29,11 +29,8 @@ alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=ext)
 logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=ext)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
-MRT0 = mymodule.b*mymodule.Rq
-Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
-a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
 highs = [np.full([ext, ext], mymodule.a2max), 
-        np.full([ext, ext], a2social)] 
+        np.full([ext, ext], mymodule.a2eq(0.0, AA, RR))] 
 
 rows = highs
 xlabel = 'Substitutability of $\it{B}$'
@@ -86,10 +83,7 @@ for j, title in enumerate(titles):
 frames = []
 for given in givens:
 
-    MRT = MRT0*(1.0 - given)
-    Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
-    a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
-    lows = [np.full([ext, ext], a2eq),
+    lows = [np.full([ext, ext], mymodule.a2eq(given, AA, RR)),
             np.full([ext, ext], 0.0)]
 
     for i, (low, high) in enumerate(zip(lows, highs)):

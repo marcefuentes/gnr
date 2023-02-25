@@ -14,9 +14,9 @@ titles = ['Games',
                 '$\it{R}$ - $\it{P}$',
                 '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 given = 0.95
-alpha = 0.7
-loges = 5.0
-ext = 256
+alpha = 0.46
+loges = 2.5
+ext = 1024
 
 fslarge = 32 # Label font size
 fssmall = 18 # Tick font size

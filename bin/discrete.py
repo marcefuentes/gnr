@@ -81,11 +81,11 @@ fig, axs = plt.subplots(nrows=len(folders),
 fig.supxlabel(xlabel,
                 x=0.513,
                 y=0.02,
-                fontsize=fslarge*1.3)
+                fontsize=fslarge*1.5)
 fig.supylabel(ylabel,
-                x=0.03,
+                x=0.05,
                 y=0.493,
-                fontsize=fslarge*1.3)
+                fontsize=fslarge*1.5)
 
 for i, folder in enumerate(folders):
     for j, title in enumerate(titles):

@@ -17,6 +17,7 @@ deathrate = pow(2, -7)
 repeats = 1.0/(1.0 - pow(1.0 - deathrate, 2.0))
 
 colormap = {
+    'transparent':  [1.0, 1.0, 1.0, 0.0],
     'white' :       [1.0, 1.0, 1.0, 1.0],
     'red' :         [1.0, 0.0, 0.0, 1.0],
     'harmonyTS' :   [1.0, 0.0, 0.0, 1.0],
@@ -66,7 +67,6 @@ def TS(mask, T, R, S):
     return mask
 
 def diagonal(T, R, P, S):
-    #mask = np.isclose(R, P)
     mask = (T == R) & (R == P) & (P == S)
     return mask
 
@@ -107,6 +107,11 @@ def snowdriftcolors(T, R, P, S, Z):
     Z[mask] = colormap['snowdrift']
     Z[TS(mask, T, R, S)] = colormap['snowdriftTS']
     Z[diagonal(T, R, P, S)] = colormap['white']
+    pass
+
+def nodilemmacolors(T, R, P, S, N):
+    mask = harmony(T, R, P, S) | (deadlock(T, R, P, S) & (2.0*P >= T + S)) | diagonal(T, R, P, S)
+    N[mask] = colormap['white']
     pass
 
 def equilibrium(T, R, P, S, low, high, a2eq, weq):

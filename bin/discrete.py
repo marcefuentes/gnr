@@ -125,9 +125,8 @@ for i, df in enumerate(dfs):
     mymodule.gamecolors(T, R, P, S, Z)
     axs[i, 0].imshow(Z, extent=extent)
 
-    N = np.full([nr, nc, 4], [1.0, 1.0, 1.0, 0.0])
-    masknodilemma = (mymodule.harmony(T, R, P, S) | (mymodule.deadlock(T, R, P, S) & (2.0*P > T + S)))
-    N[masknodilemma] = [1.0, 1.0, 1.0, 1.0]
+    N = np.full([nr, nc, 4], mymodule.colormap['transparent'])
+    mymodule.nodilemmacolors(T, R, P, S, N)
 
     Z = np.zeros([nr, nc])
     Z = R - P

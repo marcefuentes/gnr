@@ -116,9 +116,8 @@ for i, alpha in enumerate(alphas):
         Z[maskxy] = [0.9, 0.9, 0.9, 1.0]
         axss[0][i][j].imshow(Z, extent=extent)
 
-        N = np.full([ext, ext, 4], [1.0, 1.0, 1.0, 0.0])
-        masknodilemma = (mymodule.harmony(T, R, P, S) | (mymodule.deadlock(T, R, P, S) & (2.0*P > T + S)))
-        N[masknodilemma] = [1.0, 1.0, 1.0, 1.0]
+        N = np.full([ext, ext, 4], mymodule.colormap['transparent'])
+        mymodule.nodilemmacolors(T, R, P, S, N)
 
         Z = np.zeros([ext, ext])
         Z = R - P

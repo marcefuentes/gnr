@@ -56,7 +56,6 @@ q2_budget = (mymodule.a2max - mymodule.b*a1_budget)*mymodule.R2
 q1_budget = a1_budget*mymodule.R1
 q1_ic = np.linspace(0.0, mymodule.a1max*mymodule.R1, num=numa2)
 RR, AA = np.meshgrid(rhos, alphas)
-MRT0 = mymodule.b*mymodule.Rq
 wis = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
 icsss = []
 for alpha in alphas:
@@ -102,8 +101,8 @@ grid = fig.add_gridspec(nrows=num,
                         hspace=0)
 axs = grid.subplots()
 
-for i in enumerate(alphas):
-    for j in enumerate(rhos):
+for i, alpha in enumerate(alphas):
+    for j, rho in enumerate(rhos):
         axs[i, j].set(xticks=[],
                 yticks=[],
                 xlim=xlim,
@@ -120,15 +119,13 @@ for j in range(0, num, step):
 frames = []
 for given in givens:
 
-    MRT = MRT0*(1.0 - given)
-    Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
-    a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
+    a2eq = mymodule.a2eq(given, AA, RR)
     w = mymodule.fitness(a2eq, a2eq, given, AA, RR)
     q2 = a2eq*mymodule.R2
     q2b = q2_budget*(1.0 - given)
 
-    for i in enumerate(alphas):
-        for j in enumerate(rhos):
+    for i, alpha in enumerate(alphas):
+        for j, rho in enumerate(rhos):
             for line in axs[i, j].get_lines():
                 line.remove()
             for n in range(n_ic): 
@@ -137,7 +134,7 @@ for given in givens:
             axs[i, j].plot(q1_budget, budget, c='black', alpha=0.8)
             y = []
             for q1 in q1_ic:
-                y.append(indifference(q1, w[i, j], alphas[i], rhos[j]))
+                y.append(indifference(q1, w[i, j], alpha, rho))
             axs[i, j].plot(q1_ic,
                             y,
                             linewidth=4,

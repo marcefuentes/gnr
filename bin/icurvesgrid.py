@@ -54,7 +54,6 @@ q2_budget = (mymodule.a2max - mymodule.b*a1_budget)*mymodule.R2
 q1_budget = a1_budget*mymodule.R1
 q1_ic = np.linspace(0.0, mymodule.a1max*mymodule.R1, num=numa2)
 RR, AA = np.meshgrid(rhos, alphas)
-MRT0 = mymodule.b*mymodule.Rq
 wis = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
 icsss = []
 for alpha in alphas:
@@ -128,9 +127,7 @@ for g, given in enumerate(givens):
     for j in range(0, num, step):
         axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=fssmall)
 
-    MRT = MRT0*(1.0 - given)
-    Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
-    a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
+    a2eq = mymodule.a2eq(given, AA, RR)
     w = mymodule.fitness(a2eq, a2eq, given, AA, RR)
     q2 = a2eq*mymodule.R2
     q2b = q2_budget*(1.0 - given)

@@ -27,9 +27,7 @@ alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=num)
 logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
-MRT0 = mymodule.b*mymodule.Rq
-Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
-a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
+a2social = mymodule.a2eq(0.0, AA, RR)
 highs = [np.full([num, num], 0.99*a2social + 0.01*mymodule.a2max), 
         np.full([num, num], 0.01*a2social + 0.99*mymodule.a2max)] 
 
@@ -63,8 +61,8 @@ for l, outer in enumerate(outergrid):
                                 wspace=0,
                                 hspace=0)
     axs = grid.subplots()
-    for i in enumerate(alphas):
-        for j in enumerate(rhos):
+    for i, alpha in enumerate(alphas):
+        for j, rho in enumerate(rhos):
             axs[i, j].set(xticks=[],
                             yticks=[],
                             xlim=xlim,
@@ -84,9 +82,7 @@ for l, outer in enumerate(outergrid):
 frames = []
 for given in givens:
 
-    MRT = MRT0*(1.0 - given)
-    Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
-    a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
+    a2eq = mymodule.a2eq(given, AA, RR)
     lows = [np.full([num, num], 0.01*a2eq),
             np.full([num, num], 0.99*a2eq)]
 
@@ -95,11 +91,10 @@ for given in givens:
         R = mymodule.fitness(high, high, given, AA, RR)
         P = mymodule.fitness(low, low, given, AA, RR)
         S = mymodule.fitness(low, high, given, AA, RR)
-        Z = np.full([num, num, 4], mymodule.colormap['red'])
-        mymodule.gamecolors(T, R, P, S, Z)
+        Z = mymodule.gamecolors(T, R, P, S)
 
-        for i in enumerate(alphas):
-            for j in enumerate(rhos):
+        for i, alpha in enumerate(alphas):
+            for j, rho in enumerate(rhos):
                 y = [T[i, j], R[i, j], P[i, j], S[i, j]]
                 for line in axs[i, j].get_lines():
                     line.remove()

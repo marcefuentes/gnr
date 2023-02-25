@@ -39,20 +39,19 @@ rows = highs
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 letter = ord('a')
-letterposition = ext*1.035
+letterposition = 1.035
 xmin = logess[0]
 xmax = logess[-1]
 ymin = alphas[-1]
 ymax = alphas[0]
-xticks = [0, ext/2, ext]
-yticks = [0, ext/2, ext]
+xticks = [-0.5, ext/2-0.5, ext-0.5]
+yticks = [-0.5, ext/2-0.5, ext-0.5]
 xticklabels = [f'{xmin:2.0f}',
                 f'{(xmin + xmax)/2.0:2.0f}',
                 f'{xmax:2.0f}']
-yticklabels = [f'{ymin:3.1f}',
+yticklabels = [f'{ymax:3.1f}',
                 f'{(ymin + ymax)/2.0:3.1f}',
-                f'{ymax:3.1f}']
-extent = 0, ext, 0, ext
+                f'{ymin:3.1f}']
 
 fig, axs = plt.subplots(nrows=len(rows),
                         ncols=len(titles),
@@ -74,6 +73,7 @@ for ax in fig.get_axes():
     ax.text(0,
             letterposition,
             chr(letter),
+            transform=ax.transAxes,
             fontsize=fslarge*0.8,
             weight='bold')
     letter += 1
@@ -100,17 +100,17 @@ for given in givens:
         S = mymodule.fitness(low, high, given, AA, RR)
 
         Z = mymodule.gamecolors(T, R, P, S)
-        axs[i, 0].imshow(Z, extent=extent)
+        axs[i, 0].imshow(Z)
 
         N = mymodule.nodilemmacolors(T, R, P, S)
 
         Z = R - P
-        axs[i, 1].imshow(Z, extent=extent, vmin=-1, vmax=1)
-        axs[i, 1].imshow(N, extent=extent)
+        axs[i, 1].imshow(Z, vmin=-1, vmax=1)
+        axs[i, 1].imshow(N)
 
         Z = T + S - 2.0*R
-        axs[i, 2].imshow(Z, extent=extent, vmin=-1, vmax=1)
-        axs[i, 2].imshow(N, extent=extent)
+        axs[i, 2].imshow(Z, vmin=-1, vmax=1)
+        axs[i, 2].imshow(N)
 
     text = fig.text(0.90,
                     0.02,

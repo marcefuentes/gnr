@@ -35,6 +35,7 @@ a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
 highs = [np.full([ext, ext], mymodule.a2max), 
         np.full([ext, ext], a2social)] 
 
+rows = highs
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 letter = ord('a')
@@ -52,12 +53,10 @@ yticklabels = [f'{ymin:3.1f}',
                 f'{(ymin + ymax)/2.0:3.1f}',
                 f'{ymax:3.1f}']
 extent = 0, ext, 0, ext
-cmap = plt.cm.viridis
-cmap.set_bad(color='white')
 
-fig, axs = plt.subplots(nrows=len(highs),
+fig, axs = plt.subplots(nrows=len(rows),
                         ncols=len(titles),
-                        figsize=(6*len(titles), 6*len(highs)))
+                        figsize=(6*len(titles), 6*len(rows)))
 fig.supxlabel(xlabel,
                 x=0.513,
                 y=0.01,
@@ -67,26 +66,22 @@ fig.supylabel(ylabel,
                 y=0.493,
                 fontsize=fslarge*1.2)
 
-for i, high in enumerate(highs):
-    for j, title in enumerate(titles):
-        ax = axs[i, j]
-        ax.text(0, 
-                letterposition,
-                chr(letter),
-                fontsize=fslarge*0.8,
-                weight='bold')
-        letter += 1
-        ax.set(xticks=xticks, yticks=yticks)
-        if ax.get_subplotspec().is_first_row():
-            ax.set_title(title, pad=40.0, fontsize=fslarge*0.9)
-        if ax.get_subplotspec().is_first_col():
-            ax.set_yticklabels(yticklabels, fontsize=fssmall)
-        else:
-            ax.set_yticklabels([])
-        if ax.get_subplotspec().is_last_row():
-            ax.set_xticklabels(xticklabels, fontsize=fssmall)
-        else:
-            ax.set_xticklabels([])
+for ax in fig.get_axes():
+    ax.set(xticks=xticks,
+            yticks=yticks,
+            xticklabels=[],
+            yticklabels=[])
+    ax.text(0,
+            letterposition,
+            chr(letter),
+            fontsize=fslarge*0.8,
+            weight='bold')
+    letter += 1 
+for i, row in enumerate(rows):
+    axs[i, 0].set_yticklabels(yticklabels, fontsize=fssmall)
+for j, title in enumerate(titles):
+    axs[0, j].set_title(title, pad=40.0, fontsize=fslarge)
+    axs[-1, j].set_xticklabels(xticklabels, fontsize=fssmall)
 
 frames = []
 for given in givens:
@@ -104,20 +99,22 @@ for given in givens:
         P = mymodule.fitness(low, low, given, AA, RR)
         S = mymodule.fitness(low, high, given, AA, RR)
         Z = np.full([ext, ext, 4], mymodule.colormap['red'])
+
         mymodule.gamecolors(T, R, P, S, Z)
         axs[i, 0].imshow(Z, extent=extent)
 
-        Z = np.zeros([ext, ext])
-        mask = mymodule.dilemma(T, R, P, S)
-        Z[mask] = R[mask] - P[mask]
-        Z = np.ma.masked_where(Z == 0.0, Z)
-        axs[i, 1].imshow(Z, extent=extent, cmap=cmap, vmin=-1, vmax=1)
+        N = np.full([ext, ext, 4], mymodule.colormap['transparent'])
+        mymodule.nodilemmacolors(T, R, P, S, N)
 
         Z = np.zeros([ext, ext])
-        mask = mymodule.dilemma(T, R, P, S)
-        Z[mask] = T[mask] + S[mask] - 2.0*R[mask]
-        Z = np.ma.masked_where(Z == 0.0, Z)
-        axs[i, 2].imshow(Z, extent=extent, cmap=cmap, vmin=-1, vmax=1)
+        Z = R - P
+        axs[i, 1].imshow(Z, extent=extent, vmin=-1, vmax=1)
+        axs[i, 1].imshow(N, extent=extent)
+
+        Z = np.zeros([ext, ext])
+        Z = T + S - 2.0*R
+        axs[i, 2].imshow(Z, extent=extent, vmin=-1, vmax=1)
+        axs[i, 2].imshow(N, extent=extent)
 
     text = fig.text(0.90,
                     0.02,

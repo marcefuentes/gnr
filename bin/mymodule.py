@@ -70,13 +70,6 @@ def diagonal(T, R, P, S):
     mask = (T == R) & (R == P) & (P == S)
     return mask
 
-def gamecolors(T, R, P, S, Z):
-    harmonycolors(T, R, P, S, Z)
-    deadlockcolors(T, R, P, S, Z)
-    prisonercolors(T, R, P, S, Z)
-    snowdriftcolors(T, R, P, S, Z)
-    pass
-
 def harmonycolors(T, R, P, S, Z):
     mask = harmony(T, R, P, S)
     Z[mask] = colormap['white']
@@ -109,10 +102,19 @@ def snowdriftcolors(T, R, P, S, Z):
     Z[diagonal(T, R, P, S)] = colormap['white']
     pass
 
-def nodilemmacolors(T, R, P, S, N):
+def nodilemmacolors(T, R, P, S):
+    Z = np.full([*T.shape, 4], colormap['transparent'])
     mask = harmony(T, R, P, S) | (deadlock(T, R, P, S) & (2.0*P >= T + S)) | diagonal(T, R, P, S)
-    N[mask] = colormap['white']
-    pass
+    Z[mask] = colormap['white']
+    return Z
+
+def gamecolors(T, R, P, S):
+    Z = np.full([*T.shape, 4], colormap['red'])
+    harmonycolors(T, R, P, S, Z)
+    deadlockcolors(T, R, P, S, Z)
+    prisonercolors(T, R, P, S, Z)
+    snowdriftcolors(T, R, P, S, Z)
+    return Z
 
 def equilibrium(T, R, P, S, low, high, a2eq, weq):
 

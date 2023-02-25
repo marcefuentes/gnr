@@ -88,20 +88,16 @@ for a2low in a2lows:
         R = mymodule.fitness(high, high, given, AA, RR)
         P = mymodule.fitness(low, low, given, AA, RR)
         S = mymodule.fitness(low, high, given, AA, RR)
-        Z = np.full([ext, ext, 4], mymodule.colormap['red'])
 
-        mymodule.gamecolors(T, R, P, S, Z)
+        Z = mymodule.gamecolors(T, R, P, S)
         axs[i, 0].imshow(Z, extent=extent)
 
-        N = np.full([ext, ext, 4], mymodule.colormap['transparent'])
-        mymodule.nodilemmacolors(T, R, P, S, N)
+        N = mymodule.nodilemmacolors(T, R, P, S)
 
-        Z = np.zeros([ext, ext])
         Z = R - P
         axs[i, 1].imshow(Z, extent=extent, vmin=-1, vmax=1)
         axs[i, 1].imshow(N, extent=extent)
 
-        Z = np.zeros([ext, ext])
         Z = T + S - 2.0*R
         axs[i, 2].imshow(Z, extent=extent, vmin=-1, vmax=1)
         axs[i, 2].imshow(N, extent=extent)

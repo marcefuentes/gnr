@@ -125,21 +125,24 @@ for i, df in enumerate(dfs):
     R = mymodule.fitness(highs, highs, given, AA, RR)
     P = mymodule.fitness(lows, lows, given, AA, RR)
     S = mymodule.fitness(lows, highs, given, AA, RR)
+
     Z = np.full([nr, nc, 4], mymodule.colormap['red'])
     mymodule.gamecolors(T, R, P, S, Z)
     axs[i, 0].imshow(Z, extent=extent)
 
-    Z = np.zeros([nr, nc])
-    mask = mymodule.dilemma(T, R, P, S)
-    Z[mask] = R[mask] - P[mask] + 0.000001
-    Z = np.ma.masked_where(Z == 0.0, Z)
-    axs[i, 1].imshow(Z, extent=extent, cmap=cmap, vmin=-1, vmax=1)
+    N = np.full([nr, nc, 4], [1.0, 1.0, 1.0, 0.0])
+    masknodilemma = (mymodule.harmony(T, R, P, S) | (mymodule.deadlock(T, R, P, S) & (2.0*P > T + S)))
+    N[masknodilemma] = [1.0, 1.0, 1.0, 1.0]
 
     Z = np.zeros([nr, nc])
-    mask = mymodule.dilemma(T, R, P, S)
-    Z[mask] = T[mask] + S[mask] - 2.0*R[mask]
-    Z = np.ma.masked_where(Z == 0.0, Z)
-    axs[i, 2].imshow(Z, extent=extent, cmap=cmap, vmin=-1, vmax=1)
+    Z = R - P
+    axs[i, 1].imshow(Z, extent=extent, vmin=-1, vmax=1)
+    axs[i, 1].imshow(N, extent=extent)
+
+    Z = np.zeros([nr, nc])
+    Z = T + S - 2.0*R
+    axs[i, 2].imshow(Z, extent=extent, vmin=-1, vmax=1)
+    axs[i, 2].imshow(N, extent=extent)
 
 for t in ts:
     for i, df in enumerate(dfs):

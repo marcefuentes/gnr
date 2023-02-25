@@ -11,8 +11,8 @@ thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
 titles = ['Games',
-                '$\it{R}$ - $\it{P}$',
-                '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
+            '$\it{R}$ - $\it{P}$',
+            '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 given = 0.95
 num = 5    # Number of subplot rows & columns
 ext = 256
@@ -112,23 +112,22 @@ for i, alpha in enumerate(alphas):
         P = mymodule.fitness(X, X, given, AA, RR)
         S = mymodule.fitness(X, Y, given, AA, RR)
 
-        N = np.full([ext, ext, 4], [1.0, 1.0, 1.0, 0.0])
-        masknodilemma = (mymodule.harmony(T, R, P, S) | (mymodule.deadlock(T, R, P, S) & (2.0*P > T + S)))
-        N[masknodilemma] = [1.0, 1.0, 1.0, 1.0]
-
         Z = np.full([ext, ext, 4], mymodule.colormap['white'])
         mymodule.gamecolors(T, R, P, S, Z)
         Z[maskxy] = [0.9, 0.9, 0.9, 1.0]
         axss[0][i][j].imshow(Z, extent=extent)
 
-        Z = np.full([ext, ext], -3.0)
+        N = np.full([ext, ext, 4], [1.0, 1.0, 1.0, 0.0])
+        masknodilemma = (mymodule.harmony(T, R, P, S) | (mymodule.deadlock(T, R, P, S) & (2.0*P > T + S)))
+        N[masknodilemma] = [1.0, 1.0, 1.0, 1.0]
+
+        Z = np.zeros([ext, ext])
         Z = R - P
         axss[1][i][j].imshow(Z, extent=extent, vmin=-1, vmax=1)
         axss[1][i][j].imshow(N, extent=extent)
         axss[1][i][j].imshow(G, extent=extent)
 
-        Z = np.full([ext, ext], -3.0)
-        mask = mymodule.dilemma(T, R, P, S)
+        Z = np.zeros([ext, ext])
         Z = T + S - 2.0*R
         axss[2][i][j].imshow(Z, extent=extent, vmin=-1, vmax=1)
         axss[2][i][j].imshow(N, extent=extent)

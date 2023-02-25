@@ -57,20 +57,19 @@ rows = folders
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 letter = ord('a')
-letterposition = nr*1.035
+letterposition = 1.035
 xmin = logess[0]
 xmax = logess[-1]
 ymin = alphas[-1]
 ymax = alphas[0]
-xticks = [0, nc/2, nc]
-yticks = [0, nr/2, nr]
+xticks = [-0.5, nc/2-0.5, nc-0.5]
+yticks = [-0.5, nr/2-0.5, nr-0.5]
 xticklabels = [f'{xmin:2.0f}',
                 f'{(xmin + xmax)/2.0:2.0f}',
                 f'{xmax:2.0f}']
-yticklabels = [f'{ymin:3.1f}',
+yticklabels = [f'{ymax:3.1f}',
                 f'{(ymin + ymax)/2.0:3.1f}',
-                f'{ymax:3.1f}']
-extent= 0, nc, 0, nr
+                f'{ymin:3.1f}']
 traitvmaxs = [mymodule.a2max,
                 mymodule.a2max]
 
@@ -94,6 +93,7 @@ for ax in fig.get_axes():
     ax.text(0,
             letterposition,
             chr(letter),
+            transform=ax.transAxes,
             fontsize=fslarge*0.8,
             weight='bold')
     letter += 1
@@ -122,22 +122,19 @@ for i, df in enumerate(dfs):
     P = mymodule.fitness(lows, lows, given, AA, RR)
     S = mymodule.fitness(lows, highs, given, AA, RR)
 
-    Z = np.full([nr, nc, 4], mymodule.colormap['red'])
-    mymodule.gamecolors(T, R, P, S, Z)
-    axs[i, 0].imshow(Z, extent=extent)
+    Z = mymodule.gamecolors(T, R, P, S)
+    axs[i, 0].imshow(Z)
 
-    N = np.full([nr, nc, 4], mymodule.colormap['transparent'])
-    mymodule.nodilemmacolors(T, R, P, S, N)
+    N = mymodule.nodilemmacolors(T, R, P, S)
 
-    Z = np.zeros([nr, nc])
     Z = R - P
-    axs[i, 1].imshow(Z, extent=extent, vmin=-1, vmax=1)
-    axs[i, 1].imshow(N, extent=extent)
+    axs[i, 1].imshow(Z, vmin=-1, vmax=1)
+    axs[i, 1].imshow(N)
 
     Z = np.zeros([nr, nc])
     Z = T + S - 2.0*R
-    axs[i, 2].imshow(Z, extent=extent, vmin=-1, vmax=1)
-    axs[i, 2].imshow(N, extent=extent)
+    axs[i, 2].imshow(Z, vmin=-1, vmax=1)
+    axs[i, 2].imshow(N)
 
 for t in ts:
     for i, df in enumerate(dfs):
@@ -147,10 +144,7 @@ for t in ts:
                         index=[rowindex],
                         columns=['logES']).sort_index(axis=0,
                                                     ascending=False)
-            axs[i, j + 3].imshow(Z,
-                                extent=extent,
-                                vmin=0,
-                                vmax=vmax)
+            axs[i, j + 3].imshow(Z, vmin=0, vmax=vmax)
     if movie:
         text = fig.text(0.90,
                         0.93,

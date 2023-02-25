@@ -12,7 +12,7 @@ thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
 givens = [0.95]
-#givens = np.linspace(0.0, 1.0, num=21)
+givens = np.linspace(0.0, 1.0, num=21)
 
 num = 21    # Number of subplot rows and columns
 

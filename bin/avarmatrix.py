@@ -14,7 +14,7 @@ filename = thisscript.split('.')[0]
 titles = ['Games',
             '$\it{R}$ - $\it{P}$',
             '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
-givens = np.linspace(0.95, 1.0, num=1)
+givens = np.linspace(0.0, 1.0, num=21)
 
 ext = 1024
 
@@ -29,8 +29,8 @@ alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=ext)
 logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=ext)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
-highs = [np.full([ext, ext], mymodule.a2max), 
-        np.full([ext, ext], mymodule.a2eq(0.0, AA, RR))] 
+highs = [np.full([ext, ext], 0.9*mymodule.a2max), 
+        np.full([ext, ext], 0.5*mymodule.a2eq(0.0, AA, RR) + 0.5*mymodule.a2max)] 
 
 rows = highs
 xlabel = 'Substitutability of $\it{B}$'
@@ -83,8 +83,8 @@ for j, title in enumerate(titles):
 frames = []
 for given in givens:
 
-    lows = [np.full([ext, ext], mymodule.a2eq(given, AA, RR)),
-            np.full([ext, ext], 0.0)]
+    lows = [np.full([ext, ext], 0.1),
+            np.full([ext, ext], 0.5*mymodule.a2eq(given, AA, RR))]
 
     for i, (low, high) in enumerate(zip(lows, highs)):
 

@@ -81,7 +81,7 @@ for ax, title in zip(axs, titles):
             fontsize=fslarge*0.8,
             weight='bold')
     letter += 1
-    ax.set_title(title, pad=30.0, fontsize=fslarge)
+    ax.set_title(title, pad=plotsize*10, fontsize=fslarge)
     if ax.get_subplotspec().is_first_col():
         ax.set_yticklabels(yticklabels, fontsize=fssmall)
     else:

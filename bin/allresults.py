@@ -61,8 +61,8 @@ xmin = df['logES'].min()
 xmax = df['logES'].max()
 ymin = df['alpha'].min()
 ymax = df['alpha'].max()
-xticks = [0, nc/2-0.5, nc-1]
-yticks = [0, nr/2-0.5, nr-1]
+xticks = [-0.5, nc/2-0.5, nc-0.5]
+yticks = [-0.5, nr/2-0.5, nr-0.5]
 xticklabels = [f'{xmin:2.0f}',
                f'{(xmin + xmax)/2.0:2.0f}',
                f'{xmax:2.0f}']
@@ -71,6 +71,7 @@ yticklabels = [f'{ymax:3.1f}',
                f'{ymin:3.1f}']
 width = plotsize*len(titles)
 height = plotsize*len(rows)
+biglabels = plotsize*6+width/8
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -80,11 +81,11 @@ fig, axs = plt.subplots(nrows=len(rows),
 fig.supxlabel(xlabel,
               x=0.513,
               y=0.04,
-              fontsize=width*3)
+              fontsize=biglabels)
 fig.supylabel(ylabel,
               x=0.03,
               y=0.493,
-              fontsize=width*3)
+              fontsize=biglabels)
 
 for ax in fig.get_axes():
     ax.set(xticks=xticks,
@@ -101,14 +102,13 @@ for ax in fig.get_axes():
 for i, row in enumerate(rows):
     axs[i, 0].set_yticklabels(yticklabels, fontsize=plotsize*4)
 for j, title in enumerate(titles):
-    axs[0, j].set_title(title, pad=plotsize*10, fontsize=plotsize*6)
+    axs[0, j].set_title(title, pad=plotsize*10, fontsize=plotsize*5)
     axs[-1, j].set_xticklabels(xticklabels, fontsize=plotsize*4)
 
 #        if letter <= ord('z'): 
 #            textl = chr(letter)
 #        else:
 #            textl = 'a' + chr(letter - 26)
-#        letter += 1
 
 for t in ts:
     for i, df in enumerate(dfs):
@@ -121,9 +121,9 @@ for t in ts:
             axs[i, j].imshow(Z, vmin=0, vmax=traitvmaxs[j])
     if movie:
         text = fig.text(0.90,
-                        0.90,
+                        0.93,
                         f't\n{t}',
-                        fontsize=width*2,
+                        fontsize=biglabels,
                         color='grey',
                         ha='right')
         plt.savefig('temp.png', transparent=False)

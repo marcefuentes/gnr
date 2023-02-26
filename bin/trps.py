@@ -39,40 +39,32 @@ xaxis = [1, 2, 3, 4]
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 letter = ord('a')
-letterposition = 1.035
 xmin = logess[0]
 xmax = logess[-1]
 ymin = alphas[-1]
 ymax = alphas[0]
-xticks = [0, num/2, num]
-yticks = [0, num/2, num]
-xticklabels = [f'{xmin:2.0f}',
-               f'{(xmin + xmax)/2.0:2.0f}',
-               f'{xmax:2.0f}']
-yticklabels = [f'{ymax:3.1f}',
-               f'{(ymin + ymax)/2.0:3.1f}',
-               f'{ymin:3.1f}']
 width = plotsize*len(titles)
 height = plotsize
+biglabels = plotsize*5 + height/4
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
 fig = plt.figure(figsize=(width, height))
 fig.supxlabel(xlabel,
-              x=0.525,
+              x=0.502,
               y=0.0,
-              fontsize=plotsize*6+width/8)
+              fontsize=biglabels)
 fig.supylabel(ylabel,
-              x=0.08,
-              y=0.52,
-              fontsize=plotsize*6+width/8)
+              x=0.07,
+              y=0.5,
+              fontsize=biglabels)
 
 outergrid = fig.add_gridspec(nrows=1,
                              ncols=len(titles),
                              left=0.15,
-                             right=0.9,
-                             top=0.86,
-                             bottom=0.176)
+                             right=0.85,
+                             top=0.8,
+                             bottom=0.2)
 
 axss = []
 for g, title in enumerate(titles):
@@ -82,8 +74,8 @@ for g, title in enumerate(titles):
                                     hspace=0)
     axs = grid.subplots()
     axs[0, int(num/2)].set_title(title,
-                                 pad=30.0,
-                                 fontsize=plotsize*6)
+                                 pad=plotsize*5,
+                                 fontsize=plotsize*5)
     axs[0, 0].set_title(chr(letter),
                         fontsize=plotsize*5,
                         weight='bold',
@@ -137,7 +129,7 @@ for given in givens:
     text = fig.text(0.90,
                     0.02,
                     'Given: ' + f'{given:4.2f}',
-                    fontsize=plotsize*6+width/8,
+                    fontsize=biglabels,
                     color='grey',
                     ha='right')
     plt.savefig('temp.png', transparent=False)

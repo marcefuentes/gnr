@@ -53,16 +53,16 @@ q2_budget = (mymodule.a2max - mymodule.b*a1_budget)*mymodule.R2
 q1_budget = a1_budget*mymodule.R1
 q1_ic = np.linspace(0.0, mymodule.a1max*mymodule.R1, num=numa2)
 RR, AA = np.meshgrid(rhos, alphas)
-wis = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
+ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
 icsss = []
 for alpha in alphas:
     icss = []
     for rho in rhos:
         ics = []
-        for w in wis:
-            ic = []
-            for q1 in q1_ic:
-                ic.append(indifference(q1, w, alpha, rho))
+        for w in ws:
+            ic = np.zeros(numa2)
+            for i, q1 in enumerate(q1_ic):
+                ic[i] = indifference(q1, w, alpha, rho)
             ics.append(ic)
         icss.append(ics)
     icsss.append(icss)
@@ -80,6 +80,7 @@ traitvmax = mymodule.fitness(np.array([mymodule.a2max]),
 
 width = plotsize
 height = plotsize
+biglabels = plotsize*6+width/8
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -87,11 +88,11 @@ fig = plt.figure(figsize=(width, height))
 fig.supxlabel(xlabel,
               x=0.56,
               y=0.03,
-              fontsize=width*4)
+              fontsize=biglabels)
 fig.supylabel(ylabel,
               x=0.05,
               y=0.52,
-              fontsize=width*4)
+              fontsize=biglabels)
 
 grid = fig.add_gridspec(nrows=num,
                         ncols=num,
@@ -138,14 +139,14 @@ for given in givens:
             for q1 in q1_ic:
                 y.append(indifference(q1, w[i, j], alpha, rho))
             axs[i, j].plot(q1_ic,
-                            y,
-                            linewidth=4,
-                            alpha=0.8,
-                            c=cm.viridis(w[i, j]/traitvmax))
+                           y,
+                           linewidth=4,
+                           alpha=0.8,
+                           c=cm.viridis(w[i, j]/traitvmax))
     text = fig.text(0.90,
                     0.90,
                     'Given: ' + f'{given:4.2f}',
-                    fontsize=width*4,
+                    fontsize=biglabels,
                     color='grey',
                     ha='right')
     plt.savefig('temp.png', transparent=False)

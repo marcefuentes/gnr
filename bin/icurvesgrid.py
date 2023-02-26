@@ -54,16 +54,16 @@ q2_budget = (mymodule.a2max - mymodule.b*a1_budget)*mymodule.R2
 q1_budget = a1_budget*mymodule.R1
 q1_ic = np.linspace(0.0, mymodule.a1max*mymodule.R1, num=numa2)
 RR, AA = np.meshgrid(rhos, alphas)
-wis = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
+ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
 icsss = []
 for alpha in alphas:
     icss = []
     for rho in rhos:
         ics = []
-        for w in wis:
-            ic = []
-            for q1 in q1_ic:
-                ic.append(indifference(q1, w, alpha, rho))
+        for w in ws:
+            ic = np.zeros(numa2)
+            for i, q1 in enumerate(q1_ic):
+                ic[i] = indifference(q1, w, alpha, rho)
             ics.append(ic)
         icss.append(ics)
     icsss.append(icss)
@@ -82,35 +82,36 @@ traitvmax = mymodule.fitness(np.array([mymodule.a2max]),
 
 width = plotsize*len(titles)
 height = plotsize
+biglabels = plotsize*5 + height/4
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
 fig = plt.figure(figsize=(width, height))
 fig.supxlabel(xlabel,
-              x=0.525,
+              x=0.502,
               y=0.0,
-              fontsize=width*2)
+              fontsize=biglabels)
 fig.supylabel(ylabel,
-              x=0.08,
-              y=0.52,
-              fontsize=width*2)
+              x=0.07,
+              y=0.5,
+              fontsize=biglabels)
 
 outergrid = fig.add_gridspec(nrows=1,
                              ncols=len(titles),
                              left=0.15,
-                             right=0.9,
-                             top=0.86,
-                             bottom=0.176)
+                             right=0.85,
+                             top=0.8,
+                             bottom=0.2)
 
-for g, given, title in enumerate(zip(givens, titles)):
+for g, (given, title) in enumerate(zip(givens, titles)):
     grid = outergrid[g].subgridspec(nrows=num,
                                     ncols=num,
                                     wspace=0,
                                     hspace=0)
     axs = grid.subplots()
     axs[0, int(num/2)].set_title(title,
-                                 pad=30.0,
-                                 fontsize=plotsize*6)
+                                 pad=plotsize*5,
+                                 fontsize=plotsize*5)
     axs[0, 0].set_title(chr(letter),
                         fontsize=plotsize*5,
                         weight='bold',
@@ -123,10 +124,10 @@ for g, given, title in enumerate(zip(givens, titles)):
     if g == 0:
         for i in range(0, num, step):
             axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
-                                    rotation='horizontal',
-                                    horizontalalignment='right',
-                                    verticalalignment='center',
-                                    fontsize=plotsize*4)
+                                 rotation='horizontal',
+                                 horizontalalignment='right',
+                                 verticalalignment='center',
+                                 fontsize=plotsize*4)
     for j in range(0, num, step):
         axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=plotsize*4)
 
@@ -147,10 +148,10 @@ for g, given, title in enumerate(zip(givens, titles)):
             for q1 in q1_ic:
                 y.append(indifference(q1, w[i, j], alpha, rho))
             axs[i, j].plot(q1_ic,
-                            y,
-                            linewidth=4,
-                            alpha=0.8,
-                            c=cm.viridis(w[i, j]/traitvmax))
+                           y,
+                           linewidth=4,
+                           alpha=0.8,
+                           c=cm.viridis(w[i, j]/traitvmax))
 
 plt.savefig(filename + '.png', transparent=False)
 

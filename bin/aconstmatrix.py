@@ -45,6 +45,7 @@ yticklabels = [f'{ymax:3.1f}',
                f'{ymin:3.1f}']
 width = plotsize*len(titles)
 height = plotsize*len(rows)
+biglabels = plotsize*6+width/8
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -54,11 +55,11 @@ fig, axs = plt.subplots(nrows=len(rows),
 fig.supxlabel(xlabel,
               x=0.513,
               y=0.01,
-              fontsize=width*3)
+              fontsize=biglabels)
 fig.supylabel(ylabel,
               x=0.03,
               y=0.493,
-              fontsize=width*3)
+              fontsize=biglabels)
 
 for ax in fig.get_axes():
     ax.set(xticks=xticks,
@@ -75,7 +76,7 @@ for ax in fig.get_axes():
 for i, row in enumerate(rows):
     axs[i, 0].set_yticklabels(yticklabels, fontsize=plotsize*4)
 for j, title in enumerate(titles):
-    axs[0, j].set_title(title, pad=plotsize*10, fontsize=plotsize*8)
+    axs[0, j].set_title(title, pad=plotsize*10, fontsize=plotsize*5)
     axs[-1, j].set_xticklabels(xticklabels, fontsize=plotsize*4)
 
 frames = []
@@ -107,7 +108,7 @@ for a2low in a2lows:
     text = fig.text(0.90,
                     0.02,
                     'a2low: ' + f'{a2low:4.2f}',
-                    fontsize=plotsize*6+width/2,
+                    fontsize=biglabels,
                     color='grey',
                     ha='right')
     plt.savefig('temp.png', transparent=False)

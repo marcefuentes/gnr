@@ -81,7 +81,7 @@ for j, title in enumerate(titles):
 frames = []
 for a2low in a2lows:
 
-    low = np.full(shape=(ext, ext), a2low)
+    low = np.full([ext, ext], a2low)
     high = low + 0.5
 
     for i, given in enumerate(givens): 

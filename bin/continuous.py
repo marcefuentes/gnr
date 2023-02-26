@@ -11,16 +11,13 @@ thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
 titles = ['Games',
-            '$\it{R}$ - $\it{P}$',
-            '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
+          '$\it{R}$ - $\it{P}$',
+          '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 given = 0.95
 num = 5    # Number of subplot rows & columns
 ext = 256
 
-fslarge = 32 # Label font size
-fssmall = 18 # Tick font size
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
+plotsize = 6
 
 alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=num)
 logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=num)
@@ -32,7 +29,7 @@ ymax = mymodule.a2max
 x = np.linspace(xmin, xmax, num=ext)
 y = np.flip(x)
 X, Y = np.meshgrid(x, y)
-G = np.full(shape=(ext, ext, 4), mymodule.colormap['transparent'])
+G = np.full([ext, ext, 4], mymodule.colormap['transparent'])
 maskxy = (X >= Y)
 G[maskxy] = [0.9, 0.9, 0.9, 1.0]
 
@@ -48,29 +45,33 @@ ymax = alphas[0]
 xticks = [0, ext/2, ext]
 yticks = [0, ext/2, ext]
 xticklabels = [f'{xmin:2.0f}',
-                f'{(xmin + xmax)/2.0:2.0f}',
-                f'{xmax:2.0f}']
-yticklabels = [f'{ymin:3.1f}',
-                f'{(ymin + ymax)/2.0:3.1f}',
-                f'{ymax:3.1f}']
+               f'{(xmin + xmax)/2.0:2.0f}',
+               f'{xmax:2.0f}']
+yticklabels = [f'{ymax:3.1f}',
+               f'{(ymin + ymax)/2.0:3.1f}',
+               f'{ymin:3.1f}']
 extent = 0, ext, 0, ext+7.5
+width = plotsize*len(titles)
+height = plotsize
+plt.rcParams['pdf.fonttype'] = 42
+plt.rcParams['ps.fonttype'] = 42
 
-fig = plt.figure(figsize=(6*len(titles), 6))
+fig = plt.figure(figsize=(width, height))
 fig.supxlabel(xlabel,
-                x=0.525,
-                y=0.0,
-                fontsize=fslarge)
+              x=0.525,
+              y=0.0,
+              fontsize=width*2)
 fig.supylabel(ylabel,
-                x=0.08,
-                y=0.52,
-                fontsize=fslarge)
+              x=0.08,
+              y=0.52,
+              fontsize=width*2)
 
 outergrid = fig.add_gridspec(nrows=1,
-                                ncols=len(titles),
-                                left=0.15,
-                                right=0.9,
-                                top=0.86,
-                                bottom=0.176)
+                             ncols=len(titles),
+                             left=0.15,
+                             right=0.9,
+                             top=0.86,
+                             bottom=0.176)
 
 axss = []
 for g, title in enumerate(titles):
@@ -80,10 +81,10 @@ for g, title in enumerate(titles):
                                     hspace=0)
     axs = grid.subplots()
     axs[0, int(num/2)].set_title(title,
-                                    pad=30.0,
-                                    fontsize=fslarge*0.8)
+                                 pad=30.0,
+                                 fontsize=plotsize*6)
     axs[0, 0].set_title(chr(letter),
-                        fontsize=fslarge*0.8,
+                        fontsize=plotsize*5,
                         weight='bold',
                         loc='left')
     letter += 1
@@ -96,16 +97,16 @@ for g, title in enumerate(titles):
                                     rotation='horizontal',
                                     horizontalalignment='right',
                                     verticalalignment='center',
-                                    fontsize=fssmall)
+                                    fontsize=plotsize*4)
     for j in range(0, num, step):
-        axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=fssmall)
+        axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=plotsize*4)
 
     axss.append(axs)
 
 for i, alpha in enumerate(alphas):
-    AA = np.full(shape=(ext, ext), alpha)
+    AA = np.full([ext, ext], alpha)
     for j, rho in enumerate(rhos):
-        RR = np.full(shape=(ext, ext), rho)
+        RR = np.full([ext, ext], rho)
         T = mymodule.fitness(Y, X, given, AA, RR)
         R = mymodule.fitness(Y, Y, given, AA, RR)
         P = mymodule.fitness(X, X, given, AA, RR)

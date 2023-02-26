@@ -12,16 +12,12 @@ thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
 titles = ['Games',
-            '$\it{R}$ - $\it{P}$',
-            '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
+          '$\it{R}$ - $\it{P}$',
+          '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 givens = np.linspace(0.95, 1.0, num=1)
-
-ext = 21
-
-fslarge = 32 # Label font size
-fssmall = 18 # Tick font size
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
+givens = np.linspace(0.0, 1.0, num=21)
+ext = 512
+plotsize = 4
 
 if givens[-1] > 0.9999999:
     givens[-1] = 0.9999999
@@ -31,9 +27,8 @@ rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
 eq = mymodule.a2eq(0.0, AA, RR)
 highs = [0.20*eq + 0.80*mymodule.a2max,
-        0.80*eq + 0.20*mymodule.a2max,
-        0.80*eq + 0.20*mymodule.a2max]
-
+         0.50*eq + 0.50*mymodule.a2max,
+         0.80*eq + 0.20*mymodule.a2max]
 rows = highs
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
@@ -46,29 +41,34 @@ ymax = alphas[0]
 xticks = [-0.5, ext/2-0.5, ext-0.5]
 yticks = [-0.5, ext/2-0.5, ext-0.5]
 xticklabels = [f'{xmin:2.0f}',
-                f'{(xmin + xmax)/2.0:2.0f}',
-                f'{xmax:2.0f}']
+               f'{(xmin + xmax)/2.0:2.0f}',
+               f'{xmax:2.0f}']
 yticklabels = [f'{ymax:3.1f}',
-                f'{(ymin + ymax)/2.0:3.1f}',
-                f'{ymin:3.1f}']
+               f'{(ymin + ymax)/2.0:3.1f}',
+               f'{ymin:3.1f}']
+fslarge = plotsize*8 # Label font size
+fssmall = plotsize*5 # Tick font size
+plt.rcParams['pdf.fonttype'] = 42
+plt.rcParams['ps.fonttype'] = 42
 
 fig, axs = plt.subplots(nrows=len(rows),
                         ncols=len(titles),
-                        figsize=(4*len(titles), 4*len(rows)))
+                        figsize=(plotsize*len(titles),
+                                 plotsize*len(rows)))
 fig.supxlabel(xlabel,
-                x=0.513,
-                y=0.01,
-                fontsize=fslarge*1.2)
+              x=0.513,
+              y=0.01,
+              fontsize=fslarge*1.2)
 fig.supylabel(ylabel,
-                x=0.03,
-                y=0.493,
-                fontsize=fslarge*1.2)
+              x=0.03,
+              y=0.493,
+              fontsize=fslarge*1.2)
 
 for ax in fig.get_axes():
     ax.set(xticks=xticks,
-            yticks=yticks,
-            xticklabels=[],
-            yticklabels=[])
+           yticks=yticks,
+           xticklabels=[],
+           yticklabels=[])
     ax.text(0,
             letterposition,
             chr(letter),
@@ -79,14 +79,14 @@ for ax in fig.get_axes():
 for i, row in enumerate(rows):
     axs[i, 0].set_yticklabels(yticklabels, fontsize=fssmall)
 for j, title in enumerate(titles):
-    axs[0, j].set_title(title, pad=40.0, fontsize=fslarge)
+    axs[0, j].set_title(title, pad=plotsize*10, fontsize=fslarge)
     axs[-1, j].set_xticklabels(xticklabels, fontsize=fssmall)
 
 frames = []
 for given in givens:
 
     eq = mymodule.a2eq(given, AA, RR)
-    lows = [0.80*eq, 0.80*eq, 0.20*eq]
+    lows = [0.80*eq, 0.50*eq, 0.20*eq]
 
     for i, (low, high) in enumerate(zip(lows, highs)):
 

@@ -114,13 +114,13 @@ def leadercolors(T, R, P, S, Z):
     Z[diagonal(T, R, P, S)] = colormap['white']
 
 def nodilemmacolors(T, R, P, S):
-    Z = np.full(shape=(*T.shape, 4), colormap['transparent'])
+    Z = np.full([*T.shape, 4], colormap['transparent'])
     mask = harmony(T, R, P, S) | (deadlock(T, R, P, S) & (2.0*P >= T + S)) | diagonal(T, R, P, S)
     Z[mask] = colormap['white']
     return Z
 
 def gamecolors(T, R, P, S):
-    Z = np.full(shape=(*T.shape, 4), colormap['red'])
+    Z = np.full([*T.shape, 4], colormap['red'])
     harmonycolors(T, R, P, S, Z)
     deadlockcolors(T, R, P, S, Z)
     prisonercolors(T, R, P, S, Z)

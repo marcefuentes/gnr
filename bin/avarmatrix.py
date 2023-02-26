@@ -15,7 +15,8 @@ titles = ['Games',
           '$\it{R}$ - $\it{P}$',
           '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 givens = np.linspace(0.95, 1.0, num=1)
-givens = np.linspace(0.0, 1.0, num=21)
+#givens = np.linspace(0.0, 1.0, num=21)
+rows = np.linspace(0.8, 0.2, num=3)
 ext = 512
 plotsize = 4
 
@@ -25,11 +26,10 @@ alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=ext)
 logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=ext)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
+highs = [] 
 eq = mymodule.a2eq(0.0, AA, RR)
-highs = [0.20*eq + 0.80*mymodule.a2max,
-         0.50*eq + 0.50*mymodule.a2max,
-         0.80*eq + 0.20*mymodule.a2max]
-rows = highs
+for row in rows:
+    highs.append((1.0 - row)*eq + row*mymodule.a2max)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 letter = ord('a')
@@ -85,8 +85,10 @@ for j, title in enumerate(titles):
 frames = []
 for given in givens:
 
+    lows = [] 
     eq = mymodule.a2eq(given, AA, RR)
-    lows = [0.80*eq, 0.50*eq, 0.20*eq]
+    for row in rows:
+        lows.append(row*eq)
 
     for i, (low, high) in enumerate(zip(lows, highs)):
 

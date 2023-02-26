@@ -203,21 +203,8 @@ void read_globals (char *filename)
 	Q = (gR2/gR1)*pow(MRT*galpha/(1.0 - galpha), 1.0/(grho - 1));
 	double a2eq = ga2Max/(1.0 + Q*ga2Max/ga1Max);
 
-	if ( gDiscrete == 1 && ga2Init < 0.4 )
-	{
-		ga2low = ga2Min;
-		ga2high = a2social;
-	}
-	else if ( gDiscrete == 1 && ga2Init > 0.6 )
-	{
-		ga2low = a2eq;
-		ga2high = ga2Max;
-	}
-	else
-	{
-		ga2low = 0.5*ga2Min + 0.5*a2eq;
-		ga2high = 0.5*a2social + 0.5*ga2Max;
-	}
+	ga2low = ga2Init*ga2eq;
+	ga2high = ga2Init*ga2Max + (1.0 - ga2Init)*a2social;
 }
 
 void write_globals (char *filename)

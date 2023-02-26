@@ -11,17 +11,14 @@ thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
 titles = ['Games',
-                '$\it{R}$ - $\it{P}$',
-                '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
+          '$\it{R}$ - $\it{P}$',
+          '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 given = 0.95
 alpha = 0.46
 loges = 2.5
 ext = 1024
 
-fslarge = 32 # Label font size
-fssmall = 18 # Tick font size
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
+plotsize = 6
 
 rho = 1.0 - 1.0/pow(2, loges)
 RRR, AAA = np.meshgrid(np.repeat(rho, ext),
@@ -51,35 +48,39 @@ xticklabels = [f'{xmin:3.1f}',
                 f'{(xmin + xmax)/2.0:3.1f}',
                 f'{xmax:3.1f}']
 yticklabels = [f'{ymax:3.1f}',
-                f'{(ymin + ymax)/2.0:3.1f}',
-                f'{ymin:3.1f}']
+               f'{(ymin + ymax)/2.0:3.1f}',
+               f'{ymin:3.1f}']
+width = plotsize*len(titles)
+height = plotsize
+plt.rcParams['pdf.fonttype'] = 42
+plt.rcParams['ps.fonttype'] = 42
 
 fig, axs = plt.subplots(nrows=1,
                         ncols=len(titles),
                         figsize=(6*len(titles), 6))
 fig.supxlabel(xlabel,
-                x=0.513,
-                y=0.0,
-                fontsize=fslarge*1.2)
+              x=0.513,
+              y=0.0,
+              fontsize=width*2)
 fig.supylabel(ylabel,
-                x=0.03,
-                y=0.493,
-                fontsize=fslarge*1.2)
+              x=0.03,
+              y=0.493,
+              fontsize=width*2)
 
 for ax in fig.get_axes():
     ax.set(xticks=xticks, yticks=yticks)
-    ax.set_xticklabels(xticklabels, fontsize=fssmall)
+    ax.set_xticklabels(xticklabels, fontsize=plotsize*4)
     ax.set_yticklabels([])
     ax.text(0,
             letterposition,
             chr(letter),
             transform=ax.transAxes,
-            fontsize=fslarge*0.8,
+            fontsize=plotsize*5,
             weight='bold')
     letter += 1
 for j, title in enumerate(titles):
-    axs[j].set_title(title, pad=30.0, fontsize=fslarge)
-axs[0].set_yticklabels(yticklabels, fontsize=fssmall)
+    axs[j].set_title(title, pad=30.0, fontsize=plotsize*6)
+axs[0].set_yticklabels(yticklabels, fontsize=plotsize*4)
 
 Z = mymodule.gamecolors(T, R, P, S)
 Z[maskxy] = [0.9, 0.9, 0.9, 1.0]

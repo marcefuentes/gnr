@@ -30,6 +30,7 @@ highs = []
 eq = mymodule.a2eq(0.0, AA, RR)
 for row in rows:
     highs.append((1.0 - row)*eq + row*mymodule.a2max)
+
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 letter = ord('a')

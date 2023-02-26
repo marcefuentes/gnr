@@ -16,7 +16,7 @@ titles = ['Games',
           '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 givens = np.linspace(0.95, 1.0, num=1)
 #givens = np.linspace(0.0, 1.0, num=21)
-rows = np.linspace(0.8, 0.2, num=3)
+distances = np.linspace(0.8, 0.2, num=3)
 ext = 512
 plotsize = 4
 
@@ -28,9 +28,10 @@ rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
 highs = [] 
 eq = mymodule.a2eq(0.0, AA, RR)
-for row in rows:
-    highs.append((1.0 - row)*eq + row*mymodule.a2max)
+for distance in distances:
+    highs.append((1.0 - distance)*eq + distance*mymodule.a2max)
 
+rows = distances
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 letter = ord('a')

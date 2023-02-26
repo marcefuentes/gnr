@@ -33,7 +33,7 @@ ymax = mymodule.a2max
 x = np.linspace(xmin, xmax, num=ext)
 y = np.flip(x)
 X, Y = np.meshgrid(x, y)
-G = np.full([ext, ext, 4], mymodule.colormap['transparent'])
+G = np.full(shape=(ext, ext, 4), mymodule.colormap['transparent'])
 maskxy = (X >= Y)
 G[maskxy] = [0.9, 0.9, 0.9, 1.0]
 T = mymodule.fitness(Y, X, given, AAA, RRR)

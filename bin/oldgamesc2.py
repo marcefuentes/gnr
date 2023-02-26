@@ -34,8 +34,8 @@ ymax = mymodule.a2max
 x = np.linspace(xmin, xmax, num=ext)
 y = np.flip(x)
 X, Y = np.meshgrid(x, y)
-X = np.tile(A=X, reps=[num, num])
-Y = np.tile(A=Y, reps=[num, num])
+X = np.tile(A=X, reps=shape=(num, num))
+Y = np.tile(A=Y, reps=shape=(num, num))
 T = mymodule.fitness(Y, X, given, AAA, RRR)
 R = mymodule.fitness(Y, Y, given, AAA, RRR)
 P = mymodule.fitness(X, X, given, AAA, RRR)
@@ -88,24 +88,24 @@ for ax, title in zip(axs, titles):
         ax.set_yticklabels([])
 
 maskxy = (X >= Y)
-N = np.full([ext, ext, 4], [1.0, 1.0, 1.0, 0.0])
+N = np.full(shape=(ext, ext, 4), [1.0, 1.0, 1.0, 0.0])
 masknodilemma = (mymodule.harmony(T, R, P, S) | (mymodule.deadlock(T, R, P, S) & (2.0*P > T + S)))
 N[masknodilemma] = [1.0, 1.0, 1.0, 1.0]
-G = np.full([ext, ext, 4], [1.0, 1.0, 1.0, 0.0])
+G = np.full(shape=(ext, ext, 4), [1.0, 1.0, 1.0, 0.0])
 G[maskxy] = [0.9, 0.9, 0.9, 1.0]
 
-Z = np.full([ext, ext, 4], mymodule.colormap['white'])
+Z = np.full(shape=(ext, ext, 4), mymodule.colormap['white'])
 mymodule.gamecolors(T, R, P, S, Z)
 Z[maskxy] = [0.9, 0.9, 0.9, 1.0]
 axs[0].imshow(Z, extent=extent)
 
-Z = np.full([ext, ext], -3.0)
+Z = np.full(shape=(ext, ext), -3.0)
 Z = R - P
 axs[1].imshow(Z, extent=extent, vmin=-1, vmax=1)
 axs[1].imshow(N, extent=extent)
 axs[1].imshow(G, extent=extent)
 
-Z = np.full([ext, ext], -3.0)
+Z = np.full(shape=(ext, ext), -3.0)
 mask = mymodule.dilemma(T, R, P, S)
 Z = T + S - 2.0*R
 axs[2].imshow(Z, extent=extent, vmin=-1, vmax=1)

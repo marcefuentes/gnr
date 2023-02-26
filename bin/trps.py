@@ -28,8 +28,8 @@ logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
 a2social = mymodule.a2eq(0.0, AA, RR)
-highs = [np.full([num, num], 0.9*mymodule.a2max), 
-        np.full([num, num], 0.5*a2social + 0.5*mymodule.a2max)] 
+highs = [np.full(shape=(num, num), 0.9*mymodule.a2max), 
+        np.full(shape=(num, num), 0.5*a2social + 0.5*mymodule.a2max)] 
 
 xlim=[0, 5]
 ylim=[0.0, 2.0]
@@ -83,8 +83,8 @@ frames = []
 for given in givens:
 
     a2eq = mymodule.a2eq(given, AA, RR)
-    lows = [np.full([num, num], 0.1),
-            np.full([num, num], 0.5*a2eq)]
+    lows = [np.full(shape=(num, num), 0.1),
+            np.full(shape=(num, num), 0.5*a2eq)]
 
     for axs, low, high in zip(axss, lows, highs): 
         T = mymodule.fitness(high, low, given, AA, RR)

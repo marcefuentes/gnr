@@ -32,7 +32,7 @@ ymax = mymodule.a2max
 x = np.linspace(xmin, xmax, num=ext)
 y = np.flip(x)
 X, Y = np.meshgrid(x, y)
-G = np.full([ext, ext, 4], mymodule.colormap['transparent'])
+G = np.full(shape=(ext, ext, 4), mymodule.colormap['transparent'])
 maskxy = (X >= Y)
 G[maskxy] = [0.9, 0.9, 0.9, 1.0]
 
@@ -103,9 +103,9 @@ for g, title in enumerate(titles):
     axss.append(axs)
 
 for i, alpha in enumerate(alphas):
-    AA = np.full([ext, ext], alpha)
+    AA = np.full(shape=(ext, ext), alpha)
     for j, rho in enumerate(rhos):
-        RR = np.full([ext, ext], rho)
+        RR = np.full(shape=(ext, ext), rho)
         T = mymodule.fitness(Y, X, given, AA, RR)
         R = mymodule.fitness(Y, Y, given, AA, RR)
         P = mymodule.fitness(X, X, given, AA, RR)

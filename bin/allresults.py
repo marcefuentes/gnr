@@ -68,10 +68,10 @@ a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
 MRT = MRT0*(1.0 - given)
 Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
 a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
-lows = [np.full([num, num], 0.0),
-        np.full([num, num], a2eq)]
-highs = [np.full([num, num], a2social),
-        np.full([num, num], mymodule.a2max)]
+lows = [np.full(shape=(num, num), 0.0),
+        np.full(shape=(num, num), a2eq)]
+highs = [np.full(shape=(num, num), a2social),
+        np.full(shape=(num, num), mymodule.a2max)]
 
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
@@ -163,18 +163,18 @@ for i, (low, high) in enumerate(zip(lows, highs)):
     R = mymodule.fitness(high, high, given, AA, RR)
     P = mymodule.fitness(low, low, given, AA, RR)
     S = mymodule.fitness(low, high, given, AA, RR)
-    Z = np.full([num, num, 4], mymodule.colormap['red'])
+    Z = np.full(shape=(num, num, 4), mymodule.colormap['red'])
     mymodule.gamecolors(T, R, P, S, Z)
     axs[0, 2*i].imshow(Z, extent=extentnum)
 
     if i == 0:
-        Z = np.zeros([num, num])
+        Z = np.zeros(shape=(num, num))
         mask = mymodule.dilemma(T, R, P, S)
         Z[mask] = R[mask] - P[mask] + 0.000001
         Z = np.ma.masked_where(Z == 0.0, Z)
         axs[0, 2*i+1].imshow(Z, extent=extentnum, cmap=cmap, vmin=-1, vmax=1)
     else:
-        Z = np.zeros([num, num])
+        Z = np.zeros(shape=(num, num))
         mask = mymodule.dilemma(T, R, P, S)
         Z[mask] = T[mask] + S[mask] - 2.0*R[mask]
         Z = np.ma.masked_where(Z == 0.0, Z)

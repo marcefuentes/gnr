@@ -23,7 +23,6 @@ traits = ['ChooseGrainmean',
 traitvmaxs = [mymodule.a2max,
               mymodule.a2max]
 folders = ['a2init75', 'a2init50', 'a2init25']
-folders = ['a2init50']
 subfolder = 'pr'
 
 movie = False
@@ -80,11 +79,11 @@ fig, axs = plt.subplots(nrows=len(rows),
 fig.supxlabel(xlabel,
               x=0.513,
               y=0.02,
-              fontsize=width*3)
+              fontsize=plotsize*6+width/2)
 fig.supylabel(ylabel,
               x=0.05,
               y=0.493,
-              fontsize=width*3)
+              fontsize=plotsize*6+width/2)
 
 for ax in fig.get_axes():
     ax.set(xticks=xticks,

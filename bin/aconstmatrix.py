@@ -16,20 +16,17 @@ titles = ['Games',
           '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 givens = [0.95, 0.50]
 a2lows = np.linspace(0.0, 0.5, num=1)
+rows = givens
 ext = 512
 plotsize = 4
 
-fslarge = 32 # Label font size
-fssmall = 18 # Tick font size
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
-
+if givens[-1] > 0.9999999:
+    givens[-1] = 0.9999999
 alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=ext)
 logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=ext)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
 
-rows = givens
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 letter = ord('a')
@@ -83,10 +80,12 @@ for j, title in enumerate(titles):
 
 frames = []
 for a2low in a2lows:
+
     low = np.full(shape=(ext, ext), a2low)
     high = low + 0.5
 
     for i, given in enumerate(givens): 
+
         T = mymodule.fitness(high, low, given, AA, RR)
         R = mymodule.fitness(high, high, given, AA, RR)
         P = mymodule.fitness(low, low, given, AA, RR)
@@ -108,7 +107,7 @@ for a2low in a2lows:
     text = fig.text(0.90,
                     0.02,
                     'a2low: ' + f'{a2low:4.2f}',
-                    fontsize=fslarge,
+                    fontsize=width*2,
                     color='grey',
                     ha='right')
     plt.savefig('temp.png', transparent=False)

@@ -59,11 +59,11 @@ fig, axs = plt.subplots(nrows=len(rows),
 fig.supxlabel(xlabel,
               x=0.513,
               y=0.01,
-              fontsize=width*3)
+              fontsize=plotsize*6+width/2)
 fig.supylabel(ylabel,
               x=0.03,
               y=0.493,
-              fontsize=width*3)
+              fontsize=plotsize*6+width/2)
 
 for ax in fig.get_axes():
     ax.set(xticks=xticks,
@@ -86,10 +86,11 @@ for j, title in enumerate(titles):
 frames = []
 for given in givens:
 
-    lows = [] 
     eq = mymodule.a2eq(given, AA, RR)
-    for distance in distances:
-        lows.append(distance*eq)
+    for i, distance in enumerate(distances):
+
+        low = distance*eq
+        high = highs[i]
 
         T = mymodule.fitness(high, low, given, AA, RR)
         R = mymodule.fitness(high, high, given, AA, RR)
@@ -112,7 +113,7 @@ for given in givens:
     text = fig.text(0.90,
                     0.02,
                     'Given: ' + f'{given:4.2f}',
-                    fontsize=width*2,
+                    fontsize=plotsize*6+width/2,
                     color='grey',
                     ha='right')
     plt.savefig('temp.png', transparent=False)

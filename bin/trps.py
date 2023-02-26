@@ -136,7 +136,7 @@ for given in givens:
     text = fig.text(0.9,
                     0.02,
                     'Given: ' + f'{given:4.2f}',
-                    fontsize=width*2,
+                    fontsize=plotsize*6+width/2,
                     color='grey',
                     ha='right')
     plt.savefig('temp.png', transparent=False)

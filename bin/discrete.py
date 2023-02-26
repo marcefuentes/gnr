@@ -149,7 +149,7 @@ for t in ts:
         text = fig.text(0.90,
                         0.93,
                         f't\n{t}',
-                        fontsize=width*2,
+                        fontsize=plotsize*6+width/2)
                         color='grey',
                         ha='right')
         plt.savefig('temp.png', transparent=False)

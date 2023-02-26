@@ -204,7 +204,7 @@ void read_globals (char *filename)
 	double a2eq = ga2Max/(1.0 + Q*ga2Max/ga1Max);
 
 	ga2low = ga2Init*ga2eq;
-	ga2high = ga2Init*ga2Max + (1.0 - ga2Init)*a2social;
+	ga2high = (1.0 - ga2Init)*a2social + ga2Init*ga2Max;
 }
 
 void write_globals (char *filename)

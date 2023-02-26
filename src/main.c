@@ -203,8 +203,8 @@ void read_globals (char *filename)
 	Q = (gR2/gR1)*pow(MRT*galpha/(1.0 - galpha), 1.0/(grho - 1));
 	double a2eq = ga2Max/(1.0 + Q*ga2Max/ga1Max);
 
-	ga2low = ga2Init*ga2eq;
-	ga2high = (1.0 - ga2Init)*a2social + ga2Init*ga2Max;
+	ga2low = ga2Min + ga2Init*a2eq;
+	ga2high = a2social + ga2Init*(ga2Max - a2social);
 }
 
 void write_globals (char *filename)

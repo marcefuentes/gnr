@@ -12,14 +12,14 @@ thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
 givens = [0.0, 0.5, 0.95]
+titles = []
+for given in givens:
+    titles.append(f'{given*100:2.0f}%')
 num = 5    # Number of subplot rows & columns
 numa2 = 128
 n_ic = 5    # Number of indifference curves
 
-fslarge = 32 # Label font size
-fssmall = 18 # Tick font size
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
+plotsize = 6
 
 def indifference(q, w, alpha, rho):
     if rho == 0.0:
@@ -75,27 +75,32 @@ xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 letter = ord('a')
 traitvmax = mymodule.fitness(np.array([mymodule.a2max]),
-                                np.array([mymodule.a2max]),
-                                np.array([0.0]),
-                                np.array([0.9]),
-                                np.array([5.0]))
+                             np.array([mymodule.a2max]),
+                             np.array([0.0]),
+                             np.array([0.9]),
+                             np.array([5.0]))
 
-fig = plt.figure(figsize=(6*len(givens), 6))
+width = plotsize*len(titles)
+height = plotsize
+plt.rcParams['pdf.fonttype'] = 42
+plt.rcParams['ps.fonttype'] = 42
+
+fig = plt.figure(figsize=(width, height))
 fig.supxlabel(xlabel,
-                x=0.525,
-                y=0.0,
-                fontsize=fslarge)
+              x=0.525,
+              y=0.0,
+              fontsize=width*2)
 fig.supylabel(ylabel,
-                x=0.08,
-                y=0.52,
-                fontsize=fslarge)
+              x=0.08,
+              y=0.52,
+              fontsize=width*2)
 
 outergrid = fig.add_gridspec(nrows=1,
-                                ncols=len(givens),
-                                left=0.15,
-                                right=0.9,
-                                top=0.86,
-                                bottom=0.176)
+                             ncols=len(titles),
+                             left=0.15,
+                             right=0.9,
+                             top=0.86,
+                             bottom=0.176)
 
 for g, given in enumerate(givens):
     grid = outergrid[g].subgridspec(nrows=num,
@@ -103,29 +108,26 @@ for g, given in enumerate(givens):
                                     wspace=0,
                                     hspace=0)
     axs = grid.subplots()
-    axs[0, int(num/2)].set_title(f'{given*100:2.0f}%',
-                                    pad=30.0,
-                                    fontsize=fslarge*0.8)
+    axs[0, int(num/2)].set_title(titles[g],
+                                 pad=30.0,
+                                 fontsize=plotsize*6)
     axs[0, 0].set_title(chr(letter),
-                        fontsize=fslarge*0.8,
+                        fontsize=plotsize*5,
                         weight='bold',
                         loc='left')
     letter += 1
 
     for ax in fig.get_axes():
-        ax.set(xticks=[],
-                yticks=[],
-                xlim=xlim,
-                ylim=ylim)
+        ax.set(xticks=[], yticks=[], xlim=xlim, ylim=ylim)
     if g == 0:
         for i in range(0, num, step):
             axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
                                     rotation='horizontal',
                                     horizontalalignment='right',
                                     verticalalignment='center',
-                                    fontsize=fssmall)
+                                    fontsize=plotsize*4)
     for j in range(0, num, step):
-        axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=fssmall)
+        axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=plotsize*4)
 
     a2eq = mymodule.a2eq(given, AA, RR)
     w = mymodule.fitness(a2eq, a2eq, given, AA, RR)

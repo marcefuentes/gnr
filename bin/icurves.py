@@ -53,16 +53,16 @@ q2_budget = (mymodule.a2max - mymodule.b*a1_budget)*mymodule.R2
 q1_budget = a1_budget*mymodule.R1
 q1_ic = np.linspace(0.0, mymodule.a1max*mymodule.R1, num=numa2)
 RR, AA = np.meshgrid(rhos, alphas)
-ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
+wis = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
 icsss = []
 for alpha in alphas:
     icss = []
     for rho in rhos:
         ics = []
-        for w in ws:
-            ic = np.zeros(numa2)
-            for i, q1 in enumerate(q1_ic):
-                ic[i] = indifference(q1, w, alpha, rho)
+        for w in wis:
+            ic = []
+            for q1 in q1_ic:
+                ic.append(indifference(q1, w, alpha, rho))
             ics.append(ic)
         icss.append(ics)
     icsss.append(icss)

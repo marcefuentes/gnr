@@ -14,14 +14,15 @@ titles = ['Games',
           '$\it{R}$ - $\it{P}$',
           '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 given = 0.95
-num = 5    # Number of subplot rows & columns
-ext = 256
+alpha = 0.46
+loges = 2.5
+ext = 1024
 
 plotsize = 6
 
-alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=num)
-logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=num)
-rhos = 1.0 - 1.0/pow(2, logess)
+rho = 1.0 - 1.0/pow(2, loges)
+RRR, AAA = np.meshgrid(np.repeat(rho, ext),
+                        np.repeat(alpha, ext))
 xmin = 0.0
 xmax = mymodule.a2max
 ymin = 0.0
@@ -32,101 +33,70 @@ X, Y = np.meshgrid(x, y)
 G = np.full([ext, ext, 4], mymodule.colormap['transparent'])
 maskxy = (X >= Y)
 G[maskxy] = [0.9, 0.9, 0.9, 1.0]
+T = mymodule.fitness(Y, X, given, AAA, RRR)
+R = mymodule.fitness(Y, Y, given, AAA, RRR)
+P = mymodule.fitness(X, X, given, AAA, RRR)
+S = mymodule.fitness(X, Y, given, AAA, RRR)
 
-step = int(num/2)
-xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Value of $\it{B}$'
+xlabel = 'Effort to get $\it{B}$'
+ylabel = 'Effort to get $\it{B}$'
 letter = ord('a')
-letterposition = ext*1.035
-xmin = logess[0]
-xmax = logess[-1]
-ymin = alphas[-1]
-ymax = alphas[0]
-xticks = [0, ext/2, ext]
-yticks = [0, ext/2, ext]
-xticklabels = [f'{xmin:2.0f}',
-               f'{(xmin + xmax)/2.0:2.0f}',
-               f'{xmax:2.0f}']
+letterposition = 1.035
+xticks = [-0.5, ext/2-0.5, ext-0.5]
+yticks = [-0.5, ext/2-0.5, ext-0.5]
+xticklabels = [f'{xmin:3.1f}',
+                f'{(xmin + xmax)/2.0:3.1f}',
+                f'{xmax:3.1f}']
 yticklabels = [f'{ymax:3.1f}',
                f'{(ymin + ymax)/2.0:3.1f}',
                f'{ymin:3.1f}']
-extent = 0, ext, 0, ext+7.5
 width = plotsize*len(titles)
 height = plotsize
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-fig = plt.figure(figsize=(width, height))
+fig, axs = plt.subplots(nrows=1,
+                        ncols=len(titles),
+                        figsize=(6*len(titles), 6))
 fig.supxlabel(xlabel,
-              x=0.525,
+              x=0.513,
               y=0.0,
               fontsize=width*2)
 fig.supylabel(ylabel,
-              x=0.08,
-              y=0.52,
+              x=0.03,
+              y=0.493,
               fontsize=width*2)
 
-outergrid = fig.add_gridspec(nrows=1,
-                             ncols=len(titles),
-                             left=0.15,
-                             right=0.9,
-                             top=0.86,
-                             bottom=0.176)
-
-axss = []
-for g, title in enumerate(titles):
-    grid = outergrid[g].subgridspec(nrows=num,
-                                    ncols=num,
-                                    wspace=0,
-                                    hspace=0)
-    axs = grid.subplots()
-    axs[0, int(num/2)].set_title(title,
-                                 pad=30.0,
-                                 fontsize=plotsize*6)
-    axs[0, 0].set_title(chr(letter),
-                        fontsize=plotsize*5,
-                        weight='bold',
-                        loc='left')
+for ax in fig.get_axes():
+    ax.set(xticks=xticks, yticks=yticks)
+    ax.set_xticklabels(xticklabels, fontsize=plotsize*4)
+    ax.set_yticklabels([])
+    ax.text(0,
+            letterposition,
+            chr(letter),
+            transform=ax.transAxes,
+            fontsize=plotsize*5,
+            weight='bold')
     letter += 1
+for j, title in enumerate(titles):
+    axs[j].set_title(title, pad=30.0, fontsize=plotsize*6)
+axs[0].set_yticklabels(yticklabels, fontsize=plotsize*4)
 
-    for ax in fig.get_axes():
-        ax.set(xticks=[], yticks=[])
-    if g == 0:
-        for i in range(0, num, step):
-            axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
-                                    rotation='horizontal',
-                                    horizontalalignment='right',
-                                    verticalalignment='center',
-                                    fontsize=plotsize*4)
-    for j in range(0, num, step):
-        axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=plotsize*4)
+Z = mymodule.gamecolors(T, R, P, S)
+Z[maskxy] = [0.9, 0.9, 0.9, 1.0]
+axs[0].imshow(Z)
 
-    axss.append(axs)
+N = mymodule.nodilemmacolors(T, R, P, S)
 
-for i, alpha in enumerate(alphas):
-    AA = np.full([ext, ext], alpha)
-    for j, rho in enumerate(rhos):
-        RR = np.full([ext, ext], rho)
-        T = mymodule.fitness(Y, X, given, AA, RR)
-        R = mymodule.fitness(Y, Y, given, AA, RR)
-        P = mymodule.fitness(X, X, given, AA, RR)
-        S = mymodule.fitness(X, Y, given, AA, RR)
+Z = R - P
+axs[1].imshow(Z, vmin=-1, vmax=1)
+axs[1].imshow(N)
+axs[1].imshow(G)
 
-        Z = mymodule.gamecolors(T, R, P, S)
-        Z[maskxy] = [0.9, 0.9, 0.9, 1.0]
-        axss[0][i][j].imshow(Z, extent=extent)
-
-        N = mymodule.nodilemmacolors(T, R, P, S)
-
-        Z = R - P
-        axss[1][i][j].imshow(Z, extent=extent, vmin=-1, vmax=1)
-        axss[1][i][j].imshow(N, extent=extent)
-        axss[1][i][j].imshow(G, extent=extent)
-
-        Z = T + S - 2.0*R
-        axss[2][i][j].imshow(Z, extent=extent, vmin=-1, vmax=1)
-        axss[2][i][j].imshow(N, extent=extent)
-        axss[2][i][j].imshow(G, extent=extent)
+Z = T + S - 2.0*R
+axs[2].imshow(Z, vmin=-1, vmax=1)
+axs[2].imshow(N)
+axs[2].imshow(G)
 
 plt.savefig(filename + '.png', transparent=False)
 

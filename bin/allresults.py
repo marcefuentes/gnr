@@ -22,13 +22,13 @@ titles = ['Effort to get $\it{B}$',
                'Sensitivity for\nmimicking partner',
                'Fitness']
 traitvmaxs = [mymodule.a2max,
-                mymodule.a2max,
-                mymodule.a2max,
-                mymodule.fitness(np.array([mymodule.a2max]),
-                                    np.array([mymodule.a2max]),
-                                    np.array([0.0]),
-                                    np.array([0.9]),
-                                    np.array([5.0]))]
+              mymodule.a2max,
+              mymodule.a2max,
+              mymodule.fitness(np.array([mymodule.a2max]),
+                               np.array([mymodule.a2max]),
+                               np.array([0.0]),
+                               np.array([0.9]),
+                               np.array([5.0]))]
 folders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
 
 movie = False
@@ -61,8 +61,8 @@ xmin = df['logES'].min()
 xmax = df['logES'].max()
 ymin = df['alpha'].min()
 ymax = df['alpha'].max()
-xticks = [-0.5, nc/2-0.5, nc-0.5]
-yticks = [-0.5, nr/2-0.5, nr-0.5]
+xticks = [0, nc/2-0.5, nc-1]
+yticks = [0, nr/2-0.5, nr-1]
 xticklabels = [f'{xmin:2.0f}',
                f'{(xmin + xmax)/2.0:2.0f}',
                f'{xmax:2.0f}']

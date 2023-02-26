@@ -18,10 +18,7 @@ num = 3    # Number of subplot rows & columns
 numa2 = 128
 n_ic = 5    # Number of indifference curves
 
-fslarge = 32 # Label font size
-fssmall = 18 # Tick font size
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
+plotsize = 6
 
 def indifference(q, w, alpha, rho):
     if rho == 0.0:
@@ -56,16 +53,16 @@ q2_budget = (mymodule.a2max - mymodule.b*a1_budget)*mymodule.R2
 q1_budget = a1_budget*mymodule.R1
 q1_ic = np.linspace(0.0, mymodule.a1max*mymodule.R1, num=numa2)
 RR, AA = np.meshgrid(rhos, alphas)
-wis = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
+ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
 icsss = []
 for alpha in alphas:
     icss = []
     for rho in rhos:
         ics = []
-        for w in wis:
-            ic = []
-            for q1 in q1_ic:
-                ic.append(indifference(q1, w, alpha, rho))
+        for w in ws:
+            ic = np.zeros(numa2)
+            for i, q1 in enumerate(q1_ic):
+                ic[i] = indifference(q1, w, alpha, rho)
             ics.append(ic)
         icss.append(ics)
     icsss.append(icss)
@@ -75,21 +72,26 @@ ylim=[0.0, mymodule.a2max*mymodule.R2]
 step = int(num/2)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
-
 traitvmax = mymodule.fitness(np.array([mymodule.a2max]),
-                                np.array([mymodule.a2max]),
-                                np.array([0.0]),
-                                np.array([0.9]),
-                                np.array([5.0]))
-fig = plt.figure(figsize=(8, 8))
+                             np.array([mymodule.a2max]),
+                             np.array([0.0]),
+                             np.array([0.9]),
+                             np.array([5.0]))
+
+width = plotsize
+height = plotsize
+plt.rcParams['pdf.fonttype'] = 42
+plt.rcParams['ps.fonttype'] = 42
+
+fig = plt.figure(figsize=(width, height))
 fig.supxlabel(xlabel,
-                x=0.56,
-                y=0.03,
-                fontsize=fslarge)
+              x=0.56,
+              y=0.03,
+              fontsize=width*4)
 fig.supylabel(ylabel,
-                x=0.05,
-                y=0.52,
-                fontsize=fslarge)
+              x=0.05,
+              y=0.52,
+              fontsize=width*4)
 
 grid = fig.add_gridspec(nrows=num,
                         ncols=num,
@@ -109,12 +111,12 @@ for i, alpha in enumerate(alphas):
                 ylim=ylim)
 for i in range(0, num, step):
     axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
-                            rotation='horizontal',
-                            horizontalalignment='right',
-                            verticalalignment='center',
-                            fontsize=fssmall)
+                         rotation='horizontal',
+                         horizontalalignment='right',
+                         verticalalignment='center',
+                         fontsize=plotsize*4)
 for j in range(0, num, step):
-    axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=fssmall)
+    axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=plotsize*4)
 
 frames = []
 for given in givens:
@@ -143,7 +145,7 @@ for given in givens:
     text = fig.text(0.90,
                     0.90,
                     'Given: ' + f'{given:4.2f}',
-                    fontsize=fslarge,
+                    fontsize=width*4,
                     color='grey',
                     ha='right')
     plt.savefig('temp.png', transparent=False)

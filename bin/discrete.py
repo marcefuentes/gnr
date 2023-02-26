@@ -14,22 +14,21 @@ thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
 titles = ['Games',
-            '$\it{R}$ - $\it{P}$',
-            '$\it{T}$ + $\it{S}$ - 2$\it{R}$',
-            'Sensitivity for\nchoosing partner',
-            'Sensitivity for\nmimicking partner']
+          '$\it{R}$ - $\it{P}$',
+          '$\it{T}$ + $\it{S}$ - 2$\it{R}$',
+          'Sensitivity for\nchoosing partner',
+          'Sensitivity for\nmimicking partner']
 traits = ['ChooseGrainmean',
-            'MimicGrainmean']
+          'MimicGrainmean']
+traitvmaxs = [mymodule.a2max,
+              mymodule.a2max]
 folders = ['a2init75', 'a2init50', 'a2init25']
 folders = ['a2init50']
 subfolder = 'pr'
 
 movie = False
-
-fslarge = 32 # Label font size
-fssmall = 24 # Tick font size
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
+rows = folders
+plotsize = 4
 
 dfs = []
 for folder in folders:
@@ -54,7 +53,6 @@ nc = len(logess)
 rhos = 1.0 - 1.0/pow(2.0, logess)
 RR, AA = np.meshgrid(rhos, alphas)
 
-rows = folders
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 letter = ord('a')
@@ -66,44 +64,45 @@ ymax = alphas[0]
 xticks = [0, nc/2-0.5, nc-1]
 yticks = [0, nr/2-0.5, nr-1]
 xticklabels = [f'{xmin:2.0f}',
-                f'{(xmin + xmax)/2.0:2.0f}',
-                f'{xmax:2.0f}']
+               f'{(xmin + xmax)/2.0:2.0f}',
+               f'{xmax:2.0f}']
 yticklabels = [f'{ymax:3.1f}',
-                f'{(ymin + ymax)/2.0:3.1f}',
-                f'{ymin:3.1f}']
-traitvmaxs = [mymodule.a2max,
-                mymodule.a2max]
+               f'{(ymin + ymax)/2.0:3.1f}',
+               f'{ymin:3.1f}']
+width = plotsize*len(titles)
+height = plotsize*len(rows)
+plt.rcParams['pdf.fonttype'] = 42
+plt.rcParams['ps.fonttype'] = 42
 
 fig, axs = plt.subplots(nrows=len(rows),
                         ncols=len(titles),
-                        figsize=(6*len(titles), 6*len(rows)),
-                        squeeze=False)
+                        figsize=(width, height))
 fig.supxlabel(xlabel,
-                x=0.513,
-                y=0.02,
-                fontsize=fslarge*1.5)
+              x=0.513,
+              y=0.02,
+              fontsize=width*3)
 fig.supylabel(ylabel,
-                x=0.05,
-                y=0.493,
-                fontsize=fslarge*1.5)
+              x=0.05,
+              y=0.493,
+              fontsize=width*3)
 
 for ax in fig.get_axes():
     ax.set(xticks=xticks,
-            yticks=yticks,
-            xticklabels=[],
-            yticklabels=[])
+           yticks=yticks,
+           xticklabels=[],
+           yticklabels=[])
     ax.text(0,
             letterposition,
             chr(letter),
             transform=ax.transAxes,
-            fontsize=fslarge*0.8,
+            fontsize=plotsize*5,
             weight='bold')
     letter += 1
 for i, row in enumerate(rows):
-    axs[i, 0].set_yticklabels(yticklabels, fontsize=fssmall)
+    axs[i, 0].set_yticklabels(yticklabels, fontsize=plotsize*4)
 for j, title in enumerate(titles):
-    axs[0, j].set_title(title, pad=40.0, fontsize=fslarge)
-    axs[-1, j].set_xticklabels(xticklabels, fontsize=fssmall)
+    axs[0, j].set_title(title, pad=plotsize*10, fontsize=plotsize*6)
+    axs[-1, j].set_xticklabels(xticklabels, fontsize=plotsize*4)
 
 for i, df in enumerate(dfs):
 
@@ -140,18 +139,18 @@ for i, df in enumerate(dfs):
 
 for t in ts:
     for i, df in enumerate(dfs):
-        for j, (trait, vmax) in enumerate(zip(traits, traitvmaxs)):
+        for j, trait in enumerate(traits):
             Z = pd.pivot_table(df.loc[df.Time == t],
-                        values=trait,
-                        index=[rowindex],
-                        columns=['logES']).sort_index(axis=0,
+                               values=trait,
+                               index=[rowindex],
+                               columns=['logES']).sort_index(axis=0,
                                                     ascending=False)
-            axs[i, j + 3].imshow(Z, vmin=0, vmax=vmax)
+            axs[i, j + 3].imshow(Z, vmin=0, vmax=traitvmaxs[j])
     if movie:
         text = fig.text(0.90,
                         0.93,
                         f't\n{t}',
-                        fontsize=fssmall+4,
+                        fontsize=width*2,
                         color='grey',
                         ha='right')
         plt.savefig('temp.png', transparent=False)

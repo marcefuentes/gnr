@@ -61,11 +61,11 @@ fig = plt.figure(figsize=(width, height))
 fig.supxlabel(xlabel,
               x=0.525,
               y=0.0,
-              fontsize=width*2)
+              fontsize=plotsize*6+width/8)
 fig.supylabel(ylabel,
               x=0.08,
               y=0.52,
-              fontsize=width*2)
+              fontsize=plotsize*6+width/8)
 
 outergrid = fig.add_gridspec(nrows=1,
                              ncols=len(titles),
@@ -108,12 +108,13 @@ for g, title in enumerate(titles):
 frames = []
 for given in givens:
 
-    lows = [] 
     eq = mymodule.a2eq(given, AA, RR)
-    for distance in distances:
-        lows.append(distance*eq)
+    for g, distance in enumerate(distances):
 
-    for axs, low, high in zip(axss, lows, highs): 
+        low = distance*eq
+        high = highs[g]
+        axs = axss[g]
+
         T = mymodule.fitness(high, low, given, AA, RR)
         R = mymodule.fitness(high, high, given, AA, RR)
         P = mymodule.fitness(low, low, given, AA, RR)
@@ -133,10 +134,10 @@ for given in givens:
                                markerfacecolor='white',
                                markersize=3)
 
-    text = fig.text(0.9,
+    text = fig.text(0.90,
                     0.02,
                     'Given: ' + f'{given:4.2f}',
-                    fontsize=plotsize*6+width/2,
+                    fontsize=plotsize*6+width/8,
                     color='grey',
                     ha='right')
     plt.savefig('temp.png', transparent=False)

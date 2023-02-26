@@ -21,6 +21,7 @@ titles = ['Games',
 traits = ['ChooseGrainmean',
             'MimicGrainmean']
 folders = ['a2init75', 'a2init50', 'a2init25']
+folders = ['a2init50']
 subfolder = 'pr'
 
 movie = False
@@ -75,7 +76,8 @@ traitvmaxs = [mymodule.a2max,
 
 fig, axs = plt.subplots(nrows=len(rows),
                         ncols=len(titles),
-                        figsize=(6*len(titles), 6*len(rows)))
+                        figsize=(6*len(titles), 6*len(rows)),
+                        squeeze=False)
 fig.supxlabel(xlabel,
                 x=0.513,
                 y=0.02,

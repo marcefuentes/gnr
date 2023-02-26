@@ -14,9 +14,9 @@ filename = thisscript.split('.')[0]
 titles = ['Games',
             '$\it{R}$ - $\it{P}$',
             '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
-givens = np.linspace(0.0, 1.0, num=21)
+givens = np.linspace(0.95, 1.0, num=1)
 
-ext = 1024
+ext = 21
 
 fslarge = 32 # Label font size
 fssmall = 18 # Tick font size
@@ -29,8 +29,10 @@ alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=ext)
 logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=ext)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
-highs = [np.full([ext, ext], 0.9*mymodule.a2max), 
-        np.full([ext, ext], 0.5*mymodule.a2eq(0.0, AA, RR) + 0.5*mymodule.a2max)] 
+eq = mymodule.a2eq(0.0, AA, RR)
+highs = [0.05*eq + 0.95*mymodule.a2max,
+        0.95*eq + 0.05*mymodule.a2max,
+        0.95*eq + 0.05*mymodule.a2max]
 
 rows = highs
 xlabel = 'Substitutability of $\it{B}$'
@@ -52,7 +54,7 @@ yticklabels = [f'{ymax:3.1f}',
 
 fig, axs = plt.subplots(nrows=len(rows),
                         ncols=len(titles),
-                        figsize=(6*len(titles), 6*len(rows)))
+                        figsize=(4*len(titles), 4*len(rows)))
 fig.supxlabel(xlabel,
                 x=0.513,
                 y=0.01,
@@ -83,8 +85,8 @@ for j, title in enumerate(titles):
 frames = []
 for given in givens:
 
-    lows = [np.full([ext, ext], 0.1),
-            np.full([ext, ext], 0.5*mymodule.a2eq(given, AA, RR))]
+    eq = mymodule.a2eq(given, AA, RR)
+    lows = [0.95*eq, 0.95*eq, 0.05*eq]
 
     for i, (low, high) in enumerate(zip(lows, highs)):
 

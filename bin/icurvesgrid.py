@@ -102,13 +102,13 @@ outergrid = fig.add_gridspec(nrows=1,
                              top=0.86,
                              bottom=0.176)
 
-for g, given in enumerate(givens):
+for g, given, title in enumerate(zip(givens, titles)):
     grid = outergrid[g].subgridspec(nrows=num,
                                     ncols=num,
                                     wspace=0,
                                     hspace=0)
     axs = grid.subplots()
-    axs[0, int(num/2)].set_title(titles[g],
+    axs[0, int(num/2)].set_title(title,
                                  pad=30.0,
                                  fontsize=plotsize*6)
     axs[0, 0].set_title(chr(letter),
@@ -118,7 +118,8 @@ for g, given in enumerate(givens):
     letter += 1
 
     for ax in fig.get_axes():
-        ax.set(xticks=[], yticks=[], xlim=xlim, ylim=ylim)
+        ax.set(xticks=[], yticks=[])
+        ax.set(xlim=xlim, ylim=ylim)
     if g == 0:
         for i in range(0, num, step):
             axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',

@@ -11,15 +11,15 @@ start_time = time.perf_counter ()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
-givens = [0.95]
-givens = np.linspace(0.0, 1.0, num=21)
+givens = np.linspace(0.95, 1.0, num=1)
+#givens = np.linspace(0.0, 1.0, num=21)
+distances = np.linspace(0.8, 0.2, num=3)
+titles = []
+for distance in distances:
+    titles.append(f'{distance*100:2.0f}%')
 
 num = 21    # Number of subplot rows and columns
-
-fslarge = 32 # Label font size
-fssmall = 18 # Tick font size
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
+plotsize = 6
 
 if givens[-1] > 0.9999999:
     givens[-1] = 0.9999999
@@ -27,9 +27,10 @@ alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=num)
 logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
-a2social = mymodule.a2eq(0.0, AA, RR)
-highs = [np.full([num, num], 0.9*mymodule.a2max), 
-        np.full([num, num], 0.5*a2social + 0.5*mymodule.a2max)] 
+highs = [] 
+eq = mymodule.a2eq(0.0, AA, RR)
+for distance in distances:
+    highs.append((1.0 - distance)*eq + distance*mymodule.a2max)
 
 xlim=[0, 5]
 ylim=[0.0, 2.0]
@@ -37,54 +38,80 @@ step = int(num/2)
 xaxis = [1, 2, 3, 4]
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
+letter = ord('a')
+letterposition = 1.035
+xmin = logess[0]
+xmax = logess[-1]
+ymin = alphas[-1]
+ymax = alphas[0]
+xticks = [0, num/2, num]
+yticks = [0, num/2, num]
+xticklabels = [f'{xmin:2.0f}',
+               f'{(xmin + xmax)/2.0:2.0f}',
+               f'{xmax:2.0f}']
+yticklabels = [f'{ymax:3.1f}',
+               f'{(ymin + ymax)/2.0:3.1f}',
+               f'{ymin:3.1f}']
+width = plotsize*len(titles)
+height = plotsize
+plt.rcParams['pdf.fonttype'] = 42
+plt.rcParams['ps.fonttype'] = 42
 
-fig = plt.figure(figsize=(16, 8))
+fig = plt.figure(figsize=(width, height))
 fig.supxlabel(xlabel,
-                x=0.525,
-                y=0.03,
-                fontsize=fslarge)
+              x=0.525,
+              y=0.0,
+              fontsize=width*2)
 fig.supylabel(ylabel,
-                x=0.05,
-                y=0.52,
-                fontsize=fslarge)
+              x=0.08,
+              y=0.52,
+              fontsize=width*2)
 
 outergrid = fig.add_gridspec(nrows=1,
-                                ncols=len(highs),
-                                left=0.15,
-                                right=0.9,
-                                top=0.86,
-                                bottom=0.176)
+                             ncols=len(titles),
+                             left=0.15,
+                             right=0.9,
+                             top=0.86,
+                             bottom=0.176)
+
 axss = []
-for l, outer in enumerate(outergrid):
-    grid = outer.subgridspec(nrows=num,
-                                ncols=num,
-                                wspace=0,
-                                hspace=0)
+for g, title in enumerate(titles):
+    grid = outergrid[g].subgridspec(nrows=num,
+                                    ncols=num,
+                                    wspace=0,
+                                    hspace=0)
     axs = grid.subplots()
-    for i, alpha in enumerate(alphas):
-        for j, rho in enumerate(rhos):
-            axs[i, j].set(xticks=[],
-                            yticks=[],
-                            xlim=xlim,
-                            ylim=ylim)
-    if l == 0:
+    axs[0, int(num/2)].set_title(title,
+                                 pad=30.0,
+                                 fontsize=plotsize*6)
+    axs[0, 0].set_title(chr(letter),
+                        fontsize=plotsize*5,
+                        weight='bold',
+                        loc='left')
+    letter += 1
+
+    for ax in fig.get_axes():
+        ax.set(xticks=[], yticks=[])
+        ax.set(xlim=xlim, ylim=ylim)
+    if g == 0:
         for i in range(0, num, step):
             axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
-                                    rotation='horizontal',
-                                    horizontalalignment='right',
-                                    verticalalignment='center',
-                                    fontsize=fssmall)
+                                 rotation='horizontal',
+                                 horizontalalignment='right',
+                                 verticalalignment='center',
+                                 fontsize=plotsize*4)
     for j in range(0, num, step):
-        axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=fssmall)
+        axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=plotsize*4)
 
     axss.append(axs)
 
 frames = []
 for given in givens:
 
-    a2eq = mymodule.a2eq(given, AA, RR)
-    lows = [np.full([num, num], 0.1),
-            np.full([num, num], 0.5*a2eq)]
+    lows = [] 
+    eq = mymodule.a2eq(given, AA, RR)
+    for distance in distances:
+        lows.append(distance*eq)
 
     for axs, low, high in zip(axss, lows, highs): 
         T = mymodule.fitness(high, low, given, AA, RR)
@@ -99,17 +126,17 @@ for given in givens:
                 for line in axs[i, j].get_lines():
                     line.remove()
                 axs[i, j].plot(xaxis,
-                                y,
-                                c=Z[i, j],
-                                linewidth=3,
-                                marker='o',
-                                markerfacecolor='white',
-                                markersize=3)
+                               y,
+                               c=Z[i, j],
+                               linewidth=3,
+                               marker='o',
+                               markerfacecolor='white',
+                               markersize=3)
 
-    text = fig.text(0.90,
-                    0.043,
+    text = fig.text(0.9,
+                    0.02,
                     'Given: ' + f'{given:4.2f}',
-                    fontsize=fslarge,
+                    fontsize=width*2,
                     color='grey',
                     ha='right')
     plt.savefig('temp.png', transparent=False)

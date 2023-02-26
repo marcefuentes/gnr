@@ -88,10 +88,8 @@ for given in givens:
 
     lows = [] 
     eq = mymodule.a2eq(given, AA, RR)
-    for a2low in a2lows:
-        lows.append(a2low*eq)
-
-    for i, (low, high) in enumerate(zip(lows, highs)):
+    for distance in distances:
+        lows.append(distance*eq)
 
         T = mymodule.fitness(high, low, given, AA, RR)
         R = mymodule.fitness(high, high, given, AA, RR)

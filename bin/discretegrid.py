@@ -16,7 +16,7 @@ titles = ['Games',
           '$\it{R}$ - $\it{P}$',
           '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 givens = np.linspace(0.0, 1.0, num=21)
-givens = np.linspace(0.95, 1.0, num=1)
+#givens = np.linspace(0.95, 1.0, num=1)
 num = 5    # Number of subplot rows & columns
 distances = [0.2, 0.5, 0.8]
 
@@ -102,6 +102,8 @@ for given in givens:
     for i, alpha in enumerate(alphas):
         AA = np.array([alpha, alpha, alpha])
         for j, rho in enumerate(rhos):
+            for line in axs[i, j].get_lines():
+                line.remove()
             RR = np.array([rho, rho, rho])
             a2eq = mymodule.a2eq(given, AA, RR)
             a2social = mymodule.a2eq(0.0, AA, RR)

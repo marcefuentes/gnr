@@ -80,8 +80,8 @@ fig, axs = plt.subplots(nrows=len(rows),
                         ncols=len(titles),
                         figsize=(width, height))
 fig.supxlabel(xlabel,
-              x=0.513,
-              y=0.04,
+              x=0.515,
+              y=0.06,
               fontsize=biglabels)
 fig.supylabel(ylabel,
               x=0.03,

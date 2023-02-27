@@ -22,7 +22,7 @@ traits = ['ChooseGrainmean',
           'MimicGrainmean']
 traitvmaxs = [mymodule.a2max,
               mymodule.a2max]
-folders = ['a2init75', 'a2init50', 'a2init25']
+folders = ['a2init8', 'a2init5', 'a2init2']
 subfolder = 'pr'
 
 movie = False
@@ -60,8 +60,8 @@ xmin = logess[0]
 xmax = logess[-1]
 ymin = alphas[-1]
 ymax = alphas[0]
-xticks = [-0.5, nc/2-0.5, nc-0.5]
-yticks = [-0.5, nr/2-0.5, nr-0.5]
+xticks = [0, nc/2-0.5, nc-1]
+yticks = [0, nr/2-0.5, nr-1]
 xticklabels = [f'{xmin:2.0f}',
                f'{(xmin + xmax)/2.0:2.0f}',
                f'{xmax:2.0f}']

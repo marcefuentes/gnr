@@ -130,7 +130,8 @@ for g, (given, title) in enumerate(zip(givens, titles)):
                                  verticalalignment='center',
                                  fontsize=ticklabels)
     for j in range(0, num, step):
-        axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=ticklabels)
+        axs[-1, j].set_xlabel(f'{logess[j]:2.0f}',
+                              fontsize=ticklabels)
 
     a2eq = mymodule.a2eq(given, AA, RR)
     w = mymodule.fitness(a2eq, a2eq, given, AA, RR)

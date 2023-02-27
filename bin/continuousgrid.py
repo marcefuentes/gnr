@@ -1,5 +1,7 @@
 #! /usr/bin/env python
 
+from matplotlib import cm
+import imageio.v2 as iio
 import matplotlib.pyplot as plt
 import mymodule
 import numpy as np
@@ -13,12 +15,14 @@ filename = thisscript.split('.')[0]
 titles = ['Games',
           '$\it{R}$ - $\it{P}$',
           '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
-given = 0.95
+givens = np.linspace(0.0, 1.0, num=21)
 num = 5    # Number of subplot rows & columns
 ext = 256
 
 plotsize = 6
 
+if givens[-1] > 0.9999999:
+    givens[-1] = 0.9999999
 alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=num)
 logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
@@ -97,34 +101,49 @@ for g, title in enumerate(titles):
 
     axss.append(axs)
 
-for i, alpha in enumerate(alphas):
-    AA = np.full([ext, ext], alpha)
-    for j, rho in enumerate(rhos):
-        RR = np.full([ext, ext], rho)
-        T = mymodule.fitness(Y, X, given, AA, RR)
-        R = mymodule.fitness(Y, Y, given, AA, RR)
-        P = mymodule.fitness(X, X, given, AA, RR)
-        S = mymodule.fitness(X, Y, given, AA, RR)
+frames = []
+for given in givens:
 
-        Z = mymodule.gamecolors(T, R, P, S)
-        Z[maskxy] = [0.9, 0.9, 0.9, 1.0]
-        axss[0][i][j].imshow(Z, extent=extent)
+    for i, alpha in enumerate(alphas):
+        AA = np.full([ext, ext], alpha)
+        for j, rho in enumerate(rhos):
 
-        N = mymodule.nodilemmacolors(T, R, P, S)
+            RR = np.full([ext, ext], rho)
+            T = mymodule.fitness(Y, X, given, AA, RR)
+            R = mymodule.fitness(Y, Y, given, AA, RR)
+            P = mymodule.fitness(X, X, given, AA, RR)
+            S = mymodule.fitness(X, Y, given, AA, RR)
 
-        Z = R - P
-        axss[1][i][j].imshow(Z, extent=extent, vmin=-1, vmax=1)
-        axss[1][i][j].imshow(N, extent=extent)
-        axss[1][i][j].imshow(G, extent=extent)
+            Z = mymodule.gamecolors(T, R, P, S)
+            Z[maskxy] = [0.9, 0.9, 0.9, 1.0]
+            axss[0][i][j].imshow(Z, extent=extent)
 
-        Z = T + S - 2.0*R
-        axss[2][i][j].imshow(Z, extent=extent, vmin=-1, vmax=1)
-        axss[2][i][j].imshow(N, extent=extent)
-        axss[2][i][j].imshow(G, extent=extent)
+            N = mymodule.nodilemmacolors(T, R, P, S)
 
-plt.savefig(filename + '.png', transparent=False)
+            Z = R - P
+            axss[1][i][j].imshow(Z, extent=extent, vmin=-1, vmax=1)
+            axss[1][i][j].imshow(N, extent=extent)
+            axss[1][i][j].imshow(G, extent=extent)
+
+            Z = T + S - 2.0*R
+            axss[2][i][j].imshow(Z, extent=extent, vmin=-1, vmax=1)
+            axss[2][i][j].imshow(N, extent=extent)
+            axss[2][i][j].imshow(G, extent=extent)
+
+    text = fig.text(0.90,
+                    0.02,
+                    'Given: ' + f'{given:4.2f}',
+                    fontsize=biglabels,
+                    color='grey',
+                    ha='right')
+    plt.savefig('temp.png', transparent=False)
+    text.remove()
+    frames.append(iio.imread('temp.png'))
+    os.remove('temp.png')
 
 plt.close()
+
+iio.mimsave(filename + '.gif', frames)
 
 end_time = time.perf_counter()
 print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')

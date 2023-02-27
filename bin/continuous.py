@@ -6,7 +6,7 @@ import numpy as np
 import os
 import time
 
-start_time = time.perf_counter ()
+start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
@@ -104,5 +104,5 @@ plt.savefig(filename + '.png', transparent=False)
 
 plt.close()
 
-end_time = time.perf_counter ()
+end_time = time.perf_counter()
 print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')

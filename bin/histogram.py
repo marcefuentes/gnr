@@ -8,7 +8,7 @@ import os
 import pandas as pd
 import time
 
-start_time = time.perf_counter ()
+start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
@@ -113,5 +113,5 @@ plt.close()
 if movie:
     iio.mimsave(filename + '.gif', frames)
 
-end_time = time.perf_counter ()
+end_time = time.perf_counter()
 print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')

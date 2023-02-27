@@ -7,7 +7,7 @@ import numpy as np
 import os
 import time
 
-start_time = time.perf_counter ()
+start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
@@ -83,6 +83,7 @@ traitvmax = mymodule.fitness(np.array([mymodule.a2max]),
 width = plotsize*len(titles)
 height = plotsize
 biglabels = plotsize*5 + height/4
+ticklabels = plotsize*3.5
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -127,9 +128,9 @@ for g, (given, title) in enumerate(zip(givens, titles)):
                                  rotation='horizontal',
                                  horizontalalignment='right',
                                  verticalalignment='center',
-                                 fontsize=plotsize*4)
+                                 fontsize=ticklabels)
     for j in range(0, num, step):
-        axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=plotsize*4)
+        axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=ticklabels)
 
     a2eq = mymodule.a2eq(given, AA, RR)
     w = mymodule.fitness(a2eq, a2eq, given, AA, RR)
@@ -157,5 +158,5 @@ plt.savefig(filename + '.png', transparent=False)
 
 plt.close()
 
-end_time = time.perf_counter ()
+end_time = time.perf_counter()
 print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')

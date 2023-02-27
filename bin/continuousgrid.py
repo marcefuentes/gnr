@@ -6,7 +6,7 @@ import numpy as np
 import os
 import time
 
-start_time = time.perf_counter ()
+start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
@@ -46,6 +46,7 @@ extent = 0, ext, 0+7.5, ext
 width = plotsize*len(titles)
 height = plotsize
 biglabels = plotsize*5 + height/4
+ticklabels = plotsize*3.5
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -90,9 +91,9 @@ for g, title in enumerate(titles):
                                  rotation='horizontal',
                                  horizontalalignment='right',
                                  verticalalignment='center',
-                                 fontsize=plotsize*4)
+                                 fontsize=ticklabels)
     for j in range(0, num, step):
-        axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=plotsize*4)
+        axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=ticklabels)
 
     axss.append(axs)
 
@@ -125,5 +126,5 @@ plt.savefig(filename + '.png', transparent=False)
 
 plt.close()
 
-end_time = time.perf_counter ()
+end_time = time.perf_counter()
 print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')

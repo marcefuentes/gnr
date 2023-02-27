@@ -7,7 +7,7 @@ import numpy as np
 import os
 import time
 
-start_time = time.perf_counter ()
+start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
@@ -51,6 +51,7 @@ yticklabels = [f'{ymax:3.1f}',
 width = plotsize*len(titles)
 height = plotsize*len(rows)
 biglabels = plotsize*5 + height/4
+ticklabels = plotsize*4
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -77,10 +78,10 @@ for ax in fig.get_axes():
             weight='bold')
     letter += 1
 for i, row in enumerate(rows):
-    axs[i, 0].set_yticklabels(yticklabels, fontsize=plotsize*4)
+    axs[i, 0].set_yticklabels(yticklabels, fontsize=ticklabels)
 for j, title in enumerate(titles):
     axs[0, j].set_title(title, pad=plotsize*10, fontsize=plotsize*5)
-    axs[-1, j].set_xticklabels(xticklabels, fontsize=plotsize*4)
+    axs[-1, j].set_xticklabels(xticklabels, fontsize=ticklabels)
 
 frames = []
 for given in givens:
@@ -124,5 +125,5 @@ plt.close()
 
 iio.mimsave(filename + '.gif', frames)
 
-end_time = time.perf_counter ()
+end_time = time.perf_counter()
 print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')

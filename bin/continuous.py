@@ -51,9 +51,8 @@ yticklabels = [f'{ymax:3.1f}',
                f'{(ymin + ymax)/2.0:3.1f}',
                f'{ymin:3.1f}']
 width = plotsize*len(titles)
-width = plotsize
 height = plotsize
-biglabels = plotsize*6+width/8
+biglabels = plotsize*5 + height/4
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 

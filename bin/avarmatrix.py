@@ -67,10 +67,8 @@ fig.supylabel(ylabel,
               fontsize=biglabels)
 
 for ax in fig.get_axes():
-    ax.set(xticks=xticks,
-           yticks=yticks,
-           xticklabels=[],
-           yticklabels=[])
+    ax.set(xticks=xticks, yticks=yticks)
+    ax.set(xticklabels=[], yticklabels=[])
     ax.text(0,
             letterposition,
             chr(letter),

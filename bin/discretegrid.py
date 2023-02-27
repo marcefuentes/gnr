@@ -1,7 +1,6 @@
 #! /usr/bin/env python
 
 from matplotlib import cm
-import imageio.v2 as iio
 import matplotlib.pyplot as plt
 import mymodule
 import numpy as np
@@ -15,15 +14,12 @@ filename = thisscript.split('.')[0]
 titles = ['Games',
           '$\it{R}$ - $\it{P}$',
           '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
-givens = np.linspace(0.0, 1.0, num=21)
-#givens = np.linspace(0.95, 1.0, num=1)
+given = 0.95
 num = 5    # Number of subplot rows & columns
 distances = [0.2, 0.5, 0.8]
 
 plotsize = 6
 
-if givens[-1] > 0.9999999:
-    givens[-1] = 0.9999999
 alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=num)
 logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
@@ -96,72 +92,56 @@ for g, title in enumerate(titles):
 
     axss.append(axs)
 
-frames = []
-for given in givens:
+for i, alpha in enumerate(alphas):
+    AA = np.array([alpha, alpha, alpha])
+    for j, rho in enumerate(rhos):
+        RR = np.array([rho, rho, rho])
+        a2eq = mymodule.a2eq(given, AA, RR)
+        a2social = mymodule.a2eq(0.0, AA, RR)
+        X = distances*a2eq
+        Y = a2social + distances*(mymodule.a2max - a2social)
+        
+        T = mymodule.fitness(Y, X, given, AA, RR)
+        R = mymodule.fitness(Y, Y, given, AA, RR)
+        P = mymodule.fitness(X, X, given, AA, RR)
+        S = mymodule.fitness(X, Y, given, AA, RR)
 
-    for i, alpha in enumerate(alphas):
-        AA = np.array([alpha, alpha, alpha])
-        for j, rho in enumerate(rhos):
-            for line in axs[i, j].get_lines():
-                line.remove()
-            RR = np.array([rho, rho, rho])
-            a2eq = mymodule.a2eq(given, AA, RR)
-            a2social = mymodule.a2eq(0.0, AA, RR)
-            X = distances*a2eq
-            Y = a2social + distances*(mymodule.a2max - a2social)
-            
-            T = mymodule.fitness(Y, X, given, AA, RR)
-            R = mymodule.fitness(Y, Y, given, AA, RR)
-            P = mymodule.fitness(X, X, given, AA, RR)
-            S = mymodule.fitness(X, Y, given, AA, RR)
+        Z = mymodule.gamecolors(T, R, P, S)
+        axss[0][i][j].scatter(X, Y,
+                            marker='o',
+                            s=markersize,
+                            color=Z)
+        Z = mymodule.nodilemmacolorsg(T, R, P, S)
+        axss[0][i][j].scatter(X, Y,
+                            marker='o',
+                            s=markersize,
+                            color=Z)
 
-            Z = mymodule.gamecolors(T, R, P, S)
-            axss[0][i][j].scatter(X, Y,
-                                marker='o',
-                                s=markersize,
-                                color=Z)
-            Z = mymodule.nodilemmacolorsg(T, R, P, S)
-            axss[0][i][j].scatter(X, Y,
-                                marker='o',
-                                s=markersize,
-                                color=Z)
+        N = mymodule.nodilemmacolors(T, R, P, S)
 
-            N = mymodule.nodilemmacolors(T, R, P, S)
+        Z = R - P
+        axss[1][i][j].scatter(X, Y,
+                           marker='o',
+                           s=markersize,
+                           c=cm.viridis(Z))
+        axss[1][i][j].scatter(X, Y,
+                           marker='o',
+                           s=markersize*0.7,
+                           c=N)
 
-            Z = R - P
-            axss[1][i][j].scatter(X, Y,
-                               marker='o',
-                               s=markersize,
-                               c=cm.viridis(Z))
-            axss[1][i][j].scatter(X, Y,
-                               marker='o',
-                               s=markersize*0.7,
-                               c=N)
+        Z = T + S - 2.0*R
+        axss[2][i][j].scatter(X, Y,
+                           marker='o',
+                           s=markersize,
+                           c=cm.viridis(Z))
+        axss[2][i][j].scatter(X, Y,
+                           marker='o',
+                           s=markersize*0.7,
+                           c=N)
 
-            Z = T + S - 2.0*R
-            axss[2][i][j].scatter(X, Y,
-                               marker='o',
-                               s=markersize,
-                               c=cm.viridis(Z))
-            axss[2][i][j].scatter(X, Y,
-                               marker='o',
-                               s=markersize*0.7,
-                               c=N)
-
-    text = fig.text(0.90,
-                    0.02,
-                    'Given: ' + f'{given:4.2f}',
-                    fontsize=biglabels,
-                    color='grey',
-                    ha='right')
-    plt.savefig('temp.png', transparent=False)
-    text.remove()
-    frames.append(iio.imread('temp.png'))
-    os.remove('temp.png')
+plt.savefig(filename + '.png', transparent=False)
 
 plt.close()
-
-iio.mimsave(filename + '.gif', frames)
 
 end_time = time.perf_counter()
 print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')

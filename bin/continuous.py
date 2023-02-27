@@ -53,6 +53,7 @@ yticklabels = [f'{ymax:3.1f}',
 width = plotsize*len(titles)
 height = plotsize
 biglabels = plotsize*5 + height/4
+ticklabels = plotsize*3.5
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -64,13 +65,13 @@ fig.supxlabel(xlabel,
               y=0.0,
               fontsize=biglabels)
 fig.supylabel(ylabel,
-              x=0.03,
+              x=0.04,
               y=0.493,
               fontsize=biglabels)
 
 for ax in fig.get_axes():
     ax.set(xticks=xticks, yticks=yticks)
-    ax.set_xticklabels(xticklabels, fontsize=plotsize*4)
+    ax.set_xticklabels(xticklabels, fontsize=ticklabels)
     ax.set_yticklabels([])
     ax.text(0,
             letterposition,
@@ -80,8 +81,8 @@ for ax in fig.get_axes():
             weight='bold')
     letter += 1
 for j, title in enumerate(titles):
-    axs[j].set_title(title, pad=plotsize*10, fontsize=plotsize*6)
-axs[0].set_yticklabels(yticklabels, fontsize=plotsize*4)
+    axs[j].set_title(title, pad=plotsize*5, fontsize=plotsize*5)
+axs[0].set_yticklabels(yticklabels, fontsize=ticklabels)
 
 Z = mymodule.gamecolors(T, R, P, S)
 Z[maskxy] = [0.9, 0.9, 0.9, 1.0]

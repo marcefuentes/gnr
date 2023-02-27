@@ -19,6 +19,7 @@ repeats = 1.0/(1.0 - pow(1.0 - deathrate, 2.0))
 colormap = {
     'transparent':  [1.0, 1.0, 1.0, 0.0],
     'white' :       [1.0, 1.0, 1.0, 1.0],
+    'grey' :        [0.8, 0.8, 0.8, 1.0],
     'red' :         [1.0, 0.0, 0.0, 1.0],
     'harmonyTS' :   [1.0, 0.0, 0.0, 1.0],
     'snowdrift' :   [0.7, 0.0, 0.7, 1.0],
@@ -72,6 +73,10 @@ def TS(mask, T, R, S):
     mask = (mask & (2.0*R < T + S))
     return mask
 
+def nodilemma(T, R, P, S):
+    mask = harmony(T, R, P, S) | (deadlock(T, R, P, S) & (2.0*P >= T + S)) | diagonal(T, R, P, S)
+    return mask
+
 def diagonal(T, R, P, S):
     mask = (T == R) & (R == P) & (P == S)
     return mask
@@ -115,8 +120,14 @@ def leadercolors(T, R, P, S, Z):
 
 def nodilemmacolors(T, R, P, S):
     Z = np.full([*T.shape, 4], colormap['transparent'])
-    mask = harmony(T, R, P, S) | (deadlock(T, R, P, S) & (2.0*P >= T + S)) | diagonal(T, R, P, S)
+    mask = nodilemma(T, R, P, S)
     Z[mask] = colormap['white']
+    return Z
+
+def nodilemmacolorsg(T, R, P, S):
+    Z = np.full([*T.shape, 4], colormap['transparent'])
+    mask = nodilemma(T, R, P, S)
+    Z[mask] = colormap['grey']
     return Z
 
 def gamecolors(T, R, P, S):

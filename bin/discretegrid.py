@@ -15,7 +15,7 @@ filename = thisscript.split('.')[0]
 titles = ['Games',
           '$\it{R}$ - $\it{P}$',
           '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
-#givens = np.linspace(0.0, 1.0, num=21)
+givens = np.linspace(0.0, 1.0, num=21)
 givens = np.linspace(0.95, 1.0, num=1)
 num = 5    # Number of subplot rows & columns
 distances = [0.2, 0.5, 0.8]
@@ -39,7 +39,7 @@ xmin = logess[0]
 xmax = logess[-1]
 ymin = alphas[-1]
 ymax = alphas[0]
-markersize = 5.0
+markersize = 20.0
 width = plotsize*len(titles)
 height = plotsize
 biglabels = plotsize*5 + height/4
@@ -116,7 +116,12 @@ for given in givens:
             Z = mymodule.gamecolors(T, R, P, S)
             axss[0][i][j].scatter(X, Y,
                                 marker='o',
-                                #markersize=markersize,
+                                s=markersize,
+                                color=Z)
+            Z = mymodule.nodilemmacolorsg(T, R, P, S)
+            axss[0][i][j].scatter(X, Y,
+                                marker='o',
+                                s=markersize,
                                 color=Z)
 
             N = mymodule.nodilemmacolors(T, R, P, S)
@@ -124,21 +129,21 @@ for given in givens:
             Z = R - P
             axss[1][i][j].scatter(X, Y,
                                marker='o',
-                               #markersize=markersize,
+                               s=markersize,
                                c=cm.viridis(Z))
             axss[1][i][j].scatter(X, Y,
                                marker='o',
-                               #markersize=markersize,
+                               s=markersize*0.7,
                                c=N)
 
             Z = T + S - 2.0*R
             axss[2][i][j].scatter(X, Y,
                                marker='o',
-                               #markersize=markersize,
+                               s=markersize,
                                c=cm.viridis(Z))
             axss[2][i][j].scatter(X, Y,
                                marker='o',
-                               #markersize=markersize,
+                               s=markersize*0.7,
                                c=N)
 
     text = fig.text(0.90,

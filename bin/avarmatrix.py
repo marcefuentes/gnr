@@ -30,7 +30,7 @@ RR, AA = np.meshgrid(rhos, alphas)
 highs = [] 
 eq = mymodule.a2eq(0.0, AA, RR)
 for distance in distances:
-    highs.append((1.0 - distance)*eq + distance*mymodule.a2max)
+    highs.append(eq + distance*(mymodule.a2max - eq))
 
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'

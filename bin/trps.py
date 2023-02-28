@@ -19,7 +19,7 @@ for distance in distances:
     titles.append(f'{distance*100:2.0f}%')
 
 num = 21    # Number of subplot rows and columns
-plotsize = 6
+plotsize = 8
 
 if givens[-1] > 0.9999999:
     givens[-1] = 0.9999999
@@ -93,7 +93,8 @@ for g, title in enumerate(titles):
                                  verticalalignment='center',
                                  fontsize=plotsize*4)
     for j in range(0, num, step):
-        axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=plotsize*4)
+        axs[-1, j].set_xlabel(f'{logess[j]:2.0f}',
+                              fontsize=plotsize*4)
 
     axss.append(axs)
 
@@ -124,7 +125,7 @@ for given in givens:
                                linewidth=3,
                                marker='o',
                                markerfacecolor='white',
-                               markersize=3)
+                               markersize=plotsize/3)
 
     text = fig.text(0.90,
                     0.02,

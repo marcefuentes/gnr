@@ -21,8 +21,8 @@ rows = distances
 ext = 512
 plotsize = 4
 
-#if givens[-1] > 0.9999999:
-#    givens[-1] = 0.9999999
+if givens[-1] > 0.9999999:
+    givens[-1] = 0.9999999
 alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=ext)
 logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=ext)
 rhos = 1.0 - 1.0/pow(2, logess)

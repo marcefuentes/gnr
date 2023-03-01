@@ -16,7 +16,7 @@ titles = ['Games',
           '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 givens = np.linspace(1.0, 1.0, num=1)
 #givens = np.linspace(0.0, 1.0, num=21)
-distances = np.linspace(0.8, 0.2, num=3)
+distances = [0.2, 0.5, 0.8]
 rows = distances
 ext = 512
 plotsize = 4

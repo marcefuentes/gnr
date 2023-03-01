@@ -11,133 +11,107 @@ start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
-titles = ['Games',
-          '$\it{R}$ - $\it{P}$',
-          '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 given = 0.95
 num = 5    # Number of subplot rows & columns
+ext = 256
 distances = [0.2, 0.5, 0.8]
 
-plotsize = 6
+plotsize = 9
 
 alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=num)
 logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
+xmin = 0.0
+xmax = mymodule.a2max
+ymin = 0.0
+ymax = mymodule.a2max
+x = np.linspace(xmin, xmax, num=ext)
+y = np.flip(x)
+X, Y = np.meshgrid(x, y)
+maskxy = (X >= Y)
 
-xlim=[0.0, mymodule.a1max]
-ylim=[0.0, mymodule.a2max]
 step = int(num/2)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
-letter = ord('a')
-letterposition = 1.035
 xmin = logess[0]
 xmax = logess[-1]
 ymin = alphas[-1]
 ymax = alphas[0]
-markersize = 20.0
-width = plotsize*len(titles)
+extent = 0, ext, 0, ext
+markersize = plotsize*4
+width = plotsize
 height = plotsize
-biglabels = plotsize*5 + height/4
-ticklabels = plotsize*3.5
+biglabels = plotsize*4
+ticklabels = plotsize*3
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
 fig = plt.figure(figsize=(width, height))
 fig.supxlabel(xlabel,
-              x=0.502,
-              y=0.0,
+              x=0.55,
+              y=0.05,
               fontsize=biglabels)
 fig.supylabel(ylabel,
-              x=0.07,
-              y=0.5,
+              x=0.04,
+              y=0.55,
               fontsize=biglabels)
 
-outergrid = fig.add_gridspec(nrows=1,
-                             ncols=len(titles),
-                             left=0.15,
-                             right=0.85,
-                             top=0.8,
-                             bottom=0.2)
-
-axss = []
-for g, title in enumerate(titles):
-    grid = outergrid[g].subgridspec(nrows=num,
-                                    ncols=num,
-                                    wspace=0,
-                                    hspace=0)
-    axs = grid.subplots()
-    axs[0, int(num/2)].set_title(title,
-                                 pad=plotsize*5,
-                                 fontsize=plotsize*5)
-    axs[0, 0].set_title(chr(letter),
-                        fontsize=plotsize*5,
-                        weight='bold',
-                        loc='left')
-    letter += 1
-
-    for ax in fig.get_axes():
-        ax.set(xticks=[], yticks=[])
-        ax.set(xlim=xlim, ylim=ylim)
-    if g == 0:
-        for i in range(0, num, step):
-            axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
-                                 rotation='horizontal',
-                                 horizontalalignment='right',
-                                 verticalalignment='center',
-                                 fontsize=ticklabels)
-    for j in range(0, num, step):
-        axs[-1, j].set_xlabel(f'{logess[j]:2.0f}',
-                              fontsize=ticklabels)
-
-    axss.append(axs)
+grid = fig.add_gridspec(nrows=num,
+                             ncols=num,
+                             wspace=0,
+                             hspace=0,
+                             left=0.20,
+                             right=0.9,
+                             top=0.9,
+                             bottom=0.20)
+axs = grid.subplots()
+for ax in fig.get_axes():
+    ax.set(xticks=[], yticks=[])
+    #ax.set(xlim=xlim, ylim=ylim)
+for i in range(0, num, step):
+    axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
+                         rotation='horizontal',
+                         horizontalalignment='right',
+                         verticalalignment='center',
+                         fontsize=ticklabels)
+    axs[-1, i].set_xlabel(f'{logess[i]:2.0f}',
+                          fontsize=ticklabels)
 
 for i, alpha in enumerate(alphas):
-    AA = np.array([alpha, alpha, alpha])
+    AA = np.full(3, alpha)
+    AAA = np.full([ext, ext], alpha)
     for j, rho in enumerate(rhos):
-        RR = np.array([rho, rho, rho])
+        RR = np.full(3, rho)
         a2eq = mymodule.a2eq(given, AA, RR)
         a2social = mymodule.a2eq(0.0, AA, RR)
-        X = distances*a2eq
-        Y = a2social + distances*(mymodule.a2max - a2social)
+        x = distances*a2eq
+        y = a2social + distances*(mymodule.a2max - a2social)
         
-        T = mymodule.fitness(Y, X, given, AA, RR)
-        R = mymodule.fitness(Y, Y, given, AA, RR)
-        P = mymodule.fitness(X, X, given, AA, RR)
-        S = mymodule.fitness(X, Y, given, AA, RR)
+        T = mymodule.fitness(y, x, given, AA, RR)
+        R = mymodule.fitness(y, y, given, AA, RR)
+        P = mymodule.fitness(x, x, given, AA, RR)
+        S = mymodule.fitness(x, y, given, AA, RR)
 
         Z = mymodule.gamecolors(T, R, P, S)
-        axss[0][i][j].scatter(X, Y,
-                            marker='o',
-                            s=markersize,
-                            color=Z)
+        axs[i][j].scatter(x*ext, y*ext,
+                          marker='o',
+                          s=markersize,
+                          color=Z)
         Z = mymodule.nodilemmacolorsg(T, R, P, S)
-        axss[0][i][j].scatter(X, Y,
-                            marker='o',
-                            s=markersize,
-                            color=Z)
+        axs[i][j].scatter(x*ext, y*ext,
+                          marker='o',
+                          s=markersize,
+                          color=Z)
 
-        N = mymodule.nodilemmacolors(T, R, P, S)
+        RRR = np.full([ext, ext], rho)
+        T = mymodule.fitness(Y, X, given, AAA, RRR)
+        R = mymodule.fitness(Y, Y, given, AAA, RRR)
+        P = mymodule.fitness(X, X, given, AAA, RRR)
+        S = mymodule.fitness(X, Y, given, AAA, RRR)
 
-        Z = R - P
-        axss[1][i][j].scatter(X, Y,
-                           marker='o',
-                           s=markersize,
-                           c=cm.viridis(Z))
-        axss[1][i][j].scatter(X, Y,
-                           marker='o',
-                           s=markersize*0.7,
-                           c=N)
-
-        Z = T + S - 2.0*R
-        axss[2][i][j].scatter(X, Y,
-                           marker='o',
-                           s=markersize,
-                           c=cm.viridis(Z))
-        axss[2][i][j].scatter(X, Y,
-                           marker='o',
-                           s=markersize*0.7,
-                           c=N)
+        Z = mymodule.gamecolors(T, R, P, S)
+        Z[maskxy] = [0.9, 0.9, 0.9, 1.0]
+        axs[i][j].imshow(Z, extent=extent, alpha=0.2)
 
 plt.savefig(filename + '.png', transparent=False)
 

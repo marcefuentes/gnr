@@ -15,7 +15,9 @@ filename = thisscript.split('.')[0]
 titles = ['Games',
           '$\it{R}$ - $\it{P}$',
           '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
-givens = np.linspace(0.0, 1.0, num=21)
+givens = np.linspace(0.95, 1.0, num=1)
+#givens = np.linspace(0.0, 1.0, num=21)
+
 num = 5    # Number of subplot rows & columns
 ext = 256
 
@@ -97,7 +99,8 @@ for g, title in enumerate(titles):
                                  verticalalignment='center',
                                  fontsize=ticklabels)
     for j in range(0, num, step):
-        axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=ticklabels)
+        axs[-1, j].set_xlabel(f'{logess[j]:2.0f}',
+                              fontsize=ticklabels)
 
     axss.append(axs)
 
@@ -118,19 +121,17 @@ for given in givens:
             Z[maskxy] = [0.9, 0.9, 0.9, 1.0]
             axss[0][i][j].imshow(Z, extent=extent)
 
-            N = mymodule.nodilemmacolors(T, R, P, S)
-
             Z = R - P
             axss[1][i][j].imshow(Z, extent=extent, vmin=-1, vmax=1)
-            axss[1][i][j].imshow(N, extent=extent)
             axss[1][i][j].imshow(G, extent=extent)
 
             Z = T + S - 2.0*R
+            mask = R < P
+            Z[mask] = T[mask] + S[mask] - 2.0*P[mask]
             axss[2][i][j].imshow(Z, extent=extent, vmin=-1, vmax=1)
-            axss[2][i][j].imshow(N, extent=extent)
             axss[2][i][j].imshow(G, extent=extent)
 
-    text = fig.text(0.90,
+    text = fig.text(0.85,
                     0.02,
                     'Given: ' + f'{given:4.2f}',
                     fontsize=biglabels,

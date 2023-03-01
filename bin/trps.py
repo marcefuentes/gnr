@@ -46,6 +46,7 @@ ymax = alphas[0]
 width = plotsize*len(titles)
 height = plotsize
 biglabels = plotsize*5 + height/4
+ticklabels = plotsize*3.5
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -91,10 +92,10 @@ for g, title in enumerate(titles):
                                  rotation='horizontal',
                                  horizontalalignment='right',
                                  verticalalignment='center',
-                                 fontsize=plotsize*4)
+                                 fontsize=ticklabels)
     for j in range(0, num, step):
         axs[-1, j].set_xlabel(f'{logess[j]:2.0f}',
-                              fontsize=plotsize*4)
+                              fontsize=ticklabels)
 
     axss.append(axs)
 
@@ -127,7 +128,7 @@ for given in givens:
                                markerfacecolor='white',
                                markersize=plotsize/3)
 
-    text = fig.text(0.90,
+    text = fig.text(0.85,
                     0.02,
                     'Given: ' + f'{given:4.2f}',
                     fontsize=biglabels,

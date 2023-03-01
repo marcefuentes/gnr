@@ -125,24 +125,17 @@ for i, df in enumerate(dfs):
     Z = mymodule.gamecolors(T, R, P, S)
     axs[i, 0].imshow(Z)
 
-    Z = R - P
-    Z[R <= P] = 0.0
-    axs[i, 1].imshow(Z, vmin=0, vmax=1)
-    W = np.full([nc, nr, 4], mymodule.colormap['transparent'])
-    W[Z == 0.0] = mymodule.colormap['white']
-    axs[i, 1].imshow(W)
+    N = mymodule.nodilemmacolors(T, R, P, S)
 
-    mask = (T + S > 2.0*R) & (R > P)
-    Z[mask] = T[mask] + S[mask] - 2.0*R[mask]
-    Z[(T + S < 2.0*R) & (R > P)] = 0.0
-    mask = (T + S > 2.0*P) & (R < P)
+    Z = R - P
+    axs[i, 1].imshow(Z, vmin=-1, vmax=1)
+    axs[i, 1].imshow(N)
+
+    Z = T + S - 2.0*R
+    mask = R < P
     Z[mask] = T[mask] + S[mask] - 2.0*P[mask]
-    Z[(T + S < 2.0*R) & (R < P)] = 0.0
-    Z[(T > S) & (R > P) & (P < S)] = 0.0
-    axs[i, 2].imshow(Z, vmin=0, vmax=1)
-    W = np.full([nc, nr, 4], mymodule.colormap['transparent'])
-    W[Z == 0.0] = mymodule.colormap['white']
-    axs[i, 2].imshow(W)
+    axs[i, 2].imshow(Z, vmin=-1, vmax=1)
+    axs[i, 2].imshow(N)
 
 for t in ts:
     for i, df in enumerate(dfs):

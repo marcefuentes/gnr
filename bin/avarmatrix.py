@@ -16,7 +16,7 @@ titles = ['Games',
           '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 givens = np.linspace(0.95, 1.0, num=1)
 #givens = np.linspace(0.0, 1.0, num=21)
-distances = [0.2, 0.5, 0.8]
+distances = [0.8, 0.5, 0.2]
 rows = distances
 ext = 512
 plotsize = 4
@@ -107,6 +107,8 @@ for given in givens:
         axs[i, 1].imshow(N)
 
         Z = T + S - 2.0*R
+        mask = R < P
+        Z[mask] = T[mask] + S[mask] - 2.0*P[mask]
         axs[i, 2].imshow(Z, vmin=-1, vmax=1)
         axs[i, 2].imshow(N)
 

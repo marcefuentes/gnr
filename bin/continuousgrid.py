@@ -48,7 +48,7 @@ xmin = logess[0]
 xmax = logess[-1]
 ymin = alphas[-1]
 ymax = alphas[0]
-extent = 0, ext, 0, ext
+extent = 0, ext, 7.5, ext
 width = plotsize*len(titles)
 height = plotsize
 biglabels = plotsize*5 + height/4
@@ -68,10 +68,10 @@ fig.supylabel(ylabel,
 
 outergrid = fig.add_gridspec(nrows=1,
                              ncols=len(titles),
-                             left=0.17,
-                             right=0.90,
-                             top=0.82,
-                             bottom=0.18)
+                             left=0.15,
+                             right=0.85,
+                             top=0.8,
+                             bottom=0.2)
 
 axss = []
 for g, title in enumerate(titles):

@@ -35,7 +35,9 @@ ymax = mymodule.a2max
 x = np.linspace(xmin, xmax, num=ext)
 y = np.flip(x)
 X, Y = np.meshgrid(x, y)
+G = np.full([ext, ext, 4], mymodule.colormap['transparent'])
 maskxy = (X >= Y)
+G[maskxy] = [0.9, 0.9, 0.9, 1.0]
 
 step = int(num/2)
 xlabel = 'Substitutability of $\it{B}$'
@@ -121,11 +123,13 @@ for given in givens:
 
             Z = R - P
             axss[1][i][j].imshow(Z, extent=extent, vmin=-1, vmax=1)
+            axss[1][i][j].imshow(G, extent=extent)
 
             Z = T + S - 2.0*R
             mask = R < P
             Z[mask] = T[mask] + S[mask] - 2.0*P[mask]
             axss[2][i][j].imshow(Z, extent=extent, vmin=-1, vmax=1)
+            axss[2][i][j].imshow(G, extent=extent)
 
     text = fig.text(0.85,
                     0.02,

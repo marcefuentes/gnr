@@ -40,7 +40,7 @@ xticklabels = [f'{round(xmin):4.2f}',
 yticklabels = [f'{round(ymin, 3):3.1f}',
                f'{round((ymax + ymin)/2.0, 3):3.1f}',
                f'{round(ymax, 3):3.1f}']
-markersize = plotsize*4
+markersize = plotsize*30
 width = plotsize
 height = plotsize
 biglabels = plotsize*4
@@ -49,14 +49,13 @@ plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
 fig, ax = plt.subplots(figsize=(width, height))
+plt.subplots_adjust(left=0.2, right=0.9, top=0.9, bottom=0.2)
 
 ax.set_xlabel(xlabel,
-              x=0.513,
-              y=0.0,
+              labelpad=10,
               fontsize=biglabels)
 ax.set_ylabel(ylabel,
-              x=0.04,
-              y=0.493,
+              labelpad=10,
               fontsize=biglabels)
 ax.set(xticks=xticks, yticks=yticks)
 ax.set_xticklabels(xticklabels, fontsize=ticklabels)
@@ -76,12 +75,12 @@ Z = mymodule.gamecolors(T, R, P, S)
 ax.scatter(distances*ext, distances*ext,
            marker='o',
            s=markersize,
-           color=Z)
+           color='white')
 Z = mymodule.nodilemmacolorsg(T, R, P, S)
 ax.scatter(distances*ext, distances*ext,
            marker='o',
            s=markersize,
-           color=Z)
+           color='white')
 
 T = mymodule.fitness(Y, X, given, AA, RR)
 R = mymodule.fitness(Y, Y, given, AA, RR)
@@ -89,7 +88,7 @@ P = mymodule.fitness(X, X, given, AA, RR)
 S = mymodule.fitness(X, Y, given, AA, RR)
 
 Z = mymodule.gamecolors(T, R, P, S)
-ax.imshow(Z, extent=extent, alpha=0.2)
+ax.imshow(Z, extent=extent, alpha=0.99)
 
 plt.savefig(filename + '.png', transparent=False)
 

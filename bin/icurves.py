@@ -1,7 +1,6 @@
 #! /usr/bin/env python
 
 from matplotlib import cm
-import imageio.v2 as iio
 import matplotlib.pyplot as plt
 import mymodule
 import numpy as np
@@ -12,8 +11,10 @@ start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
-givens = np.linspace(0.0, 1.0, num=21)
-
+givens = [0.0, 0.5, 0.95]
+titles = []
+for given in givens:
+    titles.append(f'{given*100:2.0f}%')
 num = 3    # Number of subplot rows & columns
 numa2 = 128
 n_ic = 5    # Number of indifference curves
@@ -72,13 +73,14 @@ ylim=[0.0, mymodule.a2max*mymodule.R2]
 step = int(num/2)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
+letter = ord('a')
 traitvmax = mymodule.fitness(np.array([mymodule.a2max]),
                              np.array([mymodule.a2max]),
                              np.array([0.0]),
                              np.array([0.9]),
                              np.array([5.0]))
 
-width = plotsize
+width = plotsize*len(titles)
 height = plotsize
 biglabels = plotsize*5 + height/4
 ticklabels = plotsize*3.5
@@ -87,41 +89,50 @@ plt.rcParams['ps.fonttype'] = 42
 
 fig = plt.figure(figsize=(width, height))
 fig.supxlabel(xlabel,
-              x=0.56,
-              y=0.03,
+              x=0.502,
+              y=0.0,
               fontsize=biglabels)
 fig.supylabel(ylabel,
-              x=0.05,
-              y=0.52,
+              x=0.07,
+              y=0.5,
               fontsize=biglabels)
 
-grid = fig.add_gridspec(nrows=num,
-                        ncols=num,
-                        left=0.22,
-                        right=0.9,
-                        top=0.86,
-                        bottom=0.176,
-                        wspace=0,
-                        hspace=0)
-axs = grid.subplots()
+outergrid = fig.add_gridspec(nrows=1,
+                             ncols=len(titles),
+                             left=0.15,
+                             right=0.85,
+                             top=0.8,
+                             bottom=0.2)
 
-for i, alpha in enumerate(alphas):
-    for j, rho in enumerate(rhos):
-        axs[i, j].set(xticks=[],
-                yticks=[],
-                xlim=xlim,
-                ylim=ylim)
-for i in range(0, num, step):
-    axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
-                         rotation='horizontal',
-                         horizontalalignment='right',
-                         verticalalignment='center',
-                         fontsize=ticklabels)
-for j in range(0, num, step):
-    axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=ticklabels)
+for g, (given, title) in enumerate(zip(givens, titles)):
+    grid = outergrid[g].subgridspec(nrows=num,
+                                    ncols=num,
+                                    wspace=0,
+                                    hspace=0)
+    axs = grid.subplots()
+    axs[0, int(num/2)].set_title(title,
+                                 pad=plotsize*5,
+                                 fontsize=plotsize*5)
+    axs[0, 0].set_title(chr(letter),
+                        fontsize=plotsize*5,
+                        weight='bold',
+                        loc='left')
+    letter += 1
 
-frames = []
-for given in givens:
+    for ax in fig.get_axes():
+        ax.set(xticks=[], yticks=[])
+        ax.set(xlim=xlim, ylim=ylim)
+    if g == 0:
+        for i in range(0, num, step):
+            axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
+                                 rotation='horizontal',
+                                 horizontalalignment='right',
+                                 verticalalignment='center',
+                                 fontsize=ticklabels)
+    for j in range(0, num, step):
+        axs[-1, j].set_xlabel(f'{logess[j]:2.0f}',
+                              x=0.45,
+                              fontsize=ticklabels)
 
     a2eq = mymodule.a2eq(given, AA, RR)
     w = mymodule.fitness(a2eq, a2eq, given, AA, RR)
@@ -144,20 +155,10 @@ for given in givens:
                            linewidth=4,
                            alpha=0.8,
                            c=cm.viridis(w[i, j]/traitvmax))
-    text = fig.text(0.90,
-                    0.90,
-                    'Given: ' + f'{given:4.2f}',
-                    fontsize=biglabels,
-                    color='grey',
-                    ha='right')
-    plt.savefig('temp.png', transparent=False)
-    text.remove()
-    frames.append(iio.imread('temp.png'))
-    os.remove('temp.png')
+
+plt.savefig(filename + '.png', transparent=False)
 
 plt.close()
-
-iio.mimsave(filename + '.gif', frames)
 
 end_time = time.perf_counter()
 print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')

@@ -77,6 +77,8 @@ for g, title in enumerate(titles):
 
     for ax in fig.get_axes():
         ax.set(xticks=[], yticks=[])
+        for axis in ['top','bottom','left','right']:
+            ax.spines[axis].set_linewidth(0.1)
     if g == 0:
         for i in range(0, num, step):
             axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',

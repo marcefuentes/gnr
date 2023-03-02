@@ -35,7 +35,7 @@ traitvmaxs = [mymodule.a2max,
 folders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
 
 movie = False
-rows = folders + 1
+ext = 256
 plotsize = 4
 
 dfs = []
@@ -61,10 +61,12 @@ nc = len(logess)
 rhos = 1.0 - 1.0/pow(2.0, logess)
 RR, AA = np.meshgrid(rhos, alphas)
 
+step = int(nr/2)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 letter = ord('a')
 letterposition = 1.035
+extent = 0, ext, 7.5, ext
 xticks = [0, nc/2-0.5, nc-1]
 yticks = [0, nr/2-0.5, nr-1]
 xmin = logess[0]
@@ -78,7 +80,7 @@ yticklabels = [f'{ymax:3.1f}',
                f'{(ymin + ymax)/2.0:3.1f}',
                f'{ymin:3.1f}']
 width = plotsize*len(titles)
-height = plotsize*len(rows)
+height = plotsize*(len(folders) + 1)
 biglabels = plotsize*5 + height/4
 ticklabels = plotsize*4
 plt.rcParams['pdf.fonttype'] = 42
@@ -94,12 +96,14 @@ fig.supylabel(ylabel,
               y=0.493,
               fontsize=biglabels)
 
-outergrid = fig.add_gridspec(nrows=1),
-                             ncols=len(titlegs),
+outergrid = fig.add_gridspec(nrows=len(folders) + 1,
+                             ncols=len(titles),
                              left=0.15,
                              right=0.85,
                              top=0.8,
                              bottom=0.2)
+
+axsd = outergrid.subplots()
 
 axsg = []
 for g, title in enumerate(titlegs):
@@ -108,7 +112,7 @@ for g, title in enumerate(titlegs):
                                        wspace=0,
                                        hspace=0)
     axs = grid.subplots()
-    axs[0, int(num/2)].set_title(title,
+    axs[0, int(nc/2)].set_title(title,
                                  pad=plotsize*5,
                                  fontsize=plotsize*5)
     axs[0, 0].set_title(chr(letter),
@@ -117,13 +121,18 @@ for g, title in enumerate(titlegs):
                         loc='left')
     letter += 1
 
-    for ax in fig.get_axes():
-        ax.set(xticks=[], yticks=[])
-        ax.set(xticklabels=[])
-        for axis in ['top','bottom','left','right']:
-            ax.spines[axis].set_linewidth(0.1)
+    for i in range(nr):
+        for j in range(nc):
+            ax = axs[i, j]
+            ax.set(xticks=[], yticks=[])
+            ax.set(xticklabels=[])
+            for axis in ['top','bottom','left','right']:
+                ax.spines[axis].set_linewidth(0.1)
+            pos = ax.get_position()
+            newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
+            ax.set_position(newpos)
     if g == 0:
-        for i in range(0, num, step):
+        for i in range(0, nr, step):
             axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
                                  rotation='horizontal',
                                  horizontalalignment='right',
@@ -131,18 +140,9 @@ for g, title in enumerate(titlegs):
                                  fontsize=ticklabels)
     axsg.append(axs)
 
-#grid = fig.add_gridspec(nrows=len(folders),
-#                        ncols=len(titlegs),
-#                        left=0.15,
-#                        right=0.85,
-#                        top=0.8,
-#                        bottom=0.2)
-#
-#axs = grid.subplots()
-
-for g, title in enumerate(titles):
-    
-    for ax in fig.get_axes():
+for i, folder in enumerate(folders):
+    for j, title in enumerate(titles):
+        ax = axsd[i + 1, j]
         ax.set(xticks=xticks, yticks=yticks)
         ax.set(xticklabels=[], yticklabels=[])
         if letter <= ord('z'): 
@@ -156,18 +156,12 @@ for g, title in enumerate(titles):
                 fontsize=plotsize*5,
                 weight='bold')
         letter += 1
-    for i, row in enumerate(rows):
-        axs[i, 0].set_yticklabels(yticklabels, fontsize=ticklabels)
-    for j, title in enumerate(titlegs):
-        ax = axs[0, j]
-        ax.set_title(title, pad=plotsize*10, fontsize=plotsize*5)
-        pos = ax.get_position()
-        newpos = [pos.x0, pos.y0+0.04, pos.width, pos.height]
-        ax.set_position(newpos)
-        
-    for j, title in enumerate(titles):
-        axs[1, j].set_title(title, pad=plotsize*10, fontsize=plotsize*5)
-        axs[-1, j].set_xticklabels(xticklabels, fontsize=ticklabels)
+for i, folder in enumerate(folders):
+    axsd[i + 1, 0].set_yticklabels(yticklabels, fontsize=ticklabels)
+    
+for j, title in enumerate(titles):
+    axsd[1, j].set_title(title, pad=plotsize*10, fontsize=plotsize*5)
+    axsd[-1, j].set_xticklabels(xticklabels, fontsize=ticklabels)
 
 for i, title in enumerate(titlegs):
     for i, alpha in enumerate(alphas):
@@ -188,15 +182,15 @@ for i, title in enumerate(titlegs):
             S = mymodule.fitness(X, Y, given, AA, RR)
 
             Z = mymodule.gamecolors(T, R, P, S)
-            axss[0][i][j].imshow(Z, extent=extent)
+            axsg[0][i][j].imshow(Z, extent=extent)
 
             Z = R - P
-            axss[1][i][j].imshow(Z, extent=extent, vmin=-1, vmax=1)
+            axsg[1][i][j].imshow(Z, extent=extent, vmin=-1, vmax=1)
 
             Z = T + S - 2.0*R
             mask = R < P
             Z[mask] = T[mask] + S[mask] - 2.0*P[mask]
-            axss[2][i][j].imshow(Z, extent=extent, vmin=-1, vmax=1)
+            axsg[2][i][j].imshow(Z, extent=extent, vmin=-1, vmax=1)
 
 for t in ts:
     for i, df in enumerate(dfs):
@@ -206,7 +200,7 @@ for t in ts:
                                index=[rowindex],
                                columns=['logES']).sort_index(axis=0,
                                                     ascending=False)
-            axs[i, j].imshow(Z, vmin=0, vmax=traitvmaxs[j])
+            axsd[i + 1, j].imshow(Z, vmin=0, vmax=traitvmaxs[j])
     if movie:
         text = fig.text(0.90,
                         0.93,

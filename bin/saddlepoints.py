@@ -1,6 +1,5 @@
 #! /usr/bin/env python
 
-from matplotlib import cm
 import matplotlib.pyplot as plt
 import mymodule
 import numpy as np
@@ -55,7 +54,6 @@ grid = fig.add_gridspec(nrows=num,
 axs = grid.subplots()
 for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])
-    #ax.set(xlim=xlim, ylim=ylim)
 for i in range(0, num, step):
     axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
                          rotation='horizontal',

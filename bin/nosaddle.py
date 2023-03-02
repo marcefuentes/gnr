@@ -1,6 +1,5 @@
 #! /usr/bin/env python
 
-from matplotlib import cm
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
 import mymodule

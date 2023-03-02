@@ -1,6 +1,5 @@
 #! /usr/bin/env python
 
-from matplotlib import cm
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
 import mymodule
@@ -128,7 +127,7 @@ for given in givens:
                     0.02,
                     'Given: ' + f'{given:4.2f}',
                     fontsize=biglabels,
-                    color='grey',
+                    color='white',
                     ha='right')
     plt.savefig('temp.png', transparent=False)
     text.remove()

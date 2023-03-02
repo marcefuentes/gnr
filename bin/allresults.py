@@ -13,56 +13,56 @@ start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
-titles = ['Games',
-          'Sensitivity for\nchoosing partner',
-          'Sensitivity for\nmimicking partner']
-traits = ['ChooseGrainmean',
-          'MimicGrainmean']
+traits = ['a2Seenmean',
+          'ChooseGrainmean',
+          'MimicGrainmean',
+          'wmean']
+titles = ['Effort to get $\it{B}$',
+               'Sensitivity for\nchoosing partner',
+               'Sensitivity for\nmimicking partner',
+               'Fitness']
 traitvmaxs = [mymodule.a2max,
-              mymodule.a2max]
-folders = ['a2init8', 'a2init5', 'a2init2']
-subfolders = ['p', 'r']
+              mymodule.a2max,
+              mymodule.a2max,
+              mymodule.fitness(np.array([mymodule.a2max]),
+                               np.array([mymodule.a2max]),
+                               np.array([0.0]),
+                               np.array([0.9]),
+                               np.array([5.0]))]
+folders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
 
 movie = False
 rows = folders
 plotsize = 4
 
-dfss = []
+dfs = []
 for folder in folders:
-    dfs = []
-    for subfolder in subfolders:
-        df = pd.concat(map(pd.read_csv, glob(os.path.join(folder, subfolder, '*.csv'))),
-                        ignore_index=True)
-        df.ChooseGrainmean = 1.0 - df.ChooseGrainmean
-        df.MimicGrainmean = 1.0 - df.MimicGrainmean
-        dfs.append(df)
-    dfss.append(dfs)
+    df = pd.concat(map(pd.read_csv, glob(os.path.join(folder, '*.csv'))),
+                    ignore_index=True)
+    df.ChooseGrainmean = 1.0 - df.ChooseGrainmean
+    df.MimicGrainmean = 1.0 - df.MimicGrainmean
+    dfs.append(df)
 
-df = dfss[0][0]
+df = dfs[1]
 ts = df.Time.unique()
 if movie:
     frames = []
 else:
     ts = [ts[-1]]
-given = df.Given[0]
-alphas = np.sort(pd.unique(df.alpha))[::-1]
 rowindex = 'alpha'
-logess = np.sort(pd.unique(df.logES))
-nr = len(alphas)
-nc = len(logess)
-rhos = 1.0 - 1.0/pow(2.0, logess)
-RR, AA = np.meshgrid(rhos, alphas)
+nr = df['alpha'].nunique()
+nc = df['logES'].nunique()
 
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 letter = ord('a')
 letterposition = 1.035
+xmin = df['logES'].min()
+xmax = df['logES'].max()
+ymin = df['alpha'].min()
+ymax = df['alpha'].max()
 xticks = [0, nc/2-0.5, nc-1]
 yticks = [0, nr/2-0.5, nr-1]
-xmin = logess[0]
-xmax = logess[-1]
-ymin = alphas[-1]
-ymax = alphas[0]
 xticklabels = [f'{xmin:2.0f}',
                f'{(xmin + xmax)/2.0:2.0f}',
                f'{xmax:2.0f}']
@@ -80,11 +80,11 @@ fig, axs = plt.subplots(nrows=len(rows),
                         ncols=len(titles),
                         figsize=(width, height))
 fig.supxlabel(xlabel,
-              x=0.513,
-              y=0.03,
+              x=0.515,
+              y=0.06,
               fontsize=biglabels)
 fig.supylabel(ylabel,
-              x=0.04,
+              x=0.03,
               y=0.493,
               fontsize=biglabels)
 
@@ -101,40 +101,23 @@ for ax in fig.get_axes():
 for i, row in enumerate(rows):
     axs[i, 0].set_yticklabels(yticklabels, fontsize=ticklabels)
 for j, title in enumerate(titles):
-    axs[0, j].set_title(title, pad=plotsize*9, fontsize=plotsize*5)
-    axs[-1, j].set_xticklabels(xticklabels, x=0.47, fontsize=ticklabels)
+    axs[0, j].set_title(title, pad=plotsize*10, fontsize=plotsize*5)
+    axs[-1, j].set_xticklabels(xticklabels, fontsize=ticklabels)
 
-for i, folder in enumerate(folders):
-
-    lows = pd.pivot_table(dfss[i][0].loc[df.Time == 1],
-                values='a2low',
-                index=[rowindex],
-                columns=['logES']).sort_index(axis=0,
-                                            ascending=False)
-    lows = lows.to_numpy()
-    highs = pd.pivot_table(dfss[i][0].loc[df.Time == 1],
-                values='a2high',
-                index=[rowindex],
-                columns=['logES']).sort_index(axis=0,
-                                            ascending=False)
-    highs = highs.to_numpy()
-    T = mymodule.fitness(highs, lows, given, AA, RR)
-    R = mymodule.fitness(highs, highs, given, AA, RR)
-    P = mymodule.fitness(lows, lows, given, AA, RR)
-    S = mymodule.fitness(lows, highs, given, AA, RR)
-
-    Z = mymodule.gamecolors(T, R, P, S)
-    axs[i, 0].imshow(Z)
+#        if letter <= ord('z'): 
+#            textl = chr(letter)
+#        else:
+#            textl = 'a' + chr(letter - 26)
 
 for t in ts:
-    for i, folder in enumerate(folders):
+    for i, df in enumerate(dfs):
         for j, trait in enumerate(traits):
-            Z = pd.pivot_table(dfss[i][j].loc[df.Time == t],
+            Z = pd.pivot_table(df.loc[df.Time == t],
                                values=trait,
                                index=[rowindex],
                                columns=['logES']).sort_index(axis=0,
                                                     ascending=False)
-            axs[i, j + 1].imshow(Z, vmin=0, vmax=traitvmaxs[j])
+            axs[i, j].imshow(Z, vmin=0, vmax=traitvmaxs[j])
     if movie:
         text = fig.text(0.90,
                         0.93,

@@ -57,12 +57,12 @@ xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 letter = ord('a')
 letterposition = 1.035
+xticks = [0, nc/2-0.5, nc-1]
+yticks = [0, nr/2-0.5, nr-1]
 xmin = df['logES'].min()
 xmax = df['logES'].max()
 ymin = df['alpha'].min()
 ymax = df['alpha'].max()
-xticks = [0, nc/2-0.5, nc-1]
-yticks = [0, nr/2-0.5, nr-1]
 xticklabels = [f'{xmin:2.0f}',
                f'{(xmin + xmax)/2.0:2.0f}',
                f'{xmax:2.0f}']

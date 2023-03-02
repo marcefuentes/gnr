@@ -28,11 +28,7 @@ if givens[-1] > 0.9999999:
 alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=num)
 logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
-xmin = 0.0
-xmax = mymodule.a2max
-ymin = 0.0
-ymax = mymodule.a2max
-x = np.linspace(xmin, xmax, num=ext)
+x = np.linspace(0.0, mymodule.a2max, num=ext)
 y = np.flip(x)
 X, Y = np.meshgrid(x, y)
 G = np.full([ext, ext, 4], mymodule.colormap['transparent'])

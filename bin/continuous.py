@@ -28,11 +28,7 @@ if givens[-1] > 0.9999999:
 rho = 1.0 - 1.0/pow(2, loges)
 RRR, AAA = np.meshgrid(np.repeat(rho, ext),
                         np.repeat(alpha, ext))
-xmin = 0.0
-xmax = mymodule.a2max
-ymin = 0.0
-ymax = mymodule.a2max
-x = np.linspace(xmin, xmax, num=ext)
+x = np.linspace(0.0, mymodule.a2max, num=ext)
 y = np.flip(x)
 X, Y = np.meshgrid(x, y)
 G = np.full([ext, ext, 4], mymodule.colormap['transparent'])
@@ -45,12 +41,10 @@ letter = ord('a')
 letterposition = 1.035
 xticks = [-0.5, ext/2-0.5, ext-0.5]
 yticks = [-0.5, ext/2-0.5, ext-0.5]
-xticklabels = [f'{xmin:3.1f}',
-               f'{(xmin + xmax)/2.0:3.1f}',
-               f'{xmax:3.1f}']
-yticklabels = [f'{ymax:3.1f}',
-               f'{(ymin + ymax)/2.0:3.1f}',
-               f'{ymin:3.1f}']
+xticklabels = [f'{0.0:3.1f}',
+               f'{mymodule.a2max/2.0:3.1f}',
+               f'{mymodule.a2max:3.1f}']
+yticklabels = np.flip(xticklabels)
 width = plotsize*len(titles)
 height = plotsize
 biglabels = plotsize*5 + height/4

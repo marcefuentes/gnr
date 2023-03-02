@@ -21,11 +21,7 @@ plotsize = 9
 alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=num)
 logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
-xmin = 0.0
-xmax = mymodule.a2max
-ymin = 0.0
-ymax = mymodule.a2max
-x = np.linspace(xmin, xmax, num=ext)
+x = np.linspace(0.0, mymodule,a2max, num=ext)
 y = np.flip(x)
 X, Y = np.meshgrid(x, y)
 maskxy = (X >= Y)
@@ -33,10 +29,6 @@ maskxy = (X >= Y)
 step = int(num/2)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
-xmin = logess[0]
-xmax = logess[-1]
-ymin = alphas[-1]
-ymax = alphas[0]
 extent = 0, ext, 0, ext
 markersize = plotsize*4
 width = plotsize

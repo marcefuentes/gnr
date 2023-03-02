@@ -31,12 +31,12 @@ xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 letter = ord('a')
 letterposition = 1.035
+xticks = [-0.5, ext/2-0.5, ext-0.5]
+yticks = [-0.5, ext/2-0.5, ext-0.5]
 xmin = logess[0]
 xmax = logess[-1]
 ymin = alphas[-1]
 ymax = alphas[0]
-xticks = [-0.5, ext/2-0.5, ext-0.5]
-yticks = [-0.5, ext/2-0.5, ext-0.5]
 xticklabels = [f'{xmin:2.0f}',
                f'{(xmin + xmax)/2.0:2.0f}',
                f'{xmax:2.0f}']

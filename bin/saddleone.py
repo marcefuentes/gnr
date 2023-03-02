@@ -1,0 +1,99 @@
+#! /usr/bin/env python
+
+import matplotlib.pyplot as plt
+import mymodule
+import numpy as np
+import os
+import time
+
+start_time = time.perf_counter()
+thisscript = os.path.basename(__file__)
+filename = thisscript.split('.')[0]
+
+given = 0.95
+alpha = 0.3
+loges = 0.0
+ext = 1024
+distances = np.array([0.2, 0.5, 0.8])
+
+plotsize = 6
+
+rho = 1.0 - 1.0/pow(2, loges)
+AA = np.full([ext, ext], alpha)
+RR = np.full([ext, ext], rho)
+xmin = 0.0
+xmax = mymodule.a2eq(given, alpha, rho)
+ymin = mymodule.a2eq(0.0, alpha, rho)
+ymax = mymodule.a2max
+x = np.linspace(xmin, xmax, num=ext)
+y = np.linspace(ymax, ymin, num=ext)
+X, Y = np.meshgrid(x, y)
+
+xlabel = 'Effort to get $\it{B}$'
+ylabel = 'Effort to get $\it{B}$'
+extent = 0, ext, 0, ext
+xticks = [0, ext/2.0, ext-0.5]
+yticks = [0, ext/2.0, ext-0.5]
+xticklabels = [f'{round(xmin):4.2f}',
+               f'{round((xmax - xmin)/2.0, 3):4.2f}',
+               f'{round(xmax, 3):4.2f}']
+yticklabels = [f'{round(ymin, 3):3.1f}',
+               f'{round((ymax + ymin)/2.0, 3):3.1f}',
+               f'{round(ymax, 3):3.1f}']
+markersize = plotsize*4
+width = plotsize
+height = plotsize
+biglabels = plotsize*4
+ticklabels = plotsize*3
+plt.rcParams['pdf.fonttype'] = 42
+plt.rcParams['ps.fonttype'] = 42
+
+fig, ax = plt.subplots(figsize=(width, height))
+
+ax.set_xlabel(xlabel,
+              x=0.513,
+              y=0.0,
+              fontsize=biglabels)
+ax.set_ylabel(ylabel,
+              x=0.04,
+              y=0.493,
+              fontsize=biglabels)
+ax.set(xticks=xticks, yticks=yticks)
+ax.set_xticklabels(xticklabels, fontsize=ticklabels)
+ax.set_yticklabels(yticklabels, fontsize=ticklabels)
+
+a2eq = mymodule.a2eq(given, alpha, rho)
+a2social = mymodule.a2eq(0.0, alpha, rho)
+x = distances*a2eq
+y = a2social + distances*(mymodule.a2max - a2social)
+
+T = mymodule.fitness(y, x, given, alpha, rho)
+R = mymodule.fitness(y, y, given, alpha, rho)
+P = mymodule.fitness(x, x, given, alpha, rho)
+S = mymodule.fitness(x, y, given, alpha, rho)
+
+Z = mymodule.gamecolors(T, R, P, S)
+ax.scatter(distances*ext, distances*ext,
+           marker='o',
+           s=markersize,
+           color=Z)
+Z = mymodule.nodilemmacolorsg(T, R, P, S)
+ax.scatter(distances*ext, distances*ext,
+           marker='o',
+           s=markersize,
+           color=Z)
+
+T = mymodule.fitness(Y, X, given, AA, RR)
+R = mymodule.fitness(Y, Y, given, AA, RR)
+P = mymodule.fitness(X, X, given, AA, RR)
+S = mymodule.fitness(X, Y, given, AA, RR)
+
+Z = mymodule.gamecolors(T, R, P, S)
+ax.imshow(Z, extent=extent, alpha=0.2)
+
+plt.savefig(filename + '.png', transparent=False)
+
+plt.close()
+
+end_time = time.perf_counter()
+print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')

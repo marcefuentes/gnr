@@ -1,73 +1,96 @@
 #! /usr/bin/env python
 
-from matplotlib import cm
+from glob import glob
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
 import mymodule
 import numpy as np
 import os
+import pandas as pd
 import time
 
 start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
-titles = ['Games',
-          '$\it{R}$ - $\it{P}$',
-          '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
-#givens = np.linspace(0.0, 1.0, num=21)
-givens = np.linspace(0.95, 1.0, num=1)
-alpha = 0.46
-loges = 2.5
-ext = 1024
+traits = ['a2Seenmean',
+          'ChooseGrainmean',
+          'MimicGrainmean',
+          'wmean']
+titles = ['Effort to get $\it{B}$',
+               'Sensitivity for\nchoosing partner',
+               'Sensitivity for\nmimicking partner',
+               'Fitness']
+traitvmaxs = [mymodule.a2max,
+              mymodule.a2max,
+              mymodule.a2max,
+              mymodule.fitness(np.array([mymodule.a2max]),
+                               np.array([mymodule.a2max]),
+                               np.array([0.0]),
+                               np.array([0.9]),
+                               np.array([5.0]))]
+folders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
 
-plotsize = 6
+movie = False
+rows = folders
+plotsize = 4
 
-if givens[-1] > 0.9999999:
-    givens[-1] = 0.9999999
-rho = 1.0 - 1.0/pow(2, loges)
-RRR, AAA = np.meshgrid(np.repeat(rho, ext),
-                        np.repeat(alpha, ext))
-x = np.linspace(0.0, mymodule.a2max, num=ext)
-y = np.flip(x)
-X, Y = np.meshgrid(x, y)
-G = np.full([ext, ext, 4], mymodule.colormap['transparent'])
-maskxy = (X >= Y)
-G[maskxy] = [0.9, 0.9, 0.9, 1.0]
+dfs = []
+for folder in folders:
+    df = pd.concat(map(pd.read_csv, glob(os.path.join(folder, '*.csv'))),
+                    ignore_index=True)
+    df.ChooseGrainmean = 1.0 - df.ChooseGrainmean
+    df.MimicGrainmean = 1.0 - df.MimicGrainmean
+    dfs.append(df)
 
-xlabel = 'Effort to get $\it{B}$'
-ylabel = 'Effort to get $\it{B}$'
+df = dfs[1]
+ts = df.Time.unique()
+if movie:
+    frames = []
+else:
+    ts = [ts[-1]]
+rowindex = 'alpha'
+nr = df['alpha'].nunique()
+nc = df['logES'].nunique()
+
+xlabel = 'Substitutability of $\it{B}$'
+ylabel = 'Value of $\it{B}$'
 letter = ord('a')
 letterposition = 1.035
-xticks = [-0.5, ext/2-0.5, ext-0.5]
-yticks = [-0.5, ext/2-0.5, ext-0.5]
-xticklabels = [f'{0.0:3.1f}',
-               f'{mymodule.a2max/2.0:3.1f}',
-               f'{mymodule.a2max:3.1f}']
-yticklabels = np.flip(xticklabels)
+xticks = [0, nc/2-0.5, nc-1]
+yticks = [0, nr/2-0.5, nr-1]
+xmin = df['logES'].min()
+xmax = df['logES'].max()
+ymin = df['alpha'].min()
+ymax = df['alpha'].max()
+xticklabels = [f'{xmin:2.0f}',
+               f'{(xmin + xmax)/2.0:2.0f}',
+               f'{xmax:2.0f}']
+yticklabels = [f'{ymax:3.1f}',
+               f'{(ymin + ymax)/2.0:3.1f}',
+               f'{ymin:3.1f}']
 width = plotsize*len(titles)
-height = plotsize
+height = plotsize*len(rows)
 biglabels = plotsize*5 + height/4
-ticklabels = plotsize*3.5
+ticklabels = plotsize*4
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-fig, axs = plt.subplots(nrows=1,
+fig, axs = plt.subplots(nrows=len(rows),
                         ncols=len(titles),
                         figsize=(width, height))
 fig.supxlabel(xlabel,
-              x=0.513,
-              y=0.0,
+              x=0.515,
+              y=0.06,
               fontsize=biglabels)
 fig.supylabel(ylabel,
-              x=0.04,
+              x=0.03,
               y=0.493,
               fontsize=biglabels)
 
 for ax in fig.get_axes():
     ax.set(xticks=xticks, yticks=yticks)
-    ax.set_xticklabels(xticklabels, fontsize=ticklabels)
-    ax.set_yticklabels([])
+    ax.set(xticklabels=[], yticklabels=[])
     ax.text(0,
             letterposition,
             chr(letter),
@@ -75,48 +98,44 @@ for ax in fig.get_axes():
             fontsize=plotsize*5,
             weight='bold')
     letter += 1
+for i, row in enumerate(rows):
+    axs[i, 0].set_yticklabels(yticklabels, fontsize=ticklabels)
 for j, title in enumerate(titles):
-    axs[j].set_title(title, pad=plotsize*5, fontsize=plotsize*5)
-axs[0].set_yticklabels(yticklabels, fontsize=ticklabels)
+    axs[0, j].set_title(title, pad=plotsize*10, fontsize=plotsize*5)
+    axs[-1, j].set_xticklabels(xticklabels, fontsize=ticklabels)
 
-frames = []
-for given in givens:
+#        if letter <= ord('z'): 
+#            textl = chr(letter)
+#        else:
+#            textl = 'a' + chr(letter - 26)
 
-    T = mymodule.fitness(Y, X, given, AAA, RRR)
-    R = mymodule.fitness(Y, Y, given, AAA, RRR)
-    P = mymodule.fitness(X, X, given, AAA, RRR)
-    S = mymodule.fitness(X, Y, given, AAA, RRR)
-
-    Z = mymodule.gamecolors(T, R, P, S)
-    Z[maskxy] = [0.9, 0.9, 0.9, 1.0]
-    axs[0].imshow(Z)
-
-    N = mymodule.nodilemmacolors(T, R, P, S)
-
-    Z = R - P
-    axs[1].imshow(Z, vmin=-1, vmax=1)
-    axs[1].imshow(N)
-    axs[1].imshow(G)
-
-    Z = T + S - 2.0*R
-    axs[2].imshow(Z, vmin=-1, vmax=1)
-    axs[2].imshow(N)
-    axs[2].imshow(G)
-
-    text = fig.text(0.90,
-                    0.02,
-                    'Given: ' + f'{given:4.2f}',
-                    fontsize=biglabels,
-                    color='grey',
-                    ha='right')
-    plt.savefig('temp.png', transparent=False)
-    text.remove()
-    frames.append(iio.imread('temp.png'))
-    os.remove('temp.png')
+for t in ts:
+    for i, df in enumerate(dfs):
+        for j, trait in enumerate(traits):
+            Z = pd.pivot_table(df.loc[df.Time == t],
+                               values=trait,
+                               index=[rowindex],
+                               columns=['logES']).sort_index(axis=0,
+                                                    ascending=False)
+            axs[i, j].imshow(Z, vmin=0, vmax=traitvmaxs[j])
+    if movie:
+        text = fig.text(0.90,
+                        0.93,
+                        f't\n{t}',
+                        fontsize=biglabels,
+                        color='grey',
+                        ha='right')
+        plt.savefig('temp.png', transparent=False)
+        text.remove()
+        frames.append(iio.imread('temp.png'))
+        os.remove('temp.png')
+    else:
+        plt.savefig(filename + '.png', transparent=False)
 
 plt.close()
 
-iio.mimsave(filename + '.gif', frames)
+if movie:
+    iio.mimsave(filename + '.gif', frames)
 
 end_time = time.perf_counter()
 print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')

@@ -100,7 +100,6 @@ for given in givens:
         AA = np.full([ext, ext], alpha)
         for j, rho in enumerate(rhos):
 
-            RR = np.full([ext, ext], rho)
             xmin = 0.0
             xmax = mymodule.a2eq(given, alpha, rho)
             ymin = mymodule.a2eq(0.0, alpha, rho)
@@ -108,6 +107,7 @@ for given in givens:
             x = np.linspace(xmin, xmax, num=ext)
             y = np.linspace(ymax, ymin, num=ext)
             X, Y = np.meshgrid(x, y)
+            RR = np.full([ext, ext], rho)
             T = mymodule.fitness(Y, X, given, AA, RR)
             R = mymodule.fitness(Y, Y, given, AA, RR)
             P = mymodule.fitness(X, X, given, AA, RR)

@@ -86,6 +86,7 @@ for g, title in enumerate(titles):
                                  fontsize=ticklabels)
     for j in range(0, num, step):
         axs[-1, j].set_xlabel(f'{logess[j]:2.0f}',
+                              x=0.45,
                               fontsize=ticklabels)
 
     axss.append(axs)

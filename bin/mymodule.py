@@ -31,24 +31,6 @@ colormap = {
     'deadlock' :    [0.9, 1.0, 0.9, 1.0],
 }
 
-def fitness(x, y, given, alpha, rho):
-    q1 = (a2max - y)*R1/b
-    q2 = y*R2*(1.0 - given) + x*R2*given
-    w = q1*q2
-    if np.isscalar(alpha):
-        alpha = np.full([len(q1)], alpha)
-    if np.isscalar(rho):
-        rho = np.full([len(q1)], rho)
-    mask = (w > 0.0) & (rho == 0.0)
-    w[mask] = pow(q1[mask], 1.0 - alpha[mask])*pow(q2[mask], alpha[mask])
-    mask = (w > 0.0) & (rho < 0.0)
-    w[mask] = (1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask])
-    mask = (w > 0.0) & (rho < 0.0)
-    w[mask] = pow(w[mask], 1.0/rho[mask])
-    mask = (rho > 0.0)
-    w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
-    return w
-
 def harmony(T, R, P, S):
     mask = ((R > T) & (T >= S) & (S > P)) | ((R >= S) & (S >= T) & (T >= P))
     return mask
@@ -163,6 +145,24 @@ def equilibrium(T, R, P, S, low, high, a2eq, weq):
 
     pass
 
+def fitness(x, y, given, alpha, rho):
+    q1 = (a2max - y)*R1/b
+    q2 = y*R2*(1.0 - given) + x*R2*given
+    w = q1*q2
+    if np.isscalar(alpha):
+        alpha = np.full([len(q1)], alpha)
+    if np.isscalar(rho):
+        rho = np.full([len(q1)], rho)
+    mask = (w > 0.0) & (rho == 0.0)
+    w[mask] = pow(q1[mask], 1.0 - alpha[mask])*pow(q2[mask], alpha[mask])
+    mask = (w > 0.0) & (rho < 0.0)
+    w[mask] = (1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask])
+    mask = (w > 0.0) & (rho < 0.0)
+    w[mask] = pow(w[mask], 1.0/rho[mask])
+    mask = (rho > 0.0)
+    w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
+    return w
+
 def a2eq(g, alpha, rho):
     if g == 1.0:
         g = 0.9999999
@@ -170,3 +170,27 @@ def a2eq(g, alpha, rho):
     Q = Rq*pow(MRT*alpha/(1.0 - alpha), 1.0/(rho - 1.0))
     a2 = a2max/(1.0 + Q*b)
     return a2
+
+def indifference(q, w, alpha, rho):
+    if rho == 0.0:
+        if q == 0.0:
+            q2 = 1000.0
+        else:
+            q2 = pow(w/pow(q, 1.0 - alpha), 1.0/alpha)
+    elif rho < 0.0:
+        if q == 0.0:
+            q2 = 1000.0
+        else:
+            if pow(w, rho) <= (1.0 - alpha)*pow(q, rho):
+                q2 = 1000.0
+            else:
+                q2 = pow((pow(w, rho) - (1.0 - alpha)*pow(q, rho))/
+                        alpha, 1.0/rho)
+    else:
+        if pow(w, rho) <= (1.0 - alpha)*pow(q, rho):
+            q2 = -0.1
+        else:
+            q2 = pow((pow(w, rho) - (1.0 - alpha)*pow(q, rho))/
+                    alpha, 1.0/rho)
+    return q2
+

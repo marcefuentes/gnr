@@ -21,29 +21,6 @@ n_ic = 5    # Number of indifference curves
 
 plotsize = 6
 
-def indifference(q, w, alpha, rho):
-    if rho == 0.0:
-        if q == 0.0:
-            q2 = 1000.0
-        else:
-            q2 = pow(w/pow(q, 1.0 - alpha), 1.0/alpha)
-    elif rho < 0.0:
-        if q == 0.0:
-            q2 = 1000.0
-        else:
-            if pow(w, rho) <= (1.0 - alpha)*pow(q, rho):
-                q2 = 1000.0
-            else:
-                q2 = pow((pow(w, rho) - (1.0 - alpha)*pow(q, rho))/
-                        alpha, 1.0/rho)
-    else:
-        if pow(w, rho) <= (1.0 - alpha)*pow(q, rho):
-            q2 = -0.1
-        else:
-            q2 = pow((pow(w, rho) - (1.0 - alpha)*pow(q, rho))/
-                    alpha, 1.0/rho)
-    return q2
-
 alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=num)
 logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
@@ -61,7 +38,7 @@ for alpha in alphas:
         for w in ws:
             ic = np.zeros(numa2)
             for i, q1 in enumerate(q1_ic):
-                ic[i] = indifference(q1, w, alpha, rho)
+                ic[i] = mymodule.indifference(q1, w, alpha, rho)
             ics.append(ic)
         icss.append(ics)
     icsss.append(icss)
@@ -147,7 +124,7 @@ for g, (given, title) in enumerate(zip(givens, titles)):
             axs[i, j].plot(q1_budget, budget, c='black', alpha=0.8)
             y = []
             for q1 in q1_ic:
-                y.append(indifference(q1, w[i, j], alpha, rho))
+                y.append(mymodule.indifference(q1, w[i, j], alpha, rho))
             axs[i, j].plot(q1_ic,
                            y,
                            linewidth=4,

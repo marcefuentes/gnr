@@ -188,7 +188,7 @@ def indifference(q, w, alpha, rho):
                         alpha, 1.0/rho)
     else:
         if pow(w, rho) <= (1.0 - alpha)*pow(q, rho):
-            q2 = -0.1
+            q2 = pow(pow(w, 1.0 - rho) - alpha*pow(q, rho), 1.0/(1.0 - rho))
         else:
             q2 = pow((pow(w, rho) - (1.0 - alpha)*pow(q, rho))/
                     alpha, 1.0/rho)

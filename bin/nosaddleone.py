@@ -22,8 +22,6 @@ ext = 1024
 
 plotsize = 6
 
-if givens[-1] > 0.9999999:
-    givens[-1] = 0.9999999
 rho = 1.0 - 1.0/pow(2, loges)
 RRR, AAA = np.meshgrid(np.repeat(rho, ext),
                         np.repeat(alpha, ext))

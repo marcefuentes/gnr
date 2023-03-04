@@ -21,8 +21,6 @@ for distance in distances:
 num = 21    # Number of subplot rows and columns
 plotsize = 8
 
-if givens[-1] > 0.9999999:
-    givens[-1] = 0.9999999
 alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=num)
 logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)

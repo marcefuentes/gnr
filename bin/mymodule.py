@@ -163,7 +163,7 @@ def equilibrium(T, R, P, S, low, high, a2eq, weq):
 
     pass
 
-def a2eq(g, a, r):
+def a2eq(g, alpha, rho):
     if g == 1.0:
         g = 0.9999999
     MRT = b*Rq*(1.0 - g)

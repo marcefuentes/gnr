@@ -16,7 +16,7 @@ titles = []
 for given in givens:
     titles.append(f'{given*100:2.0f}%')
 num = 3    # Number of subplot rows & columns
-numa2 = 128
+numa2 = 256
 n_ic = 5    # Number of indifference curves
 
 plotsize = 6
@@ -27,7 +27,7 @@ rhos = 1.0 - 1.0/pow(2, logess)
 a1_budget = np.linspace(0.0, mymodule.a1max, num=3)
 q2_budget = (mymodule.a2max - mymodule.b*a1_budget)*mymodule.R2
 q1_budget = a1_budget*mymodule.R1
-q1_ic = np.linspace(0.0, mymodule.a1max*mymodule.R1, num=numa2)
+q1_ic = np.linspace(0.001, mymodule.a1max*mymodule.R1 - 0.001, num=numa2)
 RR, AA = np.meshgrid(rhos, alphas)
 ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
 icsss = []

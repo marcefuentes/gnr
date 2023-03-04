@@ -16,7 +16,7 @@ titles = []
 for given in givens:
     titles.append(f'{given*100:2.0f}%')
 num = 3    # Number of subplot rows & columns
-numa2 = 256
+numa2 = 128
 n_ic = 5    # Number of indifference curves
 
 plotsize = 6

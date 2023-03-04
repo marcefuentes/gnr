@@ -199,10 +199,13 @@ void read_globals (char *filename)
 	double MRT = (ga2Max/ga1Max)*(gR2/gR1);
 	double Q = (gR2/gR1)*pow(MRT*galpha/(1.0 - galpha), 1.0/(grho - 1));
 	double a2social = ga2Max/(1.0 + Q*ga2Max/ga1Max);
-	MRT = MRT*(1.0 - gGiven);
-	Q = (gR2/gR1)*pow(MRT*galpha/(1.0 - galpha), 1.0/(grho - 1));
-	double a2eq = ga2Max/(1.0 + Q*ga2Max/ga1Max);
-
+	double a2eq = 0.0;
+	if ( gGiven < 1.0 )
+	{
+		MRT = MRT*(1.0 - gGiven);
+		Q = (gR2/gR1)*pow(MRT*galpha/(1.0 - galpha), 1.0/(grho - 1));
+		a2eq = ga2Max/(1.0 + Q*ga2Max/ga1Max);
+	}
 	ga2low = ga2Min + ga2Init*a2eq;
 	ga2high = a2social + ga2Init*(ga2Max - a2social);
 }

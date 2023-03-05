@@ -10,17 +10,15 @@ start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
-given = 0.95
-alpha = 0.3
-loges = 0.0
+given = 1.0
+alpha = 0.5
+loges = -0.5
 ext = 1024
 distances = np.array([0.2, 0.5, 0.8])
 
 plotsize = 6
 
 rho = 1.0 - 1.0/pow(2, loges)
-AA = np.full([ext, ext], alpha)
-RR = np.full([ext, ext], rho)
 xmin = 0.0
 xmax = mymodule.a2eq(given, alpha, rho)
 ymin = mymodule.a2eq(0.0, alpha, rho)
@@ -37,9 +35,9 @@ yticks = [0, ext/2.0, ext-0.5]
 xticklabels = [f'{round(xmin):4.2f}',
                f'{round((xmax - xmin)/2.0, 3):4.2f}',
                f'{round(xmax, 3):4.2f}']
-yticklabels = [f'{round(ymin, 3):3.1f}',
-               f'{round((ymax + ymin)/2.0, 3):3.1f}',
-               f'{round(ymax, 3):3.1f}']
+yticklabels = [f'{round(ymin, 3):4.2f}',
+               f'{round((ymax + ymin)/2.0, 3):4.2f}',
+               f'{round(ymax, 3):4.2f}']
 markersize = plotsize*30
 width = plotsize
 height = plotsize
@@ -82,10 +80,10 @@ ax.scatter(distances*ext, distances*ext,
            s=markersize,
            color='white')
 
-T = mymodule.fitness(Y, X, given, AA, RR)
-R = mymodule.fitness(Y, Y, given, AA, RR)
-P = mymodule.fitness(X, X, given, AA, RR)
-S = mymodule.fitness(X, Y, given, AA, RR)
+T = mymodule.fitness(Y, X, given, alpha, rho)
+R = mymodule.fitness(Y, Y, given, alpha, rho)
+P = mymodule.fitness(X, X, given, alpha, rho)
+S = mymodule.fitness(X, Y, given, alpha, rho)
 
 Z = mymodule.gamecolors(T, R, P, S)
 ax.imshow(Z, extent=extent, alpha=0.99)

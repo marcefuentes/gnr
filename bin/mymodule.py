@@ -162,9 +162,9 @@ def fitness(x, y, given, alpha, rho):
     q2 = y*R2*(1.0 - given) + x*R2*given
     w = q1*q2
     if np.isscalar(alpha):
-        alpha = np.full([len(q1)], alpha)
+        alpha = np.full(np.shape(q1), alpha)
     if np.isscalar(rho):
-        rho = np.full([len(q1)], rho)
+        rho = np.full(np.shape(q1), rho)
     mask = (w > 0.0) & (rho == 0.0)
     w[mask] = pow(q1[mask], 1.0 - alpha[mask])*pow(q2[mask], alpha[mask])
     mask = (w > 0.0) & (rho < 0.0)

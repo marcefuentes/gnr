@@ -163,12 +163,13 @@ def fitness(x, y, given, alpha, rho):
     w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
     return w
 
-def a2eq(g, alpha, rho):
-    if g == 1.0:
-        g = 0.9999999
-    MRT = b*Rq*(1.0 - g)
-    Q = Rq*pow(MRT*alpha/(1.0 - alpha), 1.0/(rho - 1.0))
-    a2 = a2max/(1.0 + Q*b)
+def a2eq(given, alpha, rho):
+    if given < 1.0:
+        MRT = b*Rq*(1.0 - given)
+        Q = Rq*pow(MRT*alpha/(1.0 - alpha), 1.0/(rho - 1.0))
+        a2 = a2max/(1.0 + Q*b)
+    else:
+        a2 = alpha*0.0
     return a2
 
 def indifference(q, w, alpha, rho):

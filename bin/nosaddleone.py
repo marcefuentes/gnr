@@ -14,23 +14,19 @@ filename = thisscript.split('.')[0]
 titles = ['Games',
           '$\it{R}$ - $\it{P}$',
           '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
-#givens = np.linspace(0.0, 1.0, num=21)
-givens = np.linspace(0.95, 1.0, num=2)
+givens = np.linspace(0.0, 1.0, num=21)
+#givens = np.linspace(1.0, 1.0, num=1)
 alpha = 0.5
 loges = -5.0
 ext = 1024
-
 plotsize = 6
 
 rho = 1.0 - 1.0/pow(2, loges)
-RRR, AAA = np.meshgrid(np.repeat(rho, ext),
-                        np.repeat(alpha, ext))
 x = np.linspace(0.0, mymodule.a2max, num=ext)
 y = np.flip(x)
 X, Y = np.meshgrid(x, y)
 G = np.full([ext, ext, 4], mymodule.colormap['transparent'])
-maskxy = (X >= Y)
-G[maskxy] = [0.9, 0.9, 0.9, 1.0]
+G[X >= Y] = [0.9, 0.9, 0.9, 1.0]
 
 xlabel = 'Effort to get $\it{B}$'
 ylabel = 'Effort to get $\it{B}$'
@@ -79,13 +75,13 @@ axs[0].set_yticklabels(yticklabels, fontsize=ticklabels)
 frames = []
 for given in givens:
 
-    T = mymodule.fitness(Y, X, given, AAA, RRR)
-    R = mymodule.fitness(Y, Y, given, AAA, RRR)
-    P = mymodule.fitness(X, X, given, AAA, RRR)
-    S = mymodule.fitness(X, Y, given, AAA, RRR)
+    T = mymodule.fitness(Y, X, given, alpha, rho)
+    R = mymodule.fitness(Y, Y, given, alpha, rho)
+    P = mymodule.fitness(X, X, given, alpha, rho)
+    S = mymodule.fitness(X, Y, given, alpha, rho)
 
     Z = mymodule.gamecolors(T, R, P, S)
-    Z[maskxy] = [0.9, 0.9, 0.9, 1.0]
+    Z[X >= Y] = [0.9, 0.9, 0.9, 1.0]
     axs[0].imshow(Z)
 
     N = mymodule.nodilemmacolors(T, R, P, S)

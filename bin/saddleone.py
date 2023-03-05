@@ -12,7 +12,7 @@ filename = thisscript.split('.')[0]
 
 given = 1.0
 alpha = 0.5
-loges = -0.5
+loges = -5.0
 ext = 1024
 distances = np.array([0.2, 0.5, 0.8])
 

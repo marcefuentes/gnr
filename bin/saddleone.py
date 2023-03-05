@@ -10,7 +10,7 @@ start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
-given = 1.0
+given = 0.999
 alpha = 0.5
 loges = -5.0
 ext = 1024

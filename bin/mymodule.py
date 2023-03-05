@@ -31,12 +31,16 @@ colormap = {
     'deadlock' :    [0.9, 1.0, 0.9, 1.0],
 }
 
+def borderline(T, R, P, S):
+    mask = (T == R) | (R == P) | (P == S)
+    return mask
+
 def harmony(T, R, P, S):
     mask = ((R > T) & (T >= S) & (S > P)) | ((R >= S) & (S >= T) & (T >= P))
     return mask
 
 def deadlock(T, R, P, S):
-    mask = (T > R) & (R <= P) & (P > S)
+    mask = (T > R) & (R < P) & (P > S)
     return mask
 
 def prisoner(T, R, P, S):
@@ -44,7 +48,7 @@ def prisoner(T, R, P, S):
     return mask
 
 def snowdrift(T, R, P, S):
-    mask = (T > R) & (R >= S) & (S >= P)
+    mask = (T > R) & (R > S) & (S > P)
     return mask
 
 def leader(T, R, P, S):
@@ -66,6 +70,11 @@ def nodilemma(T, R, P, S):
 def diagonal(T, R, P, S):
     mask = (T == R) & (R == P) & (P == S)
     return mask
+
+def borderlinecolors(T, R, P, S, Z):
+    mask = borderline(T, R, P, S)
+    Z[mask] = colormap['grey']
+    Z[diagonal(T, R, P, S)] = colormap['white']
 
 def harmonycolors(T, R, P, S, Z):
     mask = harmony(T, R, P, S)
@@ -118,6 +127,7 @@ def nodilemmacolorsg(T, R, P, S):
 
 def gamecolors(T, R, P, S):
     Z = np.full([*T.shape, 4], colormap['red'])
+    borderlinecolors(T, R, P, S, Z)
     harmonycolors(T, R, P, S, Z)
     deadlockcolors(T, R, P, S, Z)
     prisonercolors(T, R, P, S, Z)

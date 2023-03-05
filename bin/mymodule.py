@@ -36,7 +36,7 @@ def borderline(T, R, P, S):
     return mask
 
 def harmony(T, R, P, S):
-    mask = ((R > T) & (T >= S) & (S > P)) | ((R >= S) & (S >= T) & (T >= P))
+    mask = (T < R) & (R > P) & (P < S)
     return mask
 
 def deadlock(T, R, P, S):

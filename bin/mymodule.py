@@ -33,7 +33,7 @@ colormap = {
 }
 
 def grey(T, R, P, S):
-    mask = (P == 0.0) & (S == 0.0)
+    mask = (P == S)
     return mask
 
 def harmony(T, R, P, S):
@@ -49,7 +49,7 @@ def prisoner(T, R, P, S):
     return mask
 
 def snowdrift(T, R, P, S):
-    mask = (T > R) & (R > S) & (S > P)
+    mask = (T > R) & (R > P) & (P < S)
     return mask
 
 def leader(T, R, P, S):

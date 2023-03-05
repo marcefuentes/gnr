@@ -15,7 +15,7 @@ titles = ['Games',
           '$\it{R}$ - $\it{P}$',
           '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 givens = np.linspace(0.95, 1.0, num=1)
-#givens = np.linspace(0.0, 1.0, num=21)
+givens = np.linspace(0.0, 1.0, num=21)
 
 num = 5    # Number of subplot rows & columns
 ext = 256
@@ -29,8 +29,7 @@ x = np.linspace(0.0, mymodule.a2max, num=ext)
 y = np.flip(x)
 X, Y = np.meshgrid(x, y)
 G = np.full([ext, ext, 4], mymodule.colormap['transparent'])
-maskxy = (X >= Y)
-G[maskxy] = [0.9, 0.9, 0.9, 1.0]
+G[X >= Y] = [0.9, 0.9, 0.9, 1.0]
 
 step = int(num/2)
 xlabel = 'Substitutability of $\it{B}$'
@@ -108,7 +107,7 @@ for given in givens:
             S = mymodule.fitness(X, Y, given, AA, RR)
 
             Z = mymodule.gamecolors(T, R, P, S)
-            Z[maskxy] = [0.9, 0.9, 0.9, 1.0]
+            Z[X >= Y] = [0.9, 0.9, 0.9, 1.0]
             axss[0][i][j].imshow(Z, extent=extent)
 
             Z = R - P

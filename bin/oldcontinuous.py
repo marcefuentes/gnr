@@ -64,13 +64,13 @@ rhos = 1.0 - 1.0/pow(2.0, logess)
 RR, AA = np.meshgrid(rhos, alphas)
 MRT0 = mymodule.b*mymodule.Rq
 Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
-a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
+a2zero = mymodule.a2max/(1.0 + Q0*mymodule.b)
 MRT = MRT0*(1.0 - given)
 Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
 a2private = mymodule.a2max/(1.0 + Q*mymodule.b)
 lows = [np.full([num, num], 0.0),
         np.full([num, num], a2private)]
-highs = [np.full([num, num], a2social),
+highs = [np.full([num, num], a2zero),
         np.full([num, num], mymodule.a2max)]
 
 xlabel = 'Substitutability of $\it{B}$'

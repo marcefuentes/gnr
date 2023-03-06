@@ -111,9 +111,9 @@ for g, (given, title) in enumerate(zip(givens, titles)):
                               x=0.45,
                               fontsize=ticklabels)
 
-    a2eq = mymodule.a2eq(given, AA, RR)
-    w = mymodule.fitness(a2eq, a2eq, given, AA, RR)
-    q2 = a2eq*mymodule.R2
+    a2private = mymodule.a2eq(given, AA, RR)
+    w = mymodule.fitness(a2private, a2private, given, AA, RR)
+    q2 = a2private*mymodule.R2
     q2b = q2_budget*(1.0 - given)
 
     for i, alpha in enumerate(alphas):

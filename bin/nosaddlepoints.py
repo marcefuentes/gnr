@@ -73,9 +73,9 @@ for i, alpha in enumerate(alphas):
     AAA = np.full([ext, ext], alpha)
     for j, rho in enumerate(rhos):
         RR = np.full(3, rho)
-        a2eq = mymodule.a2eq(given, AA, RR)
+        a2private = mymodule.a2eq(given, AA, RR)
         a2social = mymodule.a2eq(0.0, AA, RR)
-        x = distances*a2eq
+        x = distances*a2private
         y = a2social + distances*(mymodule.a2max - a2social)
         
         T = mymodule.fitness(y, x, given, AA, RR)

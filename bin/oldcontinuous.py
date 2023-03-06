@@ -67,9 +67,9 @@ Q0 = mymodule.Rq*pow(MRT0*AA/(1.0 - AA), 1.0/(RR - 1.0))
 a2social = mymodule.a2max/(1.0 + Q0*mymodule.b)
 MRT = MRT0*(1.0 - given)
 Q = mymodule.Rq*pow(MRT*AA/(1.0 - AA), 1.0/(RR - 1.0))
-a2eq = mymodule.a2max/(1.0 + Q*mymodule.b)
+a2private = mymodule.a2max/(1.0 + Q*mymodule.b)
 lows = [np.full([num, num], 0.0),
-        np.full([num, num], a2eq)]
+        np.full([num, num], a2private)]
 highs = [np.full([num, num], a2social),
         np.full([num, num], mymodule.a2max)]
 

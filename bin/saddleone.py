@@ -59,9 +59,9 @@ ax.set(xticks=xticks, yticks=yticks)
 ax.set_xticklabels(xticklabels, fontsize=ticklabels)
 ax.set_yticklabels(yticklabels, fontsize=ticklabels)
 
-a2eq = mymodule.a2eq(given, alpha, rho)
+a2private = mymodule.a2eq(given, alpha, rho)
 a2social = mymodule.a2eq(0.0, alpha, rho)
-x = distances*a2eq
+x = distances*a2private
 y = a2social + distances*(mymodule.a2max - a2social)
 
 T = mymodule.fitness(y, x, given, alpha, rho)

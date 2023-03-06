@@ -137,22 +137,22 @@ def gamecolors(T, R, P, S):
     leadercolors(T, R, P, S, Z)
     return Z
 
-def equilibrium(T, R, P, S, low, high, a2eq, weq):
+def equilibrium(T, R, P, S, low, high, a2, weq):
 
     # Harmony
     mask = (R > T) & (S > P) 
-    a2eq[mask] = high[mask]
+    a2[mask] = high[mask]
     weq[mask] = R[mask]
 
     # Deadlock or prisoner's dilemma
     mask = (T >= R) & (P >= S) 
-    a2eq[mask] = low[mask]
+    a2[mask] = low[mask]
     weq[mask] = P[mask]
 
     # Snowdrift (chicken) or leader
     mask = (T > R) & (S > P)
     weq[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
-    a2eq[mask] = high[mask]*weq[mask] + low[mask]*(1.0 - weq[mask])
+    a2[mask] = high[mask]*weq[mask] + low[mask]*(1.0 - weq[mask])
     weq[mask] = (T[mask] + S[mask])*weq[mask]*(1.0 - weq[mask]) + R[mask]*weq[mask]*weq[mask] + P[mask]*(1.0 - weq[mask])*(1.0 - weq[mask])
 
     pass

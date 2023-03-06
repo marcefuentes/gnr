@@ -60,9 +60,9 @@ ax.set_xticklabels(xticklabels, fontsize=ticklabels)
 ax.set_yticklabels(yticklabels, fontsize=ticklabels)
 
 a2private = mymodule.a2eq(given, alpha, rho)
-a2zero = mymodule.a2eq(0.0, alpha, rho)
+a2social = mymodule.a2eq(0.0, alpha, rho)
 x = distances*a2private
-y = a2zero + distances*(mymodule.a2max - a2zero)
+y = a2social + distances*(mymodule.a2max - a2social)
 
 T = mymodule.fitness(y, x, given, alpha, rho)
 R = mymodule.fitness(y, y, given, alpha, rho)

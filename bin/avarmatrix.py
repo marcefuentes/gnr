@@ -14,8 +14,7 @@ filename = thisscript.split('.')[0]
 titles = ['Games',
           '$\it{R}$ - $\it{P}$',
           '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
-givens = np.linspace(0.9999, 1.0, num=4)
-#givens = np.linspace(0.0, 1.0, num=21)
+givens = [0.5, 0.95, 1.0]
 distances = [0.8, 0.5, 0.2]
 rows = distances
 ext = 512

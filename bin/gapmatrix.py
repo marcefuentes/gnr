@@ -15,7 +15,7 @@ titles = ['Games',
           '$\it{R}$ - $\it{P}$',
           '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 givens = [0.5, 0.95, 1.0]
-distances = [0.8, 0.5, 0.2]
+distances = [0.2, 0.1, 0.0]
 rows = distances
 ext = 512
 plotsize = 4
@@ -86,7 +86,7 @@ for given in givens:
     eq = mymodule.a2eq(given, AA, RR)
     for i, distance in enumerate(distances):
 
-        low = distance*eq
+        low = (1.0 - distance)*eq
         high = highs[i]
 
         T = mymodule.fitness(high, low, given, AA, RR)

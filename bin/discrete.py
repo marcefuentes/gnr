@@ -20,7 +20,7 @@ traits = ['ChooseGrainmean',
           'MimicGrainmean']
 traitvmaxs = [mymodule.a2max,
               mymodule.a2max]
-folders = ['a2init8', 'a2init5', 'a2init2']
+folders = ['high', 'mid', 'low']
 subfolders = ['p', 'r']
 
 movie = False

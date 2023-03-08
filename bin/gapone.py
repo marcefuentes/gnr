@@ -10,9 +10,9 @@ start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
-given = 0.999
-alpha = 0.5
-loges = -5.0
+given = 0.95
+alpha = 0.1
+loges = 0.0
 ext = 1024
 distances = np.array([0.2, 0.5, 0.8])
 

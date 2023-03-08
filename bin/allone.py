@@ -15,9 +15,9 @@ titles = ['Games',
           '$\it{R}$ - $\it{P}$',
           '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 givens = np.linspace(0.0, 1.0, num=21)
-givens = np.linspace(0.999, 1.0, num=21)
+givens = np.linspace(0.95, 1.0, num=1)
 alpha = 0.5
-loges = -5.0
+loges = 0.0
 ext = 1025
 plotsize = 6
 

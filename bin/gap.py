@@ -20,7 +20,7 @@ givens = np.linspace(0.95, 1.0, num=1)
 num = 21    # Number of subplot rows & columns
 ext = 256
 
-plotsize = 6
+plotsize = 20
 
 alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=num)
 logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=num)
@@ -104,6 +104,8 @@ for given in givens:
             x = np.linspace(xmin, xmax, num=ext)
             y = np.linspace(ymax, ymin, num=ext)
             X, Y = np.meshgrid(x, y)
+            G = np.full([ext, ext, 4], mymodule.colormap['transparent'])
+            G[X >= Y] = [0.9, 0.9, 0.9, 1.0]
             RR = np.full([ext, ext], rho)
             T = mymodule.fitness(Y, X, given, AA, RR)
             R = mymodule.fitness(Y, Y, given, AA, RR)
@@ -111,15 +113,18 @@ for given in givens:
             S = mymodule.fitness(X, Y, given, AA, RR)
 
             Z = mymodule.gamecolors(T, R, P, S)
+            Z[X >= Y] = [0.9, 0.9, 0.9, 1.0]
             axss[0][i][j].imshow(Z, extent=extent)
 
             Z = R - P
             axss[1][i][j].imshow(Z, extent=extent, vmin=-1, vmax=1)
+            axss[1][i][j].imshow(G, extent=extent)
 
             Z = T + S - 2.0*R
             mask = R < P
             Z[mask] = T[mask] + S[mask] - 2.0*P[mask]
             axss[2][i][j].imshow(Z, extent=extent, vmin=-1, vmax=1)
+            axss[2][i][j].imshow(G, extent=extent)
 
     text = fig.text(0.85,
                     0.02,

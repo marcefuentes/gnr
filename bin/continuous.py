@@ -47,7 +47,6 @@ if movie:
     frames = []
 else:
     ts = [ts[-1]]
-given = df.Given[0]
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 rowindex = 'alpha'
 logess = np.sort(pd.unique(df.logES))
@@ -113,6 +112,7 @@ for j, title in enumerate(titles):
 
 for i, folder in enumerate(folders):
 
+    given = dfss[i][0].Given[0]
     lows = pd.pivot_table(dfss[i][0].loc[df.Time == ts[-1]],
                  values='a2Seenmean',
                  index=[rowindex],

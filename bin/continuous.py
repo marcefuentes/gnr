@@ -137,7 +137,7 @@ for i, folder in enumerate(folders):
     Z = T + S - 2.0*R
     mask = R < P
     Z[mask] = T[mask] + S[mask] - 2.0*P[mask]
-    axs[i, 2].imshow(Z, vmin=-1, vmax=0.1)
+    axs[i, 2].imshow(Z, vmin=-1, vmax=1)
     Z = my.nodilemmacolors(T, R, P, S)
     axs[i, 2].imshow(Z)
 

@@ -22,7 +22,7 @@ traits = ['ChooseGrainmean',
           'MimicGrainmean']
 traitvmaxs = [mymodule.a2max,
               mymodule.a2max]
-folders = ['given95', 'given50']
+folders = ['given100', 'given95', 'given50']
 subfolders = ['none', 'p', 'r']
 
 movie = False

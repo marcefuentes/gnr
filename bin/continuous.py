@@ -60,7 +60,6 @@ highs = pd.pivot_table(dfsocial.loc[df.Time == ts[-1]],
             index=[rowindex],
             columns=['logES']).sort_index(axis=0,
                                         ascending=False)
-print(highs)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 letter = ord('a')
@@ -119,7 +118,6 @@ for i, folder in enumerate(folders):
                  index=[rowindex],
                  columns=['logES']).sort_index(axis=0,
                                             ascending=False)
-    print(lows)
     T = mymodule.fitness(highs, lows, given, AA, RR)
     R = mymodule.fitness(highs, highs, given, AA, RR)
     P = mymodule.fitness(lows, lows, given, AA, RR)

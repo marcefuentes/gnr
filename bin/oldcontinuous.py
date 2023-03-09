@@ -3,7 +3,7 @@
 from glob import glob
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
-import mymodule
+import mymodule as my
 import numpy as np
 import os
 import pandas as pd
@@ -24,11 +24,11 @@ titles = ['Effort to get $\it{B}$',
                'Sensitivity for\nchoosing partner',
                'Sensitivity for\nmimicking partner',
                'Fitness']
-traitvmaxs = [mymodule.a2max,
-              mymodule.a2max,
-              mymodule.a2max,
-              mymodule.fitness(np.array([mymodule.a2max]),
-                               np.array([mymodule.a2max]),
+traitvmaxs = [my.a2max,
+              my.a2max,
+              my.a2max,
+              my.fitness(np.array([my.a2max]),
+                               np.array([my.a2max]),
                                np.array([0.0]),
                                np.array([0.9]),
                                np.array([5.0]))]
@@ -169,19 +169,19 @@ for i, title in enumerate(titlegs):
         for j, rho in enumerate(rhos):
 
             xmin = 0.0
-            xmax = mymodule.a2eq(given, alpha, rho)
-            ymin = mymodule.a2eq(0.0, alpha, rho)
-            ymax = mymodule.a2max
+            xmax = my.a2eq(given, alpha, rho)
+            ymin = my.a2eq(0.0, alpha, rho)
+            ymax = my.a2max
             x = np.linspace(xmin, xmax, num=ext)
             y = np.linspace(ymax, ymin, num=ext)
             X, Y = np.meshgrid(x, y)
             RR = np.full([ext, ext], rho)
-            T = mymodule.fitness(Y, X, given, AA, RR)
-            R = mymodule.fitness(Y, Y, given, AA, RR)
-            P = mymodule.fitness(X, X, given, AA, RR)
-            S = mymodule.fitness(X, Y, given, AA, RR)
+            T = my.fitness(Y, X, given, AA, RR)
+            R = my.fitness(Y, Y, given, AA, RR)
+            P = my.fitness(X, X, given, AA, RR)
+            S = my.fitness(X, Y, given, AA, RR)
 
-            Z = mymodule.gamecolors(T, R, P, S)
+            Z = my.gamecolors(T, R, P, S)
             axsg[0][i][j].imshow(Z, extent=extent)
 
             Z = R - P

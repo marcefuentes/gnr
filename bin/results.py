@@ -3,7 +3,7 @@
 from glob import glob
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
-import mymodule
+import mymodule as my
 import numpy as np
 import os
 import pandas as pd
@@ -21,11 +21,11 @@ titles = ['Effort to get $\it{B}$',
                'Sensitivity for\nchoosing partner',
                'Sensitivity for\nmimicking partner',
                'Fitness']
-traitvmaxs = [mymodule.a2max,
-              mymodule.a2max,
-              mymodule.a2max,
-              mymodule.fitness(np.array([mymodule.a2max]),
-                               np.array([mymodule.a2max]),
+traitvmaxs = [my.a2max,
+              my.a2max,
+              my.a2max,
+              my.fitness(np.array([my.a2max]),
+                               np.array([my.a2max]),
                                np.array([0.0]),
                                np.array([0.9]),
                                np.array([5.0]))]

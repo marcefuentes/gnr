@@ -3,7 +3,7 @@
 from glob import glob
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
-import mymodule
+import mymodule as my
 import numpy as np
 import os
 import pandas as pd
@@ -14,14 +14,14 @@ thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
 titles = ['Games',
-          'R - P',
-          'T + S - 2*R',
+          'Gains from\nfull cooperation',
+          'Gains from\ntaking turns',
           'Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
 traits = ['ChooseGrainmean',
           'MimicGrainmean']
-traitvmaxs = [mymodule.a2max,
-              mymodule.a2max]
+traitvmaxs = [my.a2max,
+              my.a2max]
 folders = ['given100', 'given95', 'given50']
 subfolders = ['none', 'p', 'r']
 
@@ -122,16 +122,25 @@ for i, folder in enumerate(folders):
                  columns=['logES']).sort_index(axis=0,
                                             ascending=False)
     lows = lows.to_numpy()
-    T = mymodule.fitness(highs, lows, given, AA, RR)
-    R = mymodule.fitness(highs, highs, given, AA, RR)
-    P = mymodule.fitness(lows, lows, given, AA, RR)
-    S = mymodule.fitness(lows, highs, given, AA, RR)
+    T = my.fitness(highs, lows, given, AA, RR)
+    R = my.fitness(highs, highs, given, AA, RR)
+    P = my.fitness(lows, lows, given, AA, RR)
+    S = my.fitness(lows, highs, given, AA, RR)
 
-    Z = mymodule.gamecolors(T, R, P, S)
+    Z = my.gamecolors(T, R, P, S)
     axs[i, 0].imshow(Z)
 
-    axs[i, 1].imshow(R - P, vmin=-1, vmax=1)
-    axs[i, 2].imshow(T + S - 2.0*R, vmin=-1, vmax=1)
+    axs[i, 1].imshow(R - P, vmin=0, vmax=1)
+    Z = my.nodilemmacolors(T, R, P, S)
+    axs[i, 1].imshow(Z)
+
+    Z = T + S - 2.0*R
+    mask = R < P
+    Z[mask] = T[mask] + S[mask] - 2.0*P[mask]
+    axs[i, 2].imshow(Z, vmin=-1, vmax=0.1)
+    Z = my.nodilemmacolors(T, R, P, S)
+    axs[i, 2].imshow(Z)
+
 
 for t in ts:
     for i, folder in enumerate(folders):

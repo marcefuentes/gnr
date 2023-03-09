@@ -2,7 +2,7 @@
 
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
-import mymodule
+import mymodule as my
 import numpy as np
 import os
 import time
@@ -20,14 +20,14 @@ rows = distances
 ext = 512
 plotsize = 4
 
-alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=ext)
-logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=ext)
+alphas = np.linspace(my.alphamax, my.alphamin, num=ext)
+logess = np.linspace(my.logesmin, my.logesmax, num=ext)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
 highs = [] 
-eq = mymodule.a2eq(0.0, AA, RR)
+eq = my.a2eq(0.0, AA, RR)
 for distance in distances:
-    highs.append(eq + distance*(mymodule.a2max - eq))
+    highs.append(eq + distance*(my.a2max - eq))
 
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
@@ -83,21 +83,21 @@ for j, title in enumerate(titles):
 frames = []
 for given in givens:
 
-    eq = mymodule.a2eq(given, AA, RR)
+    eq = my.a2eq(given, AA, RR)
     for i, distance in enumerate(distances):
 
         low = distance*eq
         high = highs[i]
 
-        T = mymodule.fitness(high, low, given, AA, RR)
-        R = mymodule.fitness(high, high, given, AA, RR)
-        P = mymodule.fitness(low, low, given, AA, RR)
-        S = mymodule.fitness(low, high, given, AA, RR)
+        T = my.fitness(high, low, given, AA, RR)
+        R = my.fitness(high, high, given, AA, RR)
+        P = my.fitness(low, low, given, AA, RR)
+        S = my.fitness(low, high, given, AA, RR)
 
-        Z = mymodule.gamecolors(T, R, P, S)
+        Z = my.gamecolors(T, R, P, S)
         axs[i, 0].imshow(Z)
 
-        N = mymodule.nodilemmacolors(T, R, P, S)
+        N = my.nodilemmacolors(T, R, P, S)
 
         Z = R - P
         axs[i, 1].imshow(Z, vmin=-1, vmax=1)

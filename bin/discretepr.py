@@ -3,7 +3,7 @@
 from glob import glob
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
-import mymodule
+import mymodule as my
 import numpy as np
 import os
 import pandas as pd
@@ -20,8 +20,8 @@ titles = ['Games',
           'Sensitivity for\nmimicking partner']
 traits = ['ChooseGrainmean',
           'MimicGrainmean']
-traitvmaxs = [mymodule.a2max,
-              mymodule.a2max]
+traitvmaxs = [my.a2max,
+              my.a2max]
 folders = ['high', 'mid', 'low']
 subfolder = 'pr'
 
@@ -117,15 +117,15 @@ for i, df in enumerate(dfs):
                 columns=['logES']).sort_index(axis=0,
                                             ascending=False)
     highs = highs.to_numpy()
-    T = mymodule.fitness(highs, lows, given, AA, RR)
-    R = mymodule.fitness(highs, highs, given, AA, RR)
-    P = mymodule.fitness(lows, lows, given, AA, RR)
-    S = mymodule.fitness(lows, highs, given, AA, RR)
+    T = my.fitness(highs, lows, given, AA, RR)
+    R = my.fitness(highs, highs, given, AA, RR)
+    P = my.fitness(lows, lows, given, AA, RR)
+    S = my.fitness(lows, highs, given, AA, RR)
 
-    Z = mymodule.gamecolors(T, R, P, S)
+    Z = my.gamecolors(T, R, P, S)
     axs[i, 0].imshow(Z)
 
-    N = mymodule.nodilemmacolors(T, R, P, S)
+    N = my.nodilemmacolors(T, R, P, S)
 
     Z = R - P
     axs[i, 1].imshow(Z, vmin=-1, vmax=1)

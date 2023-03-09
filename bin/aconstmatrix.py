@@ -2,7 +2,7 @@
 
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
-import mymodule
+import mymodule as my
 import numpy as np
 import os
 import time
@@ -20,8 +20,8 @@ rows = givens
 ext = 512
 plotsize = 4
 
-alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=ext)
-logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=ext)
+alphas = np.linspace(my.alphamax, my.alphamin, num=ext)
+logess = np.linspace(my.logesmin, my.logesmax, num=ext)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
 
@@ -84,15 +84,15 @@ for a2low in a2lows:
 
     for i, given in enumerate(givens): 
 
-        T = mymodule.fitness(high, low, given, AA, RR)
-        R = mymodule.fitness(high, high, given, AA, RR)
-        P = mymodule.fitness(low, low, given, AA, RR)
-        S = mymodule.fitness(low, high, given, AA, RR)
+        T = my.fitness(high, low, given, AA, RR)
+        R = my.fitness(high, high, given, AA, RR)
+        P = my.fitness(low, low, given, AA, RR)
+        S = my.fitness(low, high, given, AA, RR)
 
-        Z = mymodule.gamecolors(T, R, P, S)
+        Z = my.gamecolors(T, R, P, S)
         axs[i, 0].imshow(Z)
 
-        N = mymodule.nodilemmacolors(T, R, P, S)
+        N = my.nodilemmacolors(T, R, P, S)
 
         Z = R - P
         axs[i, 1].imshow(Z, vmin=-1, vmax=1)

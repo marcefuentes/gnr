@@ -2,7 +2,7 @@
 
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
-import mymodule
+import mymodule as my
 import numpy as np
 import os
 import time
@@ -21,14 +21,14 @@ for distance in distances:
 num = 21    # Number of subplot rows and columns
 plotsize = 8
 
-alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=num)
-logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=num)
+alphas = np.linspace(my.alphamax, my.alphamin, num=num)
+logess = np.linspace(my.logesmin, my.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
 highs = [] 
-eq = mymodule.a2eq(0.0, AA, RR)
+eq = my.a2eq(0.0, AA, RR)
 for distance in distances:
-    highs.append((1.0 - distance)*eq + distance*mymodule.a2max)
+    highs.append((1.0 - distance)*eq + distance*my.a2max)
 
 xlim=[0, 5]
 ylim=[0.0, 2.0]
@@ -96,18 +96,18 @@ for g, title in enumerate(titles):
 frames = []
 for given in givens:
 
-    eq = mymodule.a2eq(given, AA, RR)
+    eq = my.a2eq(given, AA, RR)
     for g, distance in enumerate(distances):
 
         low = distance*eq
         high = highs[g]
         axs = axss[g]
 
-        T = mymodule.fitness(high, low, given, AA, RR)
-        R = mymodule.fitness(high, high, given, AA, RR)
-        P = mymodule.fitness(low, low, given, AA, RR)
-        S = mymodule.fitness(low, high, given, AA, RR)
-        Z = mymodule.gamecolors(T, R, P, S)
+        T = my.fitness(high, low, given, AA, RR)
+        R = my.fitness(high, high, given, AA, RR)
+        P = my.fitness(low, low, given, AA, RR)
+        S = my.fitness(low, high, given, AA, RR)
+        Z = my.gamecolors(T, R, P, S)
 
         for i, alpha in enumerate(alphas):
             for j, rho in enumerate(rhos):

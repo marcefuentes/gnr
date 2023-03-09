@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 import matplotlib.pyplot as plt
-import mymodule
+import mymodule as my
 import numpy as np
 import os
 import time
@@ -17,8 +17,8 @@ distances = np.array([0.2, 0.5, 0.8])
 
 plotsize = 9
 
-alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=num)
-logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=num)
+alphas = np.linspace(my.alphamax, my.alphamin, num=num)
+logess = np.linspace(my.logesmin, my.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
 
 step = int(num/2)
@@ -66,37 +66,37 @@ for i in range(0, num, step):
 for i, alpha in enumerate(alphas):
     AA = np.full([ext, ext], alpha)
     for j, rho in enumerate(rhos):
-        a2private = mymodule.a2eq(given, alpha, rho)
-        a2social = mymodule.a2eq(0.0, alpha, rho)
+        a2private = my.a2eq(given, alpha, rho)
+        a2social = my.a2eq(0.0, alpha, rho)
         x = distances*a2private
-        y = a2social + distances*(mymodule.a2max - a2social)
+        y = a2social + distances*(my.a2max - a2social)
         
-        T = mymodule.fitness(y, x, given, alpha, rho)
-        R = mymodule.fitness(y, y, given, alpha, rho)
-        P = mymodule.fitness(x, x, given, alpha, rho)
-        S = mymodule.fitness(x, y, given, alpha, rho)
+        T = my.fitness(y, x, given, alpha, rho)
+        R = my.fitness(y, y, given, alpha, rho)
+        P = my.fitness(x, x, given, alpha, rho)
+        S = my.fitness(x, y, given, alpha, rho)
 
-        Z = mymodule.gamecolors(T, R, P, S)
+        Z = my.gamecolors(T, R, P, S)
         axs[i][j].scatter(distances*ext, distances*ext,
                           marker='o',
                           s=markersize,
                           color=Z)
-        Z = mymodule.nodilemmacolorsg(T, R, P, S)
+        Z = my.nodilemmacolorsg(T, R, P, S)
         axs[i][j].scatter(distances*ext, distances*ext,
                           marker='o',
                           s=markersize,
                           color=Z)
 
         x = np.linspace(0.0, a2private, num=ext)
-        y = np.linspace(mymodule.a2max, a2social, num=ext)
+        y = np.linspace(my.a2max, a2social, num=ext)
         X, Y = np.meshgrid(x, y)
         RR = np.full([ext, ext], rho)
-        T = mymodule.fitness(Y, X, given, AA, RR)
-        R = mymodule.fitness(Y, Y, given, AA, RR)
-        P = mymodule.fitness(X, X, given, AA, RR)
-        S = mymodule.fitness(X, Y, given, AA, RR)
+        T = my.fitness(Y, X, given, AA, RR)
+        R = my.fitness(Y, Y, given, AA, RR)
+        P = my.fitness(X, X, given, AA, RR)
+        S = my.fitness(X, Y, given, AA, RR)
 
-        Z = mymodule.gamecolors(T, R, P, S)
+        Z = my.gamecolors(T, R, P, S)
         axs[i][j].imshow(Z, extent=extent, alpha=0.2)
 
 plt.savefig(filename + '.png', transparent=False)

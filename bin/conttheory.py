@@ -2,7 +2,7 @@
 
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
-import mymodule
+import mymodule as my
 import numpy as np
 import os
 import time
@@ -22,8 +22,8 @@ ext = 256
 
 plotsize = 20
 
-alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=num)
-logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=num)
+alphas = np.linspace(my.alphamax, my.alphamin, num=num)
+logess = np.linspace(my.logesmin, my.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
 
 step = int(num/2)
@@ -98,21 +98,21 @@ for given in givens:
         for j, rho in enumerate(rhos):
 
             xmin = 0.0
-            xmax = mymodule.a2eq(given, alpha, rho)
-            ymin = mymodule.a2eq(0.0, alpha, rho)
-            ymax = mymodule.a2max
+            xmax = my.a2eq(given, alpha, rho)
+            ymin = my.a2eq(0.0, alpha, rho)
+            ymax = my.a2max
             x = np.linspace(xmin, xmax, num=ext)
             y = np.linspace(ymax, ymin, num=ext)
             X, Y = np.meshgrid(x, y)
-            G = np.full([ext, ext, 4], mymodule.colormap['transparent'])
+            G = np.full([ext, ext, 4], my.colormap['transparent'])
             G[X >= Y] = [0.9, 0.9, 0.9, 1.0]
             RR = np.full([ext, ext], rho)
-            T = mymodule.fitness(Y, X, given, AA, RR)
-            R = mymodule.fitness(Y, Y, given, AA, RR)
-            P = mymodule.fitness(X, X, given, AA, RR)
-            S = mymodule.fitness(X, Y, given, AA, RR)
+            T = my.fitness(Y, X, given, AA, RR)
+            R = my.fitness(Y, Y, given, AA, RR)
+            P = my.fitness(X, X, given, AA, RR)
+            S = my.fitness(X, Y, given, AA, RR)
 
-            Z = mymodule.gamecolors(T, R, P, S)
+            Z = my.gamecolors(T, R, P, S)
             Z[X >= Y] = [0.9, 0.9, 0.9, 1.0]
             axss[0][i][j].imshow(Z, extent=extent)
 

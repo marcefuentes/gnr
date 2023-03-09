@@ -3,7 +3,7 @@
 from matplotlib import cm
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
-import mymodule
+import mymodule as my
 import numpy as np
 import os
 import time
@@ -20,14 +20,14 @@ n_ic = 5    # Number of indifference curves
 
 plotsize = 6
 
-alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=num)
-logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=num)
+alphas = np.linspace(my.alphamax, my.alphamin, num=num)
+logess = np.linspace(my.logesmin, my.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
-a1_budget = np.linspace(0.0, mymodule.a1max, num=3)
-q2_budget = (mymodule.a2max - mymodule.b*a1_budget)*mymodule.R2
-q1_budget = a1_budget*mymodule.R1
-q1_ic = np.linspace(0.001*mymodule.R1,
-                    (mymodule.a1max - 0.001)*mymodule.R1,
+a1_budget = np.linspace(0.0, my.a1max, num=3)
+q2_budget = (my.a2max - my.b*a1_budget)*my.R2
+q1_budget = a1_budget*my.R1
+q1_ic = np.linspace(0.001*my.R1,
+                    (my.a1max - 0.001)*my.R1,
                     num=numa2)
 RR, AA = np.meshgrid(rhos, alphas)
 ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
@@ -39,18 +39,18 @@ for alpha in alphas:
         for w in ws:
             ic = np.zeros(numa2)
             for i, q1 in enumerate(q1_ic):
-                ic[i] = mymodule.indifference(q1, w, alpha, rho)
+                ic[i] = my.indifference(q1, w, alpha, rho)
             ics.append(ic)
         icss.append(ics)
     icsss.append(icss)
 
-xlim=[0.0, mymodule.a1max*mymodule.R1]
-ylim=[0.0, mymodule.a2max*mymodule.R2]
+xlim=[0.0, my.a1max*my.R1]
+ylim=[0.0, my.a2max*my.R2]
 step = int(num/2)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
-traitvmax = mymodule.fitness(np.array([mymodule.a2max]),
-                             np.array([mymodule.a2max]),
+traitvmax = my.fitness(np.array([my.a2max]),
+                             np.array([my.a2max]),
                              np.array([0.0]),
                              np.array([0.9]),
                              np.array([5.0]))
@@ -100,9 +100,9 @@ for j in range(0, num, step):
 frames = []
 for given in givens:
 
-    a2private = mymodule.a2eq(given, AA, RR)
-    w = mymodule.fitness(a2private, a2private, given, AA, RR)
-    q2 = a2private*mymodule.R2
+    a2private = my.a2eq(given, AA, RR)
+    w = my.fitness(a2private, a2private, given, AA, RR)
+    q2 = a2private*my.R2
     q2b = q2_budget*(1.0 - given)
 
     for i, alpha in enumerate(alphas):
@@ -115,7 +115,7 @@ for given in givens:
             axs[i, j].plot(q1_budget, budget, c='black', alpha=0.8)
             y = []
             for q1 in q1_ic:
-                y.append(mymodule.indifference(q1, w[i, j], alpha, rho))
+                y.append(my.indifference(q1, w[i, j], alpha, rho))
             axs[i, j].plot(q1_ic,
                            y,
                            linewidth=4,

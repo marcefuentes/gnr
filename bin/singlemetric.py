@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 import matplotlib.pyplot as plt
-import mymodule
+import mymodule as my
 import numpy as np
 import os
 import time
@@ -18,8 +18,8 @@ rows = givens
 ext = 21
 plotsize = 4
 
-alphas = np.linspace(mymodule.alphamax, mymodule.alphamin, num=ext)
-logess = np.linspace(mymodule.logesmin, mymodule.logesmax, num=ext)
+alphas = np.linspace(my.alphamax, my.alphamin, num=ext)
+logess = np.linspace(my.logesmin, my.logesmax, num=ext)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
 
@@ -76,12 +76,12 @@ for j, title in enumerate(titles):
 
 for i, given in enumerate(givens): 
 
-    high = mymodule.a2eq(0.0, AA, RR)
-    low =  mymodule.a2eq(given, AA, RR)
-    T = mymodule.fitness(high, low, given, AA, RR)
-    R = mymodule.fitness(high, high, given, AA, RR)
-    P = mymodule.fitness(low, low, given, AA, RR)
-    S = mymodule.fitness(low, high, given, AA, RR)
+    high = my.a2eq(0.0, AA, RR)
+    low =  my.a2eq(given, AA, RR)
+    T = my.fitness(high, low, given, AA, RR)
+    R = my.fitness(high, high, given, AA, RR)
+    P = my.fitness(low, low, given, AA, RR)
+    S = my.fitness(low, high, given, AA, RR)
 
     axs[i, 0].imshow(high - low, vmin=0, vmax=1)
 

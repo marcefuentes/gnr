@@ -14,6 +14,8 @@ thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
 titles = ['Games',
+          'R - P',
+          'T + S - 2*R',
           'Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
 traits = ['ChooseGrainmean',
@@ -59,6 +61,7 @@ highs = pd.pivot_table(dfsocial.loc[df.Time == ts[-1]],
             index=[rowindex],
             columns=['logES']).sort_index(axis=0,
                                         ascending=False)
+highs = highs.to_numpy()
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 letter = ord('a')
@@ -118,6 +121,7 @@ for i, folder in enumerate(folders):
                  index=[rowindex],
                  columns=['logES']).sort_index(axis=0,
                                             ascending=False)
+    lows = lows.to_numpy()
     T = mymodule.fitness(highs, lows, given, AA, RR)
     R = mymodule.fitness(highs, highs, given, AA, RR)
     P = mymodule.fitness(lows, lows, given, AA, RR)
@@ -126,15 +130,18 @@ for i, folder in enumerate(folders):
     Z = mymodule.gamecolors(T, R, P, S)
     axs[i, 0].imshow(Z)
 
+    axs[i, 1].imshow(R - P, vmin=-1, vmax=1)
+    axs[i, 2].imshow(T + S - 2.0*R, vmin=-1, vmax=1)
+
 for t in ts:
     for i, folder in enumerate(folders):
-        for j, trait in enumerate(traits):
-            Z = pd.pivot_table(dfss[i][j].loc[df.Time == t],
+        for j, trait in enumerate(traits[:3]):
+            Z = pd.pivot_table(dfss[i][j+1].loc[df.Time == t],
                                values=trait,
                                index=[rowindex],
                                columns=['logES']).sort_index(axis=0,
                                                     ascending=False)
-            axs[i, j + 1].imshow(Z, vmin=0, vmax=traitvmaxs[j])
+            axs[i, j + 3].imshow(Z, vmin=0, vmax=traitvmaxs[j])
     if movie:
         text = fig.text(0.90,
                         0.93,

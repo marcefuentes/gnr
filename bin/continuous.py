@@ -154,7 +154,7 @@ for i, folder in enumerate(folders):
 
 for t in ts:
     for i, folder in enumerate(folders):
-        for j, trait in enumerate(traits[:3]):
+        for j, trait in enumerate(traits):
             Z = pd.pivot_table(dfss[i][j+1].loc[df.Time == t],
                                values=trait,
                                index=[rowindex],

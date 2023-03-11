@@ -23,7 +23,7 @@ folders = ['given100', 'given95', 'given50']
 subfolders = ['none', 'p', 'r']
 
 rows = folders
-plotsize = 4
+plotsize = 8
 
 dfss = []
 for folder in folders:
@@ -93,10 +93,6 @@ fig.supylabel(ylabel,
 
 outergrid = fig.add_gridspec(nrows=len(rows),
                              ncols=len(titles))
-                             #left=0.20,
-                             #right=0.80)
-                             #top=0.8,
-                             #bottom=0.2)
 
 axss = []
 axds = []
@@ -124,7 +120,7 @@ for g, row in enumerate(rows):
                              fontsize=ticklabels)
     if g == 0:
         axs[0, int(nc/2)].set_title(titles[g],
-                                     pad=plotsize*5,
+                                     pad=plotsize*9,
                                      fontsize=plotsize*5)
     if g == 2:
         for j in range(0, nc, step):
@@ -187,7 +183,7 @@ for g, folder in enumerate(folders):
                            markersize=plotsize/3)
 
     for j, trait in enumerate(traits):
-        Z = pd.pivot_table(dfss[g].loc[df.Time == ts[-1]],
+        Z = pd.pivot_table(dfss[g][j+1].loc[df.Time == ts[-1]],
                            values=trait,
                            index=[rowindex],
                            columns=['logES']).sort_index(axis=0,

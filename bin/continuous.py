@@ -56,12 +56,7 @@ nr = len(alphas)
 nc = len(logess)
 rhos = 1.0 - 1.0/pow(2.0, logess)
 RR, AA = np.meshgrid(rhos, alphas)
-highs = pd.pivot_table(dfsocial.loc[df.Time == ts[-1]],
-            values='a2Seenmean',
-            index=[rowindex],
-            columns=['logES']).sort_index(axis=0,
-                                        ascending=False)
-highs = highs.to_numpy()
+
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 letter = ord('a')
@@ -113,54 +108,51 @@ for j, title in enumerate(titles):
     axs[0, j].set_title(title, pad=plotsize*9, fontsize=plotsize*5)
     axs[-1, j].set_xticklabels(xticklabels, x=0.47, fontsize=ticklabels)
 
-for i, folder in enumerate(folders):
-
-    given = dfss[i][0].Given[0]
-    lows = pd.pivot_table(dfss[i][0].loc[df.Time == ts[-1]],
-                 values='a2Seenmean',
-                 index=[rowindex],
-                 columns=['logES']).sort_index(axis=0,
-                                            ascending=False)
-    lows = lows.to_numpy()
-    T = my.fitness(highs, lows, given, AA, RR)
-    R = my.fitness(highs, highs, given, AA, RR)
-    P = my.fitness(lows, lows, given, AA, RR)
-    S = my.fitness(lows, highs, given, AA, RR)
-
-    Z = my.gamecolors(T, R, P, S)
-    axs[i, 0].imshow(Z)
-
-    Z = R - P
-    Z[R < P] = -2.0
-    Z[(T < R) & (P < S)] = -2.0
-    #m = (T > R) & (R > P) & (P > S)
-    #Z[m] = S[m] - P[m]
-    
-    axs[i, 1].imshow(Z, vmin=-2, vmax=1)
-    #Z = my.nodilemmacolors(T, R, P, S)
-    #axs[i, 1].imshow(Z)
-
-    Z = P - S
-    Z[P < S] = 0.0
-    m = (R < P) & (T + S > 2.0*P) 
-    Z[m] = T[m] + S[m] - 2.0*P[m]
-
-    #mask = R < P
-    #Z[mask] = T[mask] + S[mask] - 2.0*P[mask]
-    axs[i, 2].imshow(Z, vmin=0, vmax=1)
-    #Z = my.nodilemmacolors(T, R, P, S)
-    #axs[i, 2].imshow(Z)
-
-
 for t in ts:
+
+    highs = pd.pivot_table(dfsocial.loc[dfsocial.Time == t],
+                values='a2Seenmean',
+                index=[rowindex],
+                columns=['logES']).sort_index(axis=0,
+                                            ascending=False)
+    highs = highs.to_numpy()
+
     for i, folder in enumerate(folders):
+
+        df = dfss[i][0]
+        given = df.Given[0]
+        lows = pd.pivot_table(df.loc[df.Time == t],
+                     values='a2Seenmean',
+                     index=[rowindex],
+                     columns=['logES']).sort_index(axis=0,
+                                                ascending=False)
+        lows = lows.to_numpy()
+        T = my.fitness(highs, lows, given, AA, RR)
+        R = my.fitness(highs, highs, given, AA, RR)
+        P = my.fitness(lows, lows, given, AA, RR)
+        S = my.fitness(lows, highs, given, AA, RR)
+
+        Z = my.gamecolors(T, R, P, S)
+        axs[i, 0].imshow(Z)
+
+        Z = 2.0*R - 2.0*P - T + S
+        axs[i, 1].imshow(Z, vmin=-2, vmax=1)
+
+        Z = P - S
+        Z[P < S] = 0.0
+        m = (R < P) & (T + S > 2.0*P) 
+        Z[m] = T[m] + S[m] - 2.0*P[m]
+        axs[i, 2].imshow(Z, vmin=0, vmax=1)
+
         for j, trait in enumerate(traits):
-            Z = pd.pivot_table(dfss[i][j+1].loc[df.Time == t],
+            df = dfss[i][j+1]
+            Z = pd.pivot_table(df.loc[df.Time == t],
                                values=trait,
                                index=[rowindex],
                                columns=['logES']).sort_index(axis=0,
                                                     ascending=False)
             axs[i, j + 3].imshow(Z, vmin=0, vmax=traitvmaxs[j])
+
     if movie:
         text = fig.text(0.90,
                         0.93,

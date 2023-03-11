@@ -130,16 +130,26 @@ for i, folder in enumerate(folders):
     Z = my.gamecolors(T, R, P, S)
     axs[i, 0].imshow(Z)
 
-    axs[i, 1].imshow(R - P, vmin=0, vmax=1)
-    Z = my.nodilemmacolors(T, R, P, S)
-    axs[i, 1].imshow(Z)
+    Z = R - P
+    Z[R < P] = -2.0
+    Z[(T < R) & (P < S)] = -2.0
+    #m = (T > R) & (R > P) & (P > S)
+    #Z[m] = S[m] - P[m]
+    
+    axs[i, 1].imshow(Z, vmin=-2, vmax=1)
+    #Z = my.nodilemmacolors(T, R, P, S)
+    #axs[i, 1].imshow(Z)
 
-    Z = T + S - 2.0*R
-    mask = R < P
-    Z[mask] = T[mask] + S[mask] - 2.0*P[mask]
-    axs[i, 2].imshow(Z, vmin=-1, vmax=1)
-    Z = my.nodilemmacolors(T, R, P, S)
-    axs[i, 2].imshow(Z)
+    Z = P - S
+    Z[P < S] = 0.0
+    m = (R < P) & (T + S > 2.0*P) 
+    Z[m] = T[m] + S[m] - 2.0*P[m]
+
+    #mask = R < P
+    #Z[mask] = T[mask] + S[mask] - 2.0*P[mask]
+    axs[i, 2].imshow(Z, vmin=0, vmax=1)
+    #Z = my.nodilemmacolors(T, R, P, S)
+    #axs[i, 2].imshow(Z)
 
 
 for t in ts:

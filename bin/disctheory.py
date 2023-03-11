@@ -15,8 +15,8 @@ titles = ['Games',
           '$\it{R}$ - $\it{P}$',
           '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 given = 0.95
-distances = np.linspace(0.1, 3.0, num=21)
-ext = 512
+distances = np.linspace(0.1, 3.0, num=1)
+ext = 21
 plotsize = 4
 
 alphas = np.linspace(my.alphamax, my.alphamin, num=ext)
@@ -99,15 +99,18 @@ for distance in distances:
 
         N = my.nodilemmacolors(T, R, P, S)
 
-        Z = R - P
+        Z = T 
+       # mask = R < P
+        #Z[mask] = T[mask] - R[mask]
+        #G = np.full([*Z.shape, 4], my.colormap['transparent'])
         axs[i, 1].imshow(Z)
-        axs[i, 1].imshow(N)
+        #axs[i, 1].imshow(N)
 
-        Z = T + S - 2.0*R
-        mask = R < P
-        Z[mask] = T[mask] + S[mask] - 2.0*P[mask]
+        Z = S
+        #mask = R < P
+        #Z[mask] = T[mask] + S[mask] - 2.0*P[mask]
         axs[i, 2].imshow(Z)
-        axs[i, 2].imshow(N)
+        #axs[i, 2].imshow(N)
 
     text = fig.text(0.90,
                     0.02,

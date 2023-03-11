@@ -33,14 +33,16 @@ dfss = []
 for folder in folders:
     dfs = []
     for subfolder in subfolders:
-        df = pd.concat(map(pd.read_csv, glob(os.path.join(folder, subfolder, '*.csv'))),
+        filelist = glob(os.path.join(folder, subfolder, '*.csv'))
+        df = pd.concat(map(pd.read_csv, filelist),
                         ignore_index=True)
         df.ChooseGrainmean = 1.0 - df.ChooseGrainmean
         df.MimicGrainmean = 1.0 - df.MimicGrainmean
         dfs.append(df)
     dfss.append(dfs)
 
-dfsocial = pd.concat(map(pd.read_csv, glob(os.path.join('given00', 'none', '*.csv'))),
+filelist = glob(os.path.join('given00', 'none', '*.csv'))
+dfsocial = pd.concat(map(pd.read_csv, filelist),
                         ignore_index=True)
 
 df = dfss[0][0]
@@ -136,6 +138,7 @@ for t in ts:
         axs[i, 0].imshow(Z)
 
         Z = 2.0*R - 2.0*P - T + S
+        Z[R < P] = -2.0
         axs[i, 1].imshow(Z, vmin=-2, vmax=1)
 
         Z = P - S

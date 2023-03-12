@@ -188,8 +188,8 @@ for i, title in enumerate(titlegs):
             axsg[1][i][j].imshow(Z, extent=extent, vmin=-1, vmax=1)
 
             Z = T + S - 2.0*R
-            mask = R < P
-            Z[mask] = T[mask] + S[mask] - 2.0*P[mask]
+            m = R < P
+            Z[m] = T[m] + S[m] - 2.0*P[m]
             axsg[2][i][j].imshow(Z, extent=extent, vmin=-1, vmax=1)
 
 for t in ts:

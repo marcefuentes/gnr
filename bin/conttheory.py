@@ -121,8 +121,8 @@ for given in givens:
             axss[1][i][j].imshow(G, extent=extent)
 
             Z = T + S - 2.0*R
-            mask = R < P
-            Z[mask] = T[mask] + S[mask] - 2.0*P[mask]
+            m = R < P
+            Z[m] = T[m] + S[m] - 2.0*P[m]
             axss[2][i][j].imshow(Z, extent=extent, vmin=-1, vmax=1)
             axss[2][i][j].imshow(G, extent=extent)
 

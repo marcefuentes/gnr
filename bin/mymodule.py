@@ -33,98 +33,98 @@ colormap = {
 }
 
 def grey(T, R, P, S):
-    mask = (P == S)
-    return mask
+    m = (P == S)
+    return m
 
 def harmony(T, R, P, S):
-    mask = (T < R) & (R > P) & (P < S)
-    return mask
+    m = (T < R) & (R > P) & (P < S)
+    return m
 
 def deadlock(T, R, P, S):
-    mask = (T > R) & (R < P) & (P > S)
-    return mask
+    m = (T > R) & (R < P) & (P > S)
+    return m
 
 def prisoner(T, R, P, S):
-    mask = (T > R) & (R > P) & (P > S)
-    return mask
+    m = (T > R) & (R > P) & (P > S)
+    return m
 
 def snowdrift(T, R, P, S):
-    mask = (T > R) & (R > P) & (P < S)
-    return mask
+    m = (T > R) & (R > P) & (P < S)
+    return m
 
 def leader(T, R, P, S):
-    mask = (T > S) & (S > R) & (R > P)
-    return mask
+    m = (T > S) & (S > R) & (R > P)
+    return m
 
 def dilemma(T, R, P, S):
-    mask = prisoner(T, R, P, S) | snowdrift(T, R, P, S) | (deadlock(T, R, P, S) & (2.0*P < T + S)) | leader(T, R, P, S)
-    return mask
+    m = prisoner(T, R, P, S) | snowdrift(T, R, P, S) | (deadlock(T, R, P, S) & (2.0*P < T + S)) | leader(T, R, P, S)
+    return m
 
-def TS(mask, T, R, S):
-    mask = (mask & (2.0*R < T + S))
-    return mask
+def TS(m, T, R, S):
+    m = (m & (2.0*R < T + S))
+    return m
 
 def nodilemma(T, R, P, S):
-    mask = harmony(T, R, P, S) | (deadlock(T, R, P, S) & (2.0*P >= T + S)) | diagonal(T, R, P, S)
-    return mask
+    m = harmony(T, R, P, S) | (deadlock(T, R, P, S) & (2.0*P >= T + S)) | diagonal(T, R, P, S)
+    return m
 
 def diagonal(T, R, P, S):
-    mask = (T == R) & (R == P) & (P == S)
-    return mask
+    m = (T == R) & (R == P) & (P == S)
+    return m
 
 def greycolors(T, R, P, S, Z):
-    mask = grey(T, R, P, S)
-    Z[mask] = colormap['grey']
-    Z[TS(mask, T, R, S)] = colormap['greyTS']
+    m = grey(T, R, P, S)
+    Z[m] = colormap['grey']
+    Z[TS(m, T, R, S)] = colormap['greyTS']
     Z[diagonal(T, R, P, S)] = colormap['white']
 
 def harmonycolors(T, R, P, S, Z):
-    mask = harmony(T, R, P, S)
-    Z[mask] = colormap['white']
+    m = harmony(T, R, P, S)
+    Z[m] = colormap['white']
     Z[diagonal(T, R, P, S)] = colormap['white']
 
 def deadlockcolors(T, R, P, S, Z):
-    mask = deadlock(T, R, P, S)
-    Z[mask] = colormap['white']
-    Z[TS(mask, T, P, S)] = colormap['deadlockTS']
+    m = deadlock(T, R, P, S)
+    Z[m] = colormap['white']
+    Z[TS(m, T, P, S)] = colormap['deadlockTS']
     Z[diagonal(T, R, P, S)] = colormap['white']
     pass
 
 def prisonercolors(T, R, P, S, Z):
-    mask = prisoner(T, R, P, S)
-    Z[mask] = colormap['prisoner']
-    Z[TS(mask, T, R, S)] = colormap['prisonerTS']
+    m = prisoner(T, R, P, S)
+    Z[m] = colormap['prisoner']
+    Z[TS(m, T, R, S)] = colormap['prisonerTS']
     Z[diagonal(T, R, P, S)] = colormap['white']
     pass
 
 def prisonerTScolors(T, R, P, S, Z):
-    mask = prisoner(T, R, P, S)
-    Z[TS(mask, T, R, S)] = colormap['prisonerTS']
+    m = prisoner(T, R, P, S)
+    Z[TS(m, T, R, S)] = colormap['prisonerTS']
     Z[diagonal(T, R, P, S)] = colormap['white']
     pass
 
 def snowdriftcolors(T, R, P, S, Z):
-    mask = snowdrift(T, R, P, S)
-    Z[mask] = colormap['snowdrift']
-    Z[TS(mask, T, R, S)] = colormap['snowdriftTS']
+    m = snowdrift(T, R, P, S)
+    Z[m] = colormap['snowdrift']
+    Z[TS(m, T, R, S)] = colormap['snowdriftTS']
     Z[diagonal(T, R, P, S)] = colormap['white']
     pass
 
 def leadercolors(T, R, P, S, Z):
-    mask = leader(T, R, P, S)
-    Z[mask] = colormap['leader']
+    m = leader(T, R, P, S)
+    Z[m] = colormap['leader']
     Z[diagonal(T, R, P, S)] = colormap['white']
 
 def nodilemmacolors(T, R, P, S):
     Z = np.full([*T.shape, 4], colormap['transparent'])
-    mask = nodilemma(T, R, P, S)
-    Z[mask] = colormap['white']
+    m = nodilemma(T, R, P, S)
+    Z[m] = colormap['white']
     return Z
 
 def nodilemmacolorsg(T, R, P, S):
     Z = np.full([*T.shape, 4], colormap['transparent'])
-    mask = nodilemma(T, R, P, S)
-    Z[mask] = colormap['grey']
+    m = nodilemma(T, R, P, S)
+    Z[m] = colormap['grey']
     return Z
 
 def gamecolors(T, R, P, S):
@@ -140,20 +140,20 @@ def gamecolors(T, R, P, S):
 def equilibrium(T, R, P, S, low, high, a2, weq):
 
     # Harmony
-    mask = (R > T) & (S > P) 
-    a2[mask] = high[mask]
-    weq[mask] = R[mask]
+    m = (R > T) & (S > P) 
+    a2[m] = high[m]
+    weq[m] = R[m]
 
     # Deadlock or prisoner's dilemma
-    mask = (T >= R) & (P >= S) 
-    a2[mask] = low[mask]
-    weq[mask] = P[mask]
+    m = (T >= R) & (P >= S) 
+    a2[m] = low[m]
+    weq[m] = P[m]
 
     # Snowdrift (chicken) or leader
-    mask = (T > R) & (S > P)
-    weq[mask] = (P[mask] - S[mask])/(R[mask] - S[mask] - T[mask] + P[mask])
-    a2[mask] = high[mask]*weq[mask] + low[mask]*(1.0 - weq[mask])
-    weq[mask] = (T[mask] + S[mask])*weq[mask]*(1.0 - weq[mask]) + R[mask]*weq[mask]*weq[mask] + P[mask]*(1.0 - weq[mask])*(1.0 - weq[mask])
+    m = (T > R) & (S > P)
+    weq[m] = (P[m] - S[m])/(R[m] - S[m] - T[m] + P[m])
+    a2[m] = high[m]*weq[m] + low[m]*(1.0 - weq[m])
+    weq[m] = (T[m] + S[m])*weq[m]*(1.0 - weq[m]) + R[m]*weq[m]*weq[m] + P[m]*(1.0 - weq[m])*(1.0 - weq[m])
 
     pass
 
@@ -165,10 +165,10 @@ def fitness(x, y, given, alpha, rho):
         alpha = np.full(np.shape(q1), alpha)
     if np.isscalar(rho):
         rho = np.full(np.shape(q1), rho)
-    mask = (w > 0.0) & (rho == 0.0)
-    w[mask] = pow(q1[mask], 1.0 - alpha[mask])*pow(q2[mask], alpha[mask])
-    mask = ((w > 0.0) & (rho < 0.0)) | (rho > 0.0)
-    w[mask] = pow((1.0 - alpha[mask])*pow(q1[mask], rho[mask]) + alpha[mask]*pow(q2[mask], rho[mask]), 1.0/rho[mask])
+    m = (w > 0.0) & (rho == 0.0)
+    w[m] = pow(q1[m], 1.0 - alpha[m])*pow(q2[m], alpha[m])
+    m = ((w > 0.0) & (rho < 0.0)) | (rho > 0.0)
+    w[m] = pow((1.0 - alpha[m])*pow(q1[m], rho[m]) + alpha[m]*pow(q2[m], rho[m]), 1.0/rho[m])
     return w
 
 def a2eq(given, alpha, rho):

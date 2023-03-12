@@ -100,15 +100,15 @@ for distance in distances:
         N = my.nodilemmacolors(T, R, P, S)
 
         Z = T 
-       # mask = R < P
-        #Z[mask] = T[mask] - R[mask]
+       # m = R < P
+        #Z[m] = T[m] - R[m]
         #G = np.full([*Z.shape, 4], my.colormap['transparent'])
         axs[i, 1].imshow(Z)
         #axs[i, 1].imshow(N)
 
         Z = S
-        #mask = R < P
-        #Z[mask] = T[mask] + S[mask] - 2.0*P[mask]
+        #m = R < P
+        #Z[m] = T[m] + S[m] - 2.0*P[m]
         axs[i, 2].imshow(Z)
         #axs[i, 2].imshow(N)
 

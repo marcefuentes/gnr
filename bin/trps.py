@@ -100,8 +100,8 @@ for g, given in enumerate(givens):
     S = my.fitness(low, high, given, AA, RR)
     Z = my.gamecolors(T, R, P, S)
     greys = np.full([*Z.shape], [0.8, 0.8, 0.8, 1.0])
-    mask = (Z == my.colormap['white'])
-    Z[mask] = greys[mask]
+    m = (Z == my.colormap['white'])
+    Z[m] = greys[m]
 
     axs = axss[g]
     for i, alpha in enumerate(alphas):

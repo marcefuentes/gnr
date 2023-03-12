@@ -99,8 +99,8 @@ for a2low in a2lows:
         axs[i, 1].imshow(N)
 
         Z = T + S - 2.0*R
-        mask = R < P
-        Z[mask] = T[mask] + S[mask] - 2.0*P[mask]
+        m = R < P
+        Z[m] = T[m] + S[m] - 2.0*P[m]
         axs[i, 2].imshow(Z, vmin=-1, vmax=1)
         axs[i, 2].imshow(N)
 

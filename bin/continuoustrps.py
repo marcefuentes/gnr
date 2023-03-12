@@ -44,12 +44,14 @@ nr = len(alphas)
 nc = len(logess)
 rhos = 1.0 - 1.0/pow(2.0, logess)
 RR, AA = np.meshgrid(rhos, alphas)
-highs = pd.pivot_table(dfsocial.loc[df.Time == ts[-1]],
-            values='a2Seenmean',
-            index=[rowindex],
-            columns=['logES']).sort_index(axis=0,
-                                        ascending=False)
+df = dfsocial.loc[df.Time == ts[-1]]
+highs = pd.pivot_table(df,
+                       values='a2Seenmean',
+                       index=[rowindex],
+                       columns=['logES'])
+highs = highs.sort_index(axis=0, ascending=False)
 highs = highs.to_numpy()
+
 xlim=[0, 5]
 ylim=[0.0, 2.0]
 step = int(nr/2)
@@ -128,7 +130,7 @@ for g, folder in enumerate(folders):
 
     df = dfss[g][0]
     df = df.loc[df.Time == ts[-1]]
-    given = df['Given'].iloc[0]
+    given = df.Given.iloc[0]
     lows = pd.pivot_table(df,
                           values='a2Seenmean',
                           index=[rowindex],

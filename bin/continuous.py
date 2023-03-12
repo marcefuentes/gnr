@@ -35,7 +35,7 @@ for folder in folders:
     for subfolder in subfolders:
         filelist = glob(os.path.join(folder, subfolder, '*.csv'))
         df = pd.concat(map(pd.read_csv, filelist),
-                        ignore_index=True)
+                       ignore_index=True)
         for trait in traits:
             df[trait] = 1.0 - df[trait]
         dfs.append(df)
@@ -108,7 +108,9 @@ for i, row in enumerate(rows):
     axs[i, 0].set_yticklabels(yticklabels, fontsize=ticklabels)
 for j, title in enumerate(titles):
     axs[0, j].set_title(title, pad=plotsize*9, fontsize=plotsize*5)
-    axs[-1, j].set_xticklabels(xticklabels, x=0.47, fontsize=ticklabels)
+    axs[-1, j].set_xticklabels(xticklabels,
+                               x=0.47,
+                               fontsize=ticklabels)
 
 for t in ts:
 
@@ -124,7 +126,7 @@ for t in ts:
 
         df = dfss[g][0]
         df = df.loc[df.Time == t]
-        given = df['Given'].iloc[0]
+        given = df.Given.iloc[0]
         lows = pd.pivot_table(df,
                               values='a2Seenmean',
                               index=[rowindex],

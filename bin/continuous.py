@@ -108,9 +108,7 @@ for i, row in enumerate(rows):
     axs[i, 0].set_yticklabels(yticklabels, fontsize=ticklabels)
 for j, title in enumerate(titles):
     axs[0, j].set_title(title, pad=plotsize*9, fontsize=plotsize*5)
-    axs[-1, j].set_xticklabels(xticklabels,
-                               x=0.47,
-                               fontsize=ticklabels)
+    axs[-1, j].set_xticklabels(xticklabels, fontsize=ticklabels)
 
 for t in ts:
 

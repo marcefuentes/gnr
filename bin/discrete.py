@@ -31,10 +31,11 @@ dfss = []
 for folder in folders:
     dfs = []
     for subfolder in subfolders:
-        df = pd.concat(map(pd.read_csv, glob(os.path.join(folder, subfolder, '*.csv'))),
-                        ignore_index=True)
-        df.ChooseGrainmean = 1.0 - df.ChooseGrainmean
-        df.MimicGrainmean = 1.0 - df.MimicGrainmean
+        filelist = glob(os.path.join(folder, subfolder, '*.csv'))
+        df = pd.concat(map(pd.read_csv, filelist),
+                       ignore_index=True)
+        for trait in traits:
+            df[trait] = 1.0 - df[trait]
         dfs.append(df)
     dfss.append(dfs)
 
@@ -44,7 +45,6 @@ if movie:
     frames = []
 else:
     ts = [ts[-1]]
-given = df.Given[0]
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 rowindex = 'alpha'
 logess = np.sort(pd.unique(df.logES))
@@ -102,39 +102,47 @@ for i, row in enumerate(rows):
     axs[i, 0].set_yticklabels(yticklabels, fontsize=ticklabels)
 for j, title in enumerate(titles):
     axs[0, j].set_title(title, pad=plotsize*9, fontsize=plotsize*5)
-    axs[-1, j].set_xticklabels(xticklabels, x=0.47, fontsize=ticklabels)
-
-for i, folder in enumerate(folders):
-
-    lows = pd.pivot_table(dfss[i][0].loc[df.Time == 1],
-                values='a2low',
-                index=[rowindex],
-                columns=['logES']).sort_index(axis=0,
-                                            ascending=False)
-    lows = lows.to_numpy()
-    highs = pd.pivot_table(dfss[i][0].loc[df.Time == 1],
-                values='a2high',
-                index=[rowindex],
-                columns=['logES']).sort_index(axis=0,
-                                            ascending=False)
-    highs = highs.to_numpy()
-    T = my.fitness(highs, lows, given, AA, RR)
-    R = my.fitness(highs, highs, given, AA, RR)
-    P = my.fitness(lows, lows, given, AA, RR)
-    S = my.fitness(lows, highs, given, AA, RR)
-
-    Z = my.gamecolors(T, R, P, S)
-    axs[i, 0].imshow(Z)
+    axs[-1, j].set_xticklabels(xticklabels,
+                               x=0.47,
+                               fontsize=ticklabels)
 
 for t in ts:
-    for i, folder in enumerate(folders):
+
+    for g, folder in enumerate(folders):
+
+        df = dfss[g][0]
+        df = df.loc[df.Time == t]
+        given = df.Given.iloc[0]
+        lows = pd.pivot_table(df,
+                              values='a2low',
+                              index=[rowindex],
+                              columns=['logES'])
+        lows = lows.sort_index(axis=0, ascending=False)
+        lows = lows.to_numpy()
+        highs = pd.pivot_table(df,
+                               values='a2high',
+                               index=[rowindex],
+                               columns=['logES'])
+        highs = highs.sort_index(axis=0, ascending=False)
+        highs = highs.to_numpy()
+        T = my.fitness(highs, lows, given, AA, RR)
+        R = my.fitness(highs, highs, given, AA, RR)
+        P = my.fitness(lows, lows, given, AA, RR)
+        S = my.fitness(lows, highs, given, AA, RR)
+
+        Z = my.gamecolors(T, R, P, S)
+        axs[g, 0].imshow(Z)
+
         for j, trait in enumerate(traits):
-            Z = pd.pivot_table(dfss[i][j].loc[df.Time == t],
+            df = dfss[g][j]
+            df = df.loc[df.Time == t]
+            Z = pd.pivot_table(df,
                                values=trait,
                                index=[rowindex],
-                               columns=['logES']).sort_index(axis=0,
-                                                    ascending=False)
-            axs[i, j + 1].imshow(Z, vmin=0, vmax=traitvmaxs[j])
+                               columns=['logES'])
+            Z = Z.sort_index(axis=0, ascending=False)
+            axs[g, j + 1].imshow(Z, vmin=0, vmax=traitvmaxs[j])
+
     if movie:
         text = fig.text(0.90,
                         0.93,

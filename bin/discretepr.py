@@ -14,8 +14,6 @@ thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
 titles = ['Games',
-          '$\it{R}$ - $\it{P}$',
-          '$\it{T}$ + $\it{S}$ - 2$\it{R}$',
           'Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
 traits = ['ChooseGrainmean',
@@ -31,10 +29,11 @@ plotsize = 4
 
 dfs = []
 for folder in folders:
-    df = pd.concat(map(pd.read_csv, glob(os.path.join(folder, subfolder, '*.csv'))),
-                    ignore_index=True)
-    df.ChooseGrainmean = 1.0 - df.ChooseGrainmean
-    df.MimicGrainmean = 1.0 - df.MimicGrainmean
+    filelist = glob(os.path.join(folder, subfolder, '*.csv'))
+    df = pd.concat(map(pd.read_csv, filelist),
+                   ignore_index=True)
+    for trait in traits:
+        df[trait] = 1.0 - df[trait]
     dfs.append(df)
 
 df = dfs[0]
@@ -43,7 +42,6 @@ if movie:
     frames = []
 else:
     ts = [ts[-1]]
-given = df.Given[0]
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 rowindex = 'alpha'
 logess = np.sort(pd.unique(df.logES))
@@ -80,10 +78,10 @@ fig, axs = plt.subplots(nrows=len(rows),
                         figsize=(width, height))
 fig.supxlabel(xlabel,
               x=0.513,
-              y=0.02,
+              y=0.03,
               fontsize=biglabels)
 fig.supylabel(ylabel,
-              x=0.05,
+              x=0.04,
               y=0.493,
               fontsize=biglabels)
 
@@ -100,52 +98,48 @@ for ax in fig.get_axes():
 for i, row in enumerate(rows):
     axs[i, 0].set_yticklabels(yticklabels, fontsize=ticklabels)
 for j, title in enumerate(titles):
-    axs[0, j].set_title(title, pad=plotsize*10, fontsize=plotsize*5)
-    axs[-1, j].set_xticklabels(xticklabels, fontsize=ticklabels)
-
-for i, df in enumerate(dfs):
-
-    lows = pd.pivot_table(df.loc[df.Time == 1],
-                values='a2low',
-                index=[rowindex],
-                columns=['logES']).sort_index(axis=0,
-                                            ascending=False)
-    lows = lows.to_numpy()
-    highs = pd.pivot_table(df.loc[df.Time == 1],
-                values='a2high',
-                index=[rowindex],
-                columns=['logES']).sort_index(axis=0,
-                                            ascending=False)
-    highs = highs.to_numpy()
-    T = my.fitness(highs, lows, given, AA, RR)
-    R = my.fitness(highs, highs, given, AA, RR)
-    P = my.fitness(lows, lows, given, AA, RR)
-    S = my.fitness(lows, highs, given, AA, RR)
-
-    Z = my.gamecolors(T, R, P, S)
-    axs[i, 0].imshow(Z)
-
-    N = my.nodilemmacolors(T, R, P, S)
-
-    Z = R - P
-    axs[i, 1].imshow(Z, vmin=-1, vmax=1)
-    axs[i, 1].imshow(N)
-
-    Z = T + S - 2.0*R
-    mask = R < P
-    Z[mask] = T[mask] + S[mask] - 2.0*P[mask]
-    axs[i, 2].imshow(Z, vmin=-1, vmax=1)
-    axs[i, 2].imshow(N)
+    axs[0, j].set_title(title, pad=plotsize*9, fontsize=plotsize*5)
+    axs[-1, j].set_xticklabels(xticklabels,
+                               x=0.47,
+                               fontsize=ticklabels)
 
 for t in ts:
-    for i, df in enumerate(dfs):
+
+    for g, folder in enumerate(folders):
+
+        df = dfss[g][0]
+        df = df.loc[df.Time == t]
+        given = df.Given.iloc[0]
+        lows = pd.pivot_table(df,
+                              values='a2low',
+                              index=[rowindex],
+                              columns=['logES'])
+        lows = lows.sort_index(axis=0, ascending=False)
+        lows = lows.to_numpy()
+        highs = pd.pivot_table(df,
+                               values='a2high',
+                               index=[rowindex],
+                               columns=['logES'])
+        highs = highs.sort_index(axis=0, ascending=False)
+        highs = highs.to_numpy()
+        T = my.fitness(highs, lows, given, AA, RR)
+        R = my.fitness(highs, highs, given, AA, RR)
+        P = my.fitness(lows, lows, given, AA, RR)
+        S = my.fitness(lows, highs, given, AA, RR)
+
+        Z = my.gamecolors(T, R, P, S)
+        axs[g, 0].imshow(Z)
+
         for j, trait in enumerate(traits):
-            Z = pd.pivot_table(df.loc[df.Time == t],
+            df = dfss[g][j]
+            df = df.loc[df.Time == t]
+            Z = pd.pivot_table(df,
                                values=trait,
                                index=[rowindex],
-                               columns=['logES']).sort_index(axis=0,
-                                                    ascending=False)
-            axs[i, j + 3].imshow(Z, vmin=0, vmax=traitvmaxs[j])
+                               columns=['logES'])
+            Z = Z.sort_index(axis=0, ascending=False)
+            axs[g, j + 1].imshow(Z, vmin=0, vmax=traitvmaxs[j])
+
     if movie:
         text = fig.text(0.90,
                         0.93,

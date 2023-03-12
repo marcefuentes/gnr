@@ -37,10 +37,11 @@ plotsize = 4
 
 dfs = []
 for folder in folders:
-    df = pd.concat(map(pd.read_csv, glob(os.path.join(folder, '*.csv'))),
-                    ignore_index=True)
-    df.ChooseGrainmean = 1.0 - df.ChooseGrainmean
-    df.MimicGrainmean = 1.0 - df.MimicGrainmean
+    filelist = glob(os.path.join(folder, '*.csv'))
+    df = pd.concat(map(pd.read_csv, filelist),
+                   ignore_index=True)
+    for trait in traits:
+        df[trait] = 1.0 - df[trait]
     dfs.append(df)
 
 df = dfs[1]
@@ -57,12 +58,12 @@ xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 letter = ord('a')
 letterposition = 1.035
+xticks = [0, nc/2-0.5, nc-1]
+yticks = [0, nr/2-0.5, nr-1]
 xmin = df['logES'].min()
 xmax = df['logES'].max()
 ymin = df['alpha'].min()
 ymax = df['alpha'].max()
-xticks = [0, nc/2-0.5, nc-1]
-yticks = [0, nr/2-0.5, nr-1]
 xticklabels = [f'{xmin:2.0f}',
                f'{(xmin + xmax)/2.0:2.0f}',
                f'{xmax:2.0f}']
@@ -112,12 +113,14 @@ for j, title in enumerate(titles):
 for t in ts:
     for i, df in enumerate(dfs):
         for j, trait in enumerate(traits):
-            Z = pd.pivot_table(df.loc[df.Time == t],
+            df = df.loc[df.Time == t]
+            Z = pd.pivot_table(df,
                                values=trait,
                                index=[rowindex],
-                               columns=['logES']).sort_index(axis=0,
-                                                    ascending=False)
+                               columns=['logES'])
+            Z = Z.sort_index(axis=0, ascending=False)
             axs[i, j].imshow(Z, vmin=0, vmax=traitvmaxs[j])
+
     if movie:
         text = fig.text(0.90,
                         0.93,

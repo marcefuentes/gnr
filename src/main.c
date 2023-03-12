@@ -196,7 +196,8 @@ void read_globals (char *filename)
 	gChooseCost = pow(2.0, gChooseCost);
 	gMimicCost = pow(2.0, gMimicCost);
 	grho = 1.0 - 1.0/pow(2.0, glogES);
-	double MRT = (ga2Max/ga1Max)*(gR2/gR1);
+
+	/*double MRT = (ga2Max/ga1Max)*(gR2/gR1);
 	double Q = (gR2/gR1)*pow(MRT*galpha/(1.0 - galpha), 1.0/(grho - 1));
 	double a2social = ga2Max/(1.0 + Q*ga2Max/ga1Max);
 	double a2eq = 0.0;
@@ -207,7 +208,21 @@ void read_globals (char *filename)
 		a2eq = ga2Max/(1.0 + Q*ga2Max/ga1Max);
 	}
 	ga2low = ga2Min + ga2Init*a2eq;
-	ga2high = a2social + ga2Init*(ga2Max - a2social);
+	ga2high = a2social + ga2Init*(ga2Max - a2social);*/
+
+	if ( gDiscrete == 1 )
+	{
+		if ( (fp = fopen ("a2.glo", "r")) == NULL )
+		{
+			fprintf (stderr, "Can't open file %s to read.\n", filename);
+			exit (EXIT_FAILURE);
+		}
+
+		fscanf (fp, "a2low,%lf\n", &ga2low);
+		fscanf (fp, "a2high,%lf\n", &ga2high);
+
+		fclose (fp);
+	}
 }
 
 void write_globals (char *filename)

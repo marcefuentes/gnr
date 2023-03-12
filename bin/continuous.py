@@ -147,7 +147,8 @@ for t in ts:
         m = (R < P) & (T + S > 2.0*P) 
         Z[m] = T[m] + S[m] - 2.0*P[m]
         Z = np.ma.masked_where((P < S) | ((R < P) & (T + S < 2.0*P)), Z)
-        axs[g, 3].imshow(Z, vmin=0, vmax=0.7)
+        print(np.min(Z), np.max(Z))
+        axs[g, 3].imshow(Z, vmin=0, vmax=0.75)
 
         for j, trait in enumerate(traits):
             df = dfss[g][j + 1]

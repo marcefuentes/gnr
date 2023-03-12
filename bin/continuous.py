@@ -36,14 +36,14 @@ for folder in folders:
         filelist = glob(os.path.join(folder, subfolder, '*.csv'))
         df = pd.concat(map(pd.read_csv, filelist),
                         ignore_index=True)
-        df.ChooseGrainmean = 1.0 - df.ChooseGrainmean
-        df.MimicGrainmean = 1.0 - df.MimicGrainmean
+        for trait in traits:
+            df[trait] = 1.0 - df[trait]
         dfs.append(df)
     dfss.append(dfs)
 
 filelist = glob(os.path.join('given00', 'none', '*.csv'))
 dfsocial = pd.concat(map(pd.read_csv, filelist),
-                        ignore_index=True)
+                     ignore_index=True)
 
 df = dfss[0][0]
 ts = df.Time.unique()
@@ -112,22 +112,24 @@ for j, title in enumerate(titles):
 
 for t in ts:
 
-    highs = pd.pivot_table(dfsocial.loc[dfsocial.Time == t],
-                values='a2Seenmean',
-                index=[rowindex],
-                columns=['logES']).sort_index(axis=0,
-                                            ascending=False)
+    df = dfsocial.loc[dfsocial.Time == t]
+    highs = pd.pivot_table(df,
+                           values='a2Seenmean',
+                           index=[rowindex],
+                           columns=['logES'])
+    highs = highs.sort_index(axis=0, ascending=False)
     highs = highs.to_numpy()
 
-    for i, folder in enumerate(folders):
+    for g, folder in enumerate(folders):
 
-        df = dfss[i][0]
-        given = df.Given[0]
-        lows = pd.pivot_table(df.loc[df.Time == t],
-                     values='a2Seenmean',
-                     index=[rowindex],
-                     columns=['logES']).sort_index(axis=0,
-                                                ascending=False)
+        df = dfss[g][0]
+        df = df.loc[df.Time == t]
+        given = df['Given'].iloc[0]
+        lows = pd.pivot_table(df,
+                              values='a2Seenmean',
+                              index=[rowindex],
+                              columns=['logES'])
+        lows = lows.sort_index(axis=0, ascending=False)
         lows = lows.to_numpy()
         T = my.fitness(highs, lows, given, AA, RR)
         R = my.fitness(highs, highs, given, AA, RR)
@@ -135,26 +137,27 @@ for t in ts:
         S = my.fitness(lows, highs, given, AA, RR)
 
         Z = my.gamecolors(T, R, P, S)
-        axs[i, 0].imshow(Z)
+        axs[g, 0].imshow(Z)
 
         Z = 2.0*R - 2.0*P - T + S
         Z[R < P] = -2.0
-        axs[i, 1].imshow(Z, vmin=-2, vmax=1)
+        axs[g, 1].imshow(Z, vmin=-2, vmax=1)
 
         Z = P - S
         Z[P < S] = 0.0
         m = (R < P) & (T + S > 2.0*P) 
         Z[m] = T[m] + S[m] - 2.0*P[m]
-        axs[i, 2].imshow(Z, vmin=0, vmax=1)
+        axs[g, 2].imshow(Z, vmin=0, vmax=1)
 
         for j, trait in enumerate(traits):
-            df = dfss[i][j+1]
-            Z = pd.pivot_table(df.loc[df.Time == t],
+            df = dfss[g][j+1]
+            df = df.loc[df.Time == t]
+            Z = pd.pivot_table(df,
                                values=trait,
                                index=[rowindex],
-                               columns=['logES']).sort_index(axis=0,
-                                                    ascending=False)
-            axs[i, j + 3].imshow(Z, vmin=0, vmax=traitvmaxs[j])
+                               columns=['logES'])
+            Z = Z.sort_index(axis=0, ascending=False)
+            axs[g, j + 3].imshow(Z, vmin=0, vmax=traitvmaxs[j])
 
     if movie:
         text = fig.text(0.90,

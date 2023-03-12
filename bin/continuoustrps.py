@@ -24,14 +24,16 @@ dfss = []
 for folder in folders:
     dfs = []
     for subfolder in subfolders:
-        df = pd.concat(map(pd.read_csv, glob(os.path.join(folder, subfolder, '*.csv'))),
-                       ignore_index=True)
+        filelist = glob(os.path.join(folder, subfolder, '*.csv'))
+        df = pd.concat(map(pd.read_csv, filelist),
+                        ignore_index=True)
         df[trait] = 1.0 - df[trait]
         dfs.append(df)
     dfss.append(dfs)
 
-dfsocial = pd.concat(map(pd.read_csv, glob(os.path.join('given00', 'none', '*.csv'))),
-                        ignore_index=True)
+filelist = glob(os.path.join('given00', 'none', '*.csv'))
+dfsocial = pd.concat(map(pd.read_csv, filelist),
+                     ignore_index=True)
 
 df = dfss[0][0]
 ts = df.Time.unique()
@@ -120,28 +122,31 @@ for g, row in enumerate(rows):
             axs[-1, j].set_xlabel(f'{logess[j]:2.0f}',
                                   x=0.3,
                                   fontsize=ticklabels)
-
     axss.append(axs)
 
 for g, folder in enumerate(folders):
 
-    given = dfss[g][0].Given[0]
-    lows = pd.pivot_table(dfss[g][0].loc[df.Time == ts[-1]],
-                 values='a2Seenmean',
-                 index=[rowindex],
-                 columns=['logES']).sort_index(axis=0,
-                                            ascending=False)
+    df = dfss[g][0]
+    df = df.loc[df.Time == ts[-1]]
+    given = df['Given'].iloc[0]
+    lows = pd.pivot_table(df,
+                          values='a2Seenmean',
+                          index=[rowindex],
+                          columns=['logES'])
+    lows = lows.sort_index(axis=0, ascending=False)
     lows = lows.to_numpy()
     T = my.fitness(highs, lows, given, AA, RR)
     R = my.fitness(highs, highs, given, AA, RR)
     P = my.fitness(lows, lows, given, AA, RR)
     S = my.fitness(lows, highs, given, AA, RR)
 
-    Z = pd.pivot_table(dfss[g][1].loc[df.Time == ts[-1]],
+    df = dfss[g][1]
+    df = df.loc[df.Time == ts[-1]]
+    Z = pd.pivot_table(df,
                        values=trait,
                        index=[rowindex],
-                       columns=['logES']).sort_index(axis=0,
-                                            ascending=False)
+                       columns=['logES'])
+    Z = Z.sort_index(axis=0, ascending=False)
     Z = Z.to_numpy()
 
     axs = axss[g]

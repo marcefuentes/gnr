@@ -13,24 +13,19 @@ filename = thisscript.split('.')[0]
 givens = [1.0, 0.95, 0.5]
 
 num = 21    # Number of subplot rows and columns
+ext = 256
 rows = givens
 plotsize = 8
 
 alphas = np.linspace(my.alphamax, my.alphamin, num=num)
 logess = np.linspace(my.logesmin, my.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
-RR, AA = np.meshgrid(rhos, alphas)
-highs = [] 
-for given in givens:
-    highs.append(my.a2eq(0.0, AA, RR))
 
-xlim=[0, 5]
-ylim=[0.0, 2.0]
 step = int(num/2)
-xaxis = [1, 2, 3, 4]
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 letter = ord('a')
+extent = 0, ext, 0, ext
 width = plotsize
 height = plotsize*len(rows)
 biglabels = plotsize*5 + height/4
@@ -68,7 +63,6 @@ for g, row in enumerate(rows):
     for i, alpha in enumerate(alphas):
         for j, rho in enumerate(rhos):
             axs[i, j].set(xticks=[], yticks=[])
-            axs[i, j].set(xlim=xlim, ylim=ylim)
             for axis in ['top','bottom','left','right']:
                 axs[i, j].spines[axis].set_linewidth(0.1)
     for i in range(0, num, step):
@@ -86,32 +80,26 @@ for g, row in enumerate(rows):
 
 for g, given in enumerate(givens):
 
-    low = my.a2eq(given, AA, RR)
-
-    high = highs[g]
-
-    T = my.fitness(high, low, given, AA, RR)
-    R = my.fitness(high, high, given, AA, RR)
-    P = my.fitness(low, low, given, AA, RR)
-    S = my.fitness(low, high, given, AA, RR)
-    Z = my.gamecolors(T, R, P, S)
-    greys = np.full([*Z.shape], [0.8, 0.8, 0.8, 1.0])
-    m = (Z == my.colormap['white'])
-    Z[m] = greys[m]
-
-    axs = axss[g]
     for i, alpha in enumerate(alphas):
+        AA = np.full([ext, ext], alpha)
         for j, rho in enumerate(rhos):
-            y = [T[i, j], R[i, j], P[i, j], S[i, j]]
-            for line in axs[i, j].get_lines():
-                line.remove()
-            axs[i, j].plot(xaxis,
-                           y,
-                           c=Z[i, j],
-                           linewidth=3,
-                           marker='o',
-                           markerfacecolor='white',
-                           markersize=plotsize/3)
+
+            xmin = 0.0
+            xmax = my.a2eq(given, alpha, rho)
+            ymin = my.a2eq(0.0, alpha, rho)
+            ymax = my.a2max
+            x = np.linspace(xmin, xmax, num=ext)
+            y = np.linspace(ymax, ymin, num=ext)
+            X, Y = np.meshgrid(x, y)
+            RR = np.full([ext, ext], rho)
+            T = my.fitness(Y, X, given, AA, RR)
+            R = my.fitness(Y, Y, given, AA, RR)
+            P = my.fitness(X, X, given, AA, RR)
+            S = my.fitness(X, Y, given, AA, RR)
+
+            Z = my.gamecolors(T, R, P, S)
+            Z[X >= Y] = [0.9, 0.9, 0.9, 1.0]
+            axss[g][i][j].imshow(Z, extent=extent)
 
 plt.savefig(filename + '.png', transparent=False)
 

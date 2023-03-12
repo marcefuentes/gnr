@@ -1,10 +1,10 @@
 #! /usr/bin/env python
 
-import imageio.v2 as iio
 import matplotlib.pyplot as plt
 import mymodule as my
 import numpy as np
 import os
+import random
 import time
 
 start_time = time.perf_counter()
@@ -15,15 +15,21 @@ titles = ['Games',
           '$\it{R}$ - $\it{P}$',
           '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 givens = [1.0, 0.95, 0.50]
-a2lows = np.linspace(0.0, 0.5, num=1)
 rows = givens
-ext = 512
+ext = 21
 plotsize = 4
 
 alphas = np.linspace(my.alphamax, my.alphamin, num=ext)
 logess = np.linspace(my.logesmin, my.logesmax, num=ext)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
+random.seed()
+one = random.random()
+two = random.random()
+a2low = min(one, two)
+a2high = max(one, two)
+low = np.full([*RR.shape], a2low)
+high = np.full([*RR.shape], a2high)
 
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
@@ -59,6 +65,12 @@ fig.supylabel(ylabel,
               x=0.03,
               y=0.493,
               fontsize=biglabels)
+fig.text(0.90,
+         0.02,
+         f'{a2low:4.2f}, {a2high:4.2f}',
+         fontsize=biglabels,
+         color='grey',
+         ha='right')
 
 for ax in fig.get_axes():
     ax.set(xticks=xticks, yticks=yticks)
@@ -76,48 +88,30 @@ for j, title in enumerate(titles):
     axs[0, j].set_title(title, pad=plotsize*10, fontsize=plotsize*5)
     axs[-1, j].set_xticklabels(xticklabels, fontsize=ticklabels)
 
-frames = []
-for a2low in a2lows:
+for i, given in enumerate(givens):
 
-    low = np.full([ext, ext], a2low)
-    high = low + 0.5
+    T = my.fitness(high, low, given, AA, RR)
+    R = my.fitness(high, high, given, AA, RR)
+    P = my.fitness(low, low, given, AA, RR)
+    S = my.fitness(low, high, given, AA, RR)
 
-    for i, given in enumerate(givens): 
+    Z = my.gamecolors(T, R, P, S)
+    axs[i, 0].imshow(Z)
 
-        T = my.fitness(high, low, given, AA, RR)
-        R = my.fitness(high, high, given, AA, RR)
-        P = my.fitness(low, low, given, AA, RR)
-        S = my.fitness(low, high, given, AA, RR)
+    N = my.nodilemmacolors(T, R, P, S)
 
-        Z = my.gamecolors(T, R, P, S)
-        axs[i, 0].imshow(Z)
+    Z = R - P
+    axs[i, 1].imshow(Z, vmin=-1, vmax=1)
+    axs[i, 1].imshow(N)
 
-        N = my.nodilemmacolors(T, R, P, S)
+    Z = T + S - 2.0*R
+    m = R < P
+    Z[m] = T[m] + S[m] - 2.0*P[m]
+    axs[i, 2].imshow(Z, vmin=-1, vmax=1)
+    axs[i, 2].imshow(N)
 
-        Z = R - P
-        axs[i, 1].imshow(Z, vmin=-1, vmax=1)
-        axs[i, 1].imshow(N)
-
-        Z = T + S - 2.0*R
-        m = R < P
-        Z[m] = T[m] + S[m] - 2.0*P[m]
-        axs[i, 2].imshow(Z, vmin=-1, vmax=1)
-        axs[i, 2].imshow(N)
-
-    text = fig.text(0.90,
-                    0.02,
-                    'a2low: ' + f'{a2low:4.2f}',
-                    fontsize=biglabels,
-                    color='grey',
-                    ha='right')
-    plt.savefig('temp.png', transparent=False)
-    text.remove()
-    frames.append(iio.imread('temp.png'))
-    os.remove('temp.png')
-
+plt.savefig(filename + '.png', transparent=False)
 plt.close()
-
-iio.mimsave(filename + '.gif', frames)
 
 end_time = time.perf_counter()
 print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')

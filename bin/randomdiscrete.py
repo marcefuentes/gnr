@@ -28,6 +28,11 @@ one = random.random()
 two = random.random()
 a2low = min(one, two)
 a2high = max(one, two)
+f = open('a2.glo', 'w')
+f.write(f'a2low,{a2low}\n')
+f.write(f'a2high,{a2high}\n')
+f.close()
+
 low = np.full([*RR.shape], a2low)
 high = np.full([*RR.shape], a2high)
 

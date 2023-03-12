@@ -139,25 +139,25 @@ for t in ts:
         Z = my.gamecolors(T, R, P, S)
         axs[g, 0].imshow(Z)
 
-        Z = 2.0*R - 2.0*P - T + S
-        Z[R < P] = -2.0
-        axs[g, 1].imshow(Z, vmin=-2, vmax=1)
+        Z = R - P
+        Z = np.ma.masked_where(R < P, Z)
+        axs[g, 1].imshow(Z, vmin=0, vmax=1)
 
         Z = P - S
-        Z[P < S] = 0.0
         m = (R < P) & (T + S > 2.0*P) 
         Z[m] = T[m] + S[m] - 2.0*P[m]
-        axs[g, 2].imshow(Z, vmin=0, vmax=1)
+        Z = np.ma.masked_where((P < S) | ((R < P) & (T + S < 2.0*P)), Z)
+        axs[g, 3].imshow(Z, vmin=0, vmax=0.7)
 
         for j, trait in enumerate(traits):
-            df = dfss[g][j+1]
+            df = dfss[g][j + 1]
             df = df.loc[df.Time == t]
             Z = pd.pivot_table(df,
                                values=trait,
                                index=[rowindex],
                                columns=['logES'])
             Z = Z.sort_index(axis=0, ascending=False)
-            axs[g, j + 3].imshow(Z, vmin=0, vmax=traitvmaxs[j])
+            axs[g, 2*(j + 1)].imshow(Z, vmin=0, vmax=traitvmaxs[j])
 
     if movie:
         text = fig.text(0.90,

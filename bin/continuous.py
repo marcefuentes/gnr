@@ -26,8 +26,8 @@ folders = ['given100', 'given95', 'given50']
 subfolders = ['none', 'p', 'r']
 
 movie = False
-rows = folders
 plotsize = 4
+rows = folders
 
 dfss = []
 for folder in folders:

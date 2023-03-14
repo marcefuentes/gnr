@@ -77,43 +77,46 @@ def greycolors(T, R, P, S, Z):
     Z[m] = colormap['grey']
     Z[TS(m, T, R, S)] = colormap['greyTS']
     Z[diagonal(T, R, P, S)] = colormap['white']
+    return Z
 
 def harmonycolors(T, R, P, S, Z):
     m = harmony(T, R, P, S)
     Z[m] = colormap['white']
     Z[diagonal(T, R, P, S)] = colormap['white']
+    return Z
 
 def deadlockcolors(T, R, P, S, Z):
     m = deadlock(T, R, P, S)
     Z[m] = colormap['white']
     Z[TS(m, T, P, S)] = colormap['deadlockTS']
     Z[diagonal(T, R, P, S)] = colormap['white']
-    pass
+    return Z
 
 def prisonercolors(T, R, P, S, Z):
     m = prisoner(T, R, P, S)
     Z[m] = colormap['prisoner']
     Z[TS(m, T, R, S)] = colormap['prisonerTS']
     Z[diagonal(T, R, P, S)] = colormap['white']
-    pass
+    return Z
 
 def prisonerTScolors(T, R, P, S, Z):
     m = prisoner(T, R, P, S)
     Z[TS(m, T, R, S)] = colormap['prisonerTS']
     Z[diagonal(T, R, P, S)] = colormap['white']
-    pass
+    return Z
 
 def snowdriftcolors(T, R, P, S, Z):
     m = snowdrift(T, R, P, S)
     Z[m] = colormap['snowdrift']
     Z[TS(m, T, R, S)] = colormap['snowdriftTS']
     Z[diagonal(T, R, P, S)] = colormap['white']
-    pass
+    return Z
 
 def leadercolors(T, R, P, S, Z):
     m = leader(T, R, P, S)
     Z[m] = colormap['leader']
     Z[diagonal(T, R, P, S)] = colormap['white']
+    return Z
 
 def nodilemmacolors(T, R, P, S):
     Z = np.full([*T.shape, 4], colormap['transparent'])
@@ -129,12 +132,12 @@ def nodilemmacolorsg(T, R, P, S):
 
 def gamecolors(T, R, P, S):
     Z = np.full([*T.shape, 4], colormap['red'])
-    greycolors(T, R, P, S, Z)
-    harmonycolors(T, R, P, S, Z)
-    deadlockcolors(T, R, P, S, Z)
-    prisonercolors(T, R, P, S, Z)
-    snowdriftcolors(T, R, P, S, Z)
-    leadercolors(T, R, P, S, Z)
+    Z = greycolors(T, R, P, S, Z)
+    Z = harmonycolors(T, R, P, S, Z)
+    Z = deadlockcolors(T, R, P, S, Z)
+    Z = prisonercolors(T, R, P, S, Z)
+    Z = snowdriftcolors(T, R, P, S, Z)
+    Z= leadercolors(T, R, P, S, Z)
     return Z
 
 def equilibrium(T, R, P, S, low, high, a2, weq):

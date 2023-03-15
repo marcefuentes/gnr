@@ -1,18 +1,20 @@
 #! /usr/bin/env python
 
-import imageio.v2 as iio
-import matplotlib.pyplot as plt
-import mymodule as my
-import numpy as np
 import os
 import time
+
+import imageio.v2 as iio
+import matplotlib.pyplot as plt
+import numpy as np
+
+import mymodule as my
 
 start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
 titles = ['Games',
-          '$\it{R}$ - $\it{P}$',
+          '2$\it{R}$ - $\it{T}$ - $\it{P}$',
           '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
 givens = np.linspace(0.5, 1.0, num=1)
 #givens = np.linspace(0.0, 1.0, num=21)
@@ -116,7 +118,7 @@ for given in givens:
             Z[X >= Y] = [0.9, 0.9, 0.9, 1.0]
             axss[0][i][j].imshow(Z, extent=extent)
 
-            Z = R - P
+            Z = 2.0*R - T - P
             axss[1][i][j].imshow(Z, extent=extent, vmin=-1, vmax=1)
             axss[1][i][j].imshow(G, extent=extent)
 

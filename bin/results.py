@@ -18,17 +18,10 @@ traits = ['a2Seenmean',
           'MimicGrainmean',
           'wmean']
 titles = ['Effort to get $\it{B}$',
-               'Sensitivity for\nchoosing partner',
-               'Sensitivity for\nmimicking partner',
-               'Fitness']
-traitvmaxs = [my.a2max,
-              my.a2max,
-              my.a2max,
-              my.fitness(np.array([my.a2max]),
-                               np.array([my.a2max]),
-                               np.array([0.0]),
-                               np.array([0.9]),
-                               np.array([5.0]))]
+          'Sensitivity for\nchoosing partner',
+          'Sensitivity for\nmimicking partner',
+          'Fitness']
+traitvmaxs = [my.a2max, my.a2max, my.a2max, 2.0]
 folders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
 
 movie = False

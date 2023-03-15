@@ -1,12 +1,13 @@
 #! /usr/bin/env python
 
 from glob import glob
-import matplotlib.pyplot as plt
-import mymodule as my
-import numpy as np
 import os
-import pandas as pd
 import time
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+import mymodule as my
 
 start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)
@@ -96,9 +97,9 @@ for g, row in enumerate(rows):
     axss = []
     for p in range(2):
         grid = outergrid[g, p].subgridspec(nrows=nr,
-                                            ncols=nc,
-                                            wspace=0,
-                                            hspace=0)
+                                           ncols=nc,
+                                           wspace=0,
+                                           hspace=0)
         axs = grid.subplots()
         axs[0, 0].set_title(chr(letter),
                             fontsize=plotsize*5,
@@ -109,29 +110,30 @@ for g, row in enumerate(rows):
         for i, alpha in enumerate(alphas):
             for j, rho in enumerate(rhos):
                 axs[i, j].set(xticks=[], yticks=[])
+                axs[i, j].set(xticklabels=[], yticklabels=[])
                 for axis in ['top','bottom','left','right']:
                     axs[i, j].spines[axis].set_linewidth(0.1)
-        if p == 0:
-            for i in range(0, nr, step):
-                axs[i, 0].set(yticks=[ext/2]) 
+
+        for i in range(0, nr, step):
+            axs[i, 0].set(yticks=[ext/2]) 
+            if p == 0:
                 axs[i, 0].set_yticklabels([f'{alphas[i]:3.1f}'],
                                           rotation='horizontal',
                                           horizontalalignment='right',
                                           verticalalignment='center',
                                           y=0.3,
                                           fontsize=ticklabels)
-
+        for j in range(0, nc, step):
+            axs[-1, j].set(xticks=[ext/2]) 
+            if g == 2:
+                axs[-1, j].set_xticklabels([f'{logess[j]:2.0f}'],
+                                           x=0.0,
+                                           fontsize=ticklabels)
         if g == 0:
             axs[0, 10].set_title(titles[p],
                                  fontsize=plotsize*5,
                                  pad=plotsize*9,
                                  loc='center')
-        for j in range(0, nc, step):
-            axs[-1, j].set(xticks=[ext/2], xticklabels=[]) 
-            if g == 2:
-                axs[-1, j].set_xticklabels([f'{logess[j]:2.0f}'],
-                                           x=0.0,
-                                           fontsize=ticklabels)
         axss.append(axs)
     axsss.append(axss)
 

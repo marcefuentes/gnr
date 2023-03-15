@@ -110,7 +110,8 @@ for j, title in enumerate(titles):
                                fontsize=ticklabels)
 
 for t in ts:
-    df = dfsocial.loc[dfsocial.Time == ts[-1]]
+    m = dfsocial.Time == ts[-1]
+    df = dfsocial.loc[m]
     a2social = pd.pivot_table(df,
                               values='a2Seenmean',
                               index=[rowindex],
@@ -120,7 +121,8 @@ for t in ts:
     for g, folder in enumerate(folders):
 
         df = dfss[g][0]
-        df = df.loc[df.Time == t]
+        m = df.Time == t
+        df = df.loc[m]
         a2private = pd.pivot_table(df,
                                    values='a2Seenmean',
                                    index=[rowindex],
@@ -132,7 +134,8 @@ for t in ts:
 
         for j, trait in enumerate(traits):
             df = dfss[g][j+1]
-            df = df.loc[df.Time == t]
+            m = df.Time == t
+            df = df.loc[m]
             Z = pd.pivot_table(df,
                                values=trait,
                                index=[rowindex],

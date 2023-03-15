@@ -108,7 +108,8 @@ for t in ts:
     for g, folder in enumerate(folders):
 
         df = dfss[g][0]
-        df = df.loc[df.Time == t]
+        m = [df.Time == t
+        df = df.loc[m]
         given = df.Given.iloc[0]
         lows = pd.pivot_table(df,
                               values='a2low',
@@ -132,7 +133,8 @@ for t in ts:
 
         for j, trait in enumerate(traits):
             df = dfss[g][j]
-            df = df.loc[df.Time == t]
+            m = df.Time == t
+            df = df.loc[m]
             Z = pd.pivot_table(df,
                                values=trait,
                                index=[rowindex],

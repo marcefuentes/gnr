@@ -45,7 +45,8 @@ dfsocial = pd.concat(map(pd.read_csv, filelist),
 
 df = dfss[0][0]
 ts = df.Time.unique()
-dfso = dfsocial.loc[dfsocial.Time == ts[-1]]
+m = dfsocial.Time == ts[-1]
+dfso = dfsocial.loc[m]
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 rowindex = 'alpha'
 logess = np.sort(pd.unique(df.logES))
@@ -160,7 +161,8 @@ for g, row in enumerate(rows):
 for g, given in enumerate(givens):
 
     df = dfss[g][0]
-    df = df.loc[df.Time == ts[-1]]
+    m = df.Time == ts[-1]
+    df = df.loc[m]
     given = df.Given.iloc[0]
 
     for i, alpha in enumerate(alphas):
@@ -168,8 +170,10 @@ for g, given in enumerate(givens):
         for j, (rho, loges) in enumerate(zip(rhos, logess)):
 
             xmin = 0.0
-            xma = df.loc[(df.alpha == alpha) & (df.logES == loges)].a2Seenmean
-            ymi = dfso.loc[(dfso.alpha == alpha) & (dfso.logES == loges)].a2Seenmean
+            m = (df.alpha == alpha) & (df.logES == loges)
+            xma = df.loc[m].a2Seenmean
+            m = (dfso.alpha == alpha) & (dfso.logES == loges)
+            ymi = dfso.loc[m].a2Seenmean
             xmax = (ymi - xma)/2.0
             ymin = xmax
             ymax = my.a2max
@@ -188,7 +192,8 @@ for g, given in enumerate(givens):
 
     for j, trait in enumerate(traits):
         df = dfss[g][j + 1]
-        df = df.loc[df.Time == ts[-1]]
+        m = df.Time == ts[-1]
+        df = df.loc[m]
         Z = pd.pivot_table(df,
                            values=trait,
                            index=[rowindex],

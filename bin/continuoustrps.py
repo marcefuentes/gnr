@@ -44,7 +44,8 @@ nr = len(alphas)
 nc = len(logess)
 rhos = 1.0 - 1.0/pow(2.0, logess)
 RR, AA = np.meshgrid(rhos, alphas)
-df = dfsocial.loc[df.Time == ts[-1]]
+m = df.Time == ts[-1]
+df = dfsocial.loc[m]
 highs = pd.pivot_table(df,
                        values='a2Seenmean',
                        index=[rowindex],
@@ -129,7 +130,8 @@ for g, row in enumerate(rows):
 for g, folder in enumerate(folders):
 
     df = dfss[g][0]
-    df = df.loc[df.Time == ts[-1]]
+    m = df.Time == ts[-1]
+    df = df.loc[m]
     given = df.Given.iloc[0]
     lows = pd.pivot_table(df,
                           values='a2Seenmean',
@@ -143,7 +145,8 @@ for g, folder in enumerate(folders):
     S = my.fitness(lows, highs, given, AA, RR)
 
     df = dfss[g][1]
-    df = df.loc[df.Time == ts[-1]]
+    m = df.Time == ts[-1]
+    df = df.loc[m]
     Z = pd.pivot_table(df,
                        values=trait,
                        index=[rowindex],

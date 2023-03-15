@@ -163,7 +163,8 @@ for g, row in enumerate(rows):
 for g, given in enumerate(givens):
 
     df = dfss[g][0]
-    df = df.loc[df.Time == ts[-1]]
+    m = df.Time == ts[-1]
+    df = df.loc[m]
     given = df.Given.iloc[0]
 
     for i, alpha in enumerate(alphas):
@@ -194,7 +195,8 @@ for g, given in enumerate(givens):
 
     for j, trait in enumerate(traits):
         df = dfss[g][j]
-        df = df.loc[df.Time == ts[-1]]
+        m = df.Time == ts[-1]
+        df = df.loc[m]
         Z = pd.pivot_table(df,
                            values=trait,
                            index=[rowindex],

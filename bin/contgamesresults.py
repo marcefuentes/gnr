@@ -1,12 +1,14 @@
 #! /usr/bin/env python
 
 from glob import glob
-import matplotlib.pyplot as plt
-import mymodule as my
-import numpy as np
 import os
-import pandas as pd
 import time
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+import mymodule as my
 
 start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)

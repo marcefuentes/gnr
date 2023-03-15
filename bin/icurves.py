@@ -1,11 +1,13 @@
 #! /usr/bin/env python
 
-from matplotlib import cm
-import matplotlib.pyplot as plt
-import mymodule as my
-import numpy as np
 import os
 import time
+
+from matplotlib import cm
+import matplotlib.pyplot as plt
+import numpy as np
+
+import mymodule as my
 
 start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)
@@ -81,13 +83,13 @@ outergrid = fig.add_gridspec(nrows=1,
                              top=0.8,
                              bottom=0.2)
 
-for g, (given, title) in enumerate(zip(givens, titles)):
+for g, given in enumerate(givens):
     grid = outergrid[g].subgridspec(nrows=num,
                                     ncols=num,
                                     wspace=0,
                                     hspace=0)
     axs = grid.subplots()
-    axs[0, int(num/2)].set_title(title,
+    axs[0, int(num/2)].set_title(titles[g],
                                  pad=plotsize*5,
                                  fontsize=plotsize*5)
     axs[0, 0].set_title(chr(letter),

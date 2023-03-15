@@ -28,7 +28,7 @@ folders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
 
 movie = False
 rows = folders
-plotsize = 6
+plotsize = 4
 
 dfs = []
 for folder in folders:
@@ -107,28 +107,22 @@ for g, row in enumerate(rows):
                 axs[i, j].set(xticklabels=[], yticklabels=[])
                 for axis in ['top','bottom','left','right']:
                     axs[i, j].spines[axis].set_linewidth(0.1)
+        if g == 0:
+            axs[0, 10].set_title(titles[c],
+                                 fontsize=plotsize*5,
+                                 pad=plotsize*9,
+                                 loc='center')
         if c == 0:
             for i in range(0, nr, step):
-                axs[i, 0].set(yticks=[0.5]) 
-                axs[i, 0].set_yticklabels([f'{alphas[i]:3.1f}'],
+                axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
                                      rotation='horizontal',
                                      horizontalalignment='right',
                                      verticalalignment='center',
-                                     y=0.3,
                                      fontsize=ticklabels)
-
-        if g == 0:
-            axs[0, 10].set_title(titles[c],
-                                fontsize=plotsize*5,
-                                pad=plotsize*9,
-                                loc='center')
         if row == rows[-1]:
             for j in range(0, nc, step):
-                axs[-1, j].set(xticks=[32], xticklabels=[]) 
-                if g == 2:
-                    axs[-1, j].set_xticklabels([f'{logess[j]:2.0f}'],
-                                               x=0.0,
-                                               fontsize=ticklabels)
+                axs[-1, j].set_xlabel(f'{logess[j]:2.0f}',
+                                      fontsize=ticklabels)
         axss.append(axs)
     axsss.append(axss)
 

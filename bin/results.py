@@ -41,7 +41,8 @@ for folder in folders:
     df = pd.concat(map(pd.read_csv, filelist),
                    ignore_index=True)
     for trait in traits:
-        df[trait] = 1.0 - df[trait]
+        if 'Grain' in trait:
+            df[trait] = 1.0 - df[trait]
     dfs.append(df)
 
 df = dfs[1]
@@ -105,11 +106,6 @@ for j, title in enumerate(titles):
     axs[0, j].set_title(title, pad=plotsize*10, fontsize=plotsize*5)
     axs[-1, j].set_xticklabels(xticklabels, fontsize=ticklabels)
 
-#        if letter <= ord('z'): 
-#            textl = chr(letter)
-#        else:
-#            textl = 'a' + chr(letter - 26)
-
 for t in ts:
     for i, df in enumerate(dfs):
         for j, trait in enumerate(traits):
@@ -120,7 +116,6 @@ for t in ts:
                                columns=['logES'])
             Z = Z.sort_index(axis=0, ascending=False)
             axs[i, j].imshow(Z, vmin=0, vmax=traitvmaxs[j])
-
     if movie:
         text = fig.text(0.90,
                         0.93,

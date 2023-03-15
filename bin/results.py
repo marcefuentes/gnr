@@ -102,7 +102,8 @@ for j, title in enumerate(titles):
 for t in ts:
     for i, df in enumerate(dfs):
         for j, trait in enumerate(traits):
-            df = df.loc[df.Time == t]
+            m = df.Time == t
+            df = df.loc[m]
             Z = pd.pivot_table(df,
                                values=trait,
                                index=[rowindex],

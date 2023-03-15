@@ -90,6 +90,8 @@ for i, given in enumerate(givens):
     high = a2social + distance/(1.0 + distance/(my.a2max - a2social))
     low = a2social - distance/(1.0 + distance/(a2social - a2private))
             
+    high = high*0.0 + 0.8
+    low = low*0.0 + 0.2
     T = my.fitness(high, low, given, AA, RR)
     R = my.fitness(high, high, given, AA, RR)
     P = my.fitness(low, low, given, AA, RR)
@@ -100,18 +102,18 @@ for i, given in enumerate(givens):
 
     N = my.nodilemmacolors(T, R, P, S)
 
-    Z = T 
+    Z = 2.0*R - P - T 
     # m = R < P
     #Z[m] = T[m] - R[m]
     #G = np.full([*Z.shape, 4], my.colormap['transparent'])
     axs[i, 1].imshow(Z)
-    #axs[i, 1].imshow(N)
+    axs[i, 1].imshow(N)
 
-    Z = S
-    #m = R < P
-    #Z[m] = T[m] + S[m] - 2.0*P[m]
+    Z = T + S - 2.0*R
+    m = R < P
+    Z[m] = T[m] + S[m] - 2.0*P[m]
     axs[i, 2].imshow(Z)
-    #axs[i, 2].imshow(N)
+    axs[i, 2].imshow(N)
 
 plt.savefig(filename + '.png', transparent=False)
 plt.close()

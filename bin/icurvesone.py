@@ -118,6 +118,7 @@ for j in range(0, num, step):
 ic = np.empty(q1_ic.shape, dtype=np.float64)
 budgets = np.empty(axs.shape, dtype=object)
 icurves = np.empty(axs.shape, dtype=object)
+
 for i, alpha in enumerate(alphas):
     for j, rho in enumerate(rhos):
         for k in range(n_ic): 
@@ -126,7 +127,11 @@ for i, alpha in enumerate(alphas):
         icurves[i, j], = axs[i, j].plot(q1_ic, ic, linewidth=4, alpha=0.8)
 
 ani = FuncAnimation(fig, update, givens, blit=True)
-ani.save(filename + '.gif', writer='ffmpeg', fps=10)
+
+if len(givens) > 1:
+    ani.save(filename + '.gif', writer='ffmpeg', fps=10)
+else:
+    plt.savefig(filename + '.png', transparent=False)
 
 plt.close()
 

@@ -1,12 +1,14 @@
 #! /usr/bin/env python
 
+import os
+import time
+
 from matplotlib import cm
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
-import mymodule as my
 import numpy as np
-import os
-import time
+
+import mymodule as my
 
 start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)
@@ -15,7 +17,7 @@ filename = thisscript.split('.')[0]
 givens = np.linspace(0.0, 1.0, num=21)
 
 num = 3    # Number of subplot rows & columns
-numa2 = 128
+numa2 = 256
 n_ic = 5    # Number of indifference curves
 
 plotsize = 6
@@ -31,18 +33,12 @@ q1_ic = np.linspace(0.001*my.R1,
                     num=numa2)
 RR, AA = np.meshgrid(rhos, alphas)
 ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
-icsss = []
-for alpha in alphas:
-    icss = []
-    for rho in rhos:
-        ics = []
-        for w in ws:
-            ic = np.zeros(numa2)
-            for i, q1 in enumerate(q1_ic):
-                ic[i] = my.indifference(q1, w, alpha, rho)
-            ics.append(ic)
-        icss.append(ics)
-    icsss.append(icss)
+ics = np.empty((num, num, n_ic, numa2), dtype=np.float64)
+for i, alpha in enumerate(alphas):
+    for j, rho in enumerate(rhos):
+        for k, w in enumerate(ws):
+            for l, q1 in enumerate(q1_ic):
+                ics[i, j, k, l] = my.indifference(q1, w, alpha, rho)
 
 xlim=[0.0, my.a1max*my.R1]
 ylim=[0.0, my.a2max*my.R2]
@@ -109,8 +105,8 @@ for given in givens:
         for j, rho in enumerate(rhos):
             for line in axs[i, j].get_lines():
                 line.remove()
-            for n in range(n_ic): 
-                axs[i, j].plot(q1_ic, icsss[i][j][n], c='0.850')
+            for k in range(n_ic): 
+                axs[i, j].plot(q1_ic, ics[i, j, k], c='0.850')
             budget = q2b + q2[i, j]*given
             axs[i, j].plot(q1_budget, budget, c='black', alpha=0.8)
             y = []

@@ -31,23 +31,20 @@ movie = False
 plotsize = 4
 rows = folders
 
-dfss = []
-for folder in folders:
-    dfs = []
-    for subfolder in subfolders:
+dfs = np.empty((len(folders), len(subfolders)), dtype=object)
+for i, folder in enumerate(folders):
+    for j, subfolder in enumerate(subfolders):
         filelist = glob(os.path.join(folder, subfolder, '*.csv'))
-        df = pd.concat(map(pd.read_csv, filelist),
-                       ignore_index=True)
+        dfs[i, j] = pd.concat(map(pd.read_csv, filelist),
+                             ignore_index=True)
         for trait in traits:
-            df[trait] = 1.0 - df[trait]
-        dfs.append(df)
-    dfss.append(dfs)
+            dfs[i, j][trait] = 1.0 - dfs[i, j][trait]
 
 filelist = glob(os.path.join('given00', 'none', '*.csv'))
 dfsocial = pd.concat(map(pd.read_csv, filelist),
                      ignore_index=True)
 
-df = dfss[0][0]
+df = dfs[0, 0]
 ts = df.Time.unique()
 if movie:
     frames = []
@@ -127,7 +124,7 @@ for t in ts:
 
     for g, folder in enumerate(folders):
 
-        df = dfss[g][0]
+        df = dfs[g, 0]
         m = df.Time == t
         df = df.loc[m]
         given = df.Given.iloc[0]
@@ -160,7 +157,7 @@ for t in ts:
         axs[g, 2].imshow(N)
 
         for j, trait in enumerate(traits):
-            df = dfss[g][j+1]
+            df = dfs[g, j+1]
             m = df.Time == t
             df = df.loc[m]
             Z = pd.pivot_table(df,

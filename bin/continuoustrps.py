@@ -98,16 +98,19 @@ outergrid = fig.add_gridspec(nrows=len(rows),
                              left=0.22,
                              right=0.80)
 
-axsss = []
+axs = np.empty((len(rows),
+                len(traits),
+                len(alphas),
+                len(rhos)),
+                dtype=object)
 for g, row in enumerate(rows):
-    axss = []
     for c, trait in enumerate(traits):
         grid = outergrid[g, c].subgridspec(nrows=nr,
                                            ncols=nc,
                                            wspace=0,
                                            hspace=0)
-        axs = grid.subplots()
-        axs[0, 0].text(0,
+        axs[g, c] = grid.subplots()
+        axs[g, c, 0, 0].text(0,
                        4.8,
                        chr(letter),
                        fontsize=plotsize*5,
@@ -116,28 +119,26 @@ for g, row in enumerate(rows):
 
         for i, alpha in enumerate(alphas):
             for j, rho in enumerate(rhos):
-                axs[i, j].set(xticks=[], yticks=[])
-                axs[i, j].set(xlim=xlim, ylim=ylim)
+                axs[g, c, i, j].set(xticks=[], yticks=[])
+                axs[g, c, i, j].set(xlim=xlim, ylim=ylim)
                 for axis in ['top','bottom','left','right']:
-                    axs[i, j].spines[axis].set_linewidth(0.1)
+                    axs[g, c, i, j].spines[axis].set_linewidth(0.1)
         if c == 0:
             for i in range(0, nr, step):
-                axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
+                axs[g, c, i, 0].set_ylabel(f'{alphas[i]:3.1f}',
                                      rotation='horizontal',
                                      horizontalalignment='right',
                                      verticalalignment='center',
                                      fontsize=ticklabels)
         if g == 0:
-            axs[0, 10].set_title(titles[c],
+            axs[g, c, 0, 10].set_title(titles[c],
                          pad=plotsize*9,
                          fontsize=plotsize*5)
         if g == 2:
             for j in range(0, nc, step):
-                axs[-1, j].set_xlabel(f'{logess[j]:2.0f}',
+                axs[g, c, -1, j].set_xlabel(f'{logess[j]:2.0f}',
                                       x=0.3,
                                       fontsize=ticklabels)
-        axss.append(axs)
-    axsss.append(axss)
 
 for t in ts:
     df = dfsocial
@@ -182,9 +183,9 @@ for t in ts:
             for i, alpha in enumerate(alphas):
                 for j, rho in enumerate(rhos):
                     y = [T[i, j], R[i, j], P[i, j], S[i, j]]
-                    for line in axs[i, j].get_lines():
+                    for line in axs[g, c, i, j].get_lines():
                         line.remove()
-                    axsss[g][c][i][j].plot(xaxis,
+                    axs[g, c, i, j].plot(xaxis,
                                            y,
                                            c=cm.viridis(Z[i, j]),
                                            linewidth=1,

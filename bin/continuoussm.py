@@ -147,13 +147,17 @@ for t in ts:
         #Z[a2private >= a2social] = [0.9, 0.9, 0.9, 1.0]
         axs[g, 0].imshow(Z)
 
+        N = my.nodilemmacolors(T, R, P, S)
+
         Z = 2.0*R - T - P
-        axs[g, 1].imshow(Z, vmin=-1, vmax=1)
+        axs[g, 1].imshow(Z, vmin=-1, vmax=2)
+        axs[g, 1].imshow(N)
 
         Z = T + S - 2.0*R
-        m = R > P
+        m = R < P
         Z[m] = T[m] + S[m] - 2.0*P[m]
-        axs[g, 2].imshow(Z, vmin=-1, vmax=1)
+        axs[g, 2].imshow(Z, vmin=-2, vmax=0)
+        axs[g, 2].imshow(N)
 
         for j, trait in enumerate(traits):
             df = dfss[g][j+1]

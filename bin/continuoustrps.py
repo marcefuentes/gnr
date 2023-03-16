@@ -1,24 +1,31 @@
 #! /usr/bin/env python
 
 from glob import glob
+import os
+import time
+
+import imageio.v2 as iio
 from matplotlib import cm
 import matplotlib.pyplot as plt
-import mymodule as my
 import numpy as np
-import os
 import pandas as pd
-import time
+
+import mymodule as my
 
 start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
-trait = 'ChooseGrainmean'
+titles = ['Sensitivity for\nchoosing partner',
+          'Sensitivity for\nmimicking partner']
+traits = ['ChooseGrainmean',
+          'MimicGrainmean']
 folders = ['given100', 'given95', 'given50']
-subfolders = ['none', 'p']
+subfolders = ['none', 'p', 'r']
 
-rows = folders
+movie = False
 plotsize = 8
+rows = folders
 
 dfss = []
 for folder in folders:
@@ -26,8 +33,9 @@ for folder in folders:
     for subfolder in subfolders:
         filelist = glob(os.path.join(folder, subfolder, '*.csv'))
         df = pd.concat(map(pd.read_csv, filelist),
-                        ignore_index=True)
-        df[trait] = 1.0 - df[trait]
+                       ignore_index=True)
+        for trait in traits:
+            df[trait] = 1.0 - df[trait]
         dfs.append(df)
     dfss.append(dfs)
 
@@ -37,6 +45,10 @@ dfsocial = pd.concat(map(pd.read_csv, filelist),
 
 df = dfss[0][0]
 ts = df.Time.unique()
+if movie:
+    frames = []
+else:
+    ts = [ts[-1]]
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 rowindex = 'alpha'
 logess = np.sort(pd.unique(df.logES))
@@ -44,14 +56,6 @@ nr = len(alphas)
 nc = len(logess)
 rhos = 1.0 - 1.0/pow(2.0, logess)
 RR, AA = np.meshgrid(rhos, alphas)
-m = df.Time == ts[-1]
-df = dfsocial.loc[m]
-highs = pd.pivot_table(df,
-                       values='a2Seenmean',
-                       index=[rowindex],
-                       columns=['logES'])
-highs = highs.sort_index(axis=0, ascending=False)
-highs = highs.to_numpy()
 
 xlim=[0, 5]
 ylim=[0.0, 2.0]
@@ -72,7 +76,7 @@ xticklabels = [f'{xmin:2.0f}',
 yticklabels = [f'{ymax:3.1f}',
                f'{(ymin + ymax)/2.0:3.1f}',
                f'{ymin:3.1f}']
-width = plotsize
+width = plotsize*len(traits)
 height = plotsize*len(rows)
 biglabels = plotsize*5 + height/4
 ticklabels = plotsize*3.5
@@ -90,85 +94,116 @@ fig.supylabel(ylabel,
               fontsize=biglabels)
 
 outergrid = fig.add_gridspec(nrows=len(rows),
-                             ncols=1,
+                             ncols=len(traits),
                              left=0.22,
                              right=0.80)
 
-axss = []
+axsss = []
 for g, row in enumerate(rows):
-    grid = outergrid[g].subgridspec(nrows=nr,
-                                    ncols=nc,
-                                    wspace=0,
-                                    hspace=0)
-    axs = grid.subplots()
-    axs[0, 0].text(0,
-                   4.8,
-                   chr(letter),
-                   fontsize=plotsize*5,
-                   weight='bold')
-    letter += 1
+    axss = []
+    for c, trait in enumerate(traits):
+        grid = outergrid[g, c].subgridspec(nrows=nr,
+                                           ncols=nc,
+                                           wspace=0,
+                                           hspace=0)
+        axs = grid.subplots()
+        axs[0, 0].text(0,
+                       4.8,
+                       chr(letter),
+                       fontsize=plotsize*5,
+                       weight='bold')
+        letter += 1
 
-    for i, alpha in enumerate(alphas):
-        for j, rho in enumerate(rhos):
-            axs[i, j].set(xticks=[], yticks=[])
-            axs[i, j].set(xlim=xlim, ylim=ylim)
-            for axis in ['top','bottom','left','right']:
-                axs[i, j].spines[axis].set_linewidth(0.1)
-    for i in range(0, nr, step):
-        axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
-                             rotation='horizontal',
-                             horizontalalignment='right',
-                             verticalalignment='center',
-                             fontsize=ticklabels)
-    if g == 2:
-        for j in range(0, nc, step):
-            axs[-1, j].set_xlabel(f'{logess[j]:2.0f}',
-                                  x=0.3,
-                                  fontsize=ticklabels)
-    axss.append(axs)
+        for i, alpha in enumerate(alphas):
+            for j, rho in enumerate(rhos):
+                axs[i, j].set(xticks=[], yticks=[])
+                axs[i, j].set(xlim=xlim, ylim=ylim)
+                for axis in ['top','bottom','left','right']:
+                    axs[i, j].spines[axis].set_linewidth(0.1)
+        if c == 0:
+            for i in range(0, nr, step):
+                axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
+                                     rotation='horizontal',
+                                     horizontalalignment='right',
+                                     verticalalignment='center',
+                                     fontsize=ticklabels)
+        if g == 0:
+            axs[0, 10].set_title(titles[c],
+                         pad=plotsize*9,
+                         fontsize=plotsize*5)
+        if g == 2:
+            for j in range(0, nc, step):
+                axs[-1, j].set_xlabel(f'{logess[j]:2.0f}',
+                                      x=0.3,
+                                      fontsize=ticklabels)
+        axss.append(axs)
+    axsss.append(axss)
 
-for g, folder in enumerate(folders):
-
-    df = dfss[g][0]
-    m = df.Time == ts[-1]
+for t in ts:
+    df = dfsocial
+    m = df.Time == t
     df = df.loc[m]
-    given = df.Given.iloc[0]
-    lows = pd.pivot_table(df,
-                          values='a2Seenmean',
-                          index=[rowindex],
-                          columns=['logES'])
-    lows = lows.sort_index(axis=0, ascending=False)
-    lows = lows.to_numpy()
-    T = my.fitness(highs, lows, given, AA, RR)
-    R = my.fitness(highs, highs, given, AA, RR)
-    P = my.fitness(lows, lows, given, AA, RR)
-    S = my.fitness(lows, highs, given, AA, RR)
+    a2social = pd.pivot_table(df,
+                              values='a2Seenmean',
+                              index=[rowindex],
+                              columns=['logES'])
+    a2social = a2social.sort_index(axis=0, ascending=False)
+    a2social = a2social.to_numpy()
 
-    df = dfss[g][1]
-    m = df.Time == ts[-1]
-    df = df.loc[m]
-    Z = pd.pivot_table(df,
-                       values=trait,
-                       index=[rowindex],
-                       columns=['logES'])
-    Z = Z.sort_index(axis=0, ascending=False)
-    Z = Z.to_numpy()
+    for g, folder in enumerate(folders):
+        for c, trait in enumerate(traits):
 
-    axs = axss[g]
-    for i, alpha in enumerate(alphas):
-        for j, rho in enumerate(rhos):
-            y = [T[i, j], R[i, j], P[i, j], S[i, j]]
-            for line in axs[i, j].get_lines():
-                line.remove()
-            axs[i, j].plot(xaxis,
-                           y,
-                           c=cm.viridis(Z[i, j]),
-                           linewidth=1,
-                           marker='o',
-                           markerfacecolor='white',
-                           markersize=plotsize/3)
+            df = dfss[g][0]
+            m = df.Time == t
+            df = df.loc[m]
+            given = df.Given.iloc[0]
+            a2private = pd.pivot_table(df,
+                                       values='a2Seenmean',
+                                       index=[rowindex],
+                                       columns=['logES'])
+            a2private = a2private.sort_index(axis=0, ascending=False)
+            a2private = a2private.to_numpy()
 
-plt.savefig(filename + '.png', transparent=False)
+            T = my.fitness(a2social, a2private, given, AA, RR)
+            R = my.fitness(a2social, a2social, given, AA, RR)
+            P = my.fitness(a2private, a2private, given, AA, RR)
+            S = my.fitness(a2private, a2social, given, AA, RR)
+
+            df = dfss[g][c+1]
+            m = df.Time == ts[-1]
+            df = df.loc[m]
+            Z = pd.pivot_table(df,
+                               values=trait,
+                               index=[rowindex],
+                               columns=['logES'])
+            Z = Z.sort_index(axis=0, ascending=False)
+            Z = Z.to_numpy()
+
+            for i, alpha in enumerate(alphas):
+                for j, rho in enumerate(rhos):
+                    y = [T[i, j], R[i, j], P[i, j], S[i, j]]
+                    for line in axs[i, j].get_lines():
+                        line.remove()
+                    axsss[g][c][i][j].plot(xaxis,
+                                           y,
+                                           c=cm.viridis(Z[i, j]),
+                                           linewidth=1,
+                                           marker='o',
+                                           markerfacecolor='white',
+                                           markersize=plotsize/3)
+    if movie:
+        text = fig.text(0.90,
+                        0.93,
+                        f't\n{t}',
+                        fontsize=biglabels,
+                        color='grey',
+                        ha='right')
+        plt.savefig('temp.png', transparent=False)
+        text.remove()
+        frames.append(iio.imread('temp.png'))
+        os.remove('temp.png')
+    else:
+        plt.savefig(filename + '.png', transparent=False)
 
 plt.close()
 

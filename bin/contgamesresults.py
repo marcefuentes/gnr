@@ -14,7 +14,6 @@ start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
-givens = [1.0, 0.95, 0.5]
 titles = ['Games',
           'Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
@@ -98,9 +97,9 @@ axss = []
 axds = []
 for g, row in enumerate(rows):
     grid = outergrid[g, 0].subgridspec(nrows=nr,
-                                        ncols=nc,
-                                        wspace=0,
-                                        hspace=0)
+                                       ncols=nc,
+                                       wspace=0,
+                                       hspace=0)
     axs = grid.subplots()
     axs[0, 0].set_title(chr(letter),
                         fontsize=plotsize*5,
@@ -160,7 +159,7 @@ for g, row in enumerate(rows):
         axd.append(ax)
     axds.append(axd)
 
-for g, given in enumerate(givens):
+for g, folder in enumerate(folders):
 
     df = dfss[g][0]
     m = df.Time == ts[-1]

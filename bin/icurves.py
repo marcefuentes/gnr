@@ -120,9 +120,9 @@ for g, given in enumerate(givens):
                 axs[i, j].plot(q1_ic, ics[i, j, k], c='0.850')
             budget = q2b + q2[i, j]*given
             axs[i, j].plot(q1_budget, budget, c='black', alpha=0.8)
-            y = []
-            for q1 in q1_ic:
-                y.append(my.indifference(q1, w[i, j], alpha, rho))
+            y = np.empty(numa2, dtype=np.float64)
+            for k, q1 in enumerate(q1_ic):
+                y[k] = my.indifference(q1, w[i, j], alpha, rho)
             axs[i, j].plot(q1_ic,
                            y,
                            linewidth=4,

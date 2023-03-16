@@ -16,6 +16,8 @@ thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
 titles = ['Games',
+          '2$\it{R}$ - $\it{T}$ - $\it{P}$',
+          '$\it{T}$ + $\it{S}$ - 2$\it{R}$',
           'Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
 traits = ['ChooseGrainmean',
@@ -57,6 +59,7 @@ logess = np.sort(pd.unique(df.logES))
 nr = len(alphas)
 nc = len(logess)
 rhos = 1.0 - 1.0/pow(2.0, logess)
+RR, AA = np.meshgrid(rhos, alphas)
 
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
@@ -112,27 +115,45 @@ for j, title in enumerate(titles):
                                fontsize=ticklabels)
 
 for t in ts:
-    m = dfsocial.Time == ts[-1]
-    df = dfsocial.loc[m]
+    df = dfsocial
+    m = df.Time == t
+    df = df.loc[m]
     a2social = pd.pivot_table(df,
                               values='a2Seenmean',
                               index=[rowindex],
                               columns=['logES'])
     a2social = a2social.sort_index(axis=0, ascending=False)
+    a2social = a2social.to_numpy()
 
     for g, folder in enumerate(folders):
 
         df = dfss[g][0]
         m = df.Time == t
         df = df.loc[m]
+        given = df.Given.iloc[0]
         a2private = pd.pivot_table(df,
                                    values='a2Seenmean',
                                    index=[rowindex],
                                    columns=['logES'])
         a2private = a2private.sort_index(axis=0, ascending=False)
+        a2private = a2private.to_numpy()
 
-        Z = a2social - a2private
-        axs[g, 0].imshow(Z, vmin=0, vmax=1)
+        T = my.fitness(a2social, a2private, given, AA, RR)
+        R = my.fitness(a2social, a2social, given, AA, RR)
+        P = my.fitness(a2private, a2private, given, AA, RR)
+        S = my.fitness(a2private, a2social, given, AA, RR)
+
+        Z = my.gamecolors(T, R, P, S)
+        #Z[a2private >= a2social] = [0.9, 0.9, 0.9, 1.0]
+        axs[g, 0].imshow(Z)
+
+        Z = 2.0*R - T - P
+        axs[g, 1].imshow(Z, vmin=-1, vmax=1)
+
+        Z = T + S - 2.0*R
+        m = R > P
+        Z[m] = T[m] + S[m] - 2.0*P[m]
+        axs[g, 2].imshow(Z, vmin=-1, vmax=1)
 
         for j, trait in enumerate(traits):
             df = dfss[g][j+1]
@@ -143,7 +164,7 @@ for t in ts:
                                index=[rowindex],
                                columns=['logES'])
             Z = Z.sort_index(axis=0, ascending=False)
-            axs[g, j + 1].imshow(Z, vmin=0, vmax=traitvmaxs[j])
+            axs[g, j + 3].imshow(Z, vmin=0, vmax=traitvmaxs[j])
 
     if movie:
         text = fig.text(0.90,

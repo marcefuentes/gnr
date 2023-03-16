@@ -14,7 +14,7 @@ start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
-givens = np.linspace(0.95, 1.0, num=1)
+givens = np.linspace(0.0, 1.0, num=41)
 
 num = 3    # Number of subplot rows & columns
 numa2 = 256
@@ -36,11 +36,12 @@ def update(given):
                 ic[k] = my.indifference(q1, w[i, j], alpha, rho)
             icurves[i, j].set_ydata(ic)
             icurves[i, j].set_color(cm.viridis(w[i, j]/traitvmax))
-    axs[0, 2].set_title('Given: ' + f'{given:4.2f}',
-                        fontsize=ticklabels,
-                        color='grey',
-                        ha='right',
-                        pad=10)
+    if len(givens) > 1:
+        axs[0, 2].set_title('Given: ' + f'{given:4.2f}',
+                            fontsize=ticklabels,
+                            color='grey',
+                            ha='right',
+                            pad=10)
     return np.concatenate([budgets.flatten(), icurves.flatten()])
     
 alphas = np.linspace(my.alphamax, my.alphamin, num=num)
@@ -129,7 +130,7 @@ for i, alpha in enumerate(alphas):
 ani = FuncAnimation(fig, update, givens, blit=True)
 
 if len(givens) > 1:
-    ani.save(filename + '.gif', writer='ffmpeg', fps=10)
+    ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
 else:
     plt.savefig(filename + '.png', transparent=False)
 

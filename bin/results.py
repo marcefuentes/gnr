@@ -1,13 +1,15 @@
 #! /usr/bin/env python
 
 from glob import glob
+import os
+import time
+
 import imageio.v2 as iio
 import matplotlib.pyplot as plt
-import mymodule as my
 import numpy as np
-import os
 import pandas as pd
-import time
+
+import mymodule as my
 
 start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)

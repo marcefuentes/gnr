@@ -4,7 +4,6 @@ from glob import glob
 import os
 import time
 
-import imageio.v2 as iio
 from matplotlib import cm
 import matplotlib.pyplot as plt
 import numpy as np
@@ -23,7 +22,6 @@ traits = ['ChooseGrainmean',
 folders = ['given100', 'given95', 'given50']
 subfolders = ['none', 'p', 'r']
 
-movie = False
 plotsize = 8
 rows = folders
 
@@ -42,10 +40,7 @@ dfsocial = pd.concat(map(pd.read_csv, filelist),
 
 df = dfs[0, 0]
 ts = df.Time.unique()
-if movie:
-    frames = []
-else:
-    ts = [ts[-1]]
+t = [ts[-1]]
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 rowindex = 'alpha'
 logess = np.sort(pd.unique(df.logES))
@@ -189,19 +184,8 @@ for t in ts:
                                            marker='o',
                                            markerfacecolor='white',
                                            markersize=plotsize/3)
-    if movie:
-        text = fig.text(0.90,
-                        0.93,
-                        f't\n{t}',
-                        fontsize=biglabels,
-                        color='grey',
-                        ha='right')
-        plt.savefig('temp.png', transparent=False)
-        text.remove()
-        frames.append(iio.imread('temp.png'))
-        os.remove('temp.png')
-    else:
-        plt.savefig(filename + '.png', transparent=False)
+
+plt.savefig(filename + '.png', transparent=False)
 
 plt.close()
 

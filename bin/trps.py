@@ -1,10 +1,12 @@
 #! /usr/bin/env python
 
-import matplotlib.pyplot as plt
-import mymodule as my
-import numpy as np
 import os
 import time
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+import mymodule as my
 
 start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)
@@ -20,9 +22,7 @@ alphas = np.linspace(my.alphamax, my.alphamin, num=num)
 logess = np.linspace(my.logesmin, my.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
-highs = [] 
-for given in givens:
-    highs.append(my.a2eq(0.0, AA, RR))
+high = my.a2eq(0.0, AA, RR)
 
 xlim=[0, 5]
 ylim=[0.0, 2.0]
@@ -53,59 +53,58 @@ outergrid = fig.add_gridspec(nrows=len(rows),
                              left=0.25,
                              right=0.85)
 
-axss = []
+axs = np.empty((len(rows),
+                len(alphas),
+                len(rhos)),
+                dtype=object)
 for g, row in enumerate(rows):
     grid = outergrid[g].subgridspec(nrows=num,
                                     ncols=num,
                                     wspace=0,
                                     hspace=0)
-    axs = grid.subplots()
-    axs[0, 0].set_title(chr(letter),
-                        fontsize=plotsize*5,
-                        weight='bold',
-                        loc='left')
+    axs[g] = grid.subplots()
+    axs[g, 0, 0].set_title(chr(letter),
+                              fontsize=plotsize*5,
+                              weight='bold',
+                              loc='left')
     letter += 1
     for i, alpha in enumerate(alphas):
         for j, rho in enumerate(rhos):
-            axs[i, j].set(xticks=[], yticks=[])
-            axs[i, j].set(xlim=xlim, ylim=ylim)
+            axs[g, i, j].set(xticks=[], yticks=[])
+            axs[g, i, j].set(xlim=xlim, ylim=ylim)
             for axis in ['top','bottom','left','right']:
-                axs[i, j].spines[axis].set_linewidth(0.1)
+                axs[g, i, j].spines[axis].set_linewidth(0.1)
     for i in range(0, num, step):
-        axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
+        axs[g, i, 0].set_ylabel(f'{alphas[i]:3.1f}',
                              rotation='horizontal',
                              horizontalalignment='right',
                              verticalalignment='center',
                              fontsize=ticklabels)
     if g == 2:
         for j in range(0, num, step):
-            axs[-1, j].set_xlabel(f'{logess[j]:2.0f}',
-                                  x=0.3,
-                                  fontsize=ticklabels)
-    axss.append(axs)
+            axs[g, -1, j].set_xlabel(f'{logess[j]:2.0f}',
+                                        x=0.3,
+                                        fontsize=ticklabels)
 
 for g, given in enumerate(givens):
 
     low = my.a2eq(given, AA, RR)
-
-    high = highs[g]
 
     T = my.fitness(high, low, given, AA, RR)
     R = my.fitness(high, high, given, AA, RR)
     P = my.fitness(low, low, given, AA, RR)
     S = my.fitness(low, high, given, AA, RR)
     Z = my.gamecolors(T, R, P, S)
-    greys = np.full([*Z.shape], [0.8, 0.8, 0.8, 1.0])
+    greys = np.full(Z.shape, [0.8, 0.8, 0.8, 1.0])
     m = (Z == my.colormap['white'])
     Z[m] = greys[m]
 
-    axs = axss[g]
     for i, alpha in enumerate(alphas):
         for j, rho in enumerate(rhos):
             y = [T[i, j], R[i, j], P[i, j], S[i, j]]
-            for line in axs[i, j].get_lines():
+            for line in axs[g, i, j].get_lines():
                 line.remove()
-            axs[i, j].plot(xaxis,
+            axs[g, i, j].plot(xaxis,
                            y,
                            c=Z[i, j],
                            linewidth=3,

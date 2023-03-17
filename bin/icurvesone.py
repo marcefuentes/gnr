@@ -16,8 +16,8 @@ filename = thisscript.split('.')[0]
 
 givens = np.linspace(0.0, 1.0, num=41)
 
-num = 3    # Number of subplot rows & columns
-numa2 = 256
+num = 3     # Number of subplot rows & columns
+numa2 = 256 # Number of points along each curve
 n_ic = 5    # Number of indifference curves
 
 plotsize = 6
@@ -31,18 +31,18 @@ def update(given):
     for i, alpha in enumerate(alphas):
         for j, rho in enumerate(rhos):
             new_q2_budget = q2b + q2[i, j]*given
-            budgets[i, j].set_ydata(new_q2_budget)
+            budget[i, j].set_ydata(new_q2_budget)
             for k, q1 in enumerate(q1_ic):
                 ic[k] = my.indifference(q1, w[i, j], alpha, rho)
-            icurves[i, j].set_ydata(ic)
-            icurves[i, j].set_color(cm.viridis(w[i, j]/traitvmax))
+            icurve[i, j].set_ydata(ic)
+            icurve[i, j].set_color(cm.viridis(w[i, j]/traitvmax))
     if len(givens) > 1:
         axs[0, 2].set_title('Given: ' + f'{given:4.2f}',
                             fontsize=ticklabels,
                             color='grey',
                             ha='right',
                             pad=10)
-    return np.concatenate([budgets.flatten(), icurves.flatten()])
+    return np.concatenate([budget.flatten(), icurve.flatten()])
     
 alphas = np.linspace(my.alphamax, my.alphamin, num=num)
 logess = np.linspace(my.logesmin, my.logesmax, num=num)
@@ -117,15 +117,15 @@ for j in range(0, num, step):
     axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=ticklabels)
 
 ic = np.empty(q1_ic.shape, dtype=np.float64)
-budgets = np.empty(axs.shape, dtype=object)
-icurves = np.empty(axs.shape, dtype=object)
+budget = np.empty(axs.shape, dtype=object)
+icurve = np.empty(axs.shape, dtype=object)
 
 for i, alpha in enumerate(alphas):
     for j, rho in enumerate(rhos):
         for k in range(n_ic): 
             axs[i, j].plot(q1_ic, ics[i, j, k], c='0.850')
-        budgets[i, j], = axs[i, j].plot(q1_budget, q2_budget, c='black', alpha=0.8)
-        icurves[i, j], = axs[i, j].plot(q1_ic, ic, linewidth=4, alpha=0.8)
+        budget[i, j], = axs[i, j].plot(q1_budget, q2_budget, c='black', alpha=0.8)
+        icurve[i, j], = axs[i, j].plot(q1_ic, ic, linewidth=4, alpha=0.8)
 
 ani = FuncAnimation(fig, update, givens, blit=True)
 

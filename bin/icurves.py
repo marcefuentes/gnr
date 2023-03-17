@@ -14,9 +14,7 @@ thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
 givens = [0.0, 0.5, 0.95]
-titles = []
-for given in givens:
-    titles.append(f'{given*100:2.0f}%')
+
 num = 3     # Number of subplot rows & columns
 numa2 = 256 # Number of points along each curve
 n_ic = 5    # Number of indifference curves
@@ -36,12 +34,9 @@ def adddata(given, budget, icurve):
             icy = my.indifference(icx, w[i, j], alpha, rho)
             icurve[i, j].set_ydata(icy)
             icurve[i, j].set_color(cm.viridis(w[i, j]/traitvmax))
-    if len(givens) > 1:
-        axs[0, 2].set_title('Given: ' + f'{given:4.2f}',
-                            fontsize=ticklabels,
-                            color='grey',
-                            ha='right',
-                            pad=10)
+    axs[0, int(num/2)].set_title(f'{given*100:2.0f}%',
+                                 pad=plotsize*5,
+                                 fontsize=plotsize*5)
     return np.concatenate([budget.flatten(), icurve.flatten()])
     
 alphas = np.linspace(my.alphamax, my.alphamin, num=num)
@@ -73,7 +68,7 @@ traitvmax = my.fitness(np.array([my.a2max]),
                        np.array([0.9]),
                        np.array([5.0]))
 
-width = plotsize*len(titles)
+width = plotsize*len(givens)
 height = plotsize
 biglabels = plotsize*5 + height/4
 ticklabels = plotsize*3.5
@@ -90,7 +85,7 @@ fig.supylabel(ylabel,
               y=0.5,fontsize=biglabels)
 
 outergrid = fig.add_gridspec(nrows=1,
-                             ncols=len(titles),
+                             ncols=len(givens),
                              left=0.15,
                              right=0.85,
                              top=0.8,
@@ -102,9 +97,6 @@ for g, given in enumerate(givens):
                                     wspace=0,
                                     hspace=0)
     axs = grid.subplots()
-    axs[0, int(num/2)].set_title(titles[g],
-                                 pad=plotsize*5,
-                                 fontsize=plotsize*5)
     axs[0, 0].set_title(chr(letter),
                         fontsize=plotsize*5,
                         weight='bold',

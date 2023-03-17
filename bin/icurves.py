@@ -26,20 +26,19 @@ plotsize = 6
 alphas = np.linspace(my.alphamax, my.alphamin, num=num)
 logess = np.linspace(my.logesmin, my.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
-a1_budget = np.linspace(0.0, my.a1max, num=3)
-q2_budget = (my.a2max - my.b*a1_budget)*my.R2
-q1_budget = a1_budget*my.R1
-q1_ic = np.linspace(0.001*my.R1,
-                    (my.a1max - 0.001)*my.R1,
-                    num=numa2)
+a1 = np.array([0.0, my.a1max])
+budgetx = a1*my.R1
+budget0 = (my.a2max - my.b*a1)*my.R2
+icx = np.linspace(0.001*my.R1,
+                  (my.a1max - 0.001)*my.R1,
+                  num=numa2)
 RR, AA = np.meshgrid(rhos, alphas)
 ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
 ics = np.empty((num, num, n_ic, numa2), dtype=np.float64)
 for i, alpha in enumerate(alphas):
     for j, rho in enumerate(rhos):
         for k, w in enumerate(ws):
-            for l, q1 in enumerate(q1_ic):
-                ics[i, j, k, l] = my.indifference(q1, w, alpha, rho)
+             ics[i, j, k] = my.indifference(icx, w, alpha, rho)
 
 xlim=[0.0, my.a1max*my.R1]
 ylim=[0.0, my.a2max*my.R2]
@@ -48,10 +47,10 @@ xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 letter = ord('a')
 traitvmax = my.fitness(np.array([my.a2max]),
-                             np.array([my.a2max]),
-                             np.array([0.0]),
-                             np.array([0.9]),
-                             np.array([5.0]))
+                       np.array([my.a2max]),
+                       np.array([0.0]),
+                       np.array([0.9]),
+                       np.array([5.0]))
 
 width = plotsize*len(titles)
 height = plotsize
@@ -67,8 +66,7 @@ fig.supxlabel(xlabel,
               fontsize=biglabels)
 fig.supylabel(ylabel,
               x=0.07,
-              y=0.5,
-              fontsize=biglabels)
+              y=0.5,fontsize=biglabels)
 
 outergrid = fig.add_gridspec(nrows=1,
                              ncols=len(titles),
@@ -109,22 +107,21 @@ for g, given in enumerate(givens):
 
     a2private = my.a2eq(given, AA, RR)
     w = my.fitness(a2private, a2private, given, AA, RR)
-    q2 = a2private*my.R2
-    q2b = q2_budget*(1.0 - given)
+    q2_partner = a2private*my.R2
+    budget_own = budget0*(1.0 - given)
 
     for i, alpha in enumerate(alphas):
         for j, rho in enumerate(rhos):
-            for line in axs[i, j].get_lines():
-                line.remove()
             for k in range(n_ic): 
-                axs[i, j].plot(q1_ic, ics[i, j, k], c='0.850')
-            budget = q2b + q2[i, j]*given
-            axs[i, j].plot(q1_budget, budget, c='black', alpha=0.8)
-            y = np.empty(numa2, dtype=np.float64)
-            for k, q1 in enumerate(q1_ic):
-                y[k] = my.indifference(q1, w[i, j], alpha, rho)
-            axs[i, j].plot(q1_ic,
-                           y,
+                axs[i, j].plot(icx, ics[i, j, k], c='0.850')
+            budgety = budget_own + q2_partner[i, j]*given
+            axs[i, j].plot(budgetx,
+                           budgety,
+                           c='black',
+                           alpha=0.8)
+            icy = my.indifference(icx, w[i, j], alpha, rho)
+            axs[i, j].plot(icx,
+                           icy,
                            linewidth=4,
                            alpha=0.8,
                            c=cm.viridis(w[i, j]/traitvmax))

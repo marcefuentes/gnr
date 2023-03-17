@@ -52,7 +52,6 @@ budget0 = (my.a2max - my.b*a1)*my.R2
 icx = np.linspace(0.001*my.R1,
                   (my.a1max - 0.001)*my.R1,
                   num=numa2)
-
 RR, AA = np.meshgrid(rhos, alphas)
 ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
 ics = np.empty((num, num, n_ic, numa2), dtype=np.float64)
@@ -117,24 +116,26 @@ for j in range(0, num, step):
 budget = np.empty(axs.shape, dtype=object)
 icurve = np.empty(axs.shape, dtype=object)
 g = givens[0]
-budgety = budget0*(1.0 - g)
+a2private = my.a2eq(g, AA, RR)
+w = my.fitness(a2private, a2private, g, AA, RR)
+q2_partner = a2private*my.R2
+budget_own = budget0*(1.0 - g)
 
 for i, alpha in enumerate(alphas):
     for j, rho in enumerate(rhos):
         for k in range(n_ic): 
             axs[i, j].plot(icx, ics[i, j, k], c='0.850')
+        budgety = budget_own + q2_partner[i, j]*g
         budget[i, j], = axs[i, j].plot(budgetx,
                                        budgety,
                                        c='black',
                                        alpha=0.8)
-        a2private = my.a2eq(g, alpha, rho)
-        w = my.fitness(a2private, a2private, g, alpha, rho)
-        icy = my.indifference(icx, w, alpha, rho)
+        icy = my.indifference(icx, w[i, j], alpha, rho)
         icurve[i, j], = axs[i, j].plot(icx,
                                        icy,
                                        linewidth=4,
-                                       c=cm.viridis(w/traitvmax),
-                                       alpha=0.8)
+                                       alpha=0.8,
+                                       c=cm.viridis(w[i, j]/traitvmax))
 
 if len(givens) > 1:
     ani = FuncAnimation(fig, update, givens, blit=True)

@@ -30,10 +30,10 @@ def update(given):
 
     for i, alpha in enumerate(alphas):
         for j, rho in enumerate(rhos):
-            new_budget = budget_own + q2_partner[i, j]*given
-            budget[i, j].set_ydata(new_budget)
-            ic = my.indifference(icx, w[i, j], alpha, rho)
-            icurve[i, j].set_ydata(ic)
+            budgety = budget_own + q2_partner[i, j]*given
+            budget[i, j].set_ydata(budgety)
+            icy = my.indifference(icx, w[i, j], alpha, rho)
+            icurve[i, j].set_ydata(icy)
             icurve[i, j].set_color(cm.viridis(w[i, j]/traitvmax))
     if len(givens) > 1:
         axs[0, 2].set_title('Given: ' + f'{given:4.2f}',

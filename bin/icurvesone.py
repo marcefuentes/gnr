@@ -15,7 +15,7 @@ thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
 givens = np.linspace(0.0, 1.0, num=21)
-givens = [0.95]
+#givens = [0.95]
 
 num = 3     # Number of subplot rows & columns
 numa2 = 256 # Number of points along each curve
@@ -23,7 +23,7 @@ n_ic = 5    # Number of indifference curves
 
 plotsize = 6
 
-def update(given, budget, icurve):
+def adddata(given, budget, icurve):
     a2private = my.a2eq(given, AA, RR)
     w = my.fitness(a2private, a2private, given, AA, RR)
     q2_partner = a2private*my.R2
@@ -32,9 +32,9 @@ def update(given, budget, icurve):
     for i, alpha in enumerate(alphas):
         for j, rho in enumerate(rhos):
             budgety = budget_own + q2_partner[i, j]*given
-            budget[i, j].set_data(budgetx, budgety)
+            budget[i, j].set_ydata(budgety)
             icy = my.indifference(icx, w[i, j], alpha, rho)
-            icurve[i, j].set_data(icx, icy)
+            icurve[i, j].set_ydata(icy)
             icurve[i, j].set_color(cm.viridis(w[i, j]/traitvmax))
     if len(givens) > 1:
         axs[0, 2].set_title('Given: ' + f'{given:4.2f}',
@@ -116,25 +116,27 @@ for j in range(0, num, step):
 
 budget = np.empty(axs.shape, dtype=object)
 icurve = np.empty(axs.shape, dtype=object)
+dummy_budgety = np.zeros_like(budgetx)
+dummy_icy = np.zeros_like(icx)
 
 for i, alpha in enumerate(alphas):
     for j, rho in enumerate(rhos):
         for k in range(n_ic): 
             axs[i, j].plot(icx, ics[i, j, k], c='0.850')
-        budget[i, j], = axs[i, j].plot([],
-                                       [],
+        budget[i, j], = axs[i, j].plot(budgetx,
+                                       dummy_budgety,
                                        c='black',
                                        alpha=0.8)
-        icurve[i, j], = axs[i, j].plot([],
-                                       [],
+        icurve[i, j], = axs[i, j].plot(icx,
+                                       dummy_icy,
                                        linewidth=4,
                                        alpha=0.8)
 
 if len(givens) > 1:
-    ani = FuncAnimation(fig, update, frames=givens, fargs=(budget, icurve,), blit=True)
+    ani = FuncAnimation(fig, adddata, frames=givens, fargs=(budget, icurve,), blit=True)
     ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
 else:
-    update(givens[0], budget, icurve,)
+    adddata(givens[0], budget, icurve,)
     plt.savefig(filename + '.png', transparent=False)
 
 plt.close()

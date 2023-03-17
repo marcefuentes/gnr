@@ -17,12 +17,33 @@ givens = [0.0, 0.5, 0.95]
 titles = []
 for given in givens:
     titles.append(f'{given*100:2.0f}%')
-num = 3    # Number of subplot rows & columns
-numa2 = 256
+num = 3     # Number of subplot rows & columns
+numa2 = 256 # Number of points along each curve
 n_ic = 5    # Number of indifference curves
 
 plotsize = 6
 
+def adddata(given, budget, icurve):
+    a2private = my.a2eq(given, AA, RR)
+    w = my.fitness(a2private, a2private, given, AA, RR)
+    q2_partner = a2private*my.R2
+    budget_own = budget0*(1.0 - given)
+
+    for i, alpha in enumerate(alphas):
+        for j, rho in enumerate(rhos):
+            budgety = budget_own + q2_partner[i, j]*given
+            budget[i, j].set_ydata(budgety)
+            icy = my.indifference(icx, w[i, j], alpha, rho)
+            icurve[i, j].set_ydata(icy)
+            icurve[i, j].set_color(cm.viridis(w[i, j]/traitvmax))
+    if len(givens) > 1:
+        axs[0, 2].set_title('Given: ' + f'{given:4.2f}',
+                            fontsize=ticklabels,
+                            color='grey',
+                            ha='right',
+                            pad=10)
+    return np.concatenate([budget.flatten(), icurve.flatten()])
+    
 alphas = np.linspace(my.alphamax, my.alphamin, num=num)
 logess = np.linspace(my.logesmin, my.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
@@ -38,7 +59,7 @@ ics = np.empty((num, num, n_ic, numa2), dtype=np.float64)
 for i, alpha in enumerate(alphas):
     for j, rho in enumerate(rhos):
         for k, w in enumerate(ws):
-             ics[i, j, k] = my.indifference(icx, w, alpha, rho)
+            ics[i, j, k] = my.indifference(icx, w, alpha, rho)
 
 xlim=[0.0, my.a1max*my.R1]
 ylim=[0.0, my.a2max*my.R2]
@@ -105,26 +126,25 @@ for g, given in enumerate(givens):
                               x=0.45,
                               fontsize=ticklabels)
 
-    a2private = my.a2eq(given, AA, RR)
-    w = my.fitness(a2private, a2private, given, AA, RR)
-    q2_partner = a2private*my.R2
-    budget_own = budget0*(1.0 - given)
+    budget = np.empty(axs.shape, dtype=object)
+    icurve = np.empty(axs.shape, dtype=object)
+    dummy_budgety = np.zeros_like(budgetx)
+    dummy_icy = np.zeros_like(icx)
 
     for i, alpha in enumerate(alphas):
         for j, rho in enumerate(rhos):
             for k in range(n_ic): 
                 axs[i, j].plot(icx, ics[i, j, k], c='0.850')
-            budgety = budget_own + q2_partner[i, j]*given
-            axs[i, j].plot(budgetx,
-                           budgety,
-                           c='black',
-                           alpha=0.8)
-            icy = my.indifference(icx, w[i, j], alpha, rho)
-            axs[i, j].plot(icx,
-                           icy,
-                           linewidth=4,
-                           alpha=0.8,
-                           c=cm.viridis(w[i, j]/traitvmax))
+            budget[i, j], = axs[i, j].plot(budgetx,
+                                           dummy_budgety,
+                                           c ='black',
+                                           alpha=0.8)
+            icurve[i, j], = axs[i, j].plot(icx,
+                                           dummy_icy,
+                                           linewidth=4,
+                                           alpha=0.8)
+
+    adddata(given, budget, icurve,)
 
 plt.savefig(filename + '.png', transparent=False)
 

@@ -47,7 +47,7 @@ def update(given):
 alphas = np.linspace(my.alphamax, my.alphamin, num=num)
 logess = np.linspace(my.logesmin, my.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
-a1_budget = np.linspace(0.0, my.a1max, num=2)
+a1_budget = np.array([0.0, my.a1max])
 q1_budget = a1_budget*my.R1
 q2_budget = (my.a2max - my.b*a1_budget)*my.R2
 q1_ic = np.linspace(0.001*my.R1,

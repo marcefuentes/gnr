@@ -31,10 +31,11 @@ rows = folders
 plotsize = 4
 
 def adddata(t, ims):
-    for i, df in enumerate(dfs):
+    for i, folder in enumerate(folders):
+        df = dfs[i]
+        m = df.Time == t
+        df = df.loc[m]
         for j, trait in enumerate(traits):
-            m = df.Time == t
-            df = df.loc[m]
             Z = pd.pivot_table(df,
                                values=trait,
                                index=[rowindex],
@@ -45,22 +46,17 @@ def adddata(t, ims):
         fig.texts[2].set_text(f't\n{t}')
     return ims.flatten()
 
-dfs = []
-for folder in folders:
+dfs = np.empty(len(folders), dtype=object) 
+for i, folder in enumerate(folders):
     filelist = glob(os.path.join(folder, '*.csv'))
-    df = pd.concat(map(pd.read_csv, filelist),
+    dfs[i] = pd.concat(map(pd.read_csv, filelist),
                    ignore_index=True)
     for trait in traits:
         if 'Grain' in trait:
-            df[trait] = 1.0 - df[trait]
-    dfs.append(df)
+            dfs[i][trait] = 1.0 - dfs[i][trait]
 
 df = dfs[1]
 ts = df.Time.unique()
-if movie:
-    frames = []
-else:
-    ts = [ts[-1]]
 rowindex = 'alpha'
 nr = df['alpha'].nunique()
 nc = df['logES'].nunique()
@@ -125,7 +121,7 @@ for j, title in enumerate(titles):
 ims = np.empty(axs.shape, dtype=object) 
 dummy_Z = np.empty((nr, nc), dtype=np.float32)
 
-for i, df in enumerate(dfs):
+for i, folders in enumerate(folders):
     for j, trait in enumerate(traits):
         ims[i, j] = axs[i, j].imshow(dummy_Z,
                                      vmin=0,

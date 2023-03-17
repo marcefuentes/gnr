@@ -25,13 +25,13 @@ plotsize = 6
 def update(given):
     a2private = my.a2eq(given, AA, RR)
     w = my.fitness(a2private, a2private, given, AA, RR)
-    q2 = a2private*my.R2
-    q2b = q2_budget*(1.0 - given)
+    q2_partner = a2private*my.R2
+    budget_own = budget0*(1.0 - given)
 
     for i, alpha in enumerate(alphas):
         for j, rho in enumerate(rhos):
-            new_q2_budget = q2b + q2[i, j]*given
-            budget[i, j].set_ydata(new_q2_budget)
+            new_budget = budget_own + q2_partner[i, j]*given
+            budget[i, j].set_ydata(new_budget)
             for k, q in enumerate(q1_ic):
                 ic[k] = my.indifference(q, w[i, j], alpha, rho)
             icurve[i, j].set_ydata(ic)
@@ -49,7 +49,7 @@ logess = np.linspace(my.logesmin, my.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
 a1 = np.array([0.0, my.a1max])
 q1_budget = a1*my.R1
-q2_budget = (my.a2max - my.b*a1)*my.R2
+budget0 = (my.a2max - my.b*a1)*my.R2
 q1_ic = np.linspace(0.001*my.R1,
                     (my.a1max - 0.001)*my.R1,
                     num=numa2)
@@ -124,7 +124,7 @@ for i, alpha in enumerate(alphas):
     for j, rho in enumerate(rhos):
         for k in range(n_ic): 
             axs[i, j].plot(q1_ic, ics[i, j, k], c='0.850')
-        budget[i, j], = axs[i, j].plot(q1_budget, q2_budget, c='black', alpha=0.8)
+        budget[i, j], = axs[i, j].plot(q1_budget, budget0, c='black', alpha=0.8)
         icurve[i, j], = axs[i, j].plot(q1_ic, ic, linewidth=4, alpha=0.8)
 
 ani = FuncAnimation(fig, update, givens, blit=True)

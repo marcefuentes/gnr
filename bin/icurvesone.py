@@ -32,7 +32,7 @@ def update(given):
         for j, rho in enumerate(rhos):
             new_budget = budget_own + q2_partner[i, j]*given
             budget[i, j].set_ydata(new_budget)
-            for k, q in enumerate(q1_ic):
+            for k, q in enumerate(icx):
                 ic[k] = my.indifference(q, w[i, j], alpha, rho)
             icurve[i, j].set_ydata(ic)
             icurve[i, j].set_color(cm.viridis(w[i, j]/traitvmax))
@@ -48,9 +48,9 @@ alphas = np.linspace(my.alphamax, my.alphamin, num=num)
 logess = np.linspace(my.logesmin, my.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
 a1 = np.array([0.0, my.a1max])
-q1_budget = a1*my.R1
+budgetx = a1*my.R1
 budget0 = (my.a2max - my.b*a1)*my.R2
-q1_ic = np.linspace(0.001*my.R1,
+icx = np.linspace(0.001*my.R1,
                     (my.a1max - 0.001)*my.R1,
                     num=numa2)
 
@@ -60,7 +60,7 @@ ics = np.empty((num, num, n_ic, numa2), dtype=np.float64)
 for i, alpha in enumerate(alphas):
     for j, rho in enumerate(rhos):
         for k, w in enumerate(ws):
-            for l, q in enumerate(q1_ic):
+            for l, q in enumerate(icx):
                 ics[i, j, k, l] = my.indifference(q, w, alpha, rho)
 
 xlim=[0.0, my.a1max*my.R1]
@@ -116,20 +116,26 @@ for i in range(0, num, step):
 for j in range(0, num, step):
     axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=ticklabels)
 
-ic = np.empty(q1_ic.shape, dtype=np.float64)
+ic = np.empty(icx.shape, dtype=np.float64)
 budget = np.empty(axs.shape, dtype=object)
 icurve = np.empty(axs.shape, dtype=object)
+budgety = budget0*(1.0 - givens[0])
 
 for i, alpha in enumerate(alphas):
     for j, rho in enumerate(rhos):
         for k in range(n_ic): 
-            axs[i, j].plot(q1_ic, ics[i, j, k], c='0.850')
-        budget[i, j], = axs[i, j].plot(q1_budget, budget0, c='black', alpha=0.8)
-        icurve[i, j], = axs[i, j].plot(q1_ic, ic, linewidth=4, alpha=0.8)
-
-ani = FuncAnimation(fig, update, givens, blit=True)
+            axs[i, j].plot(icx, ics[i, j, k], c='0.850')
+        budget[i, j], = axs[i, j].plot(budgetx,
+                                       budgety,
+                                       c='black',
+                                       alpha=0.8)
+        icurve[i, j], = axs[i, j].plot(icx,
+                                       ic,
+                                       linewidth=4,
+                                       alpha=0.8)
 
 if len(givens) > 1:
+    ani = FuncAnimation(fig, update, givens, blit=True)
     ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
 else:
     plt.savefig(filename + '.png', transparent=False)

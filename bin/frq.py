@@ -20,8 +20,6 @@ titles = ['Effort\nto get B',
           'Fitness']
 traits = ['a2Seen',
           'w']
-traitvmaxs = [my.a2max,
-              my.a2max]
 folders = ['given100', 'given95', 'given50']
 subfolders = ['none', 'p', 'r']
 

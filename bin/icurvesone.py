@@ -36,9 +36,8 @@ def adddata(given, budget, icurve):
             icy = my.indifference(icx, w[i, j], alpha, rho)
             icurve[i, j].set_ydata(icy)
             icurve[i, j].set_color(cm.viridis(w[i, j]/traitvmax))
-    axs[0, int(num/2)].set_title(f'{given*100:2.0f}%',
-                                 pad=plotsize*5,
-                                 fontsize=plotsize*5)
+    axs[0, int(num/2)].title.set_text(f'{given*100:2.0f}%')
+
     return np.concatenate([budget.flatten(), icurve.flatten()])
     
 alphas = np.linspace(my.alphamax, my.alphamin, num=num)
@@ -110,6 +109,9 @@ for i in range(0, num, step):
                          fontsize=ticklabels)
 for j in range(0, num, step):
     axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=ticklabels)
+axs[0, int(num/2)].set_title(f'0',
+                             pad=plotsize*5,
+                             fontsize=plotsize*5)
 
 budget = np.empty(axs.shape, dtype=object)
 icurve = np.empty(axs.shape, dtype=object)

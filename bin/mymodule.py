@@ -164,10 +164,16 @@ def fitness(x, y, given, alpha, rho):
     q1 = (a2max - y)*R1/b
     q2 = y*R2*(1.0 - given) + x*R2*given
     w = q1*q2
-    if np.isscalar(alpha):
-        alpha = np.full(np.shape(q1), alpha)
-    if np.isscalar(rho):
-        rho = np.full(np.shape(q1), rho)
+    if not isinstance(q1, np.ndarray):
+        q1 = np.array([q1])
+    if not isinstance(q2, np.ndarray):
+        q2 = np.array([q2])
+    if not isinstance(w, np.ndarray):
+        w = np.array([w])
+    if not isinstance(alpha, np.ndarray):
+        alpha = np.full(w.shape, alpha)
+    if not isinstance(rho, np.ndarray):
+        rho = np.full(w.shape, rho)
     m = (w > 0.0) & (rho == 0.0)
     w[m] = pow(q1[m], 1.0 - alpha[m])*pow(q2[m], alpha[m])
     m = ((w > 0.0) & (rho < 0.0)) | (rho > 0.0)
@@ -183,19 +189,20 @@ def a2eq(given, alpha, rho):
         a2 = alpha*0.0
     return a2
 
-def indifference(q, w, alpha, rho):
-    for i in q:
+def indifference(qs, w, alpha, rho):
+    q2 = np.full(qs.shape, 1000.0)
+    for i, q in enumerate(qs):
         if rho == 0.0:
-            q2 = pow(w/pow(i, 1.0 - alpha), 1.0/alpha)
+            q2[i] = pow(w/pow(q, 1.0 - alpha), 1.0/alpha)
         else:
             A = pow(w, rho)
-            B = (1.0 - alpha)*pow(i, rho)
+            B = (1.0 - alpha)*pow(q, rho)
             if A <= B:
                 if rho < 0.0:
-                    q2 = 1000.0
+                    q2[i] = 1000.0
                 else:
-                    q2 = -0.1
+                    q2[i] = -0.1
             else:
-                q2 = pow((A - B)/alpha, 1.0/rho)
+                q2[i] = pow((A - B)/alpha, 1.0/rho)
     return q2
 

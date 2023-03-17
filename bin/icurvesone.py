@@ -14,7 +14,7 @@ start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
-givens = np.linspace(0.0, 1.0, num=41)
+givens = np.linspace(0.0, 1.0, num=21)
 
 num = 3     # Number of subplot rows & columns
 numa2 = 256 # Number of points along each curve
@@ -50,8 +50,8 @@ a1 = np.array([0.0, my.a1max])
 budgetx = a1*my.R1
 budget0 = (my.a2max - my.b*a1)*my.R2
 icx = np.linspace(0.001*my.R1,
-                    (my.a1max - 0.001)*my.R1,
-                    num=numa2)
+                  (my.a1max - 0.001)*my.R1,
+                  num=numa2)
 
 RR, AA = np.meshgrid(rhos, alphas)
 ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
@@ -114,10 +114,10 @@ for i in range(0, num, step):
 for j in range(0, num, step):
     axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=ticklabels)
 
-ic = np.empty(icx.shape, dtype=np.float64)
 budget = np.empty(axs.shape, dtype=object)
 icurve = np.empty(axs.shape, dtype=object)
-budgety = budget0*(1.0 - givens[0])
+g = givens[0]
+budgety = budget0*(1.0 - g)
 
 for i, alpha in enumerate(alphas):
     for j, rho in enumerate(rhos):
@@ -127,9 +127,13 @@ for i, alpha in enumerate(alphas):
                                        budgety,
                                        c='black',
                                        alpha=0.8)
+        a2private = my.a2eq(g, alpha, rho)
+        w = my.fitness(a2private, a2private, g, alpha, rho)
+        icy = my.indifference(icx, w, alpha, rho)
         icurve[i, j], = axs[i, j].plot(icx,
-                                       ic,
+                                       icy,
                                        linewidth=4,
+                                       c=cm.viridis(w/traitvmax),
                                        alpha=0.8)
 
 if len(givens) > 1:

@@ -184,17 +184,18 @@ def a2eq(given, alpha, rho):
     return a2
 
 def indifference(q, w, alpha, rho):
-    if rho == 0.0:
-        q2 = pow(w/pow(q, 1.0 - alpha), 1.0/alpha)
-    else:
-        A = pow(w, rho)
-        B = (1.0 - alpha)*pow(q, rho)
-        if A <= B:
-            if rho < 0.0:
-                q2 = 1000.0
-            else:
-                q2 = -0.1
+    for i in q:
+        if rho == 0.0:
+            q2 = pow(w/pow(i, 1.0 - alpha), 1.0/alpha)
         else:
-            q2 = pow((A - B)/alpha, 1.0/rho)
+            A = pow(w, rho)
+            B = (1.0 - alpha)*pow(i, rho)
+            if A <= B:
+                if rho < 0.0:
+                    q2 = 1000.0
+                else:
+                    q2 = -0.1
+            else:
+                q2 = pow((A - B)/alpha, 1.0/rho)
     return q2
 

@@ -47,9 +47,9 @@ def update(given):
 alphas = np.linspace(my.alphamax, my.alphamin, num=num)
 logess = np.linspace(my.logesmin, my.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
-a1_budget = np.array([0.0, my.a1max])
-q1_budget = a1_budget*my.R1
-q2_budget = (my.a2max - my.b*a1_budget)*my.R2
+a1 = np.array([0.0, my.a1max])
+q1_budget = a1*my.R1
+q2_budget = (my.a2max - my.b*a1)*my.R2
 q1_ic = np.linspace(0.001*my.R1,
                     (my.a1max - 0.001)*my.R1,
                     num=numa2)
@@ -60,8 +60,8 @@ ics = np.empty((num, num, n_ic, numa2), dtype=np.float64)
 for i, alpha in enumerate(alphas):
     for j, rho in enumerate(rhos):
         for k, w in enumerate(ws):
-            for l, q1 in enumerate(q1_ic):
-                ics[i, j, k, l] = my.indifference(q1, w, alpha, rho)
+            for l, q in enumerate(q1_ic):
+                ics[i, j, k, l] = my.indifference(q, w, alpha, rho)
 
 xlim=[0.0, my.a1max*my.R1]
 ylim=[0.0, my.a2max*my.R2]

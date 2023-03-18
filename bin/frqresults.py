@@ -79,7 +79,6 @@ fig.supylabel(ylabel,
               x=0.03,
               y=0.493,
               fontsize=biglabels)
-
 outergrid = fig.add_gridspec(nrows=len(folders),
                              ncols=len(traits))
 axs = np.empty((len(folders),
@@ -87,6 +86,14 @@ axs = np.empty((len(folders),
                 len(alphas),
                 len(rhos)),
                 dtype=object)
+if movie:
+    fig.text(0.90,
+             0.93,
+             f't\n0',
+             fontsize=biglabels,
+             color='grey',
+             ha='right')
+
 letter = ord('a') 
 letterposition = 4.8
 for g, folder in enumerate(folders):

@@ -13,6 +13,8 @@ start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
+# Options
+
 givens = [0.0, 0.5, 0.95]
 
 num = 3     # Number of subplot rows & columns
@@ -20,6 +22,8 @@ numa2 = 256 # Number of points along each curve
 n_ic = 5    # Number of indifference curves
 
 plotsize = 6
+
+# Add data to figure
 
 def figdata(given, budget, icurve):
     a2private = my.a2eq(given, AA, RR)
@@ -38,7 +42,9 @@ def figdata(given, budget, icurve):
                                  pad=plotsize*5,
                                  fontsize=plotsize*5)
     return np.concatenate([budget.flatten(), icurve.flatten()])
-    
+
+# Get data
+
 alphas = np.linspace(my.alphamax, my.alphamin, num=num)
 logess = np.linspace(my.logesmin, my.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
@@ -56,12 +62,13 @@ for i, alpha in enumerate(alphas):
         for k, w in enumerate(ws):
             ics[i, j, k] = my.indifference(icx, w, alpha, rho)
 
+# Figure properties
+
 xlim=[0.0, my.a1max*my.R1]
 ylim=[0.0, my.a2max*my.R2]
 step = int(num/2)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
-letter = ord('a')
 traitvmax = my.fitness(np.array([my.a2max]),
                        np.array([my.a2max]),
                        np.array([0.0]),
@@ -97,11 +104,11 @@ for g, given in enumerate(givens):
                                     wspace=0,
                                     hspace=0)
     axs = grid.subplots()
+    letter = ord('a') + g
     axs[0, 0].set_title(chr(letter),
                         fontsize=plotsize*5,
                         weight='bold',
                         loc='left')
-    letter += 1
 
     for ax in fig.get_axes():
         ax.set(xticks=[], yticks=[])
@@ -135,6 +142,8 @@ for g, given in enumerate(givens):
                                            dummy_icy,
                                            linewidth=4,
                                            alpha=0.8)
+
+# Save figure
 
     figdata(given, budget, icurve,)
 

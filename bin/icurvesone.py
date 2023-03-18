@@ -23,6 +23,8 @@ n_ic = 5    # Number of indifference curves
 
 plotsize = 6
 
+# Add data to figure
+
 def figdata(given, budget, icurve):
     a2private = my.a2eq(given, AA, RR)
     w = my.fitness(a2private, a2private, given, AA, RR)
@@ -39,7 +41,9 @@ def figdata(given, budget, icurve):
     axs[0, int(num/2)].title.set_text(f'{given*100:2.0f}%')
 
     return np.concatenate([budget.flatten(), icurve.flatten()])
-    
+
+# Get data
+
 alphas = np.linspace(my.alphamax, my.alphamin, num=num)
 logess = np.linspace(my.logesmin, my.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
@@ -56,6 +60,8 @@ for i, alpha in enumerate(alphas):
     for j, rho in enumerate(rhos):
         for k, w in enumerate(ws):
             ics[i, j, k] = my.indifference(icx, w, alpha, rho)
+
+# Figure properties
 
 xlim=[0.0, my.a1max*my.R1]
 ylim=[0.0, my.a2max*my.R2]
@@ -130,6 +136,8 @@ for i, alpha in enumerate(alphas):
                                        dummy_icy,
                                        linewidth=4,
                                        alpha=0.8)
+
+# Save figure
 
 if len(givens) > 1:
     ani = FuncAnimation(fig, figdata, frames=givens, fargs=(budget, icurve,), blit=True)

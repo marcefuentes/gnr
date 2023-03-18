@@ -44,7 +44,7 @@ dfsocial = pd.concat(map(pd.read_csv, filelist),
 
 df = dfs[0, 0]
 ts = df.Time.unique()
-t = [ts[-1]]
+t = ts[-1]
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 logess = np.sort(pd.unique(df.logES))
 nr = len(alphas)
@@ -88,16 +88,14 @@ fig.supylabel(ylabel,
               x=0.04,
               y=0.5,
               fontsize=biglabels)
-
 outergrid = fig.add_gridspec(nrows=len(folders),
                              ncols=len(traits),
                              left=0.22,
                              right=0.80)
-
 axs = np.empty((len(folders),
                 len(traits),
-                len(alphas),
-                len(rhos)),
+                nr,
+                nc),
                 dtype=object)
 
 letter = ord('a')
@@ -116,7 +114,7 @@ for g, folder in enumerate(folders):
                                   loc='left')
         letter += 1
         for i, alpha in enumerate(alphas):
-            for j, rho in enumerate(rhos):
+            for j, loges in enumerate(logess):
                 axs[g, c, i, j].set(xticks=[], yticks=[])
                 axs[g, c, i, j].set(xlim=xlim, ylim=ylim)
                 for axis in ['top','bottom','left','right']:
@@ -141,58 +139,57 @@ for g, folder in enumerate(folders):
                                             x=0.3,
                                             fontsize=ticklabels)
 
-for t in ts:
-    df = dfsocial
-    m = df.Time == t
-    df = df.loc[m]
-    a2social = pd.pivot_table(df,
-                              values='a2Seenmean',
-                              index=['alpha'],
-                              columns=['logES'])
-    a2social = a2social.sort_index(axis=0, ascending=False)
-    a2social = a2social.to_numpy()
+df = dfsocial
+m = df.Time == t
+df = df.loc[m]
+a2social = pd.pivot_table(df,
+                          values='a2Seenmean',
+                          index=['alpha'],
+                          columns=['logES'])
+a2social = a2social.sort_index(axis=0, ascending=False)
+a2social = a2social.to_numpy()
 
-    for g, folder in enumerate(folders):
-        for c, trait in enumerate(traits):
+for g, folder in enumerate(folders):
+    for c, trait in enumerate(traits):
 
-            df = dfs[g, 0]
-            m = df.Time == t
-            df = df.loc[m]
-            given = df.Given.iloc[0]
-            a2private = pd.pivot_table(df,
-                                       values='a2Seenmean',
-                                       index=['alpha'],
-                                       columns=['logES'])
-            a2private = a2private.sort_index(axis=0, ascending=False)
-            a2private = a2private.to_numpy()
+        df = dfs[g, 0]
+        m = df.Time == t
+        df = df.loc[m]
+        given = df.Given.iloc[0]
+        a2private = pd.pivot_table(df,
+                                   values='a2Seenmean',
+                                   index=['alpha'],
+                                   columns=['logES'])
+        a2private = a2private.sort_index(axis=0, ascending=False)
+        a2private = a2private.to_numpy()
 
-            T = my.fitness(a2social, a2private, given, AA, RR)
-            R = my.fitness(a2social, a2social, given, AA, RR)
-            P = my.fitness(a2private, a2private, given, AA, RR)
-            S = my.fitness(a2private, a2social, given, AA, RR)
+        T = my.fitness(a2social, a2private, given, AA, RR)
+        R = my.fitness(a2social, a2social, given, AA, RR)
+        P = my.fitness(a2private, a2private, given, AA, RR)
+        S = my.fitness(a2private, a2social, given, AA, RR)
 
-            df = dfs[g, c+1]
-            m = df.Time == ts[-1]
-            df = df.loc[m]
-            Z = pd.pivot_table(df,
-                               values=trait,
-                               index=['alpha'],
-                               columns=['logES'])
-            Z = Z.sort_index(axis=0, ascending=False)
-            Z = Z.to_numpy()
+        df = dfs[g, c+1]
+        m = df.Time == ts[-1]
+        df = df.loc[m]
+        Z = pd.pivot_table(df,
+                           values=trait,
+                           index=['alpha'],
+                           columns=['logES'])
+        Z = Z.sort_index(axis=0, ascending=False)
+        Z = Z.to_numpy()
 
-            for i, alpha in enumerate(alphas):
-                for j, rho in enumerate(rhos):
-                    y = [T[i, j], R[i, j], P[i, j], S[i, j]]
-                    for line in axs[g, c, i, j].get_lines():
-                        line.remove()
-                    axs[g, c, i, j].plot(xaxis,
-                                           y,
-                                           c=cm.viridis(Z[i, j]),
-                                           linewidth=1,
-                                           marker='o',
-                                           markerfacecolor='white',
-                                           markersize=plotsize/3)
+        for i, alpha in enumerate(alphas):
+            for j, rho in enumerate(rhos):
+                y = [T[i, j], R[i, j], P[i, j], S[i, j]]
+                for line in axs[g, c, i, j].get_lines():
+                    line.remove()
+                axs[g, c, i, j].plot(xaxis,
+                                     y,
+                                     c=cm.viridis(Z[i, j]),
+                                     linewidth=1,
+                                     marker='o',
+                                     markerfacecolor='white',
+                                     markersize=plotsize/3)
 
 # Save figure
 

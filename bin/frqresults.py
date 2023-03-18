@@ -27,9 +27,8 @@ titles = ['Effort to get $\it{B}$',
           'Sensitivity for\nmimicking partner',
           'Fitness']
 folders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
-folders = ['given0', 'none']
 
-movie = False
+movie = True
 plotsize = 4
 
 # Add data to figure

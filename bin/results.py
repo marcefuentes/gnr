@@ -33,7 +33,7 @@ plotsize = 4
 
 # Add data to figure
 
-def figdata(t, ims):
+def figdata(t, lines):
     for i, folder in enumerate(folders):
         df = dfs[i]
         m = df.Time == t
@@ -44,10 +44,10 @@ def figdata(t, ims):
                                index=['alpha'],
                                columns=['logES'])
             Z = Z.sort_index(axis=0, ascending=False)
-            ims[i, j].set_array(Z) 
+            lines[i, j].set_array(Z) 
     if movie:
         fig.texts[2].set_text(f't\n{t}')
-    return ims.flatten()
+    return lines.flatten()
 
 # Get data
 
@@ -123,22 +123,22 @@ for j, title in enumerate(titles):
     axs[0, j].set_title(title, pad=plotsize*10, fontsize=plotsize*5)
     axs[-1, j].set_xticklabels(xticklabels, fontsize=ticklabels)
 
-ims = np.empty(axs.shape, dtype=object) 
+lines = np.empty(axs.shape, dtype=object) 
 dummy_Z = np.empty((nr, nc), dtype=np.float32)
 
 for i, folder in enumerate(folders):
     for j, trait in enumerate(traits):
-        ims[i, j] = axs[i, j].imshow(dummy_Z,
-                                     vmin=0,
-                                     vmax=traitvmaxs[j])
+        lines[i, j] = axs[i, j].imshow(dummy_Z,
+                                       vmin=0,
+                                       vmax=traitvmaxs[j])
 
 # Save figure
 
 if movie:
-    ani = FuncAnimation(fig, figdata, frames=ts, fargs=(ims,), blit=True)
+    ani = FuncAnimation(fig, figdata, frames=ts, fargs=(lines,), blit=True)
     ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
 else:
-    figdata(ts[-1], ims,)
+    figdata(ts[-1], lines,)
     plt.savefig(filename + '.png', transparent=False)
 
 plt.close()

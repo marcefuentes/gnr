@@ -26,7 +26,10 @@ titles = ['Effort to get $\it{B}$',
           'Sensitivity for\nmimicking partner',
           'Fitness']
 traitvmaxs = [my.a2max, my.a2max, my.a2max, 2.0]
-folders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
+folders = [given100', 'given95', 'given50']
+folders = [ , , ]
+
+subfolders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
 
 movie = False
 plotsize = 4

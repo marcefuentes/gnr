@@ -121,9 +121,7 @@ for g, folder in enumerate(folders):
                                        pad=plotsize*9,
                                        fontsize=plotsize*5)
         for i in range(0, nr, step):
-            ylim = axs[g, c, i, j].get_ylim()[1]
-            ylim = ylim/2
-            axs[g, c, i, 0].set(yticks=[ylim], yticklabels=[])
+            axs[g, c, i, 0].set(yticks=[0.1], yticklabels=[])
             if c == 0:
                 axs[g, c, i, 0].set_ylabel(f'{alphas[i]:3.1f}',
                                            rotation='horizontal',

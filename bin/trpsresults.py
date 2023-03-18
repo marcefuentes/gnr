@@ -15,15 +15,19 @@ start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
-titles = ['Sensitivity for\nchoosing partner',
-          'Sensitivity for\nmimicking partner']
+# Options
+
+
 traits = ['ChooseGrainmean',
           'MimicGrainmean']
+titles = ['Sensitivity for\nchoosing partner',
+          'Sensitivity for\nmimicking partner']
 folders = ['given100', 'given95', 'given50']
 subfolders = ['none', 'p', 'r']
 
 plotsize = 8
-rows = folders
+
+# Get data
 
 dfs = np.empty((len(folders), len(subfolders)), dtype=object)
 for i, folder in enumerate(folders):
@@ -42,12 +46,13 @@ df = dfs[0, 0]
 ts = df.Time.unique()
 t = [ts[-1]]
 alphas = np.sort(pd.unique(df.alpha))[::-1]
-rowindex = 'alpha'
 logess = np.sort(pd.unique(df.logES))
 nr = len(alphas)
 nc = len(logess)
 rhos = 1.0 - 1.0/pow(2.0, logess)
 RR, AA = np.meshgrid(rhos, alphas)
+
+# Figure properties
 
 xlim=[0, 5]
 ylim=[0.0, 2.0]
@@ -55,7 +60,6 @@ step = int(nr/2)
 xaxis = [1, 2, 3, 4]
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
-letter = ord('a')
 xticks = [0, nc/2-0.5, nc-1]
 yticks = [0, nr/2-0.5, nr-1]
 xmin = logess[0]
@@ -69,9 +73,9 @@ yticklabels = [f'{ymax:3.1f}',
                f'{(ymin + ymax)/2.0:3.1f}',
                f'{ymin:3.1f}']
 width = plotsize*len(traits)
-height = plotsize*len(rows)
+height = plotsize*len(folders)
 biglabels = plotsize*5 + height/4
-ticklabels = plotsize*3.5
+ticklabels = plotsize*4
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -85,36 +89,41 @@ fig.supylabel(ylabel,
               y=0.5,
               fontsize=biglabels)
 
-outergrid = fig.add_gridspec(nrows=len(rows),
+outergrid = fig.add_gridspec(nrows=len(folders),
                              ncols=len(traits),
                              left=0.22,
                              right=0.80)
 
-axs = np.empty((len(rows),
+axs = np.empty((len(folders),
                 len(traits),
                 len(alphas),
                 len(rhos)),
                 dtype=object)
-for g, row in enumerate(rows):
+letter = ord('a') 
+letterposition = 4.8
+for g, folder in enumerate(folders):
     for c, trait in enumerate(traits):
         grid = outergrid[g, c].subgridspec(nrows=nr,
                                            ncols=nc,
                                            wspace=0,
                                            hspace=0)
         axs[g, c] = grid.subplots()
-        axs[g, c, 0, 0].text(0,
-                       4.8,
-                       chr(letter),
-                       fontsize=plotsize*5,
-                       weight='bold')
+        axs[g, c, 0, 0].set_title(chr(letter),
+                            fontsize=plotsize*5,
+                            pad = 10,
+                            weight='bold',
+                            loc='left')
         letter += 1
-
         for i, alpha in enumerate(alphas):
             for j, rho in enumerate(rhos):
                 axs[g, c, i, j].set(xticks=[], yticks=[])
                 axs[g, c, i, j].set(xlim=xlim, ylim=ylim)
                 for axis in ['top','bottom','left','right']:
                     axs[g, c, i, j].spines[axis].set_linewidth(0.1)
+        if g == 0:
+            axs[g, c, 0, 10].set_title(titles[c],
+                         pad=plotsize*9,
+                         fontsize=plotsize*5)
         if c == 0:
             for i in range(0, nr, step):
                 axs[g, c, i, 0].set_ylabel(f'{alphas[i]:3.1f}',
@@ -122,11 +131,7 @@ for g, row in enumerate(rows):
                                      horizontalalignment='right',
                                      verticalalignment='center',
                                      fontsize=ticklabels)
-        if g == 0:
-            axs[g, c, 0, 10].set_title(titles[c],
-                         pad=plotsize*9,
-                         fontsize=plotsize*5)
-        if g == 2:
+        if folder == folders[-1]:
             for j in range(0, nc, step):
                 axs[g, c, -1, j].set_xlabel(f'{logess[j]:2.0f}',
                                       x=0.3,
@@ -138,7 +143,7 @@ for t in ts:
     df = df.loc[m]
     a2social = pd.pivot_table(df,
                               values='a2Seenmean',
-                              index=[rowindex],
+                              index=['alpha'],
                               columns=['logES'])
     a2social = a2social.sort_index(axis=0, ascending=False)
     a2social = a2social.to_numpy()
@@ -152,7 +157,7 @@ for t in ts:
             given = df.Given.iloc[0]
             a2private = pd.pivot_table(df,
                                        values='a2Seenmean',
-                                       index=[rowindex],
+                                       index=['alpha'],
                                        columns=['logES'])
             a2private = a2private.sort_index(axis=0, ascending=False)
             a2private = a2private.to_numpy()
@@ -167,7 +172,7 @@ for t in ts:
             df = df.loc[m]
             Z = pd.pivot_table(df,
                                values=trait,
-                               index=[rowindex],
+                               index=['alpha'],
                                columns=['logES'])
             Z = Z.sort_index(axis=0, ascending=False)
             Z = Z.to_numpy()
@@ -184,6 +189,8 @@ for t in ts:
                                            marker='o',
                                            markerfacecolor='white',
                                            markersize=plotsize/3)
+
+# Save figure
 
 plt.savefig(filename + '.png', transparent=False)
 

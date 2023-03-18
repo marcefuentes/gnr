@@ -41,7 +41,7 @@ def figdata(t, ims):
         for j, trait in enumerate(traits):
             Z = pd.pivot_table(df,
                                values=trait,
-                               index=[rowindex],
+                               index=['alpha'],
                                columns=['logES'])
             Z = Z.sort_index(axis=0, ascending=False)
             ims[i, j].set_array(Z) 
@@ -62,7 +62,6 @@ for i, folder in enumerate(folders):
 
 df = dfs[1]
 ts = df.Time.unique()
-rowindex = 'alpha'
 nr = df['alpha'].nunique()
 nc = df['logES'].nunique()
 

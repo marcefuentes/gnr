@@ -5,7 +5,7 @@ import os
 import re
 import time
 
-import imageio.v2 as iio
+from matplotlib.animation import FuncAnimation
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd

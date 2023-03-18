@@ -30,7 +30,7 @@ movie = False
 rows = folders
 plotsize = 4
 
-def adddata(t, ims):
+def figdata(t, ims):
     for i, folder in enumerate(folders):
         df = dfs[i]
         m = df.Time == t
@@ -127,10 +127,10 @@ for i, folders in enumerate(folders):
                                      vmin=0,
                                      vmax=traitvmaxs[j])
 if movie:
-    ani = FuncAnimation(fig, adddata, frames=ts, fargs=(ims,), blit=True)
+    ani = FuncAnimation(fig, figdata, frames=ts, fargs=(ims,), blit=True)
     ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
 else:
-    adddata(ts[-1], ims,)
+    figdata(ts[-1], ims,)
     plt.savefig(filename + '.png', transparent=False)
 
 plt.close()

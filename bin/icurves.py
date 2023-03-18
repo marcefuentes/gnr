@@ -21,7 +21,7 @@ n_ic = 5    # Number of indifference curves
 
 plotsize = 6
 
-def adddata(given, budget, icurve):
+def figdata(given, budget, icurve):
     a2private = my.a2eq(given, AA, RR)
     w = my.fitness(a2private, a2private, given, AA, RR)
     q2_partner = a2private*my.R2
@@ -136,7 +136,7 @@ for g, given in enumerate(givens):
                                            linewidth=4,
                                            alpha=0.8)
 
-    adddata(given, budget, icurve,)
+    figdata(given, budget, icurve,)
 
 plt.savefig(filename + '.png', transparent=False)
 

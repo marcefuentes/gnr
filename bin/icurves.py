@@ -121,6 +121,9 @@ for g, given in enumerate(givens):
         axs[-1, j].set_xlabel(f'{logess[j]:2.0f}',
                               x=0.45,
                               fontsize=ticklabels)
+    axs[0, int(num/2)].set_title(f'{given*100:2.0f}%',
+                                 pad=plotsize*5,
+                                 fontsize=plotsize*5)
 
     budget = np.empty(axs.shape, dtype=object)
     icurve = np.empty(axs.shape, dtype=object)
@@ -140,12 +143,9 @@ for g, given in enumerate(givens):
                                            linewidth=4,
                                            alpha=0.8)
 
-    axs[0, int(num/2)].set_title(f'{given*100:2.0f}%',
-                                 pad=plotsize*5,
-                                 fontsize=plotsize*5)
-# Save figure
+    # Save figure
 
-figdata(given, budget, icurve,)
+    figdata(given, budget, icurve,)
 
 plt.savefig(filename + '.png', transparent=False)
 

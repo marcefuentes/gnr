@@ -179,6 +179,8 @@ void read_globals (char *filename)
 	fscanf (fp, "PartnerChoice,%i\n", &gPartnerChoice);
 	fscanf (fp, "Reciprocity,%i\n", &gReciprocity);
 	fscanf (fp, "Discrete,%i\n", &gDiscrete);
+	fscanf (fp, "a2low,%lf\n", &ga2low);
+	fscanf (fp, "a2high,%lf\n", &ga2high);
 	fscanf (fp, "IndirectR,%i\n", &gIndirectR);
 	fscanf (fp, "alpha,%lf\n", &galpha);
 	fscanf (fp, "logES,%lf\n", &glogES);
@@ -209,20 +211,6 @@ void read_globals (char *filename)
 	}
 	ga2low = ga2Min + ga2Init*a2eq;
 	ga2high = a2social + ga2Init*(ga2Max - a2social);*/
-
-	if ( gDiscrete == 1 )
-	{
-		if ( (fp = fopen ("a2.glo", "r")) == NULL )
-		{
-			fprintf (stderr, "Can't open file %s to read.\n", filename);
-			exit (EXIT_FAILURE);
-		}
-
-		fscanf (fp, "a2low,%lf\n", &ga2low);
-		fscanf (fp, "a2high,%lf\n", &ga2high);
-
-		fclose (fp);
-	}
 }
 
 void write_globals (char *filename)

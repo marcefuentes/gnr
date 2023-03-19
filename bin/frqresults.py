@@ -28,7 +28,7 @@ titles = ['Effort to get $\it{B}$',
           'Fitness']
 folders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
 
-movie = True
+movie = False
 plotsize = 4
 
 # Add data to figure
@@ -93,22 +93,24 @@ ticklabels = plotsize*4
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
+# Create empty figure
+
 fig = plt.figure(figsize=(width, height))
+left_x = axs[0, 0].get_position().x0
+right_x = axs[0, -1].get_position().x1
+center_x = (left_x + right_x) / 2
 fig.supxlabel(xlabel,
-              x=0.515,
+              x=center_x,
               y=0.06,
               fontsize=biglabels)
+
+top_y = axs[0, 0].get_position().y1
+bottom_y = axs[-1, 0].get_position().y0
+center_y = (top_y + bottom_y) / 2
 fig.supylabel(ylabel,
               x=0.03,
-              y=0.493,
+              y=center_y,
               fontsize=biglabels)
-outergrid = fig.add_gridspec(nrows=len(folders),
-                             ncols=len(traits))
-axs = np.empty((len(folders),
-                len(traits),
-                nr,
-                nc),
-                dtype=object)
 if movie:
     fig.text(0.90,
              0.93,
@@ -118,7 +120,6 @@ if movie:
              ha='right')
 
 letter = ord('a')
-letterposition = 4.8
 for i, folder in enumerate(folders):
     for j, trait in enumerate(traits):
         grid = outergrid[i, j].subgridspec(nrows=nr,

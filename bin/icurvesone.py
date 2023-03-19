@@ -32,15 +32,16 @@ def figdata(given, budget, icurve):
     w = my.fitness(a2private, a2private, given, AA, RR)
     q2_partner = a2private*my.R2
     budget_own = budget0*(1.0 - given)
+    axs[0, int(num/2)].title.set_text(f'{given*100:.0f}%')
 
-    for i, alpha in enumerate(alphas):
-        for j, rho in enumerate(rhos):
-            budgety = budget_own + q2_partner[i, j]*given
-            budget[i, j].set_ydata(budgety)
-            icy = my.indifference(icx, w[i, j], alpha, rho)
-            icurve[i, j].set_ydata(icy)
-            icurve[i, j].set_color(cm.viridis(w[i, j]/traitvmax))
-    axs[0, int(num/2)].title.set_text(f'{given*100:2.0f}%')
+    for a, alpha in enumerate(alphas):
+        for r, rho in enumerate(rhos):
+            budgety = budget_own + q2_partner[a, r]*given
+            budget[a, r].set_ydata(budgety)
+            icy = my.indifference(icx, w[a, r], alpha, rho)
+            icurve[a, r].set_ydata(icy)
+            color = cm.viridis(w[a, r]/traitvmax)
+            icurve[a, r].set_color(color)
 
     return np.concatenate([budget.flatten(), icurve.flatten()])
 
@@ -65,34 +66,27 @@ for i, alpha in enumerate(alphas):
 
 # Figure properties
 
+width = plotsize
+height = plotsize
+xlabel = 'Substitutability of $\it{B}$'
+ylabel = 'Value of $\it{B}$'
+biglabels = plotsize*5 + height/4
+ticklabels = plotsize*3.5
 xlim=[0.0, my.a1max*my.R1]
 ylim=[0.0, my.a2max*my.R2]
 step = int(num/2)
-xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Value of $\it{B}$'
 traitvmax = my.fitness(np.array([my.a2max]),
                        np.array([my.a2max]),
                        np.array([0.0]),
                        np.array([0.9]),
                        np.array([5.0]))
 
-width = plotsize
-height = plotsize
-biglabels = plotsize*5 + height/4
-ticklabels = plotsize*3.5
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-fig = plt.figure(figsize=(width, height))
-fig.supxlabel(xlabel,
-              x=0.56,
-              y=0.03,
-              fontsize=biglabels)
-fig.supylabel(ylabel,
-              x=0.05,
-              y=0.52,
-              fontsize=biglabels)
+# Create figure
 
+fig = plt.figure(figsize=(width, height))
 grid = fig.add_gridspec(nrows=num,
                         ncols=num,
                         left=0.22,
@@ -101,47 +95,63 @@ grid = fig.add_gridspec(nrows=num,
                         bottom=0.176,
                         wspace=0,
                         hspace=0)
-axs = grid.subplots()
 
-for i, alpha in enumerate(alphas):
-    for j, rho in enumerate(rhos):
-        axs[i, j].set(xticks=[],
-                      yticks=[],
-                      xlim=xlim,
-                      ylim=ylim)
-for i in range(0, num, step):
-    axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
+axs = grid.subplots()
+budget = np.empty(axs.shape, dtype=object)
+icurve = np.empty(axs.shape, dtype=object)
+
+left_x = axs[0, 0].get_position().x0
+right_x = axs[-1, -1].get_position().x1
+center_x = (left_x + right_x) / 2
+top_y = axs[0, 0].get_position().y1
+bottom_y = axs[-1, -1].get_position().y0
+center_y = (top_y + bottom_y) / 2
+fig.supxlabel(xlabel,
+              x=center_x,
+              y=bottom_y - 0.18,
+              fontsize=biglabels)
+fig.supylabel(ylabel,
+              x=left_x - 0.20,
+              y=center_y,
+              fontsize=biglabels)
+
+for ax in fig.get_axes():
+    ax.set(xticks=[], yticks=[])
+    ax.set(xlim=xlim, ylim=ylim)
+
+axs[0, int(num/2)].set_title(f'0',
+                             pad=plotsize*5,
+                             fontsize=plotsize*5)
+for a in range(0, num, step):
+    axs[a, 0].set_ylabel(f'{alphas[i]:.1f}',
                          rotation='horizontal',
                          horizontalalignment='right',
                          verticalalignment='center',
                          fontsize=ticklabels)
-for j in range(0, num, step):
-    axs[-1, j].set_xlabel(f'{logess[j]:2.0f}',
+for r in range(0, num, step):
+    axs[-1, r].set_xlabel(f'{logess[r]:.0f}',
                           x=0.45,
                           fontsize=ticklabels)
-axs[0, int(num/2)].set_title(f'0',
-                             pad=plotsize*5,
-                             fontsize=plotsize*5)
 
-budget = np.empty(axs.shape, dtype=object)
-icurve = np.empty(axs.shape, dtype=object)
+# Assign lines to axs
+
 dummy_budgety = np.zeros_like(budgetx)
 dummy_icy = np.zeros_like(icx)
 
-for i, alpha in enumerate(alphas):
-    for j, rho in enumerate(rhos):
-        for k in range(n_ic): 
-            axs[i, j].plot(icx, ics[i, j, k], c='0.850')
-        budget[i, j], = axs[i, j].plot(budgetx,
+for a, alpha in enumerate(alphas):
+    for r, rho in enumerate(rhos):
+        for c in range(n_ic): 
+            axs[a, r].plot(icx, ics[a, r, c], c='0.850')
+        budget[a, r], = axs[a, r].plot(budgetx,
                                        dummy_budgety,
                                        c='black',
                                        alpha=0.8)
-        icurve[i, j], = axs[i, j].plot(icx,
+        icurve[a, r], = axs[a, r].plot(icx,
                                        dummy_icy,
                                        linewidth=4,
                                        alpha=0.8)
 
-# Save figure
+# Add data and save figure
 
 if len(givens) > 1:
     ani = FuncAnimation(fig, figdata, frames=givens, fargs=(budget, icurve,), blit=True)

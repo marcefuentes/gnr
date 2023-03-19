@@ -112,16 +112,15 @@ for i, outer_column in enumerate(outer_columns):
 left_x = axs[0, 0, 0].get_position().x0
 right_x = axs[-1, -1, -1].get_position().x1
 center_x = (left_x + right_x) / 2
-fig.supxlabel(xlabel,
-              x=center_x,
-              y=0.0,
-              fontsize=biglabels)
-
 top_y = axs[0, 0, 0].get_position().y1
 bottom_y = axs[-1, -1, -1].get_position().y0
 center_y = (top_y + bottom_y) / 2
+fig.supxlabel(xlabel,
+              x=center_x,
+              y=bottom_y - 0.18,
+              fontsize=biglabels)
 fig.supylabel(ylabel,
-              x=0.07,
+              x=left_x - 0.08,
               y=center_y,
               fontsize=biglabels)
 

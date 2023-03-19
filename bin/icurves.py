@@ -17,6 +17,7 @@ filename = thisscript.split('.')[0]
 
 givens = [0.0, 0.5, 0.95]
 
+traitvmax = 2.0
 num = 3     # Number of subplot rows & columns
 numa2 = 256 # Number of points along each curve
 n_ic = 5    # Number of indifference curves
@@ -74,12 +75,6 @@ ticklabels = plotsize*3.5
 xlim=[0.0, my.a1max*my.R1]
 ylim=[0.0, my.a2max*my.R2] 
 step = int(num/2)
-traitvmax = my.fitness(np.array([my.a2max]),
-                       np.array([my.a2max]),
-                       np.array([0.0]),
-                       np.array([0.9]),
-                       np.array([5.0]))
-
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -114,10 +109,10 @@ bottom_y = axs[-1, -1, -1].get_position().y0
 center_y = (top_y + bottom_y) / 2
 fig.supxlabel(xlabel,
               x=center_x,
-              y=bottom_y - 0.18,
+              y=bottom_y*0.2,
               fontsize=biglabels)
 fig.supylabel(ylabel,
-              x=left_x - 0.08,
+              x=left_x*0.5,
               y=center_y,
               fontsize=biglabels)
 

@@ -90,7 +90,7 @@ outergrid = fig.add_gridspec(nrows=1,
 axs = np.empty((len(givens),
                 len(alphas),
                 len(rhos)),
-                dtype=object)
+               dtype=object)
 budget = np.empty(axs.shape, dtype=object)
 icurve = np.empty(axs.shape, dtype=object)
 
@@ -121,7 +121,7 @@ for ax in fig.get_axes():
     ax.set(xlim=xlim, ylim=ylim)
 
 for g, given in enumerate(givens):
-    letter = ord('a') + i
+    letter = ord('a') + g
     axs[g, 0, 0].set_title(chr(letter),
                            fontsize=plotsize*5,
                            weight='bold',

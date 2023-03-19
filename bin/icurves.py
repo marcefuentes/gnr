@@ -27,20 +27,20 @@ plotsize = 6
 
 def figdata(budget, icurve):
 
-    for g, given in enumerate(givens):
+    for i, given in enumerate(givens):
         a2private = my.a2eq(given, AA, RR)
         w = my.fitness(a2private, a2private, given, AA, RR)
         q2_partner = a2private*my.R2
         budget_own = budget0*(1.0 - given)
 
-        for i, alpha in enumerate(alphas):
-            for j, rho in enumerate(rhos):
-                budgety = budget_own + q2_partner[i, j]*given
-                budget[g, i, j].set_ydata(budgety)
-                icy = my.indifference(icx, w[i, j], alpha, rho)
-                icurve[g, i, j].set_ydata(icy)
-                color = cm.viridis(w[i, j]/traitvmax)
-                icurve[g, i, j].set_color(color)
+        for j, alpha in enumerate(alphas):
+            for k, rho in enumerate(rhos):
+                budgety = budget_own + q2_partner[j, k]*given
+                budget[i, j, k].set_ydata(budgety)
+                icy = my.indifference(icx, w[j, k], alpha, rho)
+                icurve[i, j, k].set_ydata(icy)
+                color = cm.viridis(w[j, k]/traitvmax)
+                icurve[i, j, k].set_color(color)
 
     return np.concatenate([budget.flatten(), icurve.flatten()])
 
@@ -62,24 +62,27 @@ for i, alpha in enumerate(alphas):
     for j, rho in enumerate(rhos):
         for k, w in enumerate(ws):
             ics[i, j, k] = my.indifference(icx, w, alpha, rho)
+outer_columns = givens
+inner_columns = logess
+inner_rows = alphas
 
 # Figure properties
 
+width = plotsize*len(outer_columns)
+height = plotsize
+xlabel = 'Substitutability of $\it{B}$'
+ylabel = 'Value of $\it{B}$'
+biglabels = plotsize*5 + height/4
+ticklabels = plotsize*3.5
 xlim=[0.0, my.a1max*my.R1]
 ylim=[0.0, my.a2max*my.R2]
 step = int(num/2)
-xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Value of $\it{B}$'
 traitvmax = my.fitness(np.array([my.a2max]),
                        np.array([my.a2max]),
                        np.array([0.0]),
                        np.array([0.9]),
                        np.array([5.0]))
 
-width = plotsize*len(givens)
-height = plotsize
-biglabels = plotsize*5 + height/4
-ticklabels = plotsize*3.5
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -87,50 +90,24 @@ plt.rcParams['ps.fonttype'] = 42
 
 fig = plt.figure(figsize=(width, height))
 outergrid = fig.add_gridspec(nrows=1,
-                             ncols=len(givens),
+                             ncols=len(outer_columns),
                              left=0.15,
                              right=0.85,
                              top=0.8,
                              bottom=0.2)
-
-axs = np.empty((len(givens),
-                len(alphas),
-                len(rhos)),
+axs = np.empty((len(outer_columns),
+                len(inner_rows),
+                len(inner_columns)),
                 dtype=object)
 budget = np.empty(axs.shape, dtype=object)
 icurve = np.empty(axs.shape, dtype=object)
 
-for g, given in enumerate(givens):
-    grid = outergrid[g].subgridspec(nrows=num,
+for i, outer_column in enumerate(outer_columns):
+    grid = outergrid[i].subgridspec(nrows=num,
                                     ncols=num,
                                     wspace=0,
                                     hspace=0)
-    axs[g] = grid.subplots()
-
-for ax in fig.get_axes():
-    letter = ord('a') + g
-    axs[g, 0, 0].set_title(chr(letter),
-                        fontsize=plotsize*5,
-                        weight='bold',
-                        loc='left')
-    ax.set(xticks=[], yticks=[])
-    ax.set(xlim=xlim, ylim=ylim)
-
-for g, given in enumerate(givens):
-    if g == 0:
-        for i in range(0, num, step):
-            axs[g, i, 0].set_ylabel(f'{alphas[i]:3.1f}',
-                                 rotation='horizontal',
-                                 horizontalalignment='right',
-                                 verticalalignment='center',
-                                 fontsize=ticklabels)
-    for j in range(0, num, step):
-        axs[g, -1, j].set_xlabel(f'{logess[j]:2.0f}',
-                              x=0.45,
-                              fontsize=ticklabels)
-    axs[g, 0, int(num/2)].set_title(f'{given*100:2.0f}%',
-                                 pad=plotsize*5,
-                                 fontsize=plotsize*5)
+    axs[i] = grid.subplots()
 
 left_x = axs[0, 0, 0].get_position().x0
 right_x = axs[-1, -1, -1].get_position().x1
@@ -148,19 +125,46 @@ fig.supylabel(ylabel,
               y=center_y,
               fontsize=biglabels)
 
+for ax in fig.get_axes():
+    ax.set(xticks=[], yticks=[])
+    ax.set(xlim=xlim, ylim=ylim)
+
+for i, outer_column in enumerate(outer_columns):
+    letter = ord('a') + i
+    axs[i, 0, 0].set_title(chr(letter),
+                           fontsize=plotsize*5,
+                           weight='bold',
+                           loc='left')
+    axs[i, 0, int(num/2)].set_title(f'{outer_columns[i]*100:.0f}%',
+                                    pad=plotsize*5,
+                                    fontsize=plotsize*5)
+    if i == 0:
+        for j in range(0, num, step):
+            axs[i, j, 0].set_ylabel(f'{inner_rows[j]:.1f}',
+                                    rotation='horizontal',
+                                    horizontalalignment='right',
+                                    verticalalignment='center',
+                                    fontsize=ticklabels)
+    for k in range(0, num, step):
+        axs[i, -1, k].set_xlabel(f'{inner_columns[k]:.0f}',
+                                 x=0.45,
+                                 fontsize=ticklabels)
+
+# Assign lines to axs
+
 dummy_budgety = np.zeros_like(budgetx)
 dummy_icy = np.zeros_like(icx)
 
-for g, given in enumerate(givens):
-    for i, alpha in enumerate(alphas):
-        for j, rho in enumerate(rhos):
-            for k in range(n_ic): 
-                axs[g, i, j].plot(icx, ics[i, j, k], c='0.850')
-            budget[g, i, j], = axs[g, i, j].plot(budgetx,
+for i, given in enumerate(givens):
+    for j, alpha in enumerate(alphas):
+        for k, rho in enumerate(rhos):
+            for l in range(n_ic): 
+                axs[i, j, k].plot(icx, ics[j, k, l], c='0.850')
+            budget[i, j, k], = axs[i, j, k].plot(budgetx,
                                                  dummy_budgety,
                                                  c='black',
                                                  alpha=0.8)
-            icurve[g, i, j], = axs[g, i, j].plot(icx,
+            icurve[i, j, k], = axs[i, j, k].plot(icx,
                                                  dummy_icy,
                                                  linewidth=4,
                                                  alpha=0.8)

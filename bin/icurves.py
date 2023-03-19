@@ -106,15 +106,17 @@ for g, given in enumerate(givens):
                                     wspace=0,
                                     hspace=0)
     axs[g] = grid.subplots()
+
+for ax in fig.get_axes():
     letter = ord('a') + g
     axs[g, 0, 0].set_title(chr(letter),
                         fontsize=plotsize*5,
                         weight='bold',
                         loc='left')
+    ax.set(xticks=[], yticks=[])
+    ax.set(xlim=xlim, ylim=ylim)
 
-    for ax in fig.get_axes():
-        ax.set(xticks=[], yticks=[])
-        ax.set(xlim=xlim, ylim=ylim)
+for g, given in enumerate(givens):
     if g == 0:
         for i in range(0, num, step):
             axs[g, i, 0].set_ylabel(f'{alphas[i]:3.1f}',

@@ -26,10 +26,9 @@ titles = ['Effort to get $\it{B}$',
           'Sensitivity for\nmimicking partner',
           'Fitness']
 traitvmaxs = [my.a2max, my.a2max, my.a2max, 2.0]
-folders = ['given100', 'given95', 'given50']
-folders = [ , , ]
+#folders = ['given100', 'given95', 'given50']
 
-subfolders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
+folders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
 
 movie = False
 plotsize = 4
@@ -91,16 +90,26 @@ ticklabels = plotsize*4
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
+# Create empty figure
+
 fig, axs = plt.subplots(nrows=len(folders),
                         ncols=len(traits),
                         figsize=(width, height))
+
+left_x = axs[0, 0].get_position().x0
+right_x = axs[0, -1].get_position().x1
+center_x = (left_x + right_x) / 2
 fig.supxlabel(xlabel,
-              x=0.515,
+              x=center_x,
               y=0.06,
               fontsize=biglabels)
+
+top_y = axs[0, 0].get_position().y1
+bottom_y = axs[-1, 0].get_position().y0
+center_y = (top_y + bottom_y) / 2
 fig.supylabel(ylabel,
               x=0.03,
-              y=0.493,
+              y=center_y,
               fontsize=biglabels)
 if movie:
     fig.text(0.90,
@@ -109,6 +118,7 @@ if movie:
              fontsize=biglabels,
              color='grey',
              ha='right')
+
 letterposition = 1.035
 for i, ax in enumerate(fig.get_axes()):
     ax.set(xticks=xticks, yticks=yticks)

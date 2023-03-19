@@ -39,15 +39,6 @@ plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
 fig = plt.figure(figsize=(width*1.13, height))
-fig.supxlabel(xlabel,
-              x=0.55,
-              y=0.04,
-              fontsize=biglabels)
-fig.supylabel(ylabel,
-              x=0.04,
-              y=0.495,
-              fontsize=biglabels)
-
 outergrid = fig.add_gridspec(nrows=len(rows),
                              ncols=1,
                              left=0.25,
@@ -85,6 +76,24 @@ for g, row in enumerate(rows):
             axs[g, -1, j].set_xlabel(f'{logess[j]:2.0f}',
                                         x=0.3,
                                         fontsize=ticklabels)
+
+left_x = axs[0, 0, 0].get_position().x0
+right_x = axs[0, -1, -1].get_position().x1
+center_x = (left_x + right_x) / 2
+fig.supxlabel(xlabel,
+              x=center_x,
+              y=0.04,
+              fontsize=biglabels)
+
+top_y = axs[0, 0, 0].get_position().y1
+bottom_y = axs[-1, -1, 0].get_position().y0
+center_y = (top_y + bottom_y) / 2
+fig.supylabel(ylabel,
+              x=0.04,
+              y=center_y,
+              fontsize=biglabels)
+
+# Create lines
 
 for g, given in enumerate(givens):
 

@@ -90,27 +90,11 @@ ticklabels = plotsize*4
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-# Create empty figure
+# Create figure
 
 fig, axs = plt.subplots(nrows=len(folders),
                         ncols=len(traits),
                         figsize=(width, height))
-
-left_x = axs[0, 0].get_position().x0
-right_x = axs[0, -1].get_position().x1
-center_x = (left_x + right_x) / 2
-fig.supxlabel(xlabel,
-              x=center_x,
-              y=0.06,
-              fontsize=biglabels)
-
-top_y = axs[0, 0].get_position().y1
-bottom_y = axs[-1, 0].get_position().y0
-center_y = (top_y + bottom_y) / 2
-fig.supylabel(ylabel,
-              x=0.03,
-              y=center_y,
-              fontsize=biglabels)
 if movie:
     fig.text(0.90,
              0.93,
@@ -136,6 +120,24 @@ for j, title in enumerate(titles):
     axs[0, j].set_title(title, pad=plotsize*10, fontsize=plotsize*5)
     axs[-1, j].set_xticklabels(xticklabels, fontsize=ticklabels)
 
+left_x = axs[0, 0].get_position().x0
+right_x = axs[0, -1].get_position().x1
+center_x = (left_x + right_x) / 2
+fig.supxlabel(xlabel,
+              x=center_x,
+              y=0.06,
+              fontsize=biglabels)
+
+top_y = axs[0, 0].get_position().y1
+bottom_y = axs[-1, 0].get_position().y0
+center_y = (top_y + bottom_y) / 2
+fig.supylabel(ylabel,
+              x=0.03,
+              y=center_y,
+              fontsize=biglabels)
+
+# Create lines
+
 lines = np.empty(axs.shape, dtype=object) 
 dummy_Z = np.empty((nr, nc), dtype=np.float32)
 
@@ -145,7 +147,7 @@ for i, folder in enumerate(folders):
                                        vmin=0,
                                        vmax=traitvmaxs[j])
 
-# Save figure
+# Add data and save figure
 
 if movie:
     ani = FuncAnimation(fig, figdata, frames=ts, fargs=(lines,), blit=True)

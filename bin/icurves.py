@@ -25,19 +25,23 @@ plotsize = 6
 
 # Add data to figure
 
-def figdata(given, budget, icurve):
-    a2private = my.a2eq(given, AA, RR)
-    w = my.fitness(a2private, a2private, given, AA, RR)
-    q2_partner = a2private*my.R2
-    budget_own = budget0*(1.0 - given)
+def figdata(budget, icurve):
 
-    for i, alpha in enumerate(alphas):
-        for j, rho in enumerate(rhos):
-            budgety = budget_own + q2_partner[i, j]*given
-            budget[i, j].set_ydata(budgety)
-            icy = my.indifference(icx, w[i, j], alpha, rho)
-            icurve[i, j].set_ydata(icy)
-            icurve[i, j].set_color(cm.viridis(w[i, j]/traitvmax))
+    for g, given in enumerate(givens):
+        a2private = my.a2eq(given, AA, RR)
+        w = my.fitness(a2private, a2private, given, AA, RR)
+        q2_partner = a2private*my.R2
+        budget_own = budget0*(1.0 - given)
+
+        for i, alpha in enumerate(alphas):
+            for j, rho in enumerate(rhos):
+                budgety = budget_own + q2_partner[i, j]*given
+                budget[g, i, j].set_ydata(budgety)
+                icy = my.indifference(icx, w[i, j], alpha, rho)
+                icurve[g, i, j].set_ydata(icy)
+                color = cm.viridis(w[i, j]/traitvmax)
+                icurve[g, i, j].set_color(color)
+
     return np.concatenate([budget.flatten(), icurve.flatten()])
 
 # Get data
@@ -79,15 +83,9 @@ ticklabels = plotsize*3.5
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-fig = plt.figure(figsize=(width, height))
-fig.supxlabel(xlabel,
-              x=0.502,
-              y=0.0,
-              fontsize=biglabels)
-fig.supylabel(ylabel,
-              x=0.07,
-              y=0.5,fontsize=biglabels)
+# Create figure
 
+fig = plt.figure(figsize=(width, height))
 outergrid = fig.add_gridspec(nrows=1,
                              ncols=len(givens),
                              left=0.15,
@@ -95,14 +93,19 @@ outergrid = fig.add_gridspec(nrows=1,
                              top=0.8,
                              bottom=0.2)
 
+axs = np.empty((len(givens),
+                len(alphas),
+                len(rhos)),
+                dtype=object)
+
 for g, given in enumerate(givens):
     grid = outergrid[g].subgridspec(nrows=num,
                                     ncols=num,
                                     wspace=0,
                                     hspace=0)
-    axs = grid.subplots()
+    axs[g] = grid.subplots()
     letter = ord('a') + g
-    axs[0, 0].set_title(chr(letter),
+    axs[g, 0, 0].set_title(chr(letter),
                         fontsize=plotsize*5,
                         weight='bold',
                         loc='left')
@@ -112,40 +115,59 @@ for g, given in enumerate(givens):
         ax.set(xlim=xlim, ylim=ylim)
     if g == 0:
         for i in range(0, num, step):
-            axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
+            axs[g, i, 0].set_ylabel(f'{alphas[i]:3.1f}',
                                  rotation='horizontal',
                                  horizontalalignment='right',
                                  verticalalignment='center',
                                  fontsize=ticklabels)
     for j in range(0, num, step):
-        axs[-1, j].set_xlabel(f'{logess[j]:2.0f}',
+        axs[g, -1, j].set_xlabel(f'{logess[j]:2.0f}',
                               x=0.45,
                               fontsize=ticklabels)
-    axs[0, int(num/2)].set_title(f'{given*100:2.0f}%',
+    axs[g, 0, int(num/2)].set_title(f'{given*100:2.0f}%',
                                  pad=plotsize*5,
                                  fontsize=plotsize*5)
 
-    budget = np.empty(axs.shape, dtype=object)
-    icurve = np.empty(axs.shape, dtype=object)
-    dummy_budgety = np.zeros_like(budgetx)
-    dummy_icy = np.zeros_like(icx)
+left_x = axs[0, 0, 0].get_position().x0
+right_x = axs[-1, -1, -1].get_position().x1
+center_x = (left_x + right_x) / 2
+fig.supxlabel(xlabel,
+              x=center_x,
+              y=0.0,
+              fontsize=biglabels)
 
+top_y = axs[0, 0, 0].get_position().y1
+bottom_y = axs[-1, -1, -1].get_position().y0
+center_y = (top_y + bottom_y) / 2
+fig.supylabel(ylabel,
+              x=0.07,
+              y=center_y,
+              fontsize=biglabels)
+
+# Create lines
+
+budget = np.empty(axs.shape, dtype=object)
+icurve = np.empty(axs.shape, dtype=object)
+dummy_budgety = np.zeros_like(budgetx)
+dummy_icy = np.zeros_like(icx)
+
+for g, given in enumerate(givens):
     for i, alpha in enumerate(alphas):
         for j, rho in enumerate(rhos):
             for k in range(n_ic): 
-                axs[i, j].plot(icx, ics[i, j, k], c='0.850')
-            budget[i, j], = axs[i, j].plot(budgetx,
-                                           dummy_budgety,
-                                           c='black',
-                                           alpha=0.8)
-            icurve[i, j], = axs[i, j].plot(icx,
-                                           dummy_icy,
-                                           linewidth=4,
-                                           alpha=0.8)
+                axs[g, i, j].plot(icx, ics[i, j, k], c='0.850')
+            budget[g, i, j], = axs[g, i, j].plot(budgetx,
+                                                 dummy_budgety,
+                                                 c='black',
+                                                 alpha=0.8)
+            icurve[g, i, j], = axs[g, i, j].plot(icx,
+                                                 dummy_icy,
+                                                 linewidth=4,
+                                                 alpha=0.8)
 
-    # Save figure
+# Add data and save figure
 
-    figdata(given, budget, icurve,)
+figdata(budget, icurve,)
 
 plt.savefig(filename + '.png', transparent=False)
 

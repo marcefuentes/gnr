@@ -44,10 +44,7 @@ outergrid = fig.add_gridspec(nrows=len(rows),
                              left=0.25,
                              right=0.85)
 
-axs = np.empty((len(rows),
-                len(alphas),
-                len(rhos)),
-                dtype=object)
+
 for g, row in enumerate(rows):
     grid = outergrid[g].subgridspec(nrows=num,
                                     ncols=num,
@@ -78,7 +75,7 @@ for g, row in enumerate(rows):
                                         fontsize=ticklabels)
 
 left_x = axs[0, 0, 0].get_position().x0
-right_x = axs[0, -1, -1].get_position().x1
+right_x = axs[0, 0, -1].get_position().x1
 center_x = (left_x + right_x) / 2
 fig.supxlabel(xlabel,
               x=center_x,

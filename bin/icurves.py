@@ -97,6 +97,8 @@ axs = np.empty((len(givens),
                 len(alphas),
                 len(rhos)),
                 dtype=object)
+budget = np.empty(axs.shape, dtype=object)
+icurve = np.empty(axs.shape, dtype=object)
 
 for g, given in enumerate(givens):
     grid = outergrid[g].subgridspec(nrows=num,
@@ -144,10 +146,6 @@ fig.supylabel(ylabel,
               y=center_y,
               fontsize=biglabels)
 
-# Create lines
-
-budget = np.empty(axs.shape, dtype=object)
-icurve = np.empty(axs.shape, dtype=object)
 dummy_budgety = np.zeros_like(budgetx)
 dummy_icy = np.zeros_like(icx)
 

@@ -2,14 +2,14 @@
 
 import numpy as np
 
+given = 0.95
 num = 21
-givens = np.linspace(0.0, 1.0, num)
 alphas = np.linspace(0.1, 0.9, num)
-loges = 1.0
+logess = np.linspace(-5.0, 5.0, num)
 c = 101
 
 for alpha in alphas:
-    for given in givens:
+    for loges in logess:
         filename = str(c) + '.glo'
         f = open(filename, 'w')
 
@@ -33,9 +33,11 @@ for alpha in alphas:
         f.write('MimicCost,-14\n')
         f.write('PartnerChoice,0\n')
         f.write('Reciprocity,0\n')
-        f.write('Discrete,1\n')
+        f.write('Discrete,0\n')
+        f.write(f'a2low,0.0\n')
+        f.write(f'a2high,0.0\n')
         f.write('IndirectR,0\n')
-        f.write(f'alpha,{alpha}\n')
+        f.write(f'alpha,{alpha:.6}\n')
         f.write(f'logES,{loges}\n')
         f.write(f'Given,{given}\n')
 

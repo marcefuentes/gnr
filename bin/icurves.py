@@ -38,9 +38,6 @@ def figdata(given, budget, icurve):
             icy = my.indifference(icx, w[i, j], alpha, rho)
             icurve[i, j].set_ydata(icy)
             icurve[i, j].set_color(cm.viridis(w[i, j]/traitvmax))
-    axs[0, int(num/2)].set_title(f'{given*100:2.0f}%',
-                                 pad=plotsize*5,
-                                 fontsize=plotsize*5)
     return np.concatenate([budget.flatten(), icurve.flatten()])
 
 # Get data
@@ -143,9 +140,12 @@ for g, given in enumerate(givens):
                                            linewidth=4,
                                            alpha=0.8)
 
+    axs[0, int(num/2)].set_title(f'{given*100:2.0f}%',
+                                 pad=plotsize*5,
+                                 fontsize=plotsize*5)
 # Save figure
 
-    figdata(given, budget, icurve,)
+figdata(given, budget, icurve,)
 
 plt.savefig(filename + '.png', transparent=False)
 

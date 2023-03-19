@@ -116,7 +116,9 @@ for i in range(0, num, step):
                          verticalalignment='center',
                          fontsize=ticklabels)
 for j in range(0, num, step):
-    axs[-1, j].set_xlabel(f'{logess[j]:2.0f}', fontsize=ticklabels)
+    axs[-1, j].set_xlabel(f'{logess[j]:2.0f}',
+                          x=0.45,
+                          fontsize=ticklabels)
 axs[0, int(num/2)].set_title(f'0',
                              pad=plotsize*5,
                              fontsize=plotsize*5)

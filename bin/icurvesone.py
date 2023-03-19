@@ -14,6 +14,8 @@ start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
+# Options
+
 givens = np.linspace(0.0, 1.0, num=21)
 #givens = [0.95]
 

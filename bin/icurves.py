@@ -136,7 +136,7 @@ for g, given in enumerate(givens):
                 axs[i, j].plot(icx, ics[i, j, k], c='0.850')
             budget[i, j], = axs[i, j].plot(budgetx,
                                            dummy_budgety,
-                                           c ='black',
+                                           c='black',
                                            alpha=0.8)
             icurve[i, j], = axs[i, j].plot(icx,
                                            dummy_icy,

@@ -198,18 +198,13 @@ for f, folder in enumerate(folders):
         for a in range(0, nr, step):
             axs[f, c, a, 0].set(yticks=[ylim[1]/2], yticklabels=[])
             if c == 0:
-                axs[f, c, a, 0].set_ylabel(f'{alphas[a]:.1f}',
-                                           rotation='horizontal',
-                                           horizontalalignment='right',
-                                           verticalalignment='center',
-                                           y=0.3,
-                                           fontsize=ticklabels)
+                axs[f, c, a, 0].set_yticklabels([alphas[a]],
+                                                fontsize=ticklabels)
         for l in range(0, nc, step):
             axs[f, c, -1, l].set(xticks=[xlim[1]/2], xticklabels=[])
             if folder == folders[-1]:
-                axs[f, c, -1, l].set_xlabel(f'{logess[l]:.0f}',
-                                            x=0.3,
-                                            fontsize=ticklabels)
+                axs[f, c, -1, l].set_xticklabels([f'{logess[l]:.0f}'],
+                                                 fontsize=ticklabels)
 
 # Assign axs objects to variables
 # (Line2D objects to lines)

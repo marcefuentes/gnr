@@ -35,7 +35,7 @@ plotsize = 4
 
 # Add data to figure
 
-def figdata(t, lines):
+def figdata(t, images):
     for i, folder in enumerate(folders):
         df = dfs[i]
         m = df.Time == t
@@ -48,18 +48,24 @@ def figdata(t, lines):
             Z = Z.sort_index(axis=0, ascending=False)
             if 'Grain' in trait:
                 Z = 1.0 - Z
-            lines[i, j].set_array(Z) 
+            images[i, j].set_array(Z) 
     if movie:
         fig.texts[2].set_text(f't\n{t}')
-    return lines.flatten()
+    return images.flatten()
 
 # Get data
+
+def read_file(file):
+    df = pd.read_csv(file)
+    if not movie:
+        df = df.tail(1)
+    return df
 
 dfs = np.empty(len(folders), dtype=object) 
 for i, folder in enumerate(folders):
     filelist = glob(os.path.join(folder, '*.csv'))
-    dfs[i] = pd.concat(map(pd.read_csv, filelist),
-                       ignore_index=True)
+    d = list(map(read_file, filelist))
+    dfs[i] = pd.concat(d, ignore_index=True)
 
 df = dfs[1]
 ts = df.Time.unique()
@@ -94,7 +100,7 @@ plt.rcParams['ps.fonttype'] = 42
 fig, axs = plt.subplots(nrows=len(folders),
                         ncols=len(traits),
                         figsize=(width, height))
-lines = np.empty(axs.shape, dtype=object) 
+images = np.empty(axs.shape, dtype=object) 
 dummy_Z = np.empty((nr, nc), dtype=np.float32)
 
 left_x = axs[0, 0].get_position().x0
@@ -137,21 +143,25 @@ for j, title in enumerate(titles):
     axs[0, j].set_title(title, pad=plotsize*10, fontsize=plotsize*5)
     axs[-1, j].set_xticklabels(xticklabels, fontsize=ticklabels)
 
-# Assign lines to axs
+# Assign AxesImage objects to "images"
 
 for i, folder in enumerate(folders):
     for j, trait in enumerate(traits):
-        lines[i, j] = axs[i, j].imshow(dummy_Z,
-                                       vmin=0,
-                                       vmax=traitvmaxs[j])
+        images[i, j] = axs[i, j].imshow(dummy_Z,
+                                        vmin=0,
+                                        vmax=traitvmaxs[j])
 
 # Add data and save figure
 
 if movie:
-    ani = FuncAnimation(fig, figdata, frames=ts, fargs=(lines,), blit=True)
+    ani = FuncAnimation(fig,
+                        figdata,
+                        frames=ts,
+                        fargs=(images,),
+                        blit=True)
     ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
 else:
-    figdata(ts[-1], lines,)
+    figdata(ts[-1], images,)
     plt.savefig(filename + '.png', transparent=False)
 
 plt.close()

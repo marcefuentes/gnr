@@ -1,10 +1,11 @@
+from matplotlib import cm
 #! /usr/bin/env python
 
 from glob import glob
 import os
 import time
 
-from matplotlib import cm
+from matplotlib.animation import FuncAnimation
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -58,6 +59,7 @@ def figdata(t, lines):
         R = my.fitness(a2social, a2social, given, AA, RR)
         P = my.fitness(a2private, a2private, given, AA, RR)
         S = my.fitness(a2private, a2social, given, AA, RR)
+        y = np.stack((T, R, P, S), axis=-1)
 
         for c, trait in enumerate(traits):
 
@@ -74,8 +76,7 @@ def figdata(t, lines):
 
             for a, alpha in enumerate(alphas):
                 for r, rho in enumerate(rhos):
-                    y = [T[a, r], R[a, r], P[a, r], S[a, r]]
-                    lines[f, c, a, r].set_ydata(y)
+                    lines[f, c, a, r].set_ydata(y[a, r])
                     color = cm.viridis(Z[a, r])
                     lines[f, c, a, r].axes.set_facecolor(color)
 

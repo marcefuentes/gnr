@@ -36,8 +36,9 @@ plotsize = 4
 def figdata(t, images):
     for f, folder in enumerate(folders):
         df = dfs[f]
-        m = df.Time == t
-        df = df.loc[m]
+        if movie:
+            m = df.Time == t
+            df = df.loc[m]
         for r, trait in enumerate(traits):
             Z = pd.pivot_table(df,
                                values=trait,

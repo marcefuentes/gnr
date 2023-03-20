@@ -33,8 +33,9 @@ plotsize = 8
 def figdata(t, lines):
 
     df = dfsocial
-    m = df.Time == t
-    df = df.loc[m]
+    if movie:
+        m = df.Time == t
+        df = df.loc[m]
     a2social = pd.pivot_table(df,
                               values='a2Seenmean',
                               index=['alpha'],

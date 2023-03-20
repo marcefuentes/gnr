@@ -76,7 +76,7 @@ def figdata(t, lines):
                     y = [T[a, r], R[a, r], P[a, r], S[a, r]]
                     lines[f, c, a, r].set_ydata(y)
                     color = cm.viridis(Z[a, r])
-                    lines[f, c, a, r].set_color(color)
+                    lines[f, c, a, r].axes.set_facecolor(color)
 
     return lines.flatten()
 
@@ -228,6 +228,7 @@ for f, folder in enumerate(folders):
                 lines[f, c, a, r], = ax.plot(xaxis,
                                              dummy_y,
                                              linewidth=1,
+                                             color = 'white',
                                              marker='o',
                                              markerfacecolor='white',
                                              markersize=plotsize/3)

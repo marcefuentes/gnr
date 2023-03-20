@@ -124,18 +124,6 @@ xlim=[0, 5]
 ylim=[0.0, 2.0]
 step = int(nr/2)
 xaxis = [1, 2, 3, 4]
-xticks = [0, nc/2-0.5, nc-1]
-yticks = [0, nr/2-0.5, nr-1]
-xmin = logess[0]
-xmax = logess[-1]
-ymin = alphas[-1]
-ymax = alphas[0]
-xticklabels = [f'{xmin:2.0f}',
-               f'{(xmin + xmax)/2.0:2.0f}',
-               f'{xmax:2.0f}']
-yticklabels = [f'{ymax:3.1f}',
-               f'{(ymin + ymax)/2.0:3.1f}',
-               f'{ymin:3.1f}']
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 

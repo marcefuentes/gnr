@@ -46,6 +46,8 @@ def figdata(t, lines):
                                index=['alpha'],
                                columns=['logES'])
             Z = Z.sort_index(axis=0, ascending=False)
+            if 'Grain' in trait:
+                Z = 1.0 - Z
             lines[i, j].set_array(Z) 
     if movie:
         fig.texts[2].set_text(f't\n{t}')
@@ -57,10 +59,7 @@ dfs = np.empty(len(folders), dtype=object)
 for i, folder in enumerate(folders):
     filelist = glob(os.path.join(folder, '*.csv'))
     dfs[i] = pd.concat(map(pd.read_csv, filelist),
-                   ignore_index=True)
-    for trait in traits:
-        if 'Grain' in trait:
-            dfs[i][trait] = 1.0 - dfs[i][trait]
+                       ignore_index=True)
 
 df = dfs[1]
 ts = df.Time.unique()

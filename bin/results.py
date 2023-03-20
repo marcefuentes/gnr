@@ -149,7 +149,7 @@ for f, folder in enumerate(folders):
     for r, trait in enumerate(traits):
         images[f, r] = axs[f, r].imshow(dummy_Z,
                                         vmin=0,
-                                        vmax=traitvmaxs[j])
+                                        vmax=traitvmaxs[r])
 
 # Add data and save figure
 

@@ -114,7 +114,7 @@ fig, axs = plt.subplots(nrows=len(folders),
                         ncols=len(titles),
                         figsize=(width, height))
 images = np.empty(axs.shape, dtype=object) 
-dummy_Zg = np.empty((nr, nc, 4), dtype=np.float32)
+dummy_Zg = np.zeros((nr, nc, 4), dtype=np.float32)
 dummy_Z = np.empty((nr, nc), dtype=np.float32)
 
 left_x = axs[0, 0].get_position().x0

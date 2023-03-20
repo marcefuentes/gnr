@@ -25,22 +25,59 @@ traitvmaxs = [my.a2max,
 folders = ['0', '1']
 subfolders = ['p', 'r']
 
-movie = False
-rows = folders
 plotsize = 4
 
+# Add data to figure
+
+def figdata(images):
+    for i, folder in enumerate(folders):
+        df = dfs[i, 0]
+        given = df.Given.iloc[0]
+        lows = pd.pivot_table(df,
+                              values='a2low',
+                              index=['alpha'],
+                              columns=['logES'])
+        lows = lows.sort_index(axis=0, ascending=False)
+        lows = lows.to_numpy()
+        highs = pd.pivot_table(df,
+                               values='a2high',
+                               index=['alpha'],
+                               columns=['logES'])
+        highs = highs.sort_index(axis=0, ascending=False)
+        highs = highs.to_numpy()
+        T = my.fitness(highs, lows, given, AA, RR)
+        R = my.fitness(highs, highs, given, AA, RR)
+        P = my.fitness(lows, lows, given, AA, RR)
+        S = my.fitness(lows, highs, given, AA, RR)
+
+        Z = my.gamecolors(T, R, P, S)
+        images[i, 0].set_array(Z)
+        for j, trait in enumerate(traits):
+            df = dfs[i, j]
+            Z = pd.pivot_table(df,
+                               values=trait,
+                               index=['alpha'],
+                               columns=['logES'])
+            Z = Z.sort_index(axis=0, ascending=False)
+            if 'Grain' in trait:
+                Z = 1.0 - Z
+            images[i, j+1].set_array(Z) 
+    return images.flatten()
+
 # Get data
+
+def read_file(file):
+    df = pd.read_csv(file)
+    return df.tail(1)
 
 dfs = np.empty((len(folders), len(subfolders)), dtype=object) 
 for i, folder in enumerate(folders):
     for j, subfolder in enumerate(subfolders):
         filelist = glob(os.path.join(folder, subfolder, '*.csv'))
-        dfs[i, j] = pd.concat(map(pd.read_csv, filelist),
-                              ignore_index=True)
+        d = list(map(read_file, filelist))
+        dfs[i, j] = pd.concat(d, ignore_index=True)
 
 df = dfs[0, 0]
-ts = df.Time.unique()
-t = ts[-1]
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 logess = np.sort(pd.unique(df.logES))
 nr = len(alphas)
@@ -71,16 +108,28 @@ yticklabels = [f'{ymax:3.1f}',
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
+# Create figure
+
 fig, axs = plt.subplots(nrows=len(folders),
                         ncols=len(titles),
                         figsize=(width, height))
+images = np.empty(axs.shape, dtype=object) 
+dummy_Zg = np.empty((nr, nc, 4), dtype=np.float32)
+dummy_Z = np.empty((nr, nc), dtype=np.float32)
+
+left_x = axs[0, 0].get_position().x0
+right_x = axs[-1, -1].get_position().x1
+center_x = (left_x + right_x) / 2
+top_y = axs[0, 0].get_position().y1
+bottom_y = axs[-1, -1].get_position().y0
+center_y = (top_y + bottom_y) / 2
 fig.supxlabel(xlabel,
-              x=0.513,
-              y=0.03,
+              x=center_x,
+              y=bottom_y*0.5,
               fontsize=biglabels)
 fig.supylabel(ylabel,
-              x=0.04,
-              y=0.493,
+              x=left_x*0.4,
+              y=center_y,
               fontsize=biglabels)
 
 letterposition = 1.035
@@ -102,45 +151,20 @@ for j, title in enumerate(titles):
                                x=0.47,
                                fontsize=ticklabels)
 
-for f, folder in enumerate(folders):
+# Assign AxesImage objects to "images"
 
-    df = dfs[f, 0]
-    m = df.Time == t
-    df = df.loc[m]
-    given = df.Given.iloc[0]
-    lows = pd.pivot_table(df,
-                          values='a2low',
-                          index=['alpha'],
-                          columns=['logES'])
-    lows = lows.sort_index(axis=0, ascending=False)
-    lows = lows.to_numpy()
-    highs = pd.pivot_table(df,
-                           values='a2high',
-                           index=['alpha'],
-                           columns=['logES'])
-    highs = highs.sort_index(axis=0, ascending=False)
-    highs = highs.to_numpy()
-    T = my.fitness(highs, lows, given, AA, RR)
-    R = my.fitness(highs, highs, given, AA, RR)
-    P = my.fitness(lows, lows, given, AA, RR)
-    S = my.fitness(lows, highs, given, AA, RR)
+for i, folder in enumerate(folders):
 
-    Z = my.gamecolors(T, R, P, S)
-    axs[f, 0].imshow(Z)
+    images[i] = axs[i, 0].imshow(dummy_Zg)
 
     for j, trait in enumerate(traits):
-        df = dfs[f, j]
-        m = df.Time == t
-        df = df.loc[m]
-        Z = pd.pivot_table(df,
-                           values=trait,
-                           index=['alpha'],
-                           columns=['logES'])
-        Z = Z.sort_index(axis=0, ascending=False)
-        if 'Grain' in trait:
-            Z = 1.0 - Z
-        axs[f, j + 1].imshow(Z, vmin=0, vmax=traitvmaxs[j])
+        images[i, j + 1] = axs[i, j + 1].imshow(dummy_Z,
+                                                vmin=0,
+                                                vmax=traitvmaxs[j])
 
+# Add data and save figure
+
+figdata(images,)
 plt.savefig(filename + '.png', transparent=False)
 
 plt.close()

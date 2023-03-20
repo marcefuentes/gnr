@@ -128,7 +128,8 @@ for r in range(0, num, step):
     axs[-1, r].set_xlabel(f'{logess[r]:.0f}',
                           fontsize=ticklabels)
 
-# Assign Line2D objects to lines
+# Assign axs objects to variables
+# (Line2D objects to lines)
 
 dummy_budgety = np.zeros_like(budgetx)
 dummy_icy = np.zeros_like(icx)
@@ -138,13 +139,13 @@ for a, alpha in enumerate(alphas):
         for c in range(n_ic): 
             axs[a, r].plot(icx, ics[a, r, c], c='0.850')
         budgets[a, r], = axs[a, r].plot(budgetx,
-                                       dummy_budgety,
-                                       c='black',
-                                       alpha=0.8)
+                                        dummy_budgety,
+                                        c='black',
+                                        alpha=0.8)
         icurves[a, r], = axs[a, r].plot(icx,
-                                       dummy_icy,
-                                       linewidth=4,
-                                       alpha=0.8)
+                                        dummy_icy,
+                                        linewidth=4,
+                                        alpha=0.8)
 
 # Add data and save figure
 

@@ -142,7 +142,8 @@ for g, given in enumerate(givens):
         axs[g, -1, r].set_xlabel(f'{logess[r]:.0f}',
                                  fontsize=ticklabels)
 
-# Assign Line2D objects to lines
+# Assign axs objects to variables
+# (Line2D objects to lines)
 
 dummy_budgety = np.zeros_like(budgetx)
 dummy_icy = np.zeros_like(icx)
@@ -153,13 +154,13 @@ for g, given in enumerate(givens):
             for c in range(n_ic): 
                 axs[g, a, r].plot(icx, ics[a, r, c], c='0.850')
             budgets[g, a, r], = axs[g, a, r].plot(budgetx,
-                                                 dummy_budgety,
-                                                 c='black',
-                                                 alpha=0.8)
+                                                  dummy_budgety,
+                                                  c='black',
+                                                  alpha=0.8)
             icurves[g, a, r], = axs[g, a, r].plot(icx,
-                                                 dummy_icy,
-                                                 linewidth=4,
-                                                 alpha=0.8)
+                                                  dummy_icy,
+                                                  linewidth=4,
+                                                  alpha=0.8)
 
 # Add data and save figure
 

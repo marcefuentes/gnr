@@ -26,8 +26,6 @@ titles = ['Effort to get $\it{B}$',
           'Sensitivity for\nmimicking partner',
           'Fitness']
 traitvmaxs = [my.a2max, my.a2max, my.a2max, 2.0]
-#folders = ['given100', 'given95', 'given50']
-
 folders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
 
 movie = False
@@ -36,11 +34,11 @@ plotsize = 4
 # Add data to figure
 
 def figdata(t, images):
-    for i, folder in enumerate(folders):
-        df = dfs[i]
+    for f, folder in enumerate(folders):
+        df = dfs[f]
         m = df.Time == t
         df = df.loc[m]
-        for j, trait in enumerate(traits):
+        for r, trait in enumerate(traits):
             Z = pd.pivot_table(df,
                                values=trait,
                                index=['alpha'],
@@ -48,7 +46,7 @@ def figdata(t, images):
             Z = Z.sort_index(axis=0, ascending=False)
             if 'Grain' in trait:
                 Z = 1.0 - Z
-            images[i, j].set_array(Z) 
+            images[f, r].set_array(Z) 
     if movie:
         fig.texts[2].set_text(f't\n{t}')
     return images.flatten()
@@ -100,8 +98,6 @@ plt.rcParams['ps.fonttype'] = 42
 fig, axs = plt.subplots(nrows=len(folders),
                         ncols=len(traits),
                         figsize=(width, height))
-images = np.empty(axs.shape, dtype=object) 
-dummy_Z = np.empty((nr, nc), dtype=np.float32)
 
 left_x = axs[0, 0].get_position().x0
 right_x = axs[-1, -1].get_position().x1
@@ -143,11 +139,15 @@ if movie:
              color='grey',
              ha='right')
 
-# Assign AxesImage objects to "images"
+# Assign axs objects to variables
+# (AxesImage objects to images)
 
-for i, folder in enumerate(folders):
-    for j, trait in enumerate(traits):
-        images[i, j] = axs[i, j].imshow(dummy_Z,
+images = np.empty(axs.shape, dtype=object) 
+dummy_Z = np.empty((nr, nc), dtype=np.float32)
+
+for f, folder in enumerate(folders):
+    for r, trait in enumerate(traits):
+        images[f, r] = axs[f, r].imshow(dummy_Z,
                                         vmin=0,
                                         vmax=traitvmaxs[j])
 

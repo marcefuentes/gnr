@@ -68,7 +68,6 @@ for i, folder in enumerate(folders):
 
 df = dfs[1]
 ts = df.Time.unique()
-t = ts[-1]
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 logess = np.sort(pd.unique(df.logES))
 nr = len(alphas)
@@ -97,7 +96,6 @@ axs = np.empty((len(folders),
                 len(alphas),
                 len(logess)),
                dtype=object)
-lines = np.empty(axs.shape, dtype=object)
 
 for f, folder in enumerate(folders):
     for r, trait in enumerate(traits):
@@ -121,14 +119,6 @@ fig.supylabel(ylabel,
               x=left_x*0.4,
               y=center_y,
               fontsize=biglabels)
-
-if movie:
-    fig.text(right_x,
-             bottom_y*0.5,
-             f't\n0',
-             fontsize=biglabels,
-             color='grey',
-             ha='right')
 
 for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])
@@ -163,8 +153,18 @@ for f, folder in enumerate(folders):
                                             x=0.3,
                                             fontsize=ticklabels)
 
-# Assign lines to axs
+if movie:
+    fig.text(right_x,
+             bottom_y*0.5,
+             f't\n0',
+             fontsize=biglabels,
+             color='grey',
+             ha='right')
 
+# Assign axs objects to variables
+# (Line2D objects to lines)
+
+lines = np.empty(axs.shape, dtype=object)
 dummy_y = np.zeros_like(x)
 
 for f, folder in enumerate(folders):
@@ -176,7 +176,11 @@ for f, folder in enumerate(folders):
 # Add data and save figure
 
 if movie:
-    ani = FuncAnimation(fig, figdata, frames=ts, fargs=(lines,), blit=True)
+    ani = FuncAnimation(fig,
+                        figdata,
+                        frames=ts,
+                        fargs=(lines,),
+                        blit=True)
     ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
 else:
     figdata(ts[-1], lines,)

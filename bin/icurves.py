@@ -26,7 +26,7 @@ plotsize = 6
 
 # Add data to figure
 
-def figdata(budget, icurve):
+def figdata(budgets, icurves):
 
     for g, given in enumerate(givens):
         a2private = my.a2eq(given, AA, RR)
@@ -37,13 +37,13 @@ def figdata(budget, icurve):
         for a, alpha in enumerate(alphas):
             for r, rho in enumerate(rhos):
                 budgety = budget_own + q2_partner[a, r]*given
-                budget[g, a, r].set_ydata(budgety)
+                budgets[g, a, r].set_ydata(budgety)
                 icy = my.indifference(icx, w[a, r], alpha, rho)
-                icurve[g, a, r].set_ydata(icy)
+                icurves[g, a, r].set_ydata(icy)
                 color = cm.viridis(w[a, r]/traitvmax)
-                icurve[g, a, r].set_color(color)
+                icurves[g, a, r].set_color(color)
 
-    return np.concatenate([budget.flatten(), icurve.flatten()])
+    return np.concatenate([budgets.flatten(), icurves.flatten()])
 
 # Get data
 
@@ -91,8 +91,8 @@ axs = np.empty((len(givens),
                 len(alphas),
                 len(rhos)),
                dtype=object)
-budget = np.empty(axs.shape, dtype=object)
-icurve = np.empty(axs.shape, dtype=object)
+budgets = np.empty(axs.shape, dtype=object)
+icurves = np.empty(axs.shape, dtype=object)
 
 for g, given in enumerate(givens):
     grid = outergrid[g].subgridspec(nrows=num,
@@ -119,6 +119,8 @@ fig.supylabel(ylabel,
 for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])
     ax.set(xlim=xlim, ylim=ylim)
+    for axis in ['top','bottom','left','right']:
+        ax.spines[axis].set_linewidth(0.2)
 
 for g, given in enumerate(givens):
     letter = ord('a') + g
@@ -138,7 +140,6 @@ for g, given in enumerate(givens):
                                     fontsize=ticklabels)
     for r in range(0, num, step):
         axs[g, -1, r].set_xlabel(f'{logess[r]:.0f}',
-                                 x=0.45,
                                  fontsize=ticklabels)
 
 # Assign Line2D objects to lines
@@ -151,18 +152,18 @@ for g, given in enumerate(givens):
         for r, rho in enumerate(rhos):
             for c in range(n_ic): 
                 axs[g, a, r].plot(icx, ics[a, r, c], c='0.850')
-            budget[g, a, r], = axs[g, a, r].plot(budgetx,
+            budgets[g, a, r], = axs[g, a, r].plot(budgetx,
                                                  dummy_budgety,
                                                  c='black',
                                                  alpha=0.8)
-            icurve[g, a, r], = axs[g, a, r].plot(icx,
+            icurves[g, a, r], = axs[g, a, r].plot(icx,
                                                  dummy_icy,
                                                  linewidth=4,
                                                  alpha=0.8)
 
 # Add data and save figure
 
-figdata(budget, icurve,)
+figdata(budgets, icurves,)
 
 plt.savefig(filename + '.png', transparent=False)
 

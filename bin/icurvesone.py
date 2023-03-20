@@ -19,6 +19,7 @@ filename = thisscript.split('.')[0]
 givens = np.linspace(0.0, 1.0, num=21)
 #givens = [0.95]
 
+traitvmax = 2.0
 num = 3     # Number of subplot rows & columns
 numa2 = 256 # Number of points along each curve
 n_ic = 5    # Number of indifference curves
@@ -27,7 +28,7 @@ plotsize = 6
 
 # Add data to figure
 
-def figdata(given, budget, icurve):
+def figdata(given, budgets, icurves):
     a2private = my.a2eq(given, AA, RR)
     w = my.fitness(a2private, a2private, given, AA, RR)
     q2_partner = a2private*my.R2
@@ -37,13 +38,13 @@ def figdata(given, budget, icurve):
     for a, alpha in enumerate(alphas):
         for r, rho in enumerate(rhos):
             budgety = budget_own + q2_partner[a, r]*given
-            budget[a, r].set_ydata(budgety)
+            budgets[a, r].set_ydata(budgety)
             icy = my.indifference(icx, w[a, r], alpha, rho)
-            icurve[a, r].set_ydata(icy)
+            icurves[a, r].set_ydata(icy)
             color = cm.viridis(w[a, r]/traitvmax)
-            icurve[a, r].set_color(color)
+            icurves[a, r].set_color(color)
 
-    return np.concatenate([budget.flatten(), icurve.flatten()])
+    return np.concatenate([budgets.flatten(), icurves.flatten()])
 
 # Get data
 
@@ -75,12 +76,6 @@ ticklabels = plotsize*3.5
 xlim=[0.0, my.a1max*my.R1]
 ylim=[0.0, my.a2max*my.R2]
 step = int(num/2)
-traitvmax = my.fitness(np.array([my.a2max]),
-                       np.array([my.a2max]),
-                       np.array([0.0]),
-                       np.array([0.9]),
-                       np.array([5.0]))
-
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -97,8 +92,8 @@ grid = fig.add_gridspec(nrows=num,
                         hspace=0)
 
 axs = grid.subplots()
-budget = np.empty(axs.shape, dtype=object)
-icurve = np.empty(axs.shape, dtype=object)
+budgets = np.empty(axs.shape, dtype=object)
+icurves = np.empty(axs.shape, dtype=object)
 
 left_x = axs[0, 0].get_position().x0
 right_x = axs[-1, -1].get_position().x1
@@ -111,29 +106,29 @@ fig.supxlabel(xlabel,
               y=bottom_y*0.2,
               fontsize=biglabels)
 fig.supylabel(ylabel,
-              x=left_x*0.5,
+              x=left_x*0.2,
               y=center_y,
               fontsize=biglabels)
 
 for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])
     ax.set(xlim=xlim, ylim=ylim)
-
+    for axis in ['top','bottom','left','right']:
+        ax.spines[axis].set_linewidth(0.2)
 axs[0, int(num/2)].set_title(f'0',
                              pad=plotsize*5,
                              fontsize=plotsize*5)
 for a in range(0, num, step):
-    axs[a, 0].set_ylabel(f'{alphas[i]:.1f}',
+    axs[a, 0].set_ylabel(f'{alphas[a]:.1f}',
                          rotation='horizontal',
                          horizontalalignment='right',
                          verticalalignment='center',
                          fontsize=ticklabels)
 for r in range(0, num, step):
     axs[-1, r].set_xlabel(f'{logess[r]:.0f}',
-                          x=0.45,
                           fontsize=ticklabels)
 
-# Assign lines to axs
+# Assign Line2D objects to lines
 
 dummy_budgety = np.zeros_like(budgetx)
 dummy_icy = np.zeros_like(icx)
@@ -142,11 +137,11 @@ for a, alpha in enumerate(alphas):
     for r, rho in enumerate(rhos):
         for c in range(n_ic): 
             axs[a, r].plot(icx, ics[a, r, c], c='0.850')
-        budget[a, r], = axs[a, r].plot(budgetx,
+        budgets[a, r], = axs[a, r].plot(budgetx,
                                        dummy_budgety,
                                        c='black',
                                        alpha=0.8)
-        icurve[a, r], = axs[a, r].plot(icx,
+        icurves[a, r], = axs[a, r].plot(icx,
                                        dummy_icy,
                                        linewidth=4,
                                        alpha=0.8)
@@ -154,10 +149,10 @@ for a, alpha in enumerate(alphas):
 # Add data and save figure
 
 if len(givens) > 1:
-    ani = FuncAnimation(fig, figdata, frames=givens, fargs=(budget, icurve,), blit=True)
+    ani = FuncAnimation(fig, figdata, frames=givens, fargs=(budgets, icurves,), blit=True)
     ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
 else:
-    figdata(givens[0], budget, icurve,)
+    figdata(givens[0], budgets, icurves,)
     plt.savefig(filename + '.png', transparent=False)
 
 plt.close()

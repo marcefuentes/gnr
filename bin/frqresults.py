@@ -54,11 +54,17 @@ def figdata(t, lines):
 
 # Get data
 
+def read_file(file):
+    df = pd.read_csv(file)
+    if not movie:
+        df = df.tail(1)
+    return df
+
 dfs = np.empty(len(folders), dtype=object) 
 for i, folder in enumerate(folders):
     filelist = glob(os.path.join(folder, '*.frq'))
-    dfs[i] = pd.concat(map(pd.read_csv, filelist),
-                   ignore_index=True)
+    d = list(map(read_file, filelist))
+    dfs[i] = pd.concat(d, ignore_index=True)
 
 df = dfs[1]
 ts = df.Time.unique()

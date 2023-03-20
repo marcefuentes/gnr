@@ -124,7 +124,8 @@ for g, given in enumerate(givens):
                                      x=0.3,
                                      fontsize=ticklabels)
 
-# Assign Line2D objects to lines
+# Assign axs objects to variables
+# (Line2D objects to lines)
 
 lines = np.empty(axs.shape, dtype=object)
 dummy_y = np.zeros_like(xaxis)
@@ -132,12 +133,13 @@ dummy_y = np.zeros_like(xaxis)
 for g, given in enumerate(givens):
     for a, alpha in enumerate(alphas):
         for r, rho in enumerate(rhos):
-            lines[g, a, r], = axs[g, a, r].plot(xaxis,
-                                                dummy_y,
-                                                linewidth=3,
-                                                marker='o',
-                                                markerfacecolor='white',
-                                                markersize=plotsize/3)
+            ax = axs[g, a, r]
+            lines[g, a, r], = ax.plot(xaxis,
+                                      dummy_y,
+                                      linewidth=3,
+                                      marker='o',
+                                      markerfacecolor='white',
+                                      markersize=plotsize/3)
 
 # Add data and save figure
 

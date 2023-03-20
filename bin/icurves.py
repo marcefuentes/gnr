@@ -91,8 +91,6 @@ axs = np.empty((len(givens),
                 len(alphas),
                 len(rhos)),
                dtype=object)
-budgets = np.empty(axs.shape, dtype=object)
-icurves = np.empty(axs.shape, dtype=object)
 
 for g, given in enumerate(givens):
     grid = outergrid[g].subgridspec(nrows=num,
@@ -145,6 +143,8 @@ for g, given in enumerate(givens):
 # Assign axs objects to variables
 # (Line2D objects to lines)
 
+budgets = np.empty(axs.shape, dtype=object)
+icurves = np.empty(axs.shape, dtype=object)
 dummy_budgety = np.zeros_like(budgetx)
 dummy_icy = np.zeros_like(icx)
 

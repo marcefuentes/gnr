@@ -23,7 +23,7 @@ plotsize = 8
 
 def figdata(lines):
 
-    for g, given in enumerate(givens)
+    for g, given in enumerate(givens):
 
         low = my.a2eq(given, AA, RR)
 
@@ -38,7 +38,7 @@ def figdata(lines):
         for a, alpha in enumerate(alphas):
             for r, rho in enumerate(rhos):
                 y = [T[a, r], R[a, r], P[a, r], S[a, r]]
-                lines[g, a, r].set.y_data(y)
+                lines[g, a, r].set_ydata(y)
                 lines[g, a, r].set_color(Z[a, r])
 
     return lines.flatten()
@@ -54,7 +54,7 @@ high = my.a2eq(0.0, AA, RR)
 # Figure properties
 
 width = plotsize
-height = plotsize*len(rows)
+height = plotsize*len(givens)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 biglabels = plotsize*5 + height/4
@@ -69,10 +69,14 @@ plt.rcParams['ps.fonttype'] = 42
 # Create figure
 
 fig = plt.figure(figsize=(width*1.13, height))
-outergrid = fig.add_gridspec(nrows=len(rows),
+outergrid = fig.add_gridspec(nrows=len(givens),
                              ncols=1,
                              left=0.25,
                              right=0.85)
+axs = np.empty((len(givens),
+                len(alphas),
+                len(rhos)),
+               dtype=object)
 
 for g, given in enumerate(givens):
     grid = outergrid[g].subgridspec(nrows=num,
@@ -122,6 +126,7 @@ for g, given in enumerate(givens):
 
 # Assign Line2D objects to lines
 
+lines = np.empty(axs.shape, dtype=object)
 dummy_y = np.zeros_like(xaxis)
 
 for g, given in enumerate(givens):

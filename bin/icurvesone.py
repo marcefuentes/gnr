@@ -92,8 +92,6 @@ grid = fig.add_gridspec(nrows=num,
                         hspace=0)
 
 axs = grid.subplots()
-budgets = np.empty(axs.shape, dtype=object)
-icurves = np.empty(axs.shape, dtype=object)
 
 left_x = axs[0, 0].get_position().x0
 right_x = axs[-1, -1].get_position().x1
@@ -131,6 +129,8 @@ for r in range(0, num, step):
 # Assign axs objects to variables
 # (Line2D objects to lines)
 
+budgets = np.empty(axs.shape, dtype=object)
+icurves = np.empty(axs.shape, dtype=object)
 dummy_budgety = np.zeros_like(budgetx)
 dummy_icy = np.zeros_like(icx)
 

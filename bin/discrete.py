@@ -148,7 +148,6 @@ for i, folder in enumerate(folders):
 for j, title in enumerate(titles):
     axs[0, j].set_title(title, pad=plotsize*9, fontsize=plotsize*5)
     axs[-1, j].set_xticklabels(xticklabels,
-                               x=0.47,
                                fontsize=ticklabels)
 
 # Assign AxesImage objects to "images"

@@ -42,23 +42,24 @@ def figdata(t, lines):
     a2social = a2social.to_numpy()
 
     for f, folder in enumerate(folders):
+
+        df = dfs[f, 0]
+        m = df.Time == t
+        df = df.loc[m]
+        given = df.Given.iloc[0]
+        a2private = pd.pivot_table(df,
+                                   values='a2Seenmean',
+                                   index=['alpha'],
+                                   columns=['logES'])
+        a2private = a2private.sort_index(axis=0, ascending=False)
+        a2private = a2private.to_numpy()
+
+        T = my.fitness(a2social, a2private, given, AA, RR)
+        R = my.fitness(a2social, a2social, given, AA, RR)
+        P = my.fitness(a2private, a2private, given, AA, RR)
+        S = my.fitness(a2private, a2social, given, AA, RR)
+
         for c, trait in enumerate(traits):
-
-            df = dfs[f, 0]
-            m = df.Time == t
-            df = df.loc[m]
-            given = df.Given.iloc[0]
-            a2private = pd.pivot_table(df,
-                                       values='a2Seenmean',
-                                       index=['alpha'],
-                                       columns=['logES'])
-            a2private = a2private.sort_index(axis=0, ascending=False)
-            a2private = a2private.to_numpy()
-
-            T = my.fitness(a2social, a2private, given, AA, RR)
-            R = my.fitness(a2social, a2social, given, AA, RR)
-            P = my.fitness(a2private, a2private, given, AA, RR)
-            S = my.fitness(a2private, a2social, given, AA, RR)
 
             df = dfs[f, c+1]
             m = df.Time == t

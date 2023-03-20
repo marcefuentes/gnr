@@ -45,8 +45,9 @@ def figdata(t, lines):
     for f, folder in enumerate(folders):
 
         df = dfs[f, 0]
-        m = df.Time == t
-        df = df.loc[m]
+        if movie:
+            m = df.Time == t
+            df = df.loc[m]
         given = df.Given.iloc[0]
         a2private = pd.pivot_table(df,
                                    values='a2Seenmean',

@@ -118,14 +118,6 @@ fig.supylabel(ylabel,
               y=center_y,
               fontsize=biglabels)
 
-if movie:
-    fig.text(right_x,
-             bottom_y*0.5,
-             f't\n0',
-             fontsize=biglabels,
-             color='grey',
-             ha='right')
-
 letterposition = 1.035
 for i, ax in enumerate(fig.get_axes()):
     ax.set(xticks=xticks, yticks=yticks)
@@ -142,6 +134,14 @@ for i, folder in enumerate(folders):
 for j, title in enumerate(titles):
     axs[0, j].set_title(title, pad=plotsize*10, fontsize=plotsize*5)
     axs[-1, j].set_xticklabels(xticklabels, fontsize=ticklabels)
+
+if movie:
+    fig.text(right_x,
+             bottom_y*0.5,
+             f't\n0',
+             fontsize=biglabels,
+             color='grey',
+             ha='right')
 
 # Assign AxesImage objects to "images"
 

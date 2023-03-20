@@ -3,6 +3,7 @@
 from glob import glob
 import os
 import time
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -147,8 +148,7 @@ for i, folder in enumerate(folders):
     axs[i, 0].set_yticklabels(yticklabels, fontsize=ticklabels)
 for j, title in enumerate(titles):
     axs[0, j].set_title(title, pad=plotsize*9, fontsize=plotsize*5)
-    axs[-1, j].set_xticklabels(xticklabels,
-                               fontsize=ticklabels)
+    axs[-1, j].set_xticklabels(xticklabels, fontsize=ticklabels)
 
 # Assign AxesImage objects to "images"
 

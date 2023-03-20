@@ -141,7 +141,7 @@ for g, given in enumerate(givens):
                                  x=0.45,
                                  fontsize=ticklabels)
 
-# Assign lines to axs
+# Assign Line2D objects to lines
 
 dummy_budgety = np.zeros_like(budgetx)
 dummy_icy = np.zeros_like(icx)

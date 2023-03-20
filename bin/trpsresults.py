@@ -76,11 +76,10 @@ def figdata(t, lines):
             Z = Z.to_numpy()
             Z = 1.0 - Z
 
-            for a, alpha in enumerate(alphas):
-                for r, rho in enumerate(rhos):
-                    lines[f, c, a, r].set_ydata(y[a, r])
-                    color = cm.viridis(Z[a, r])
-                    lines[f, c, a, r].axes.set_facecolor(color)
+            for (a, r, i), _ in np.ndenumerate(y):
+                lines[f, c, a, r].set_ydata(y[a, r])
+                color = cm.viridis(Z[a, r])
+                lines[f, c, a, r].axes.set_facecolor(color)
 
     return lines.flatten()
 
@@ -192,12 +191,6 @@ for f, folder in enumerate(folders):
                                   weight='bold',
                                   loc='left')
         letter += 1
-        for a, alpha in enumerate(alphas):
-            for l, loges in enumerate(logess):
-                axs[f, c, a, l].set(xticks=[], yticks=[])
-                axs[f, c, a, l].set(xlim=xlim, ylim=ylim)
-                for axis in ['top','bottom','left','right']:
-                    axs[f, c, a, l].spines[axis].set_linewidth(0.1)
         if f == 0:
             axs[f, c, 0, 10].set_title(titles[c],
                                        pad=plotsize*9,

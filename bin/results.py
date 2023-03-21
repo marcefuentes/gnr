@@ -42,8 +42,8 @@ def figdata(t, images):
         for c, trait in enumerate(traits):
             Z = pd.pivot_table(df,
                                values=trait,
-                               index=['alpha'],
-                               columns=['logES'])
+                               index='alpha',
+                               columns='logES')
             Z = Z.sort_index(axis=0, ascending=False)
             if 'Grain' in trait:
                 Z = 1.0 - Z

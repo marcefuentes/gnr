@@ -29,8 +29,9 @@ plotsize = 4
 # Add data to figure
 
 def figdata(images):
-    for i, folder in enumerate(folders):
-        df = dfs[i, 0]
+
+    for f, folder in enumerate(folders):
+        df = dfs[f, 0]
         given = df.Given.iloc[0]
         lows = pd.pivot_table(df,
                               values='a2low',
@@ -50,9 +51,9 @@ def figdata(images):
         S = my.fitness(lows, highs, given, AA, RR)
 
         Z = my.gamecolors(T, R, P, S)
-        images[i, 0].set_array(Z)
-        for j, trait in enumerate(traits):
-            df = dfs[i, j]
+        images[f, 0].set_array(Z)
+        for c, trait in enumerate(traits):
+            df = dfs[f, c]
             Z = pd.pivot_table(df,
                                values=trait,
                                index=['alpha'],
@@ -60,7 +61,7 @@ def figdata(images):
             Z = Z.sort_index(axis=0, ascending=False)
             if 'Grain' in trait:
                 Z = 1.0 - Z
-            images[i, j+1].set_array(Z) 
+            images[f, c+1].set_array(Z) 
     return images.flatten()
 
 # Get data
@@ -142,13 +143,15 @@ for i, ax in enumerate(fig.get_axes()):
             transform=ax.transAxes,
             fontsize=plotsize*5,
             weight='bold')
-for i, folder in enumerate(folders):
-    axs[i, 0].set_yticklabels(yticklabels, fontsize=ticklabels)
-for j, title in enumerate(titles):
-    axs[0, j].set_title(title, pad=plotsize*9, fontsize=plotsize*5)
-    axs[-1, j].set_xticklabels(xticklabels, fontsize=ticklabels)
+for f, folder in enumerate(folders):
+    axs[f, 0].set_yticklabels(yticklabels, fontsize=ticklabels)
+for c, title in enumerate(titles):
+    axs[0, c].set_title(title, pad=plotsize*9, fontsize=plotsize*5)
+    axs[-1, c].set_xticklabels(xticklabels, fontsize=ticklabels)
 
-# Assign AxesImage objects to "images"
+# Assign axs objects to variables
+# (Line2D objects to lines)
+# (AxesImage objects to "images")
 
 for i, folder in enumerate(folders):
 

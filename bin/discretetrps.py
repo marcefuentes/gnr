@@ -23,7 +23,9 @@ traits = ['ChooseGrainmean',
 titles = ['Games',
           'Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
-folders = ['0', '1']
+folders = ['/home/marcelino/code/gnr/results/discretefromcont/given95/',
+           '/home/marcelino/code/gnr/results/discreterandom/given95/0',
+           '/home/marcelino/code/gnr/results/discreterandom/given95/1']
 subfolders = ['p', 'r']
 
 movie = False

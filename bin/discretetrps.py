@@ -94,9 +94,9 @@ def update(t, lines):
 
 # Get data
 
-def read_file(file):
+def read_file(file, alltimes):
     df = pd.read_csv(file)
-    if not movie:
+    if not alltimes:
         df = df.tail(1)
     return df
 
@@ -104,7 +104,7 @@ dfs = np.empty((len(folders), len(subfolders)), dtype=object)
 for i, folder in enumerate(folders):
     for j, subfolder in enumerate(subfolders):
         filelist = glob(os.path.join(folder, subfolder, '*.csv'))
-        d = list(map(read_file, filelist))
+        d = [read_file(file, movie) for file in filelist]
         dfs[i, j] = pd.concat(d, ignore_index=True)
 
 df = dfs[0, 0]
@@ -177,7 +177,7 @@ for f, folder in enumerate(folders):
     for c, title in enumerate(titles):
         axs[f, c, 0, 0].set_title(chr(letter),
                                   fontsize=plotsize*5,
-                                  pad = 10,
+                                  pad = 11,
                                   weight='bold',
                                   loc='left')
         letter += 1

@@ -1,4 +1,3 @@
-from matplotlib import cm
 #! /usr/bin/env python
 
 from glob import glob
@@ -21,7 +20,8 @@ filename = thisscript.split('.')[0]
 
 traits = ['ChooseGrainmean',
           'MimicGrainmean']
-titles = ['Sensitivity for\nchoosing partner',
+titles = ['Games',
+          'Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
 folders = ['given100', 'given95', 'given50']
 subfolders = ['none', 'p', 'r']
@@ -31,12 +31,9 @@ plotsize = 8
 
 # Add data to figure
 
-def figdata(t, lines):
+def init(lines):
 
     df = dfsocial
-    if movie:
-        m = df.Time == t
-        df = df.loc[m]
     highs = pd.pivot_table(df,
                               values='a2Seenmean',
                               index='alpha',
@@ -66,6 +63,21 @@ def figdata(t, lines):
         m = lows > highs
         linecolor[m] = red[m]
 
+        Zg = my.gamecolors(T, R, P, S)
+        for c, title in enumerate(titles):
+            for (a, r, i), _ in np.ndenumerate(y):
+                lines[f, c, a, r].set_ydata(y[a, r])
+                if c == 0:
+                    lines[f, c, a, r].axes.set_facecolor(Zg[a, r])
+                lcolor = linecolor[a, r] 
+                lines[f, c, a, r].set_color(lcolor)
+                lines[f, c, a, r].set_markerfacecolor(lcolor)
+
+    return lines.flatten()
+
+def update(t, lines):
+        
+    for f, folder in enumerate(folders):
         for c, trait in enumerate(traits):
             df = dfs[f, c + 1]
             if movie:
@@ -79,21 +91,17 @@ def figdata(t, lines):
             Z = Z.to_numpy()
             Z = 1.0 - Z
 
-            for (a, r, i), _ in np.ndenumerate(y):
-                lines[f, c, a, r].set_ydata(y[a, r])
+            for (a, r), _ in np.ndenumerate(Z):
                 bgcolor = cm.viridis(Z[a, r]/my.a2max)
-                lines[f, c, a, r].axes.set_facecolor(bgcolor)
-                lcolor = linecolor[a, r] 
-                lines[f, c, a, r].set_color(lcolor)
-                lines[f, c, a, r].set_markerfacecolor(lcolor)
+                lines[f, c + 1, a, r].axes.set_facecolor(bgcolor)
 
     return lines.flatten()
 
 # Get data
 
-def read_file(file):
+def read_file(file, alltimes):
     df = pd.read_csv(file)
-    if not movie:
+    if not alltimes:
         df = df.tail(1)
     return df
 
@@ -101,11 +109,11 @@ dfs = np.empty((len(folders), len(subfolders)), dtype=object)
 for i, folder in enumerate(folders):
     for j, subfolder in enumerate(subfolders):
         filelist = glob(os.path.join(folder, subfolder, '*.csv'))
-        d = list(map(read_file, filelist))
+        d = [read_file(file, movie) for file in filelist]
         dfs[i, j] = pd.concat(d, ignore_index=True)
 
 filelist = glob(os.path.join('given00', 'none', '*.csv'))
-d = list(map(read_file, filelist))
+d = [read_file(file, False) for file in filelist]
 dfsocial = pd.concat(d, ignore_index=True) 
 
 df = dfs[0, 0]
@@ -119,7 +127,7 @@ RR, AA = np.meshgrid(rhos, alphas)
 
 # Figure properties
 
-width = plotsize*len(traits)
+width = plotsize*len(titles)
 height = plotsize*len(folders)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
@@ -134,19 +142,17 @@ plt.rcParams['ps.fonttype'] = 42
 
 # Create figure
 
-fig = plt.figure(figsize=(width*1.25, height))
+fig = plt.figure(figsize=(width, height))
 outergrid = fig.add_gridspec(nrows=len(folders),
-                             ncols=len(traits),
-                             left=0.22,
-                             right=0.80)
+                             ncols=len(titles))
 axs = np.empty((len(folders),
-                len(traits),
+                len(titles),
                 nr,
                 nc),
                 dtype=object)
 
 for f, folder in enumerate(folders):
-    for c, trait in enumerate(traits):
+    for c, title in enumerate(titles):
         grid = outergrid[f, c].subgridspec(nrows=nr,
                                            ncols=nc,
                                            wspace=0,
@@ -177,15 +183,15 @@ for ax in fig.get_axes():
 letter = ord('a')
 letterposition = 4.8
 for f, folder in enumerate(folders):
-    for c, trait in enumerate(traits):
+    for c, title in enumerate(titles):
         axs[f, c, 0, 0].set_title(chr(letter),
                                   fontsize=plotsize*5,
-                                  pad = 10,
+                                  pad = 11,
                                   weight='bold',
                                   loc='left')
         letter += 1
         if f == 0:
-            axs[f, c, 0, 10].set_title(titles[c],
+            axs[f, c, 0, 10].set_title(title,
                                        pad=plotsize*9,
                                        fontsize=plotsize*5)
         for a in range(0, nr, step):
@@ -206,7 +212,7 @@ lines = np.empty(axs.shape, dtype=object)
 dummy_y = np.zeros_like(xaxis)
 
 for f, folder in enumerate(folders):
-    for c, trait in enumerate(traits):
+    for c, title in enumerate(titles):
         for a, alpha in enumerate(alphas):
             for r, rho in enumerate(rhos):
                 ax = axs[f, c, a, r] 
@@ -218,15 +224,17 @@ for f, folder in enumerate(folders):
 
 # Add data and save figure
 
+init(lines,)
+
 if movie:
     ani = FuncAnimation(fig,
-                        figdata,
+                        update,
                         frames=ts,
                         fargs=(lines,),
                         blit=True)
     ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
 else:
-    figdata(ts[-1], lines,)
+    update(ts[-1], lines,)
     plt.savefig(filename + '.png', transparent=False)
 
 plt.close()

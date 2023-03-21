@@ -28,7 +28,7 @@ plotsize = 6
 
 # Add data to figure
 
-def figdata(given, budgets, icurves):
+def update(given, budgets, icurves):
     a2private = my.a2eq(given, AA, RR)
     w = my.fitness(a2private, a2private, given, AA, RR)
     q2_partner = a2private*my.R2
@@ -150,10 +150,10 @@ for a, alpha in enumerate(alphas):
 # Add data and save figure
 
 if len(givens) > 1:
-    ani = FuncAnimation(fig, figdata, frames=givens, fargs=(budgets, icurves,), blit=True)
+    ani = FuncAnimation(fig, update, frames=givens, fargs=(budgets, icurves,), blit=True)
     ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
 else:
-    figdata(givens[0], budgets, icurves,)
+    update(givens[0], budgets, icurves,)
     plt.savefig(filename + '.png', transparent=False)
 
 plt.close()

@@ -26,7 +26,7 @@ plotsize = 6
 
 # Add data to figure
 
-def figdata(budgets, icurves):
+def init(budgets, icurves):
 
     for g, given in enumerate(givens):
         a2private = my.a2eq(given, AA, RR)
@@ -164,7 +164,7 @@ for g, given in enumerate(givens):
 
 # Add data and save figure
 
-figdata(budgets, icurves,)
+init(budgets, icurves,)
 
 plt.savefig(filename + '.png', transparent=False)
 

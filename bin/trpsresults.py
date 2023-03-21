@@ -62,6 +62,10 @@ def figdata(t, lines):
         P = my.fitness(a2private, a2private, given, AA, RR)
         S = my.fitness(a2private, a2social, given, AA, RR)
         y = np.stack((T, R, P, S), axis=-1)
+        linecolor = np.full(a2social.shape, 'white')
+        red = np.full(a2social.shape, 'red')
+        m = a2private > a2social
+        linecolor[m] = red[m]
 
         for c, trait in enumerate(traits):
 
@@ -78,8 +82,11 @@ def figdata(t, lines):
 
             for (a, r, i), _ in np.ndenumerate(y):
                 lines[f, c, a, r].set_ydata(y[a, r])
-                color = cm.viridis(Z[a, r]/my.a2max)
-                lines[f, c, a, r].axes.set_facecolor(color)
+                bgcolor = cm.viridis(Z[a, r]/my.a2max)
+                lines[f, c, a, r].axes.set_facecolor(bgcolor)
+                lcolor = linecolor[a, r] 
+                lines[f, c, a, r].set_color(lcolor)
+                lines[f, c, a, r].set_markerfacecolor(lcolor)
 
     return lines.flatten()
 
@@ -208,9 +215,7 @@ for f, folder in enumerate(folders):
                 lines[f, c, a, r], = ax.plot(xaxis,
                                              dummy_y,
                                              linewidth=1,
-                                             color = 'white',
                                              marker='o',
-                                             markerfacecolor='white',
                                              markersize=plotsize/3)
 
 # Add data and save figure

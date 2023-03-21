@@ -22,7 +22,7 @@ titles = ['Games',
           'Sensitivity for\nmimicking partner']
 traits = ['ChooseGrainmean',
           'MimicGrainmean']
-traitvmaxs = [my.a2max,
+vmaxs = [my.a2max,
               my.a2max]
 folders = ['given100', 'given95', 'given50']
 subfolders = ['none', 'p', 'r']
@@ -165,7 +165,7 @@ for t in ts:
                                index=[rowindex],
                                columns=['logES'])
             Z = Z.sort_index(axis=0, ascending=False)
-            axs[g, j + 3].imshow(Z, vmin=0, vmax=traitvmaxs[j])
+            axs[g, j + 3].imshow(Z, vmin=0, vmax=vmaxs[j])
 
     if movie:
         text = fig.text(0.90,

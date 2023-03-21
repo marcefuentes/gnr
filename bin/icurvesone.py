@@ -19,7 +19,7 @@ filename = thisscript.split('.')[0]
 givens = np.linspace(0.0, 1.0, num=21)
 #givens = [0.95]
 
-traitvmax = 2.0
+vmax = 2.0
 num = 3     # Number of subplot rows & columns
 numa2 = 256 # Number of points along each curve
 n_ic = 5    # Number of indifference curves
@@ -41,7 +41,7 @@ def figdata(given, budgets, icurves):
             budgets[a, r].set_ydata(budgety)
             icy = my.indifference(icx, w[a, r], alpha, rho)
             icurves[a, r].set_ydata(icy)
-            color = cm.viridis(w[a, r]/traitvmax)
+            color = cm.viridis(w[a, r]/vmax)
             icurves[a, r].set_color(color)
 
     return np.concatenate([budgets.flatten(), icurves.flatten()])

@@ -25,7 +25,7 @@ titles = ['Effort to get $\it{B}$',
           'Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner',
           'Fitness']
-traitvmaxs = [my.a2max, my.a2max, my.a2max, 2.0]
+vmaxs = [my.a2max, my.a2max, my.a2max, 2.0]
 folders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
 
 movie = False
@@ -150,7 +150,7 @@ for f, folder in enumerate(folders):
     for r, trait in enumerate(traits):
         images[f, r] = axs[f, r].imshow(dummy_Z,
                                         vmin=0,
-                                        vmax=traitvmaxs[r])
+                                        vmax=vmaxs[r])
 
 # Add data and save figure
 

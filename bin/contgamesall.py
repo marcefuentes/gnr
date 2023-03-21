@@ -20,7 +20,7 @@ titles = ['Prisoner\'s dilemma',
           'Sensitivity for\nmimicking partner']
 traits = ['ChooseGrainmean',
           'MimicGrainmean']
-traitvmaxs = [my.a2max,
+vmaxs = [my.a2max,
               my.a2max]
 folders = ['given100', 'given95', 'given50']
 subfolders = ['p', 'r']
@@ -204,7 +204,7 @@ for g, given in enumerate(givens):
                            index=[rowindex],
                            columns=['logES'])
         Z = Z.sort_index(axis=0, ascending=False)
-        axds[g][j].imshow(Z, vmin=0, vmax=traitvmaxs[j])
+        axds[g][j].imshow(Z, vmin=0, vmax=vmaxs[j])
 
 plt.savefig(filename + '.png', transparent=False)
 

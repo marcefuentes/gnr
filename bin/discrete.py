@@ -21,7 +21,7 @@ traits = ['ChooseGrainmean',
 titles = ['Games',
           'Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
-traitvmaxs = [my.a2max,
+vmaxs = [my.a2max,
               my.a2max]
 folders = ['0', '1']
 subfolders = ['p', 'r']
@@ -159,7 +159,7 @@ for i, folder in enumerate(folders):
     for j, trait in enumerate(traits):
         images[i, j + 1] = axs[i, j + 1].imshow(dummy_Z,
                                                 vmin=0,
-                                                vmax=traitvmaxs[j])
+                                                vmax=vmaxs[j])
 
 # Add data and save figure
 

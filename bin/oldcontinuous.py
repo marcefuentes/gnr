@@ -24,7 +24,7 @@ titles = ['Effort to get $\it{B}$',
                'Sensitivity for\nchoosing partner',
                'Sensitivity for\nmimicking partner',
                'Fitness']
-traitvmaxs = [my.a2max,
+vmaxs = [my.a2max,
               my.a2max,
               my.a2max,
               my.fitness(np.array([my.a2max]),
@@ -200,7 +200,7 @@ for t in ts:
                                index=[rowindex],
                                columns=['logES']).sort_index(axis=0,
                                                     ascending=False)
-            axsd[i + 1, j].imshow(Z, vmin=0, vmax=traitvmaxs[j])
+            axsd[i + 1, j].imshow(Z, vmin=0, vmax=vmaxs[j])
     if movie:
         text = fig.text(0.90,
                         0.93,

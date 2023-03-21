@@ -21,7 +21,7 @@ traits = ['ChooseGrainmean',
 titles = ['Games',
           'Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
-traitvmaxs = [my.a2max,
+vmaxs = [my.a2max,
               my.a2max]
 folders = ['given100', 'given95', 'given50']
 subfolders = ['none', 'p', 'r']
@@ -201,7 +201,7 @@ for g, folder in enumerate(folders):
                            index=['alpha'],
                            columns=['logES'])
         Z = Z.sort_index(axis=0, ascending=False)
-        axd[g, j].imshow(Z, vmin=0, vmax=traitvmaxs[j])
+        axd[g, j].imshow(Z, vmin=0, vmax=vmaxs[j])
 # Save figure
 
 plt.savefig(filename + '.png', transparent=False)

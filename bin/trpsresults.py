@@ -5,6 +5,7 @@ from glob import glob
 import os
 import time
 
+from matplotlib import cm
 from matplotlib.animation import FuncAnimation
 import matplotlib.pyplot as plt
 import numpy as np
@@ -44,7 +45,6 @@ def figdata(t, lines):
     highs = highs.to_numpy()
 
     for f, folder in enumerate(folders):
-
         df = dfs[f, 0]
         if movie:
             m = df.Time == t
@@ -68,8 +68,9 @@ def figdata(t, lines):
 
         for c, trait in enumerate(traits):
             df = dfs[f, c + 1]
-            m = df.Time == t
-            df = df.loc[m]
+            if movie:
+                m = df.Time == t
+                df = df.loc[m]
             Z = pd.pivot_table(df,
                                values=trait,
                                index='alpha',
@@ -109,7 +110,6 @@ dfsocial = pd.concat(d, ignore_index=True)
 
 df = dfs[0, 0]
 ts = df.Time.unique()
-t = ts[-1]
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 logess = np.sort(pd.unique(df.logES))
 nr = len(alphas)

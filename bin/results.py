@@ -39,7 +39,7 @@ def figdata(t, images):
         if movie:
             m = df.Time == t
             df = df.loc[m]
-        for r, trait in enumerate(traits):
+        for c, trait in enumerate(traits):
             Z = pd.pivot_table(df,
                                values=trait,
                                index=['alpha'],
@@ -47,7 +47,7 @@ def figdata(t, images):
             Z = Z.sort_index(axis=0, ascending=False)
             if 'Grain' in trait:
                 Z = 1.0 - Z
-            images[f, r].set_array(Z) 
+            images[f, c].set_array(Z) 
     if movie:
         fig.texts[2].set_text(f't\n{t}')
     return images.flatten()
@@ -126,11 +126,11 @@ for i, ax in enumerate(fig.get_axes()):
             transform=ax.transAxes,
             fontsize=plotsize*5,
             weight='bold')
-for i, folder in enumerate(folders):
-    axs[i, 0].set_yticklabels(yticklabels, fontsize=ticklabels)
-for j, title in enumerate(titles):
-    axs[0, j].set_title(title, pad=plotsize*10, fontsize=plotsize*5)
-    axs[-1, j].set_xticklabels(xticklabels, fontsize=ticklabels)
+for f, folder in enumerate(folders):
+    axs[f, 0].set_yticklabels(yticklabels, fontsize=ticklabels)
+for c, title in enumerate(titles):
+    axs[0, c].set_title(title, pad=plotsize*10, fontsize=plotsize*5)
+    axs[-1, c].set_xticklabels(xticklabels, fontsize=ticklabels)
 
 if movie:
     fig.text(right_x,
@@ -147,10 +147,10 @@ images = np.empty(axs.shape, dtype=object)
 dummy_Z = np.empty((nr, nc), dtype=np.float32)
 
 for f, folder in enumerate(folders):
-    for r, trait in enumerate(traits):
-        images[f, r] = axs[f, r].imshow(dummy_Z,
+    for c, trait in enumerate(traits):
+        images[f, c] = axs[f, c].imshow(dummy_Z,
                                         vmin=0,
-                                        vmax=vmaxs[r])
+                                        vmax=vmaxs[c])
 
 # Add data and save figure
 

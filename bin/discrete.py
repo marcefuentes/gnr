@@ -114,9 +114,6 @@ plt.rcParams['ps.fonttype'] = 42
 fig, axs = plt.subplots(nrows=len(folders),
                         ncols=len(titles),
                         figsize=(width, height))
-images = np.empty(axs.shape, dtype=object) 
-dummy_Zg = np.zeros((nr, nc, 4), dtype=np.float32)
-dummy_Z = np.empty((nr, nc), dtype=np.float32)
 
 left_x = axs[0, 0].get_position().x0
 right_x = axs[-1, -1].get_position().x1
@@ -153,6 +150,10 @@ for c, title in enumerate(titles):
 # Assign axs objects to variables
 # (Line2D objects to lines)
 # (AxesImage objects to "images")
+
+images = np.empty(axs.shape, dtype=object) 
+dummy_Zg = np.zeros((nr, nc, 4), dtype=np.float32)
+dummy_Z = np.empty((nr, nc), dtype=np.float32)
 
 for f, folder in enumerate(folders):
 

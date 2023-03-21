@@ -115,12 +115,12 @@ for t in ts:
     df = dfsocial
     m = df.Time == t
     df = df.loc[m]
-    a2social = pd.pivot_table(df,
+    highs = pd.pivot_table(df,
                               values='a2Seenmean',
                               index=[rowindex],
                               columns=['logES'])
-    a2social = a2social.sort_index(axis=0, ascending=False)
-    a2social = a2social.to_numpy()
+    highs = highs.sort_index(axis=0, ascending=False)
+    highs = highs.to_numpy()
 
     for g, folder in enumerate(folders):
 
@@ -128,20 +128,20 @@ for t in ts:
         m = df.Time == t
         df = df.loc[m]
         given = df.Given.iloc[0]
-        a2private = pd.pivot_table(df,
+        lows = pd.pivot_table(df,
                                    values='a2Seenmean',
                                    index=[rowindex],
                                    columns=['logES'])
-        a2private = a2private.sort_index(axis=0, ascending=False)
-        a2private = a2private.to_numpy()
+        lows = lows.sort_index(axis=0, ascending=False)
+        lows = lows.to_numpy()
 
-        T = my.fitness(a2social, a2private, given, AA, RR)
-        R = my.fitness(a2social, a2social, given, AA, RR)
-        P = my.fitness(a2private, a2private, given, AA, RR)
-        S = my.fitness(a2private, a2social, given, AA, RR)
+        T = my.fitness(highs, lows, given, AA, RR)
+        R = my.fitness(highs, highs, given, AA, RR)
+        P = my.fitness(lows, lows, given, AA, RR)
+        S = my.fitness(lows, highs, given, AA, RR)
 
         Z = my.gamecolors(T, R, P, S)
-        #Z[a2private >= a2social] = [0.9, 0.9, 0.9, 1.0]
+        #Z[lows >= highs] = [0.9, 0.9, 0.9, 1.0]
         axs[g, 0].imshow(Z)
 
         N = my.nodilemmacolors(T, R, P, S)

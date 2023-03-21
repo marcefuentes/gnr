@@ -61,7 +61,8 @@ def figdata(images):
             Z = Z.sort_index(axis=0, ascending=False)
             if 'Grain' in trait:
                 Z = 1.0 - Z
-            images[f, c+1].set_array(Z) 
+            images[f, c + 1].set_array(Z) 
+
     return images.flatten()
 
 # Get data
@@ -70,7 +71,7 @@ def read_file(file):
     df = pd.read_csv(file)
     return df.tail(1)
 
-dfs = np.empty((len(folders), len(subfolders)), dtype=object) 
+dfs = np.empty((len(folders), len(subfolders)), dtype=object)
 for i, folder in enumerate(folders):
     for j, subfolder in enumerate(subfolders):
         filelist = glob(os.path.join(folder, subfolder, '*.csv'))
@@ -153,12 +154,12 @@ for c, title in enumerate(titles):
 # (Line2D objects to lines)
 # (AxesImage objects to "images")
 
-for i, folder in enumerate(folders):
+for f, folder in enumerate(folders):
 
-    images[i] = axs[i, 0].imshow(dummy_Zg)
+    images[f] = axs[f, 0].imshow(dummy_Zg)
 
-    for j, trait in enumerate(traits):
-        images[i, j + 1] = axs[i, j + 1].imshow(dummy_Z,
+    for c, trait in enumerate(traits):
+        images[f, c + 1] = axs[f, c + 1].imshow(dummy_Z,
                                                 vmin=0,
                                                 vmax=my.a2max)
 

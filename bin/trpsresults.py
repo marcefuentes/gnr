@@ -51,12 +51,11 @@ def figdata(t, lines):
             df = df.loc[m]
         given = df.Given.iloc[0]
         lows = pd.pivot_table(df,
-                                   values='a2Seenmean',
-                                   index=['alpha'],
-                                   columns=['logES'])
+                              values='a2Seenmean',
+                              index=['alpha'],
+                              columns=['logES'])
         lows = lows.sort_index(axis=0, ascending=False)
         lows = lows.to_numpy()
-
         T = my.fitness(highs, lows, given, AA, RR)
         R = my.fitness(highs, highs, given, AA, RR)
         P = my.fitness(lows, lows, given, AA, RR)
@@ -68,8 +67,7 @@ def figdata(t, lines):
         linecolor[m] = red[m]
 
         for c, trait in enumerate(traits):
-
-            df = dfs[f, c+1]
+            df = dfs[f, c + 1]
             m = df.Time == t
             df = df.loc[m]
             Z = pd.pivot_table(df,

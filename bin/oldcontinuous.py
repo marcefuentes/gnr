@@ -54,7 +54,6 @@ else:
     ts = [ts[-1]]
 given = df.Given[0]
 alphas = np.sort(pd.unique(df.alpha))[::-1]
-rowindex = 'alpha'
 logess = np.sort(pd.unique(df.logES))
 nr = len(alphas)
 nc = len(logess)
@@ -197,8 +196,8 @@ for t in ts:
         for j, trait in enumerate(traits):
             Z = pd.pivot_table(df.loc[df.Time == t],
                                values=trait,
-                               index=[rowindex],
-                               columns=['logES']).sort_index(axis=0,
+                               index='alpha',
+                               columns='logES').sort_index(axis=0,
                                                     ascending=False)
             axsd[i + 1, j].imshow(Z, vmin=0, vmax=vmaxs[j])
     if movie:

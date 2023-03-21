@@ -38,8 +38,8 @@ def figdata(t, lines):
         df = df.loc[m]
     highs = pd.pivot_table(df,
                               values='a2Seenmean',
-                              index=['alpha'],
-                              columns=['logES'])
+                              index='alpha',
+                              columns='logES')
     highs = highs.sort_index(axis=0, ascending=False)
     highs = highs.to_numpy()
 
@@ -52,8 +52,8 @@ def figdata(t, lines):
         given = df.Given.iloc[0]
         lows = pd.pivot_table(df,
                               values='a2Seenmean',
-                              index=['alpha'],
-                              columns=['logES'])
+                              index='alpha',
+                              columns='logES')
         lows = lows.sort_index(axis=0, ascending=False)
         lows = lows.to_numpy()
         T = my.fitness(highs, lows, given, AA, RR)
@@ -72,8 +72,8 @@ def figdata(t, lines):
             df = df.loc[m]
             Z = pd.pivot_table(df,
                                values=trait,
-                               index=['alpha'],
-                               columns=['logES'])
+                               index='alpha',
+                               columns='logES')
             Z = Z.sort_index(axis=0, ascending=False)
             Z = Z.to_numpy()
             Z = 1.0 - Z

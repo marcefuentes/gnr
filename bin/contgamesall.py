@@ -44,7 +44,6 @@ for folder in folders:
 df = dfss[0][0]
 ts = df.Time.unique()
 alphas = np.sort(pd.unique(df.alpha))[::-1]
-rowindex = 'alpha'
 logess = np.sort(pd.unique(df.logES))
 nr = len(alphas)
 nc = len(logess)
@@ -201,8 +200,8 @@ for g, given in enumerate(givens):
         df = df.loc[m]
         Z = pd.pivot_table(df,
                            values=trait,
-                           index=[rowindex],
-                           columns=['logES'])
+                           index='alpha',
+                           columns='logES')
         Z = Z.sort_index(axis=0, ascending=False)
         axds[g][j].imshow(Z, vmin=0, vmax=vmaxs[j])
 

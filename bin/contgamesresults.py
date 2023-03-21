@@ -198,7 +198,7 @@ for g, folder in enumerate(folders):
         df = df.loc[m]
         Z = pd.pivot_table(df,
                            values=trait,
-                           index=['alpha'],
+                           index='alpha',
                            columns=['logES'])
         Z = Z.sort_index(axis=0, ascending=False)
         axd[g, j].imshow(Z, vmin=0, vmax=vmaxs[j])

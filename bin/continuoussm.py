@@ -51,7 +51,6 @@ if movie:
 else:
     ts = [ts[-1]]
 alphas = np.sort(pd.unique(df.alpha))[::-1]
-rowindex = 'alpha'
 logess = np.sort(pd.unique(df.logES))
 nr = len(alphas)
 nc = len(logess)
@@ -130,8 +129,8 @@ for t in ts:
         given = df.Given.iloc[0]
         lows = pd.pivot_table(df,
                                    values='a2Seenmean',
-                                   index=[rowindex],
-                                   columns=['logES'])
+                                   index='alpha',
+                                   columns='logES')
         lows = lows.sort_index(axis=0, ascending=False)
         lows = lows.to_numpy()
 
@@ -162,8 +161,8 @@ for t in ts:
             df = df.loc[m]
             Z = pd.pivot_table(df,
                                values=trait,
-                               index=[rowindex],
-                               columns=['logES'])
+                               index='alpha',
+                               columns='logES')
             Z = Z.sort_index(axis=0, ascending=False)
             axs[g, j + 3].imshow(Z, vmin=0, vmax=vmaxs[j])
 

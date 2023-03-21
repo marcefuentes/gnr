@@ -78,7 +78,7 @@ def figdata(t, lines):
 
             for (a, r, i), _ in np.ndenumerate(y):
                 lines[f, c, a, r].set_ydata(y[a, r])
-                color = cm.viridis(Z[a, r])
+                color = cm.viridis(Z[a, r]/my.a2max)
                 lines[f, c, a, r].axes.set_facecolor(color)
 
     return lines.flatten()

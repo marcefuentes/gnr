@@ -20,8 +20,7 @@ filename = thisscript.split('.')[0]
 
 traits = ['ChooseGrainmean',
           'MimicGrainmean']
-titles = ['Games',
-          'Sensitivity for\nchoosing partner',
+titles = ['Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
 folders = ['given100', 'given95', 'given50']
 subfolders = ['none', 'p', 'r']
@@ -62,12 +61,9 @@ def init(lines):
         m = lows > highs
         linecolor[m] = red[m]
 
-        Zg = my.gamecolors(T, R, P, S)
-        for c, title in enumerate(titles):
+        for c, trait in enumerate(traits):
             for (a, r, i), _ in np.ndenumerate(y):
                 lines[f, c, a, r].set_ydata(y[a, r])
-                if c == 0:
-                    lines[f, c, a, r].axes.set_facecolor(Zg[a, r])
                 lcolor = linecolor[a, r] 
                 lines[f, c, a, r].set_color(lcolor)
                 lines[f, c, a, r].set_markerfacecolor(lcolor)
@@ -92,7 +88,7 @@ def update(t, lines):
 
             for (a, r), _ in np.ndenumerate(Z):
                 bgcolor = cm.viridis(Z[a, r]/my.a2max)
-                lines[f, c + 1, a, r].axes.set_facecolor(bgcolor)
+                lines[f, c, a, r].axes.set_facecolor(bgcolor)
 
     return lines.flatten()
 
@@ -122,7 +118,7 @@ RR, AA = np.meshgrid(rhos, alphas)
 
 # Figure properties
 
-width = plotsize*len(titles)
+width = plotsize*len(traits)
 height = plotsize*len(folders)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
@@ -139,15 +135,15 @@ plt.rcParams['ps.fonttype'] = 42
 
 fig = plt.figure(figsize=(width, height))
 outergrid = fig.add_gridspec(nrows=len(folders),
-                             ncols=len(titles))
+                             ncols=len(traits))
 axs = np.empty((len(folders),
-                len(titles),
+                len(traits),
                 nr,
                 nc),
                 dtype=object)
 
 for f, folder in enumerate(folders):
-    for c, title in enumerate(titles):
+    for c, trait in enumerate(traits):
         grid = outergrid[f, c].subgridspec(nrows=nr,
                                            ncols=nc,
                                            wspace=0,
@@ -165,7 +161,7 @@ fig.supxlabel(xlabel,
               y=bottom_y*0.2,
               fontsize=biglabels)
 fig.supylabel(ylabel,
-              x=left_x*0.4,
+              x=left_x*0.2,
               y=center_y,
               fontsize=biglabels)
 
@@ -206,7 +202,7 @@ lines = np.empty(axs.shape, dtype=object)
 dummy_y = np.zeros_like(xaxis)
 
 for f, folder in enumerate(folders):
-    for c, title in enumerate(titles):
+    for c, trait in enumerate(traits):
         for a, alpha in enumerate(alphas):
             for r, rho in enumerate(rhos):
                 ax = axs[f, c, a, r] 

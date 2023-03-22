@@ -181,7 +181,6 @@ for ax in fig.get_axes():
         ax.spines[axis].set_linewidth(0.1)
 
 letter = ord('a')
-letterposition = 4.8
 for f, folder in enumerate(folders):
     for c, title in enumerate(titles):
         axs[f, c, 0, 0].set_title(chr(letter),

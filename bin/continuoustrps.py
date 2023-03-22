@@ -33,14 +33,6 @@ plotsize = 8
 
 def init(lines):
 
-    df = dfsocial
-    highs = pd.pivot_table(df,
-                              values='a2Seenmean',
-                              index='alpha',
-                              columns='logES')
-    highs = highs.sort_index(axis=0, ascending=False)
-    highs = highs.to_numpy()
-
     for f, folder in enumerate(folders):
         df = dfs[f, 0]
         if movie:
@@ -53,11 +45,18 @@ def init(lines):
                               columns='logES')
         lows = lows.sort_index(axis=0, ascending=False)
         lows = lows.to_numpy()
+        highs = lows + 0.001
         T = my.fitness(highs, lows, given, AA, RR)
         R = my.fitness(highs, highs, given, AA, RR)
         P = my.fitness(lows, lows, given, AA, RR)
         S = my.fitness(lows, highs, given, AA, RR)
-        y = np.stack((T, R, P, S), axis=-1)
+        Ma = np.maximum.reduce([T, R, P, S])
+        Mi = np.minimum.reduce([T, R, P, S])
+        Tn = (T - Mi)/(Ma - Mi)
+        Rn = (R - Mi)/(Ma - Mi)
+        Pn = (P - Mi)/(Ma - Mi)
+        Sn = (S - Mi)/(Ma - Mi)
+        y = np.stack((Tn, Rn, Pn, Sn), axis=-1)
         linecolor = np.full(highs.shape, 'white')
         red = np.full(highs.shape, 'red')
         m = lows > highs
@@ -112,10 +111,6 @@ for i, folder in enumerate(folders):
         d = [read_file(file, movie) for file in filelist]
         dfs[i, j] = pd.concat(d, ignore_index=True)
 
-filelist = glob(os.path.join('given00', 'none', '*.csv'))
-d = [read_file(file, False) for file in filelist]
-dfsocial = pd.concat(d, ignore_index=True) 
-
 df = dfs[0, 0]
 ts = df.Time.unique()
 alphas = np.sort(pd.unique(df.alpha))[::-1]
@@ -134,7 +129,7 @@ ylabel = 'Value of $\it{B}$'
 biglabels = plotsize*5 + height/4
 ticklabels = plotsize*4
 xlim=[0, 5]
-ylim=[0.0, 2.0]
+ylim=[-0.1, 1.1]
 step = int(nr/2)
 xaxis = [1, 2, 3, 4]
 plt.rcParams['pdf.fonttype'] = 42

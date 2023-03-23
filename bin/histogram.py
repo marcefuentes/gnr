@@ -34,7 +34,6 @@ else:
     ts = [ts[-1]]
 given = df.Given[0]
 alphas = np.sort(pd.unique(df.alpha))[::-1]
-rowindex = 'alpha'
 logess = np.sort(pd.unique(df.logES))
 nr = len(alphas)
 nc = len(logess)
@@ -91,7 +90,7 @@ for t in ts:
             for ax, loges in zip(axrow, logess):
                 bottom = 0.0
                 for trait, color in zip(traits, colors):
-                    barheight = df.loc[(df['Time'] == t) & (df['logES'] > loges - 0.1) & (df['logES'] < loges + 0.1) & (df[rowindex] == alpha), trait].values[0]
+                    barheight = df.loc[(df['Time'] == t) & (df['logES'] > loges - 0.1) & (df['logES'] < loges + 0.1) & (df['alpha'] == alpha), trait].values[0]
                     ax.bar(x=0.5, height=barheight, bottom=bottom, width=1.0, color=color)
                     bottom = bottom + barheight
     if movie:

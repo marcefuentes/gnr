@@ -41,7 +41,6 @@ filelist = glob(os.path.join('given00', 'none', '*.frq'))
 df = dfss[0][0]
 ts = df.Time.unique()
 alphas = np.sort(pd.unique(df.alpha))[::-1]
-rowindex = 'alpha'
 logess = np.sort(pd.unique(df.logES))
 nr = len(alphas)
 nc = len(logess)

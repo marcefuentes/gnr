@@ -30,19 +30,19 @@ plotsize = 8
 
 # Add data to figure
 
-def init(lines0, lines1):
+def init(scatters):
 
     highs = pd.pivot_table(dfsocial,
-                          values='a2Seenmean',
-                          index='alpha',
-                          columns='logES')
+                           values='a2Seenmean',
+                           index='alpha',
+                           columns='logES')
     highs = highs.sort_index(axis=0, ascending=False)
     highs = highs.to_numpy()
 
     for f, folder in enumerate(folders):
         df = dfs[f, 0]
         if movie:
-            m = df.Time == t
+            m = df.Time == ts[-1]
             df = df.loc[m]
         given = df.Given.iloc[0]
         lows = pd.pivot_table(df,
@@ -56,31 +56,30 @@ def init(lines0, lines1):
         P = my.fitness(lows, lows, given, AA, RR)
         S = my.fitness(lows, highs, given, AA, RR)
 
-        y00 = 2.0*R - P - T - S
+        p_left = (2.0*R - P - T - S)*plotsize*10
+        p_right = (R - P)*plotsize*10
 
-        y01 = T + S - R - P
+        r_left = (T + S - R - P)*plotsize*10
         #m = R < P
         #y[m] = T[m] + S[m] - 2.0*P[m]
 
-        y11 = P - S
+        r_right = (P - S)*plotsize*10
 
-        transp_r = np.ones_like(y01)
-        transp0 = np.zeros_like(y01)
-        m = ((R > P) & (P < S)) | ((R < P) & (R < T)) 
-        transp_r[m] = transp0[m]
+        #transp_r = np.ones_like(y01)
+        #transp0 = np.zeros_like(y01)
+        #m = ((R > P) & (P < S)) | ((R < P) & (R < T)) 
+        #transp_r[m] = transp0[m]
 
         for a, alpha in enumerate(alphas):
             for r, rho in enumerate(rhos):
-                lines0[f, 0, a, r].set_ydata([y00[a, r], y00[a, r]])
+                c_array = [p_left[a, r], p_right[a, r]]
+                scatters[f, 0, a, r].set_sizes(c_array)
+                c_array = [r_left[a, r], r_right[a, r]]
+                scatters[f, 1, a, r].set_sizes(c_array)
 
-                lines0[f, 1, a, r].set_ydata([y01[a, r], y01[a, r]])
-                lines0[f, 1, a, r].set_alpha(transp_r[a, r])
-                lines1[f, 1, a, r].set_ydata([y11[a, r], y11[a, r]])
-                lines1[f, 1, a, r].set_alpha(transp_r[a, r])
+    return scatters.flatten()
 
-    return np.concatenate([lines0.flatten(), lines1.flatten()])
-
-def update(t, lines0):
+def update(t, scatters):
         
     for f, folder in enumerate(folders):
         for c, trait in enumerate(traits):
@@ -98,9 +97,9 @@ def update(t, lines0):
 
             for (a, r), _ in np.ndenumerate(Z):
                 bgcolor = cm.viridis(Z[a, r]/my.a2max)
-                lines0[f, c, a, r].axes.set_facecolor(bgcolor)
+                scatters[f, c, a, r].axes.set_facecolor(bgcolor)
 
-    return lines0.flatten()
+    return scatters.flatten()
 
 # Get data
 
@@ -139,7 +138,7 @@ ylabel = 'Value of $\it{B}$'
 biglabels = plotsize*5 + height/4
 ticklabels = plotsize*4
 xlim = [0, 1]
-ylim=[0.0, 1.0]
+ylim=[0, 1]
 step = int(nr/2)
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
@@ -209,40 +208,36 @@ for f, folder in enumerate(folders):
                                                  fontsize=ticklabels)
 
 # Assign axs objects to variables
-# (Line2D objects to lines)
+# (PathCollection artists to scatters)
 
-lines0 = np.empty(axs.shape, dtype=object)
-lines1 = np.empty(axs.shape, dtype=object)
-dummy_y = np.zeros_like(xlim)
+scatters = np.empty(axs.shape, dtype=object)
+x = [0.25, 0.75]
+y = [0.50, 0.50]
+dummy_z = [0.0, 0.0]
 
 for f, folder in enumerate(folders):
     for c, trait in enumerate(traits):
         for a, alpha in enumerate(alphas):
             for r, rho in enumerate(rhos):
                 ax = axs[f, c, a, r] 
-                lines0[f, c, a, r], = ax.plot(xlim,
-                                             dummy_y,
-                                             linewidth=1,
-                                             color='white')
-                lines1[f, c, a, r], = ax.plot(xlim,
-                                             dummy_y,
-                                             linewidth=1,
-                                             linestyle='dashed',
-                                             color='white')
+                scatters[f, c, a, r] = ax.scatter(x,
+                                                  y,
+                                                  color='white',
+                                                  sizes=dummy_z)
 
 # Add data and save figure
 
-init(lines0, lines1,)
+init(scatters,)
 
 if movie:
     ani = FuncAnimation(fig,
                         update,
                         frames=ts,
-                        fargs=(lines0,),
+                        fargs=(scatters,),
                         blit=True)
     ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
 else:
-    update(ts[-1], lines0,)
+    update(ts[-1], scatters,)
     plt.savefig(filename + '.png', transparent=False)
 
 plt.close()

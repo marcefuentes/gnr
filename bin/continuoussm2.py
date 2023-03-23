@@ -55,10 +55,12 @@ def init(lines):
         R = my.fitness(highs, highs, given, AA, RR)
         P = my.fitness(lows, lows, given, AA, RR)
         S = my.fitness(lows, highs, given, AA, RR)
+
         y = 2.0*R - P - T - S
         ymax = np.max(y)
         ymin = np.min(y)
         y0 = (y - ymin)/(ymax - ymin)
+
         y = T + S - R - P
         #m = R < P
         #y[m] = T[m] + S[m] - 2.0*P[m]

@@ -30,7 +30,7 @@ plotsize = 8
 
 # Add data to figure
 
-def init(lines):
+def init(lines0, lines1):
 
     highs = pd.pivot_table(dfsocial,
                           values='a2Seenmean',
@@ -56,32 +56,31 @@ def init(lines):
         P = my.fitness(lows, lows, given, AA, RR)
         S = my.fitness(lows, highs, given, AA, RR)
 
-        y = 2.0*R - P - T - S
-        ymax = np.max(y)
-        ymin = np.min(y)
-        y0 = (y - ymin)/(ymax - ymin)
+        y00 = 2.0*R - P - T - S
 
-        y = T + S - R - P
+        y01 = T + S - R - P
         #m = R < P
         #y[m] = T[m] + S[m] - 2.0*P[m]
-        ymax = np.max(y)
-        ymin = np.min(y)
-        y1 = (y - ymin)/(ymax - ymin)
 
+        y11 = P - S
+
+        transp_r = np.ones_like(y01)
+        transp0 = np.zeros_like(y01)
         m = ((R > P) & (P < S)) | ((R < P) & (R < T)) 
-        transp = np.ones_like(y)
-        transp0 = np.zeros_like(y)
-        transp[m] = transp0[m]
+        transp_r[m] = transp0[m]
 
         for a, alpha in enumerate(alphas):
             for r, rho in enumerate(rhos):
-                lines[f, 0, a, r].set_ydata([y0[a, r], y0[a, r]])
-                lines[f, 1, a, r].set_ydata([y1[a, r], y1[a, r]])
-                lines[f, 1, a, r].set_alpha(transp[a, r])
+                lines0[f, 0, a, r].set_ydata([y00[a, r], y00[a, r]])
 
-    return lines.flatten()
+                lines0[f, 1, a, r].set_ydata([y01[a, r], y01[a, r]])
+                lines0[f, 1, a, r].set_alpha(transp_r[a, r])
+                lines1[f, 1, a, r].set_ydata([y11[a, r], y11[a, r]])
+                lines1[f, 1, a, r].set_alpha(transp_r[a, r])
 
-def update(t, lines):
+    return np.concatenate([lines0.flatten(), lines1.flatten()])
+
+def update(t, lines0):
         
     for f, folder in enumerate(folders):
         for c, trait in enumerate(traits):
@@ -99,9 +98,9 @@ def update(t, lines):
 
             for (a, r), _ in np.ndenumerate(Z):
                 bgcolor = cm.viridis(Z[a, r]/my.a2max)
-                lines[f, c, a, r].axes.set_facecolor(bgcolor)
+                lines0[f, c, a, r].axes.set_facecolor(bgcolor)
 
-    return lines.flatten()
+    return lines0.flatten()
 
 # Get data
 
@@ -140,7 +139,7 @@ ylabel = 'Value of $\it{B}$'
 biglabels = plotsize*5 + height/4
 ticklabels = plotsize*4
 xlim = [0, 1]
-ylim=[-0.1, 1.1]
+ylim=[0.0, 1.0]
 step = int(nr/2)
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
@@ -212,7 +211,8 @@ for f, folder in enumerate(folders):
 # Assign axs objects to variables
 # (Line2D objects to lines)
 
-lines = np.empty(axs.shape, dtype=object)
+lines0 = np.empty(axs.shape, dtype=object)
+lines1 = np.empty(axs.shape, dtype=object)
 dummy_y = np.zeros_like(xlim)
 
 for f, folder in enumerate(folders):
@@ -220,24 +220,29 @@ for f, folder in enumerate(folders):
         for a, alpha in enumerate(alphas):
             for r, rho in enumerate(rhos):
                 ax = axs[f, c, a, r] 
-                lines[f, c, a, r], = ax.plot(xlim,
+                lines0[f, c, a, r], = ax.plot(xlim,
                                              dummy_y,
                                              linewidth=1,
+                                             color='white')
+                lines1[f, c, a, r], = ax.plot(xlim,
+                                             dummy_y,
+                                             linewidth=1,
+                                             linestyle='dashed',
                                              color='white')
 
 # Add data and save figure
 
-init(lines,)
+init(lines0, lines1,)
 
 if movie:
     ani = FuncAnimation(fig,
                         update,
                         frames=ts,
-                        fargs=(lines,),
+                        fargs=(lines0,),
                         blit=True)
     ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
 else:
-    update(ts[-1], lines,)
+    update(ts[-1], lines0,)
     plt.savefig(filename + '.png', transparent=False)
 
 plt.close()

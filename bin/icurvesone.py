@@ -150,7 +150,11 @@ for a, alpha in enumerate(alphas):
 # Add data and save figure
 
 if len(givens) > 1:
-    ani = FuncAnimation(fig, update, frames=givens, fargs=(budgets, icurves,), blit=True)
+    ani = FuncAnimation(fig,
+                        update,
+                        frames=givens,
+                        fargs=(budgets, icurves,),
+                        blit=True)
     ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
 else:
     update(givens[0], budgets, icurves,)

@@ -116,8 +116,8 @@ for t in ts:
     df = df.loc[m]
     highs = pd.pivot_table(df,
                               values='a2Seenmean',
-                              index=[rowindex],
-                              columns=['logES'])
+                              index='alpha',
+                              columns='logES')
     highs = highs.sort_index(axis=0, ascending=False)
     highs = highs.to_numpy()
 

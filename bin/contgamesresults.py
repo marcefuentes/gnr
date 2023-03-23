@@ -171,14 +171,14 @@ for g, folder in enumerate(folders):
         AA = np.full([ext, ext], alpha)
         for j, (rho, loges) in enumerate(zip(rhos, logess)):
 
+            #m = (df.alpha == alpha) & (df.logES == loges)
+            #xmin = df.loc[m].a2Seenmean
+            #m = (dfso.alpha == alpha) & (dfso.logES == loges)
+            #xmax = dfso.loc[m].a2Seenmean
             xmin = 0.0
-            m = (df.alpha == alpha) & (df.logES == loges)
-            xma = df.loc[m].a2Seenmean
-            m = (dfso.alpha == alpha) & (dfso.logES == loges)
-            ymi = dfso.loc[m].a2Seenmean
-            xmax = (ymi - xma)/2.0
-            ymin = xmax
-            ymax = my.a2max
+            xmax = my.a2max
+            ymin = xmin
+            ymax = xmax
             x = np.linspace(xmin, xmax, num=ext)
             y = np.linspace(ymax, ymin, num=ext)
             X, Y = np.meshgrid(x, y)

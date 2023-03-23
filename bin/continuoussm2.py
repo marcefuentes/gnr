@@ -32,6 +32,13 @@ plotsize = 8
 
 def init(lines):
 
+    highs = pd.pivot_table(dfsocial,
+                          values='a2Seenmean',
+                          index='alpha',
+                          columns='logES')
+    highs = highs.sort_index(axis=0, ascending=False)
+    highs = highs.to_numpy()
+
     for f, folder in enumerate(folders):
         df = dfs[f, 0]
         if movie:
@@ -44,7 +51,6 @@ def init(lines):
                               columns='logES')
         lows = lows.sort_index(axis=0, ascending=False)
         lows = lows.to_numpy()
-        highs = lows + 0.001
         T = my.fitness(highs, lows, given, AA, RR)
         R = my.fitness(highs, highs, given, AA, RR)
         P = my.fitness(lows, lows, given, AA, RR)
@@ -103,12 +109,16 @@ def read_file(file, alltimes):
         df = df.tail(1)
     return df
 
+filelist = glob('given00/none/*.csv')
+df = [read_file(file, False) for file in filelist]
+dfsocial = pd.concat(df, ignore_index=True)
+
 dfs = np.empty((len(folders), len(subfolders)), dtype=object)
 for i, folder in enumerate(folders):
     for j, subfolder in enumerate(subfolders):
         filelist = glob(os.path.join(folder, subfolder, '*.csv'))
-        d = [read_file(file, movie) for file in filelist]
-        dfs[i, j] = pd.concat(d, ignore_index=True)
+        df = [read_file(file, movie) for file in filelist]
+        dfs[i, j] = pd.concat(df, ignore_index=True)
 
 df = dfs[0, 0]
 ts = df.Time.unique()

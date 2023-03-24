@@ -86,7 +86,6 @@ ticklabels = plotsize*3.5
 xlim=[0, 5]
 ylim=[-0.1, 1.1]
 step = int(nc/2)
-xaxis = [1, 2, 3, 4]
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -136,6 +135,7 @@ for i in range(0, nc, step):
 # (Line2D objects to lines)
 
 lines = np.empty(axs.shape, dtype=object)
+xaxis = [1, 2, 3, 4]
 dummy_y = np.zeros_like(xaxis)
 
 for a, alpha in enumerate(alphas):

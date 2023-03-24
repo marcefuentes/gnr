@@ -56,22 +56,23 @@ def init(scatters):
         P = my.fitness(lows, lows, given, AA, RR)
         S = my.fitness(lows, highs, given, AA, RR)
 
-        pc = (2.0*R - 2.0*P - T + S)*plotsize*10
-        pc = (R - P)*plotsize*10
-        re = (P - S)*plotsize*10
-
-        zeros = np.zeros_like(re)
-        m = pc < 0.0
-        pc[m] = zeros[m]
-        m = re < 0.0
-        re[m] = zeros[m]
+        #CG = (2.0*R - 2.0*P - T + S)*plotsize*10
+        #CG = (R - P)*plotsize*10
+        CG = (0.99 + 0.12*T - 0.2*R - 0.5*P + 0.3*S)*plotsize*30
+        #MG = (P - S)*plotsize*10
+        MG = (-0.01*T + 0.23*R - 0.09*P - 0.22*S)*plotsize*10 
+        zeros = np.zeros_like(MG)
+        m = CG < 0.0
+        CG[m] = zeros[m]
+        m = MG < 0.0
+        MG[m] = zeros[m]
         m = ((R > P) & (P < S)) | ((R < P) & (R < T)) 
-        re[m] = zeros[m]
+        MG[m] = zeros[m]
 
         for a, alpha in enumerate(alphas):
             for r, rho in enumerate(rhos):
-                scatters[f, 0, a, r].set_sizes([pc[a, r]])
-                scatters[f, 1, a, r].set_sizes([re[a, r]])
+                scatters[f, 0, a, r].set_sizes([CG[a, r]])
+                scatters[f, 1, a, r].set_sizes([MG[a, r]])
 
     return scatters.flatten()
 

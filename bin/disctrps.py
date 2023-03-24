@@ -54,7 +54,13 @@ def init(lines):
         R = my.fitness(highs, highs, given, AA, RR)
         P = my.fitness(lows, lows, given, AA, RR)
         S = my.fitness(lows, highs, given, AA, RR)
-        y = np.stack((T, R, P, S), axis=-1)
+        Ma = np.maximum.reduce([T, R, P, S])
+        Mi = np.minimum.reduce([T, R, P, S])
+        Tn = (T - Mi)/(Ma - Mi)
+        Rn = (R - Mi)/(Ma - Mi)
+        Pn = (P - Mi)/(Ma - Mi)
+        Sn = (S - Mi)/(Ma - Mi)
+        y = np.stack((Tn, Rn, Pn, Sn), axis=-1)
         linecolor = np.full(highs.shape, 'white')
         red = np.full(highs.shape, 'red')
         m = lows > highs
@@ -106,8 +112,8 @@ dfs = np.empty((len(folders), len(subfolders)), dtype=object)
 for i, folder in enumerate(folders):
     for j, subfolder in enumerate(subfolders):
         filelist = glob(os.path.join(folder, subfolder, '*.csv'))
-        d = [read_file(file, movie) for file in filelist]
-        dfs[i, j] = pd.concat(d, ignore_index=True)
+        df = [read_file(file, movie) for file in filelist]
+        dfs[i, j] = pd.concat(df, ignore_index=True)
 
 df = dfs[0, 0]
 ts = df.Time.unique()
@@ -127,9 +133,8 @@ ylabel = 'Value of $\it{B}$'
 biglabels = plotsize*5 + height/4
 ticklabels = plotsize*4
 xlim=[0, 5]
-ylim=[0.0, 2.0]
+ylim=[-0.1, 1.1]
 step = int(nr/2)
-xaxis = [1, 2, 3, 4]
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -201,6 +206,7 @@ for f, folder in enumerate(folders):
 # (Line2D objects to lines)
 
 lines = np.empty(axs.shape, dtype=object)
+xaxis = [1, 2, 3, 4]
 dummy_y = np.zeros_like(xaxis)
 
 for f, folder in enumerate(folders):

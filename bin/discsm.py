@@ -95,7 +95,7 @@ def update(t, scatters):
 
             for (a, r), _ in np.ndenumerate(Z):
                 bgcolor = cm.viridis(Z[a, r]/my.a2max)
-                lines[f, c + 1, a, r].axes.set_facecolor(bgcolor)
+                scatters[f, c + 1, a, r].axes.set_facecolor(bgcolor)
 
     return scatters.flatten()
 

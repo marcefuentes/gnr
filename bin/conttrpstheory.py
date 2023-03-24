@@ -32,25 +32,12 @@ plotsize = 8
 
 def init(lines):
 
-    highs = pd.pivot_table(dfsocial,
-                          values='a2Seenmean',
-                          index='alpha',
-                          columns='logES')
-    highs = highs.sort_index(axis=0, ascending=False)
-    highs = highs.to_numpy()
+    highs = my.a2eq(0.0, AA, RR)
 
     for f, folder in enumerate(folders):
         df = dfs[f, 0]
-        if movie:
-            m = df.Time == ts[-1]
-            df = df.loc[m]
         given = df.Given.iloc[0]
-        lows = pd.pivot_table(df,
-                              values='a2Seenmean',
-                              index='alpha',
-                              columns='logES')
-        lows = lows.sort_index(axis=0, ascending=False)
-        lows = lows.to_numpy()
+        lows = my.a2eq(given, AA, RR)
         T = my.fitness(highs, lows, given, AA, RR)
         R = my.fitness(highs, highs, given, AA, RR)
         P = my.fitness(lows, lows, given, AA, RR)

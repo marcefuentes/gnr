@@ -35,6 +35,9 @@ def init(lines):
 
     for f, folder in enumerate(folders):
         df = dfs[f, 0]
+        if movie:
+            m = df.Time == ts[-1]
+            df = df.loc[m]
         given = df.Given.iloc[0]
         lows = pd.pivot_table(df,
                               values='a2low',

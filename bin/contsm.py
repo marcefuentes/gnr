@@ -56,26 +56,21 @@ def init(scatters):
         P = my.fitness(lows, lows, given, AA, RR)
         S = my.fitness(lows, highs, given, AA, RR)
 
-        p_left = (2.0*R - P - T - S)*plotsize*10
-        p_right = (R - P)*plotsize*10
+        pc = (2.0*R - 2.0*P - T + S)*plotsize*10
+        re = (P - S)*plotsize*10
 
-        r_left = (T + S - R - P)*plotsize*10
-        #m = R < P
-        #y[m] = T[m] + S[m] - 2.0*P[m]
-
-        r_right = (P - S)*plotsize*10
-
-        #transp_r = np.ones_like(y01)
-        #transp0 = np.zeros_like(y01)
-        #m = ((R > P) & (P < S)) | ((R < P) & (R < T)) 
-        #transp_r[m] = transp0[m]
+        zeros = np.zeros_like(re)
+        m = pc < 0.0
+        pc[m] = zeros[m]
+        m = re < 0.0
+        re[m] = zeros[m]
+        m = ((R > P) & (P < S)) | ((R < P) & (R < T)) 
+        re[m] = zeros[m]
 
         for a, alpha in enumerate(alphas):
             for r, rho in enumerate(rhos):
-                c_array = [p_left[a, r], p_right[a, r]]
-                scatters[f, 0, a, r].set_sizes(c_array)
-                c_array = [r_left[a, r], r_right[a, r]]
-                scatters[f, 1, a, r].set_sizes(c_array)
+                scatters[f, 0, a, r].set_sizes([pc[a, r]])
+                scatters[f, 1, a, r].set_sizes([re[a, r]])
 
     return scatters.flatten()
 
@@ -211,9 +206,9 @@ for f, folder in enumerate(folders):
 # (PathCollection artists to scatters)
 
 scatters = np.empty(axs.shape, dtype=object)
-x = [0.25, 0.75]
-y = [0.50, 0.50]
-dummy_z = [0.0, 0.0]
+x = [0.5]
+y = [0.5]
+dummy_z = [0.0]
 
 for f, folder in enumerate(folders):
     for c, trait in enumerate(traits):
@@ -223,7 +218,7 @@ for f, folder in enumerate(folders):
                 scatters[f, c, a, r] = ax.scatter(x,
                                                   y,
                                                   color='white',
-                                                  sizes=dummy_z)
+                                                  s=dummy_z)
 
 # Add data and save figure
 

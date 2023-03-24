@@ -57,6 +57,7 @@ def init(scatters):
         S = my.fitness(lows, highs, given, AA, RR)
 
         pc = (2.0*R - 2.0*P - T + S)*plotsize*10
+        pc = (R - P)*plotsize*10
         re = (P - S)*plotsize*10
 
         zeros = np.zeros_like(re)

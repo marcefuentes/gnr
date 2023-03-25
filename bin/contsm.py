@@ -57,8 +57,8 @@ def init(scatters):
         S = my.fitness(lows, highs, given, AA, RR)
 
         #CG = (2.0*R - 2.0*P - T + S)*plotsize*10
-        #CG = (R - P)*plotsize*10
-        CG = (0.99 + 0.12*T - 0.2*R - 0.5*P + 0.3*S)*plotsize*30
+        CG = (P-S)*plotsize*10
+        #CG = (0.99 + 0.12*T - 0.2*R - 0.5*P + 0.3*S)*plotsize*30
         #MG = (P - S)*plotsize*10
         MG = (-0.01*T + 0.23*R - 0.09*P - 0.22*S)*plotsize*10 
         zeros = np.zeros_like(MG)

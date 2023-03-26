@@ -67,63 +67,34 @@ R = my.fitness(high, high, given, alpha, rho)
 P = my.fitness(low, low, given, alpha, rho)
 S = my.fitness(low, high, given, alpha, rho)
 
-X = np.stack((R - P, P - S, T + S, R, P), axis=1)
+dl = my.deadlock(T, R, P, S)
+h = my.harmony(T, R, P, S)
+pd = my.prisoner(T, R, P, S)
+sd = my.snowdrift(T, R, P, S)
+dl = dl.astype(int)
+h = h.astype(int)
+pd = pd.astype(int)
+sd = sd.astype(int)
+
+X = np.stack((T - R, R - P, R - S, P - S),axis=1)
 
 CG = dfns[1]['ChooseGrainmean'].values
 MG = dfns[2]['MimicGrainmean'].values
 CG = 1.0 - CG
 MG = 1.0 - MG
 
+mask = pd 
+X = X[mask]
+CG = CG[mask]
+
 # Split data into training and testing sets
 X_train, X_test, CG_train, CG_test = train_test_split(X, CG, test_size=0.2, random_state=42)
 
 # Choose a linear regression model
-model = LinearRegression()
-
-# Train the model on the training data
-model.fit(X_train, CG_train)
-
-# Make predictions on the testing data
-CG_pred = model.predict(X_test)
-
-# Evaluate the performance of the model
-mse = mean_squared_error(CG_test, CG_pred)
-r2 = r2_score(CG_test, CG_pred)
-print('Mean Squared Error:', mse)
-print('R-squared:', r2)
-
-# Print the regression equation
-coef = model.coef_
-intercept = model.intercept_
-eqn = 'CG = {:.2f} + {:.2f}*(R-P) + {:.2f}*(P-S) + {:.2f}*(T+S) + {:.2f}*R'.format(intercept, coef[0], coef[1], coef[2], coef[3])
-print('Regression Equation:', eqn)
-
-# Split data into training and testing sets
-X_train, X_test, MG_train, MG_test = train_test_split(X, MG, test_size=0.2, random_state=42)
-
-# Choose a linear regression model
-model = LinearRegression()
-
-# Train the model on the training data
-model.fit(X_train, MG_train)
-
-# Make predictions on the testing data
-MG_pred = model.predict(X_test)
-
-# Evaluate the performance of the model
-mse = mean_squared_error(MG_test, MG_pred)
-r2 = r2_score(MG_test, MG_pred)
-print('Mean Squared Error:', mse)
-print('R-squared:', r2)
-
-# Print the regression equation
-coef = model.coef_
-intercept = model.intercept_
-eqn = 'MG = {:.2f} + {:.2f}*(R-P) + {:.2f}*(P-S) + {:.2f}*(T+S) + {:.2f}*R'.format(intercept, coef[0], coef[1], coef[2], coef[3])
-print('Regression Equation:', eqn)
+#model = LinearRegression()
 
 # Create a random forest regressor object
-rf = RandomForestRegressor(n_estimators=100, max_depth=3, random_state=42)
+rf = RandomForestRegressor(n_estimators=100, random_state=42)
 
 # Fit the regressor to the training data
 rf.fit(X_train, CG_train)

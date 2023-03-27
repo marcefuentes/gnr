@@ -3,30 +3,26 @@
 from glob import glob
 import os
 import pandas as pd
+import mymodule as my
 
 private_folder = 'private'
 social_folder = 'social'
 output_folder = 'none'
 
-# Get data
-
-def read_file(file, alltimes):
-    df = pd.read_csv(file)
-    if not alltimes:
-        df = df.tail(1)
-    return df
-
 for i in range(101, 542):
-    private_file_path = os.path.join(private_folder, f"{i}.csv")
-    social_file_path = os.path.join(social_folder, f"{i}.csv")
-    output_file_path = os.path.join(output_folder, f"{i}.glo")
-    dfprivate = read_file(private_file_path, False)
-    dfsocial = read_file(social_file_path, False)
+
+    private_file_path = os.path.join(private_folder, f'{i}.csv')
+    dfprivate = my.read_file(private_file_path, False)
     a2low = dfprivate['a2Seenmean'].iloc[0]
-    a2high = dfsocial['a2Seenmean'].iloc[0]
     alpha = dfprivate['alpha'].iloc[0]
     logES = dfprivate['logES'].iloc[0]
     Given = dfprivate['Given'].iloc[0]
+
+    social_file_path = os.path.join(social_folder, f'{i}.csv')
+    dfsocial = my.read_file(social_file_path, False)
+    a2high = dfsocial['a2Seenmean'].iloc[0]
+
+    output_file_path = os.path.join(output_folder, f'{i}.glo')
     
     with open(output_file_path, 'w') as f:
         f.write('Seed,1\n')

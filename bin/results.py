@@ -108,7 +108,7 @@ bottom_y = axs[-1, -1].get_position().y0
 center_y = (top_y + bottom_y) / 2
 fig.supxlabel(xlabel,
               x=center_x,
-              y=bottom_y*0.5,
+              y=bottom_y*0.6,
               fontsize=biglabels)
 fig.supylabel(ylabel,
               x=left_x*0.4,

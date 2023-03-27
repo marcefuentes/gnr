@@ -56,7 +56,7 @@ def init(scatters):
         P = my.fitness(lows, lows, given, AA, RR)
         S = my.fitness(lows, highs, given, AA, RR)
 
-        CG = (P - S)*plotsize*10
+        CG = (R - P)*(R - P)*plotsize*10/(R - S)
         zeros = np.zeros_like(CG)
         m = my.harmony(T, R, P, S) | my.deadlock(T, R, P, S)
         CG[m] = zeros[m]

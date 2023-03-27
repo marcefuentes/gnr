@@ -2,37 +2,33 @@
 
 from glob import glob
 import os
-import numpy as np
 import pandas as pd
 
-given = 0.95
-num = 21
-alphas = np.linspace(0.1, 0.9, num)
-logess = np.linspace(-5.0, 5.0, num)
-c = 101
+private_folder = 'private'
+social_folder = 'social'
+output_folder = 'none'
 
-filelist = glob(os.path.join('../given95/none', '*.csv'))
-df = pd.concat(map(pd.read_csv, filelist),
-                       ignore_index=True)
+# Get data
 
-ts = df.Time.unique()
-t = ts[-1]
-Zs = np.empty((2, 21, 21), dtype=np.float32)
+def read_file(file, alltimes):
+    df = pd.read_csv(file)
+    if not alltimes:
+        df = df.tail(1)
+    return df
 
-m = df.Time == t
-df = df.loc[m]
-Z = pd.pivot_table(df,
-                   values='a2Seenmean',
-                   index='alpha',
-                   columns=['logES'])
-Z = Z.sort_index(axis=0, ascending=True)
-Z = Z.to_numpy()
-
-for a, alpha in enumerate(alphas):
-    for l, loges in enumerate(logess):
-        filename = str(c) + '.glo'
-        f = open(filename, 'w')
-
+for i in range(101, 542):
+    private_file_path = os.path.join(private_folder, f"{i}.csv")
+    social_file_path = os.path.join(social_folder, f"{i}.csv")
+    output_file_path = os.path.join(output_folder, f"{i}.glo")
+    dfprivate = read_file(private_file_path, False)
+    dfsocial = read_file(social_file_path, False)
+    a2low = dfprivate['a2Seenmean'].iloc[0]
+    a2high = dfsocial['a2Seenmean'].iloc[0]
+    alpha = dfprivate['alpha'].iloc[0]
+    logES = dfprivate['logES'].iloc[0]
+    Given = dfprivate['Given'].iloc[0]
+    
+    with open(output_file_path, 'w') as f:
         f.write('Seed,1\n')
         f.write('N,12\n')
         f.write('Runs,30\n')
@@ -54,12 +50,9 @@ for a, alpha in enumerate(alphas):
         f.write('PartnerChoice,0\n')
         f.write('Reciprocity,0\n')
         f.write('Discrete,1\n')
-        f.write(f'a2low,{Z[a, l]}\n')
-        f.write(f'a2high,{Z[a, l] + 0.001}\n')
+        f.write(f'a2low,{str(a2low)}\n')
+        f.write(f'a2high,{str(a2high)}\n')
         f.write('IndirectR,0\n')
-        f.write(f'alpha,{alpha:.6}\n')
-        f.write(f'logES,{loges}\n')
-        f.write(f'Given,{given}\n')
-
-        f.close()
-        c = c + 1
+        f.write(f'alpha,{str(alpha)}\n')
+        f.write(f'logES,{str(logES)}\n')
+        f.write(f'Given,{str(Given)}\n')

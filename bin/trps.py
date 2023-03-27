@@ -47,15 +47,10 @@ def update(frame, lines):
 
 # Get data
 
-def read_file(file):
-    df = pd.read_csv(file)
-    df = df.tail(1)
-    return df
-
 a2eqs = np.empty(len(folders), dtype=object)
 for i, folder in enumerate(folders):
     filelist = glob(os.path.join(folder, 'none', '*.csv'))
-    df = [read_file(file) for file in filelist]
+    df = [my.read_file(file, False) for file in filelist]
     df = pd.concat(df, ignore_index=True)
     if i == 0:
         given = df.Given.iloc[0]

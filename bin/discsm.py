@@ -101,17 +101,11 @@ def update(t, scatters):
 
 # Get data
 
-def read_file(file, alltimes):
-    df = pd.read_csv(file)
-    if not alltimes:
-        df = df.tail(1)
-    return df
-
 dfs = np.empty((len(folders), len(subfolders)), dtype=object)
 for i, folder in enumerate(folders):
     for j, subfolder in enumerate(subfolders):
         filelist = glob(os.path.join(folder, subfolder, '*.csv'))
-        df = [read_file(file, movie) for file in filelist]
+        df = [my.read_file(file, movie) for file in filelist]
         dfs[i, j] = pd.concat(df, ignore_index=True)
 
 df = dfs[0, 0]

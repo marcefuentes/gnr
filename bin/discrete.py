@@ -67,16 +67,12 @@ def figdata(images):
 
 # Get data
 
-def read_file(file):
-    df = pd.read_csv(file)
-    return df.tail(1)
-
 dfs = np.empty((len(folders), len(subfolders)), dtype=object)
 for i, folder in enumerate(folders):
     for j, subfolder in enumerate(subfolders):
         filelist = glob(os.path.join(folder, subfolder, '*.csv'))
-        d = list(map(read_file, filelist))
-        dfs[i, j] = pd.concat(d, ignore_index=True)
+        df = [my.read_file(file, False) for file in filelist]
+        dfs[i, j] = pd.concat(df, ignore_index=True)
 
 df = dfs[0, 0]
 alphas = np.sort(pd.unique(df.alpha))[::-1]

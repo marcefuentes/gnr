@@ -53,6 +53,8 @@ def update(t, lines):
                     y = y.values[0]
                     y = y.flatten()
                     lines[f, c, a, r].set_ydata(y)
+    if movie:
+        fig.texts[2].set_text(f't\n{t}')
     return lines.flatten()
 
 # Get data
@@ -125,17 +127,16 @@ for ax in fig.get_axes():
     for axis in ['top','bottom','left','right']:
         ax.spines[axis].set_linewidth(0.1)
 
-letter = ord('a')
 for f, folder in enumerate(folders):
-    for c, title in enumerate(titles):
+    for c, trait in enumerate(traits):
+        letter = ord('a') + f*len(traits) + c
         axs[f, c, 0, 0].set_title(chr(letter),
                                   fontsize=plotsize*5,
                                   pad = 11,
                                   weight='bold',
                                   loc='left')
-        letter += 1
         if f == 0:
-            axs[f, c, 0, 10].set_title(title,
+            axs[f, c, 0, 10].set_title(titles[c],
                                        pad=plotsize*9,
                                        fontsize=plotsize*5)
         for a in range(0, nr, step):
@@ -149,19 +150,27 @@ for f, folder in enumerate(folders):
                 axs[f, c, -1, l].set_xticklabels([f'{logess[l]:.0f}'],
                                                  fontsize=ticklabels)
 
+if movie:
+    fig.text(right_x,
+             bottom_y*0.5,
+             f't\n0',
+             fontsize=biglabels,
+             color='grey',
+             ha='right')
+
 # Assign axs objects to variables
 # (Line2D artists to lines)
 
 lines = np.empty(axs.shape, dtype=object)
 x = np.arange(64)
-y = np.zeros_like(x)
+dummy_y = np.zeros_like(x)
 
 for f, folder in enumerate(folders):
     for c, trait in enumerate(traits):
         for a, alpha in enumerate(alphas):
             for r, loges in enumerate(logess):
                 ax = axs[f, c, a, r] 
-                lines[f, c, a, r], = ax.plot(x, y)
+                lines[f, c, a, r], = ax.plot(x, dummy_y)
 
 # Add data and save figure
 

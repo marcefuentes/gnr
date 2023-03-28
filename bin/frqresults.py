@@ -29,26 +29,27 @@ titles = ['Effort to get $\it{B}$',
 folders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
 
 movie = False
-plotsize = 4
+plotsize = 8
+bins = 64
 
 # Add data to figure
 
-def figdata(t, lines):
+def update(t, lines):
     for f, folder in enumerate(folders):
         df = dfs[f]
         if movie:
             m = df.Time == t
             df = df.loc[m]
-        for r, trait in enumerate(traits):
+        for c, trait in enumerate(traits):
             for a, alpha in enumerate(alphas):
-                for l, loges in enumerate(logess):
+                for r, loges in enumerate(logess):
                     m = (df.alpha == alpha) & (df.logES == loges)
                     d = df.loc[m]
                     freq_a = [col for col in d.columns if re.match(fr'^{trait}\d+$', col)]
                     y = d.loc[:, freq_a]
                     y = y.values[0]
                     y = y.flatten()
-                    lines[f, r, a, l].set_ydata(y)
+                    lines[f, c, a, r].set_ydata(y)
     if movie:
         fig.texts[2].set_text(f't\n{t}')
     return lines.flatten()
@@ -67,7 +68,6 @@ alphas = np.sort(pd.unique(df.alpha))[::-1]
 logess = np.sort(pd.unique(df.logES))
 nr = len(alphas)
 nc = len(logess)
-x = np.arange(64)
 
 # Figure properties
 
@@ -78,6 +78,8 @@ ylabel = 'Value of $\it{B}$'
 biglabels = plotsize*5 + height/4
 ticklabels = plotsize*4
 step = int(nr/2)
+xlim = [-2, bins + 1]
+ylim = [0, 0.25]
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -88,17 +90,17 @@ outergrid = fig.add_gridspec(nrows=len(folders),
                              ncols=len(traits))
 axs = np.empty((len(folders),
                 len(traits),
-                len(alphas),
-                len(logess)),
+                nr,
+                nc),
                dtype=object)
 
 for f, folder in enumerate(folders):
-    for r, trait in enumerate(traits):
-        grid = outergrid[f, r].subgridspec(nrows=nr,
+    for c, trait in enumerate(traits):
+        grid = outergrid[f, c].subgridspec(nrows=nr,
                                            ncols=nc,
                                            wspace=0,
                                            hspace=0)
-        axs[f, r] = grid.subplots()
+        axs[f, c] = grid.subplots()
 
 left_x = axs[0, 0, 0, 0].get_position().x0
 right_x = axs[-1, -1, -1, -1].get_position().x1
@@ -117,35 +119,31 @@ fig.supylabel(ylabel,
 
 for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])
+    ax.set(xlim=xlim, ylim=ylim)
     for axis in ['top','bottom','left','right']:
         ax.spines[axis].set_linewidth(0.1)
 
 for f, folder in enumerate(folders):
-    for r, trait in enumerate(traits):
-        letter = ord('a') + f*len(traits) + r
-        axs[f, r, 0, 0].set_title(chr(letter),
+    for c, trait in enumerate(traits):
+        letter = ord('a') + f*len(traits) + c
+        axs[f, c, 0, 0].set_title(chr(letter),
                                   fontsize=plotsize*5,
                                   pad = 10,
                                   weight='bold',
                                   loc='left')
         if f == 0:
-            axs[f, r, 0, 10].set_title(titles[r],
+            axs[f, c, 0, 10].set_title(titles[c],
                                        pad=plotsize*9,
                                        fontsize=plotsize*5)
         for a in range(0, nr, step):
-            axs[f, r, a, 0].set(yticks=[0.1], yticklabels=[])
-            if r == 0:
-                axs[f, r, a, 0].set_ylabel(f'{alphas[a]:.1f}',
-                                           rotation='horizontal',
-                                           horizontalalignment='right',
-                                           verticalalignment='center',
-                                           y=0.3,
+            axs[f, c, a, 0].set(yticks=[ylim[1]/2.0], yticklabels=[])
+            if c == 0:
+                axs[f, c, a, 0].set_yticklabels([alphas[a]],
                                            fontsize=ticklabels)
         for l in range(0, nc, step):
-            axs[f, r, -1, l].set(xticks=[32], xticklabels=[])
+            axs[f, c, -1, l].set(xticks=[xlim[1]/2.0], xticklabels=[])
             if folder == folders[-1]:
-                axs[f, r, -1, l].set_xlabel(f'{logess[l]:.0f}',
-                                            x=0.3,
+                axs[f, c, -1, l].set_xticklabels([f'{logess[l]:.0f}'],
                                             fontsize=ticklabels)
 
 if movie:
@@ -157,28 +155,30 @@ if movie:
              ha='right')
 
 # Assign axs objects to variables
-# (Line2D objects to lines)
+# (Line2D artists to lines)
 
 lines = np.empty(axs.shape, dtype=object)
+x = np.arange(64)
 dummy_y = np.zeros_like(x)
 
 for f, folder in enumerate(folders):
-    for r, trait in enumerate(traits):
+    for c, trait in enumerate(traits):
         for a, alpha in enumerate(alphas):
-            for l, loges in enumerate(logess):
-                lines[f, r, a, l], = axs[f, r, a, l].plot(x, dummy_y)
+            for r, loges in enumerate(logess):
+                ax = axs[f, c, a, r] 
+                lines[f, c, a, r], = ax.plot(x, dummy_y)
 
 # Add data and save figure
 
 if movie:
     ani = FuncAnimation(fig,
-                        figdata,
+                        update,
                         frames=ts,
                         fargs=(lines,),
                         blit=True)
     ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
 else:
-    figdata(ts[-1], lines,)
+    update(ts[-1], lines,)
     plt.savefig(filename + '.png', transparent=False)
 
 plt.close()

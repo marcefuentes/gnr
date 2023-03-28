@@ -42,14 +42,14 @@ def update(t, lines):
             df = df.loc[m]
         for c, trait in enumerate(traits):
             for a, alpha in enumerate(alphas):
-                for r, loges in enumerate(logess):
+                for l, loges in enumerate(logess):
                     m = (df.alpha == alpha) & (df.logES == loges)
                     d = df.loc[m]
                     freq_a = [col for col in d.columns if re.match(fr'^{trait}\d+$', col)]
                     y = d.loc[:, freq_a]
                     y = y.values[0]
                     y = y.flatten()
-                    lines[f, c, a, r].set_ydata(y)
+                    lines[f, c, a, l].set_ydata(y)
     if movie:
         fig.texts[2].set_text(f't\n{t}')
     return lines.flatten()
@@ -77,9 +77,9 @@ xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 biglabels = plotsize*5 + height/4
 ticklabels = plotsize*4
-step = int(nr/2)
 xlim = [-2, bins + 1]
 ylim = [0, 0.25]
+step = int(nr/2)
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -164,9 +164,9 @@ dummy_y = np.zeros_like(x)
 for f, folder in enumerate(folders):
     for c, trait in enumerate(traits):
         for a, alpha in enumerate(alphas):
-            for r, loges in enumerate(logess):
-                ax = axs[f, c, a, r] 
-                lines[f, c, a, r], = ax.plot(x, dummy_y)
+            for l, loges in enumerate(logess):
+                ax = axs[f, c, a, l] 
+                lines[f, c, a, l], = ax.plot(x, dummy_y)
 
 # Add data and save figure
 

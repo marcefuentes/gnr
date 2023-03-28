@@ -5,6 +5,7 @@ import os
 import re
 import time
 
+from matplotlib.animation import FuncAnimation
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -15,138 +16,163 @@ start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
-givens = [1.0, 0.95, 0.5]
+# Options
+
+traits = ['ChooseGrain',
+          'MimicGrain']
+titles = ['Sensitivity for\nchoosing partner',
+          'Sensitivity for\nmimicking partner']
 titles = ['Effort\nto get B',
           'Fitness']
 traits = ['a2Seen',
           'w']
 folders = ['given100', 'given95', 'given50']
-subfolders = ['none', 'p', 'r']
+subfolders = ['p', 'r']
 
-rows = folders
-plotsize = 6
+movie = False
+plotsize = 8
+bins = 64
 
-dfss = []
-for folder in folders:
-    dfs = []
-    for subfolder in subfolders:
+# Add data to figure
+
+def update(t, lines):
+    for f, folder in enumerate(folders):
+        for c, trait in enumerate(traits):
+            df = dfs[f, c]
+            if movie:
+                m = df.Time == t
+                df = df.loc[m]
+            for a, alpha in enumerate(alphas):
+                for r, loges in enumerate(logess):
+                    m = (df.alpha == alpha) & (df.logES == loges)
+                    d = df.loc[m]
+                    freq_a = [col for col in d.columns if re.match(fr'^{trait}\d+$', col)]
+                    y = d.loc[:, freq_a]
+                    y = y.values[0]
+                    y = y.flatten()
+                    lines[f, c, a, r].set_ydata(y)
+    return lines.flatten()
+
+# Get data
+
+dfs = np.empty((len(folders), len(subfolders)), dtype=object)
+for i, folder in enumerate(folders):
+    for j, subfolder in enumerate(subfolders):
         filelist = glob(os.path.join(folder, subfolder, '*.frq'))
-        df = pd.concat(map(pd.read_csv, filelist),
-                       ignore_index=True)
-        dfs.append(df)
-    dfss.append(dfs)
+        df = [my.read_file(file, movie) for file in filelist]
+        dfs[i, j] = pd.concat(df, ignore_index=True)
 
-filelist = glob(os.path.join('given00', 'none', '*.frq'))
-
-df = dfss[0][0]
+df = dfs[0, 0]
 ts = df.Time.unique()
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 logess = np.sort(pd.unique(df.logES))
 nr = len(alphas)
 nc = len(logess)
-x = np.arange(64)
 
-step = int(nr/2)
+# Figure properties
+
+width = plotsize*len(traits)
+height = plotsize*len(folders)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
-letter = ord('a')
-letterposition = 1.035
-xticks = [0, nc/2-0.5, nc-1]
-yticks = [0, nr/2-0.5, nr-1]
-xmin = logess[0]
-xmax = logess[-1]
-ymin = alphas[-1]
-ymax = alphas[0]
-xticklabels = [f'{xmin:2.0f}',
-               f'{(xmin + xmax)/2.0:2.0f}',
-               f'{xmax:2.0f}']
-yticklabels = [f'{ymax:3.1f}',
-               f'{(ymin + ymax)/2.0:3.1f}',
-               f'{ymin:3.1f}']
-width = plotsize*len(titles)
-height = plotsize*len(rows)
 biglabels = plotsize*5 + height/4
-ticklabels = plotsize*3.5
+ticklabels = plotsize*4
+step = int(nr/2)
+xlim = [-2, bins + 1]
+ylim = [0, 0.25]
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-fig = plt.figure(figsize=(width, height))
-fig.supxlabel(xlabel,
-              x=0.515,
-              y=0.04,
-              fontsize=biglabels)
-fig.supylabel(ylabel,
-              x=0.04,
-              y=0.495,
-              fontsize=biglabels)
+# Create figure
 
-outergrid = fig.add_gridspec(nrows=len(rows),
-                             ncols=len(titles))
-axsss = []
-for g, row in enumerate(rows):
-    axss = []
+fig = plt.figure(figsize=(width, height))
+outergrid = fig.add_gridspec(nrows=len(folders),
+                             ncols=len(traits))
+axs = np.empty((len(folders),
+                len(traits),
+                nr,
+                nc),
+                dtype=object)
+
+for f, folder in enumerate(folders):
     for c, trait in enumerate(traits):
-        grid = outergrid[g, c].subgridspec(nrows=nr,
+        grid = outergrid[f, c].subgridspec(nrows=nr,
                                            ncols=nc,
                                            wspace=0,
                                            hspace=0)
-        axs = grid.subplots()
-        axs[0, 0].set_title(chr(letter),
-                            fontsize=plotsize*5,
-                            pad = 10,
-                            weight='bold',
-                            loc='left')
+        axs[f, c] = grid.subplots()
+
+left_x = axs[0, 0, 0, 0].get_position().x0
+right_x = axs[-1, -1, -1, -1].get_position().x1
+center_x = (left_x + right_x) / 2
+top_y = axs[0, 0, 0, 0].get_position().y1
+bottom_y = axs[-1, -1, -1, -1].get_position().y0
+center_y = (top_y + bottom_y) / 2
+fig.supxlabel(xlabel,
+              x=center_x,
+              y=bottom_y*0.3,
+              fontsize=biglabels)
+fig.supylabel(ylabel,
+              x=left_x*0.1,
+              y=center_y,
+              fontsize=biglabels)
+
+for ax in fig.get_axes():
+    ax.set(xticks=[], yticks=[])
+    ax.set(xlim=xlim, ylim=ylim)
+    for axis in ['top','bottom','left','right']:
+        ax.spines[axis].set_linewidth(0.1)
+
+letter = ord('a')
+for f, folder in enumerate(folders):
+    for c, title in enumerate(titles):
+        axs[f, c, 0, 0].set_title(chr(letter),
+                                  fontsize=plotsize*5,
+                                  pad = 11,
+                                  weight='bold',
+                                  loc='left')
         letter += 1
-        for i, alpha in enumerate(alphas):
-            for j, loges in enumerate(logess):
-                axs[i, j].set(xticks=[], yticks=[])
-                axs[i, j].set(xticklabels=[], yticklabels=[])
-                for axis in ['top','bottom','left','right']:
-                    axs[i, j].spines[axis].set_linewidth(0.1)
-        if c == 0:
-            for i in range(0, nr, step):
-                axs[i, 0].set(yticks=[0.5]) 
-                axs[i, 0].set_yticklabels([f'{alphas[i]:3.1f}'],
-                                     rotation='horizontal',
-                                     horizontalalignment='right',
-                                     verticalalignment='center',
-                                     y=0.3,
-                                     fontsize=ticklabels)
+        if f == 0:
+            axs[f, c, 0, 10].set_title(title,
+                                       pad=plotsize*9,
+                                       fontsize=plotsize*5)
+        for a in range(0, nr, step):
+            axs[f, c, a, 0].set(yticks=[ylim[1]/2.0], yticklabels=[])
+            if c == 0:
+                axs[f, c, a, 0].set_yticklabels([alphas[a]],
+                                                fontsize=ticklabels)
+        for l in range(0, nc, step):
+            axs[f, c, -1, l].set(xticks=[xlim[1]/2.0], xticklabels=[])
+            if folder == folders[-1]:
+                axs[f, c, -1, l].set_xticklabels([f'{logess[l]:.0f}'],
+                                                 fontsize=ticklabels)
 
-        if g == 0:
-            axs[0, 10].set_title(titles[c],
-                                fontsize=plotsize*5,
-                                pad=plotsize*9,
-                                loc='center')
-        if row == rows[-1]:
-            for j in range(0, nc, step):
-                axs[-1, j].set(xticks=[32], xticklabels=[]) 
-                if g == 2:
-                    axs[-1, j].set_xticklabels([f'{logess[j]:2.0f}'],
-                                               x=0.0,
-                                               fontsize=ticklabels)
-        axss.append(axs)
-    axsss.append(axss)
+# Assign axs objects to variables
+# (Line2D artists to lines)
 
-for g, given in enumerate(givens):
+lines = np.empty(axs.shape, dtype=object)
+x = np.arange(64)
+y = np.zeros_like(x)
 
-    df = dfss[g][0]
-    m = df.Time == ts[-1]
-    df = df.loc[m]
-    given = df.Given.iloc[0]
+for f, folder in enumerate(folders):
+    for c, trait in enumerate(traits):
+        for a, alpha in enumerate(alphas):
+            for r, loges in enumerate(logess):
+                ax = axs[f, c, a, r] 
+                lines[f, c, a, r], = ax.plot(x, y)
 
-    for r, trait in enumerate(traits):
-        for i, alpha in enumerate(alphas):
-            for j, loges in enumerate(logess):
-                m = (df.alpha == alpha) & (df.logES == loges)
-                d = df.loc[m]
-                freq_a = [col for col in d.columns if re.match(fr'^{trait}\d+$', col)]
-                y = d.loc[:, freq_a]
-                y = y.values[0]
-                y = y.flatten()
-                axsss[g][r][i][j].plot(x, y)
+# Add data and save figure
 
-plt.savefig(filename + '.png', transparent=False)
+if movie:
+    ani = FuncAnimation(fig,
+                        update,
+                        frames=ts,
+                        fargs=(lines,),
+                        blit=True)
+    ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
+else:
+    update(ts[-1], lines,)
+    plt.savefig(filename + '.png', transparent=False)
 
 plt.close()
 

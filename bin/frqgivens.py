@@ -22,12 +22,14 @@ traits = ['ChooseGrain',
           'MimicGrain']
 titles = ['Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
-titles = ['Effort\nto get B',
-          'Fitness']
+
 traits = ['a2Seen',
-          'w']
+          'a2Seen']
+titles = ['Effort\nto get B',
+          'Effort\nto get B']
+
 folders = ['given100', 'given95', 'given50']
-subfolders = ['p', 'r']
+subfolders = ['given0', 'given0']
 
 movie = False
 plotsize = 8

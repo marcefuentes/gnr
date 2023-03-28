@@ -68,11 +68,11 @@ def init(lines):
         linecolor[m] = red[m]
 
         for c, trait in enumerate(traits):
-            for (a, r, i), _ in np.ndenumerate(y):
-                lines[f, c, a, r].set_ydata(y[a, r])
-                lcolor = linecolor[a, r] 
-                lines[f, c, a, r].set_color(lcolor)
-                lines[f, c, a, r].set_markerfacecolor(lcolor)
+            for (a, l, i), _ in np.ndenumerate(y):
+                lines[f, c, a, l].set_ydata(y[a, l])
+                lcolor = linecolor[a, l] 
+                lines[f, c, a, l].set_color(lcolor)
+                lines[f, c, a, l].set_markerfacecolor(lcolor)
 
     return lines.flatten()
 
@@ -92,9 +92,11 @@ def update(t, lines):
             Z = Z.to_numpy()
             Z = 1.0 - Z
 
-            for (a, r), _ in np.ndenumerate(Z):
-                bgcolor = cm.viridis(Z[a, r]/my.a2max)
-                lines[f, c, a, r].axes.set_facecolor(bgcolor)
+            for (a, l), _ in np.ndenumerate(Z):
+                bgcolor = cm.viridis(Z[a, l]/my.a2max)
+                lines[f, c, a, l].axes.set_facecolor(bgcolor)
+    if movie:
+        fig.texts[2].set_text(f't\n{t}')
 
     return lines.flatten()
 
@@ -128,8 +130,8 @@ xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 biglabels = plotsize*5 + height/4
 ticklabels = plotsize*4
-xlim=[0, 5]
-ylim=[-0.1, 1.1]
+xlim = [0, 5]
+ylim = [-0.1, 1.1]
 step = int(nr/2)
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
@@ -161,10 +163,10 @@ bottom_y = axs[-1, -1, -1, -1].get_position().y0
 center_y = (top_y + bottom_y) / 2
 fig.supxlabel(xlabel,
               x=center_x,
-              y=bottom_y*0.2,
+              y=bottom_y*0.3,
               fontsize=biglabels)
 fig.supylabel(ylabel,
-              x=left_x*0.2,
+              x=left_x*0.1,
               y=center_y,
               fontsize=biglabels)
 
@@ -174,32 +176,39 @@ for ax in fig.get_axes():
     for axis in ['top','bottom','left','right']:
         ax.spines[axis].set_linewidth(0.1)
 
-letter = ord('a')
 for f, folder in enumerate(folders):
     for c, title in enumerate(titles):
+        letter = ord('a') + f*len(titles) + c
         axs[f, c, 0, 0].set_title(chr(letter),
                                   fontsize=plotsize*5,
                                   pad = 11,
                                   weight='bold',
                                   loc='left')
-        letter += 1
         if f == 0:
             axs[f, c, 0, 10].set_title(title,
                                        pad=plotsize*9,
                                        fontsize=plotsize*5)
         for a in range(0, nr, step):
-            axs[f, c, a, 0].set(yticks=[ylim[1]/2], yticklabels=[])
+            axs[f, c, a, 0].set(yticks=[ylim[1]/2.0], yticklabels=[])
             if c == 0:
                 axs[f, c, a, 0].set_yticklabels([alphas[a]],
                                                 fontsize=ticklabels)
         for l in range(0, nc, step):
-            axs[f, c, -1, l].set(xticks=[xlim[1]/2], xticklabels=[])
+            axs[f, c, -1, l].set(xticks=[xlim[1]/2.0], xticklabels=[])
             if folder == folders[-1]:
                 axs[f, c, -1, l].set_xticklabels([f'{logess[l]:.0f}'],
                                                  fontsize=ticklabels)
 
+if movie:
+    fig.text(right_x,
+             bottom_y*0.5,
+             f't\n0',
+             fontsize=biglabels,
+             color='grey',
+             ha='right')
+
 # Assign axs objects to variables
-# (Line2D objects to lines)
+# (Line2D artists to lines)
 
 lines = np.empty(axs.shape, dtype=object)
 xaxis = [1, 2, 3, 4]
@@ -208,9 +217,9 @@ dummy_y = np.zeros_like(xaxis)
 for f, folder in enumerate(folders):
     for c, trait in enumerate(traits):
         for a, alpha in enumerate(alphas):
-            for r, rho in enumerate(rhos):
-                ax = axs[f, c, a, r] 
-                lines[f, c, a, r], = ax.plot(xaxis,
+            for l, loges in enumerate(logess):
+                ax = axs[f, c, a, l] 
+                lines[f, c, a, l], = ax.plot(xaxis,
                                              dummy_y,
                                              linewidth=1,
                                              marker='o',

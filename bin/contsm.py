@@ -97,7 +97,6 @@ def update(t, scatters):
                 scatters[f, c, a, l].axes.set_facecolor(bgcolor)
     if movie:
         fig.texts[2].set_text(f't\n{t}')
-    return lines.flatten()
 
     return scatters.flatten()
 

@@ -20,7 +20,8 @@ filename = thisscript.split('.')[0]
 
 traits = ['ChooseGrainmean',
           'MimicGrainmean']
-titles = ['Sensitivity for\nchoosing partner',
+titles = ['Games',
+          'Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
 folders = ['given100', 'given95', 'given50']
 subfolders = ['none', 'p', 'r']
@@ -68,9 +69,12 @@ def init(lines):
         m = lows > highs
         linecolor[m] = red[m]
 
-        for c, trait in enumerate(traits):
+        Zg = my.gamecolors(T, R, P, S)
+        for c, title in enumerate(titles):
             for (a, l, i), _ in np.ndenumerate(y):
                 lines[f, c, a, l].set_ydata(y[a, l])
+                if c == 0:
+                    lines[f, c, a, l].axes.set_facecolor(Zg[a, l])
                 lcolor = linecolor[a, l] 
                 lines[f, c, a, l].set_color(lcolor)
                 lines[f, c, a, l].set_markerfacecolor(lcolor)
@@ -81,7 +85,7 @@ def update(t, lines):
         
     for f, folder in enumerate(folders):
         for c, trait in enumerate(traits):
-            df = dfs[f, c + 1]
+            df = dfs[f, c]
             if movie:
                 m = df.Time == t
                 df = df.loc[m]
@@ -95,7 +99,7 @@ def update(t, lines):
 
             for (a, l), _ in np.ndenumerate(Z):
                 bgcolor = cm.viridis(Z[a, l]/my.a2max)
-                lines[f, c, a, l].axes.set_facecolor(bgcolor)
+                lines[f, c + 1, a, l].axes.set_facecolor(bgcolor)
     if movie:
         fig.texts[2].set_text(f't\n{t}')
 
@@ -168,7 +172,7 @@ fig.supxlabel(xlabel,
               y=bottom_y*0.3,
               fontsize=biglabels)
 fig.supylabel(ylabel,
-              x=left_x*0.1,
+              x=left_x*0.4,
               y=center_y,
               fontsize=biglabels)
 

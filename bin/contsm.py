@@ -20,7 +20,8 @@ filename = thisscript.split('.')[0]
 
 traits = ['ChooseGrainmean',
           'MimicGrainmean']
-titles = ['Sensitivity for\nchoosing partner',
+titles = ['Games',
+          'Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
 folders = ['given100', 'given95', 'given50']
 subfolders = ['none', 'p', 'r']
@@ -69,10 +70,12 @@ def init(scatters):
         m = ((R > P) & (P < S)) | ((R < P) & (R < T)) 
         MG[m] = zeros[m]
 
+        Zg = my.gamecolors(T, R, P, S)
         for a, alpha in enumerate(alphas):
             for l, loges in enumerate(logess):
-                scatters[f, 0, a, l].set_sizes([CG[a, l]])
-                scatters[f, 1, a, l].set_sizes([MG[a, l]])
+                scatters[f, 0, a, l].axes.set_facecolor(Zg[a, l])
+                scatters[f, 1, a, l].set_sizes([CG[a, l]])
+                scatters[f, 2, a, l].set_sizes([MG[a, l]])
 
     return scatters.flatten()
 
@@ -94,7 +97,7 @@ def update(t, scatters):
 
             for (a, l), _ in np.ndenumerate(Z):
                 bgcolor = cm.viridis(Z[a, l]/my.a2max)
-                scatters[f, c, a, l].axes.set_facecolor(bgcolor)
+                scatters[f, c + 1, a, l].axes.set_facecolor(bgcolor)
     if movie:
         fig.texts[2].set_text(f't\n{t}')
 
@@ -166,7 +169,7 @@ fig.supxlabel(xlabel,
               y=bottom_y*0.3,
               fontsize=biglabels)
 fig.supylabel(ylabel,
-              x=left_x*0.1,
+              x=left_x*0.4,
               y=center_y,
               fontsize=biglabels)
 

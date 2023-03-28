@@ -70,7 +70,7 @@ def init(scatters):
 
         Zg = my.gamecolors(T, R, P, S)
         for a, alpha in enumerate(alphas):
-            for l, rho in enumerate(rhos):
+            for l, loges in enumerate(logess):
                 scatters[f, 0, a, l].axes.set_facecolor(Zg[a, l])
                 scatters[f, 1, a, l].set_sizes([CG[a, l]])
                 scatters[f, 2, a, l].set_sizes([MG[a, l]])

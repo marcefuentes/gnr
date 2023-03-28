@@ -55,6 +55,7 @@ def update(t, lines):
                     lines[f, c, a, l].set_ydata(y)
     if movie:
         fig.texts[2].set_text(f't\n{t}')
+
     return lines.flatten()
 
 # Get data
@@ -75,7 +76,7 @@ nc = len(logess)
 
 # Figure properties
 
-width = plotsize*len(traits)
+width = plotsize*len(titles)
 height = plotsize*len(folders)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
@@ -91,15 +92,15 @@ plt.rcParams['ps.fonttype'] = 42
 
 fig = plt.figure(figsize=(width, height))
 outergrid = fig.add_gridspec(nrows=len(folders),
-                             ncols=len(traits))
+                             ncols=len(titles))
 axs = np.empty((len(folders),
-                len(traits),
+                len(titles),
                 nr,
                 nc),
                 dtype=object)
 
 for f, folder in enumerate(folders):
-    for c, trait in enumerate(traits):
+    for c, title in enumerate(titles):
         grid = outergrid[f, c].subgridspec(nrows=nr,
                                            ncols=nc,
                                            wspace=0,
@@ -128,15 +129,15 @@ for ax in fig.get_axes():
         ax.spines[axis].set_linewidth(0.1)
 
 for f, folder in enumerate(folders):
-    for c, trait in enumerate(traits):
-        letter = ord('a') + f*len(traits) + c
+    for c, title in enumerate(titles):
+        letter = ord('a') + f*len(titles) + c
         axs[f, c, 0, 0].set_title(chr(letter),
                                   fontsize=plotsize*5,
                                   pad = 11,
                                   weight='bold',
                                   loc='left')
         if f == 0:
-            axs[f, c, 0, 10].set_title(titles[c],
+            axs[f, c, 0, 10].set_title(title,
                                        pad=plotsize*9,
                                        fontsize=plotsize*5)
         for a in range(0, nr, step):
@@ -166,7 +167,7 @@ x = np.arange(64)
 dummy_y = np.zeros_like(x)
 
 for f, folder in enumerate(folders):
-    for c, trait in enumerate(traits):
+    for c, title in enumerate(titles):
         for a, alpha in enumerate(alphas):
             for l, loges in enumerate(logess):
                 ax = axs[f, c, a, l] 

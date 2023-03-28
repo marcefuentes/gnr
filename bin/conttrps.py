@@ -124,7 +124,7 @@ RR, AA = np.meshgrid(rhos, alphas)
 
 # Figure properties
 
-width = plotsize*len(traits)
+width = plotsize*len(titles)
 height = plotsize*len(folders)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
@@ -140,15 +140,15 @@ plt.rcParams['ps.fonttype'] = 42
 
 fig = plt.figure(figsize=(width, height))
 outergrid = fig.add_gridspec(nrows=len(folders),
-                             ncols=len(traits))
+                             ncols=len(titles))
 axs = np.empty((len(folders),
-                len(traits),
+                len(titles),
                 nr,
                 nc),
                 dtype=object)
 
 for f, folder in enumerate(folders):
-    for c, trait in enumerate(traits):
+    for c, title in enumerate(titles):
         grid = outergrid[f, c].subgridspec(nrows=nr,
                                            ncols=nc,
                                            wspace=0,
@@ -215,7 +215,7 @@ xaxis = [1, 2, 3, 4]
 dummy_y = np.zeros_like(xaxis)
 
 for f, folder in enumerate(folders):
-    for c, trait in enumerate(traits):
+    for c, title in enumerate(titles):
         for a, alpha in enumerate(alphas):
             for l, loges in enumerate(logess):
                 ax = axs[f, c, a, l] 

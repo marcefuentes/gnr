@@ -71,8 +71,8 @@ def init(scatters):
 
         for a, alpha in enumerate(alphas):
             for l, loges in enumerate(logess):
-                scatters[f, 0, a, r].set_sizes([CG[a, l]])
-                scatters[f, 1, a, r].set_sizes([MG[a, l]])
+                scatters[f, 0, a, l].set_sizes([CG[a, l]])
+                scatters[f, 1, a, l].set_sizes([MG[a, l]])
 
     return scatters.flatten()
 
@@ -124,14 +124,14 @@ RR, AA = np.meshgrid(rhos, alphas)
 
 # Figure properties
 
-width = plotsize*len(traits)
+width = plotsize*len(titles)
 height = plotsize*len(folders)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 biglabels = plotsize*5 + height/4
 ticklabels = plotsize*4
 xlim = [0, 1]
-ylim=[0, 1]
+ylim = [0, 1]
 step = int(nr/2)
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
@@ -140,15 +140,15 @@ plt.rcParams['ps.fonttype'] = 42
 
 fig = plt.figure(figsize=(width, height))
 outergrid = fig.add_gridspec(nrows=len(folders),
-                             ncols=len(traits))
+                             ncols=len(titles))
 axs = np.empty((len(folders),
-                len(traits),
+                len(titles),
                 nr,
                 nc),
                 dtype=object)
 
 for f, folder in enumerate(folders):
-    for c, trait in enumerate(traits):
+    for c, title in enumerate(titles):
         grid = outergrid[f, c].subgridspec(nrows=nr,
                                            ncols=nc,
                                            wspace=0,
@@ -216,7 +216,7 @@ y = [0.5]
 dummy_z = [0.0]
 
 for f, folder in enumerate(folders):
-    for c, trait in enumerate(traits):
+    for c, title in enumerate(titles):
         for a, alpha in enumerate(alphas):
             for l, loges in enumerate(logess):
                 ax = axs[f, c, a, l] 

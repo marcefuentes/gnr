@@ -33,7 +33,7 @@ plotsize = 4
 
 # Add data to figure
 
-def figdata(t, images):
+def update(t, images):
     for f, folder in enumerate(folders):
         df = dfs[f]
         if movie:
@@ -135,13 +135,13 @@ if movie:
              ha='right')
 
 # Assign axs objects to variables
-# (AxesImage objects to images)
+# (AxesImage artists to images)
 
 images = np.empty(axs.shape, dtype=object) 
 dummy_Z = np.empty((nr, nc), dtype=np.float32)
 
 for f, folder in enumerate(folders):
-    for c, trait in enumerate(traits):
+    for c, title in enumerate(titles):
         images[f, c] = axs[f, c].imshow(dummy_Z,
                                         vmin=0,
                                         vmax=vmaxs[c])
@@ -150,13 +150,13 @@ for f, folder in enumerate(folders):
 
 if movie:
     ani = FuncAnimation(fig,
-                        figdata,
+                        update,
                         frames=ts,
                         fargs=(images,),
                         blit=True)
     ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
 else:
-    figdata(ts[-1], images,)
+    update(ts[-1], images,)
     plt.savefig(filename + '.png', transparent=False)
 
 plt.close()

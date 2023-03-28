@@ -70,10 +70,10 @@ def init(scatters):
 
         Zg = my.gamecolors(T, R, P, S)
         for a, alpha in enumerate(alphas):
-            for r, rho in enumerate(rhos):
-                scatters[f, 0, a, r].axes.set_facecolor(Zg[a, r])
-                scatters[f, 1, a, r].set_sizes([CG[a, r]])
-                scatters[f, 2, a, r].set_sizes([MG[a, r]])
+            for l, rho in enumerate(rhos):
+                scatters[f, 0, a, l].axes.set_facecolor(Zg[a, l])
+                scatters[f, 1, a, l].set_sizes([CG[a, l]])
+                scatters[f, 2, a, l].set_sizes([MG[a, l]])
 
     return scatters.flatten()
 
@@ -93,9 +93,11 @@ def update(t, scatters):
             Z = Z.to_numpy()
             Z = 1.0 - Z
 
-            for (a, r), _ in np.ndenumerate(Z):
-                bgcolor = cm.viridis(Z[a, r]/my.a2max)
-                scatters[f, c + 1, a, r].axes.set_facecolor(bgcolor)
+            for (a, l), _ in np.ndenumerate(Z):
+                bgcolor = cm.viridis(Z[a, l]/my.a2max)
+                scatters[f, c + 1, a, l].axes.set_facecolor(bgcolor)
+    if movie:
+        fig.texts[2].set_text(f't\n{t}')
 
     return scatters.flatten()
 
@@ -126,7 +128,7 @@ ylabel = 'Value of $\it{B}$'
 biglabels = plotsize*5 + height/4
 ticklabels = plotsize*4
 xlim = [0, 1]
-ylim=[0, 1]
+ylim = [0, 1]
 step = int(nr/2)
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
@@ -158,7 +160,7 @@ bottom_y = axs[-1, -1, -1, -1].get_position().y0
 center_y = (top_y + bottom_y) / 2
 fig.supxlabel(xlabel,
               x=center_x,
-              y=bottom_y*0.2,
+              y=bottom_y*0.3,
               fontsize=biglabels)
 fig.supylabel(ylabel,
               x=left_x*0.4,
@@ -171,29 +173,36 @@ for ax in fig.get_axes():
     for axis in ['top','bottom','left','right']:
         ax.spines[axis].set_linewidth(0.1)
 
-letter = ord('a')
 for f, folder in enumerate(folders):
     for c, title in enumerate(titles):
+        letter = ord('a') + f*len(titles) + c
         axs[f, c, 0, 0].set_title(chr(letter),
                                   fontsize=plotsize*5,
                                   pad = 11,
                                   weight='bold',
                                   loc='left')
-        letter += 1
         if f == 0:
             axs[f, c, 0, 10].set_title(title,
                                        pad=plotsize*9,
                                        fontsize=plotsize*5)
         for a in range(0, nr, step):
-            axs[f, c, a, 0].set(yticks=[ylim[1]/2], yticklabels=[])
+            axs[f, c, a, 0].set(yticks=[ylim[1]/2.0], yticklabels=[])
             if c == 0:
                 axs[f, c, a, 0].set_yticklabels([alphas[a]],
                                                 fontsize=ticklabels)
         for l in range(0, nc, step):
-            axs[f, c, -1, l].set(xticks=[xlim[1]/2], xticklabels=[])
+            axs[f, c, -1, l].set(xticks=[xlim[1]/2.0], xticklabels=[])
             if folder == folders[-1]:
                 axs[f, c, -1, l].set_xticklabels([f'{logess[l]:.0f}'],
                                                  fontsize=ticklabels)
+
+if movie:
+    fig.text(right_x,
+             bottom_y*0.5,
+             f't\n0',
+             fontsize=biglabels,
+             color='grey',
+             ha='right')
 
 # Assign axs objects to variables
 # (PathCollection artists to scatters)
@@ -206,9 +215,9 @@ dummy_z = [0.0]
 for f, folder in enumerate(folders):
     for c, title in enumerate(titles):
         for a, alpha in enumerate(alphas):
-            for r, rho in enumerate(rhos):
-                ax = axs[f, c, a, r] 
-                scatters[f, c, a, r] = ax.scatter(x,
+            for l, loges in enumerate(logess):
+                ax = axs[f, c, a, l] 
+                scatters[f, c, a, l] = ax.scatter(x,
                                                   y,
                                                   color='white',
                                                   s=dummy_z)

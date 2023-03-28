@@ -2,9 +2,9 @@
 
 from glob import glob
 import os
+import re
 import time
 
-from matplotlib import cm
 from matplotlib.animation import FuncAnimation
 import matplotlib.pyplot as plt
 import numpy as np
@@ -23,91 +23,38 @@ traits = ['ChooseGrainmean',
 titles = ['Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
 folders = ['given100', 'given95', 'given50']
-subfolders = ['none', 'p', 'r']
+subfolders = ['p', 'r']
 
 movie = False
 plotsize = 8
+bins = 64
 
 # Add data to figure
 
-def init(scatters):
-
-    highs = pd.pivot_table(dfsocial,
-                           values='a2Seenmean',
-                           index='alpha',
-                           columns='logES')
-    highs = highs.sort_index(axis=0, ascending=False)
-    highs = highs.to_numpy()
-
-    for f, folder in enumerate(folders):
-        df = dfs[f, 0]
-        if movie:
-            m = df.Time == ts[-1]
-            df = df.loc[m]
-        given = df.Given.iloc[0]
-        lows = pd.pivot_table(df,
-                              values='a2Seenmean',
-                              index='alpha',
-                              columns='logES')
-        lows = lows.sort_index(axis=0, ascending=False)
-        lows = lows.to_numpy()
-        T = my.fitness(highs, lows, given, AA, RR)
-        R = my.fitness(highs, highs, given, AA, RR)
-        P = my.fitness(lows, lows, given, AA, RR)
-        S = my.fitness(lows, highs, given, AA, RR)
-
-        CG = 1.0/(T - R)
-        zeros = np.zeros_like(CG)
-        m = my.harmony(T, R, P, S) | my.deadlock(T, R, P, S) | my.snowdrift(T, R, P, S)
-        CG[m] = zeros[m]
-        m = CG < 0.0
-        CG[m] = zeros[m]
-        #MG = (P - S)*plotsize*10
-        MG = (-0.01*T + 0.23*R - 0.09*P - 0.22*S)*plotsize*10 
-        m = MG < 0.0
-        MG[m] = zeros[m]
-        m = ((R > P) & (P < S)) | ((R < P) & (R < T)) 
-        MG[m] = zeros[m]
-
-        for a, alpha in enumerate(alphas):
-            for r, rho in enumerate(rhos):
-                scatters[f, 0, a, r].set_sizes([CG[a, r]])
-                scatters[f, 1, a, r].set_sizes([MG[a, r]])
-
-    return scatters.flatten()
-
-def update(t, scatters):
-        
+def update(t, lines):
     for f, folder in enumerate(folders):
         for c, trait in enumerate(traits):
-            df = dfs[f, c + 1]
+            df = dfs[f, c]
             if movie:
                 m = df.Time == t
                 df = df.loc[m]
-            Z = pd.pivot_table(df,
-                               values=trait,
-                               index='alpha',
-                               columns='logES')
-            Z = Z.sort_index(axis=0, ascending=False)
-            Z = Z.to_numpy()
-            Z = 1.0 - Z
-
-            for (a, r), _ in np.ndenumerate(Z):
-                bgcolor = cm.viridis(Z[a, r]/my.a2max)
-                scatters[f, c, a, r].axes.set_facecolor(bgcolor)
-
-    return scatters.flatten()
+            for a, alpha in enumerate(alphas):
+                for r, loges in enumerate(logess):
+                    m = (df.alpha == alpha) & (df.logES == loges)
+                    d = df.loc[m]
+                    freq_a = [col for col in d.columns if re.match(fr'^{trait}\d+$', col)]
+                    y = d.loc[:, freq_a]
+                    y = y.values[0]
+                    y = y.flatten()
+                    lines[f, c, a, r].set_ydata(y)
+    return lines.flatten()
 
 # Get data
-
-filelist = glob('given00/none/*.csv')
-df = [my.read_file(file, False) for file in filelist]
-dfsocial = pd.concat(df, ignore_index=True)
 
 dfs = np.empty((len(folders), len(subfolders)), dtype=object)
 for i, folder in enumerate(folders):
     for j, subfolder in enumerate(subfolders):
-        filelist = glob(os.path.join(folder, subfolder, '*.csv'))
+        filelist = glob(os.path.join(folder, subfolder, '*.frq'))
         df = [my.read_file(file, movie) for file in filelist]
         dfs[i, j] = pd.concat(df, ignore_index=True)
 
@@ -117,8 +64,6 @@ alphas = np.sort(pd.unique(df.alpha))[::-1]
 logess = np.sort(pd.unique(df.logES))
 nr = len(alphas)
 nc = len(logess)
-rhos = 1.0 - 1.0/pow(2.0, logess)
-RR, AA = np.meshgrid(rhos, alphas)
 
 # Figure properties
 
@@ -188,47 +133,41 @@ for f, folder in enumerate(folders):
                                        pad=plotsize*9,
                                        fontsize=plotsize*5)
         for a in range(0, nr, step):
-            axs[f, c, a, 0].set(yticks=[ylim[1]/2], yticklabels=[])
+            axs[f, c, a, 0].set(yticks=[0.5], yticklabels=[])
             if c == 0:
                 axs[f, c, a, 0].set_yticklabels([alphas[a]],
                                                 fontsize=ticklabels)
         for l in range(0, nc, step):
-            axs[f, c, -1, l].set(xticks=[xlim[1]/2], xticklabels=[])
+            axs[f, c, -1, l].set(xticks=[bins/2 -1], xticklabels=[])
             if folder == folders[-1]:
                 axs[f, c, -1, l].set_xticklabels([f'{logess[l]:.0f}'],
                                                  fontsize=ticklabels)
 
 # Assign axs objects to variables
-# (PathCollection artists to scatters)
+# (Line2D artists to lines)
 
-scatters = np.empty(axs.shape, dtype=object)
-x = [0.5]
-y = [0.5]
-dummy_z = [0.0]
+lines = np.empty(axs.shape, dtype=object)
+x = np.arange(64)
+y = np.zeros_like(x)
 
 for f, folder in enumerate(folders):
     for c, trait in enumerate(traits):
         for a, alpha in enumerate(alphas):
-            for r, rho in enumerate(rhos):
+            for r, loges in enumerate(logess):
                 ax = axs[f, c, a, r] 
-                scatters[f, c, a, r] = ax.scatter(x,
-                                                  y,
-                                                  color='white',
-                                                  s=dummy_z)
+                lines[f, c, a, r], = ax.plot(x, y)
 
 # Add data and save figure
-
-init(scatters,)
 
 if movie:
     ani = FuncAnimation(fig,
                         update,
                         frames=ts,
-                        fargs=(scatters,),
+                        fargs=(lines,),
                         blit=True)
     ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
 else:
-    update(ts[-1], scatters,)
+    update(ts[-1], lines,)
     plt.savefig(filename + '.png', transparent=False)
 
 plt.close()

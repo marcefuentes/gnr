@@ -202,6 +202,7 @@ for g, folder in enumerate(folders):
                            columns=['logES'])
         Z = Z.sort_index(axis=0, ascending=False)
         axd[g, j].imshow(Z, vmin=0, vmax=vmaxs[j])
+
 # Save figure
 
 plt.savefig(filename + '.png', transparent=False)

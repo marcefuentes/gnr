@@ -57,18 +57,18 @@ def init(artists):
         P = my.fitness(lows, lows, given, AA, RR)
         S = my.fitness(lows, highs, given, AA, RR)
 
-        CG = 1.0/(T - R)
+        CG = (R - P)*plotsize*10
         zeros = np.zeros_like(CG)
-        m = my.harmony(T, R, P, S) | my.deadlock(T, R, P, S) | my.snowdrift(T, R, P, S)
-        CG[m] = zeros[m]
+        #m = my.harmony(T, R, P, S) | my.deadlock(T, R, P, S) | my.snowdrift(T, R, P, S)
+        #CG[m] = zeros[m]
         m = CG < 0.0
         CG[m] = zeros[m]
         #MG = (P - S)*plotsize*10
-        MG = (-0.01*T + 0.23*R - 0.09*P - 0.22*S)*plotsize*10 
+        MG = (highs - lows)*plotsize*10 
         m = MG < 0.0
         MG[m] = zeros[m]
-        m = ((R > P) & (P < S)) | ((R < P) & (R < T)) 
-        MG[m] = zeros[m]
+        #m = ((R > P) & (P < S)) | ((R < P) & (R < T)) 
+        #MG[m] = zeros[m]
 
         Zg = my.gamecolors(T, R, P, S)
         for a, alpha in enumerate(alphas):

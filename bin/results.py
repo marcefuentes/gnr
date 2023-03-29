@@ -124,7 +124,8 @@ for f, folder in enumerate(folders):
     axs[f, 0].set_yticklabels(yticklabels, fontsize=ticklabels)
 for c, title in enumerate(titles):
     axs[0, c].set_title(title, pad=plotsize*10, fontsize=plotsize*5)
-    axs[-1, c].set_xticklabels(xticklabels, fontsize=ticklabels)
+    axs[-1, c].set_xticklabels(xticklabels,
+                               fontsize=ticklabels)
 
 if movie:
     fig.text(right_x,

@@ -148,7 +148,7 @@ axs = np.empty((len(folders),
                 len(titles),
                 nr,
                 nc),
-                dtype=object)
+               dtype=object)
 
 for f, folder in enumerate(folders):
     for c, title in enumerate(titles):

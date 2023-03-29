@@ -137,7 +137,7 @@ if movie:
 # Assign axs objects to variables
 # (AxesImage)
 
-artists = np.empty(axs.shape, dtype=object) 
+artists = np.empty_like(axs) 
 dummy_Z = np.empty((nr, nc), dtype=np.float32)
 frames = ts
 frame0 = ts[-1]

@@ -129,7 +129,7 @@ for i in range(0, nc, step):
 # Assign axs objects to variables
 # (Line2D)
 
-artists = np.empty(axs.shape, dtype=object) 
+artists = np.empty_like(axs) 
 xaxis = [1, 2, 3, 4]
 dummy_y = np.zeros_like(xaxis)
 frames = distances

@@ -215,7 +215,7 @@ if movie:
 # Assign axs objects to variables
 # (PathCollection)
 
-artists = np.empty(axs.shape, dtype=object) 
+artists = np.empty_like(axs) 
 x = [0.5]
 y = [0.5]
 dummy_z = [0.0]

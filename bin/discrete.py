@@ -146,8 +146,8 @@ for c, title in enumerate(titles):
 # Assign axs objects to variables
 # (AxesImage)
 
-artists = np.empty(axs.shape, dtype=object) 
-dummy_Z = np.empty((nr, nc), dtype=np.float32)
+artists = np.empty_like(axs) 
+dummy_Z = np.empty_like(AA)
 
 for f, folder in enumerate(folders):
 

@@ -143,8 +143,8 @@ for g, given in enumerate(givens):
 # Assign axs objects to variables
 # (Line2D)
 
-budgets = np.empty(axs.shape, dtype=object)
-icurves = np.empty(axs.shape, dtype=object)
+budgets = np.empty_like(axs)
+icurves = np.empty_like(axs)
 dummy_budgety = np.zeros_like(budgetx)
 dummy_icy = np.zeros_like(icx)
 

@@ -158,7 +158,7 @@ if movie:
 # Assign axs objects to variables
 # (Line2D)
 
-artists = np.empty(axs.shape, dtype=object) 
+artists = np.empty_like(axs) 
 x = np.arange(64)
 dummy_y = np.zeros_like(x)
 frames = ts

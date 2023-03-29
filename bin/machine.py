@@ -22,7 +22,7 @@ filename = thisscript.split('.')[0]
 folders = ['given100', 'given95', 'given50']
 subfolders = ['none', 'p', 'r']
 
-# Get data
+# Data
 
 filelist = glob('given00/none/*.csv')
 df = [my.read_file(file, False) for file in filelist]

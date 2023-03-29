@@ -65,7 +65,7 @@ def figdata(images):
 
     return images.flatten()
 
-# Get data
+# Data
 
 dfs = np.empty((len(folders), len(subfolders)), dtype=object)
 for i, folder in enumerate(folders):
@@ -144,25 +144,23 @@ for c, title in enumerate(titles):
     axs[-1, c].set_xticklabels(xticklabels, fontsize=ticklabels)
 
 # Assign axs objects to variables
-# (Line2D objects to lines)
-# (AxesImage objects to "images")
+# (AxesImage)
 
-images = np.empty(axs.shape, dtype=object) 
-dummy_Zg = np.zeros((nr, nc, 4), dtype=np.float32)
+artists = np.empty(axs.shape, dtype=object) 
 dummy_Z = np.empty((nr, nc), dtype=np.float32)
 
 for f, folder in enumerate(folders):
 
-    images[f] = axs[f, 0].imshow(dummy_Zg)
+    artists[f] = axs[f, 0].imshow(dummy_Zg)
 
     for c, trait in enumerate(traits):
-        images[f, c + 1] = axs[f, c + 1].imshow(dummy_Z,
-                                                vmin=0,
-                                                vmax=my.a2max)
+        artists[f, c + 1] = axs[f, c + 1].imshow(dummy_Z,
+                                                 vmin=0,
+                                                 vmax=my.a2max)
 
 # Add data and save figure
 
-figdata(images,)
+figdata(artists,)
 plt.savefig(filename + '.png', transparent=False)
 
 plt.close()

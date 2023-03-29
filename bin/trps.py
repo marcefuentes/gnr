@@ -24,10 +24,10 @@ plotsize = 8
 
 # Add data to figure
 
-def update(frame, lines):
+def update(distance, lines):
 
-    lows = a2eqs[0] + frame*(a2eqs[1] - a2eqs[0])
-    highs = a2eqs[0] + (frame + 1.0/nframes)*(a2eqs[1] - a2eqs[0])
+    lows = a2eqs[0] + distance*(a2eqs[1] - a2eqs[0])
+    highs = a2eqs[0] + (distance + 1.0/nframes)*(a2eqs[1] - a2eqs[0])
     T = my.fitness(highs, lows, given, AA, RR)
     R = my.fitness(highs, highs, given, AA, RR)
     P = my.fitness(lows, lows, given, AA, RR)
@@ -45,7 +45,7 @@ def update(frame, lines):
 
     return lines.flatten()
 
-# Get data
+# Data
 
 a2eqs = np.empty(len(folders), dtype=object)
 for i, folder in enumerate(folders):
@@ -68,7 +68,7 @@ nc = len(logess)
 rhos = 1.0 - 1.0/pow(2.0, logess)
 RR, AA = np.meshgrid(rhos, alphas)
 
-frames = np.linspace(0.0, 1.0 - 1.0/nframes, num=nframes)
+distances = np.linspace(0.0, 1.0 - 1.0/nframes, num=nframes)
 
 # Figure properties
 
@@ -127,20 +127,22 @@ for i in range(0, nc, step):
                                fontsize=ticklabels)
 
 # Assign axs objects to variables
-# (Line2D objects to lines)
+# (Line2D)
 
-lines = np.empty(axs.shape, dtype=object)
+artists = np.empty(axs.shape, dtype=object) 
 xaxis = [1, 2, 3, 4]
 dummy_y = np.zeros_like(xaxis)
+frames = distances
+frame0 = distances[0]
 
 for a, alpha in enumerate(alphas):
     for r, rho in enumerate(rhos):
         ax = axs[a, r]
-        lines[a, r], = ax.plot(xaxis,
-                               dummy_y,
-                               linewidth=1,
-                               marker='o',
-                               markersize=plotsize/3)
+        artists[a, r], = ax.plot(xaxis,
+                                 dummy_y,
+                                 linewidth=1,
+                                 marker='o',
+                                 markersize=plotsize/3)
 
 # Add data and save figure
 
@@ -148,11 +150,11 @@ if movie:
     ani = FuncAnimation(fig,
                         update,
                         frames=frames,
-                        fargs=(lines,),
+                        fargs=(artists,),
                         blit=True)
     ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
 else:
-    update(frames[0], lines,)
+    update(frame0, artists,)
     plt.savefig(filename + '.png', transparent=False)
 
 plt.close()

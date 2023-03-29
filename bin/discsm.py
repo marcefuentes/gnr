@@ -101,7 +101,7 @@ def update(t, scatters):
 
     return scatters.flatten()
 
-# Get data
+# Data
 
 dfs = np.empty((len(folders), len(subfolders)), dtype=object)
 for i, folder in enumerate(folders):

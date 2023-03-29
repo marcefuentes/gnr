@@ -55,7 +55,7 @@ def update(t, lines):
 
     return lines.flatten()
 
-# Get data
+# Data
 
 dfs = np.empty(len(folders), dtype=object) 
 for i, folder in enumerate(folders):
@@ -93,7 +93,7 @@ axs = np.empty((len(folders),
                 len(titles),
                 nr,
                 nc),
-               dtype=object)
+                dtype=object)
 
 for f, folder in enumerate(folders):
     for c, title in enumerate(titles):
@@ -140,12 +140,12 @@ for f, folder in enumerate(folders):
             axs[f, c, a, 0].set(yticks=[ylim[1]/2.0], yticklabels=[])
             if c == 0:
                 axs[f, c, a, 0].set_yticklabels([alphas[a]],
-                                           fontsize=ticklabels)
+                                                fontsize=ticklabels)
         for l in range(0, nc, step):
             axs[f, c, -1, l].set(xticks=[xlim[1]/2.0], xticklabels=[])
             if folder == folders[-1]:
                 axs[f, c, -1, l].set_xticklabels([f'{logess[l]:.0f}'],
-                                            fontsize=ticklabels)
+                                                 fontsize=ticklabels)
 
 if movie:
     fig.text(right_x,
@@ -156,30 +156,32 @@ if movie:
              ha='right')
 
 # Assign axs objects to variables
-# (Line2D artists to lines)
+# (Line2D)
 
-lines = np.empty(axs.shape, dtype=object)
+artists = np.empty(axs.shape, dtype=object) 
 x = np.arange(64)
 dummy_y = np.zeros_like(x)
+frames = ts
+frame0 = ts[-1]
 
 for f, folder in enumerate(folders):
     for c, title in enumerate(titles):
         for a, alpha in enumerate(alphas):
             for l, loges in enumerate(logess):
                 ax = axs[f, c, a, l] 
-                lines[f, c, a, l], = ax.plot(x, dummy_y)
+                artists[f, c, a, l], = ax.plot(x, dummy_y)
 
 # Add data and save figure
 
 if movie:
     ani = FuncAnimation(fig,
                         update,
-                        frames=ts,
-                        fargs=(lines,),
+                        frames=frames,
+                        fargs=(artists,),
                         blit=True)
     ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
 else:
-    update(ts[-1], lines,)
+    update(frame0, artists,)
     plt.savefig(filename + '.png', transparent=False)
 
 plt.close()

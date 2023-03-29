@@ -103,7 +103,7 @@ def update(t, scatters):
 
     return scatters.flatten()
 
-# Get data
+# Data
 
 filelist = glob('given00/none/*.csv')
 df = [my.read_file(file, False) for file in filelist]
@@ -211,36 +211,38 @@ if movie:
              ha='right')
 
 # Assign axs objects to variables
-# (PathCollection artists to scatters)
+# (PathCollection)
 
-scatters = np.empty(axs.shape, dtype=object)
+artists = np.empty(axs.shape, dtype=object) 
 x = [0.5]
 y = [0.5]
 dummy_z = [0.0]
+frames = ts
+frame0 = ts[-1]
 
 for f, folder in enumerate(folders):
     for c, title in enumerate(titles):
         for a, alpha in enumerate(alphas):
             for l, loges in enumerate(logess):
                 ax = axs[f, c, a, l] 
-                scatters[f, c, a, l] = ax.scatter(x,
-                                                  y,
-                                                  color='white',
-                                                  s=dummy_z)
+                artists[f, c, a, l] = ax.scatter(x,
+                                                 y,
+                                                 color='white',
+                                                 s=dummy_z)
 
 # Add data and save figure
 
-init(scatters,)
+init(artists,)
 
 if movie:
     ani = FuncAnimation(fig,
                         update,
-                        frames=ts,
-                        fargs=(scatters,),
+                        frames=frames,
+                        fargs=(artists,),
                         blit=True)
     ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
 else:
-    update(ts[-1], scatters,)
+    update(frame0, artists,)
     plt.savefig(filename + '.png', transparent=False)
 
 plt.close()

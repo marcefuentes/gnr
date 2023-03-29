@@ -29,7 +29,7 @@ subfolders = ['none', 'p', 'r']
 ext = 256
 plotsize = 6
 
-# Get data
+# Data
 
 dfs = np.empty((len(folders), len(subfolders)), dtype=object)
 for i, folder in enumerate(folders):

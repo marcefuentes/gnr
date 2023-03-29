@@ -104,7 +104,7 @@ def update(t, lines):
 
     return lines.flatten()
 
-# Get data
+# Data
 
 dfs = np.empty((len(folders), len(subfolders)), dtype=object)
 for i, folder in enumerate(folders):
@@ -209,36 +209,38 @@ if movie:
              ha='right')
 
 # Assign axs objects to variables
-# (Line2D artists to lines)
+# (Line2D)
 
-lines = np.empty(axs.shape, dtype=object)
+artists = np.empty(axs.shape, dtype=object) 
 xaxis = [1, 2, 3, 4]
 dummy_y = np.zeros_like(xaxis)
+frames = ts
+frame0 = ts[-1]
 
 for f, folder in enumerate(folders):
     for c, title in enumerate(titles):
         for a, alpha in enumerate(alphas):
             for l, loges in enumerate(logess):
                 ax = axs[f, c, a, l] 
-                lines[f, c, a, l], = ax.plot(xaxis,
-                                             dummy_y,
-                                             linewidth=1,
-                                             marker='o',
-                                             markersize=plotsize/3)
+                artists[f, c, a, l], = ax.plot(xaxis,
+                                               dummy_y,
+                                               linewidth=1,
+                                               marker='o',
+                                               markersize=plotsize/3)
 
 # Add data and save figure
 
-init(lines,)
+init(artists,)
 
 if movie:
     ani = FuncAnimation(fig,
                         update,
-                        frames=ts,
-                        fargs=(lines,),
+                        frames=frames,
+                        fargs=(artists,),
                         blit=True)
     ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
 else:
-    update(ts[-1], lines,)
+    update(frame0, artists,)
     plt.savefig(filename + '.png', transparent=False)
 
 plt.close()

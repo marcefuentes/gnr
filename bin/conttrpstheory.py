@@ -91,7 +91,7 @@ def update(t, lines):
 
     return lines.flatten()
 
-# Get data
+# Data
 
 filelist = glob('given00/none/*.csv')
 df = [my.read_file(file, False) for file in filelist]

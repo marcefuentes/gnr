@@ -45,7 +45,7 @@ def init(budgets, icurves):
 
     return np.concatenate([budgets.flatten(), icurves.flatten()])
 
-# Get data
+# Data
 
 alphas = np.linspace(my.alphamax, my.alphamin, num=num)
 logess = np.linspace(my.logesmin, my.logesmax, num=num)

@@ -52,7 +52,7 @@ def update(t, images):
         fig.texts[2].set_text(f't\n{t}')
     return images.flatten()
 
-# Get data
+# Data
 
 dfs = np.empty(len(folders), dtype=object) 
 for i, folder in enumerate(folders):
@@ -67,14 +67,14 @@ nc = df['logES'].nunique()
 
 # Figure properties
 
-width = plotsize*len(traits)
+width = plotsize*len(titles)
 height = plotsize*len(folders)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 biglabels = plotsize*5 + height/4
 ticklabels = plotsize*4
-xticks = [0, nc/2-0.5, nc-1]
-yticks = [0, nr/2-0.5, nr-1]
+xticks = [0, nc/2 - 0.5, nc - 1]
+yticks = [0, nr/2 - 0.5, nr - 1]
 xmin = df['logES'].min()
 xmax = df['logES'].max()
 ymin = df['alpha'].min()
@@ -91,7 +91,7 @@ plt.rcParams['ps.fonttype'] = 42
 # Create figure
 
 fig, axs = plt.subplots(nrows=len(folders),
-                        ncols=len(traits),
+                        ncols=len(titles),
                         figsize=(width, height))
 
 left_x = axs[0, 0].get_position().x0
@@ -135,28 +135,30 @@ if movie:
              ha='right')
 
 # Assign axs objects to variables
-# (AxesImage artists to images)
+# (AxesImage)
 
-images = np.empty(axs.shape, dtype=object) 
+artists = np.empty(axs.shape, dtype=object) 
 dummy_Z = np.empty((nr, nc), dtype=np.float32)
+frames = ts
+frame0 = ts[-1]
 
 for f, folder in enumerate(folders):
     for c, title in enumerate(titles):
-        images[f, c] = axs[f, c].imshow(dummy_Z,
-                                        vmin=0,
-                                        vmax=vmaxs[c])
+        artists[f, c] = axs[f, c].imshow(dummy_Z,
+                                         vmin=0,
+                                         vmax=vmaxs[c])
 
 # Add data and save figure
 
 if movie:
     ani = FuncAnimation(fig,
                         update,
-                        frames=ts,
-                        fargs=(images,),
+                        frames=frames,
+                        fargs=(artists,),
                         blit=True)
     ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
 else:
-    update(ts[-1], images,)
+    update(frame0, artists,)
     plt.savefig(filename + '.png', transparent=False)
 
 plt.close()

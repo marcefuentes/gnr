@@ -31,7 +31,7 @@ plotsize = 8
 
 # Add data to figure
 
-def init(lines):
+def init(artists):
 
     for f, folder in enumerate(folders):
         df = dfs[f, 0]
@@ -71,16 +71,16 @@ def init(lines):
         Zg = my.gamecolors(T, R, P, S)
         for c, title in enumerate(titles):
             for (a, l, i), _ in np.ndenumerate(y):
-                lines[f, c, a, l].set_ydata(y[a, l])
+                artists[f, c, a, l].set_ydata(y[a, l])
                 if c == 0:
-                    lines[f, c, a, l].axes.set_facecolor(Zg[a, l])
+                    artists[f, c, a, l].axes.set_facecolor(Zg[a, l])
                 lcolor = linecolor[a, l] 
-                lines[f, c, a, l].set_color(lcolor)
-                lines[f, c, a, l].set_markerfacecolor(lcolor)
+                artists[f, c, a, l].set_color(lcolor)
+                artists[f, c, a, l].set_markerfacecolor(lcolor)
 
-    return lines.flatten()
+    return artists.flatten()
 
-def update(t, lines):
+def update(t, artists):
         
     for f, folder in enumerate(folders):
         for c, trait in enumerate(traits):
@@ -98,11 +98,11 @@ def update(t, lines):
 
             for (a, l), _ in np.ndenumerate(Z):
                 bgcolor = cm.viridis(Z[a, l]/my.a2max)
-                lines[f, c + 1, a, l].axes.set_facecolor(bgcolor)
+                artists[f, c + 1, a, l].axes.set_facecolor(bgcolor)
     if movie:
         fig.texts[2].set_text(f't\n{t}')
 
-    return lines.flatten()
+    return artists.flatten()
 
 # Data
 

@@ -28,7 +28,7 @@ plotsize = 4
 
 # Add data to figure
 
-def figdata(images):
+def figdata(artists):
 
     for f, folder in enumerate(folders):
         df = dfs[f, 0]
@@ -51,7 +51,7 @@ def figdata(images):
         S = my.fitness(lows, highs, given, AA, RR)
 
         Z = my.gamecolors(T, R, P, S)
-        images[f, 0].set_array(Z)
+        artists[f, 0].set_array(Z)
         for c, trait in enumerate(traits):
             df = dfs[f, c]
             Z = pd.pivot_table(df,
@@ -61,9 +61,9 @@ def figdata(images):
             Z = Z.sort_index(axis=0, ascending=False)
             if 'Grain' in trait:
                 Z = 1.0 - Z
-            images[f, c + 1].set_array(Z) 
+            artists[f, c + 1].set_array(Z) 
 
-    return images.flatten()
+    return artists.flatten()
 
 # Data
 

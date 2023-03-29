@@ -37,7 +37,7 @@ bins = 64
 
 # Add data to figure
 
-def update(t, lines):
+def update(t, artists):
     for f, folder in enumerate(folders):
         for c, trait in enumerate(traits):
             df = dfs[f, c]
@@ -52,11 +52,11 @@ def update(t, lines):
                     y = d.loc[:, freq_a]
                     y = y.values[0]
                     y = y.flatten()
-                    lines[f, c, a, l].set_ydata(y)
+                    artists[f, c, a, l].set_ydata(y)
     if movie:
         fig.texts[2].set_text(f't\n{t}')
 
-    return lines.flatten()
+    return artists.flatten()
 
 # Data
 

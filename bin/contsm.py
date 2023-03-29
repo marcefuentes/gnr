@@ -31,7 +31,7 @@ plotsize = 8
 
 # Add data to figure
 
-def init(scatters):
+def init(artists):
 
     highs = pd.pivot_table(dfsocial,
                            values='a2Seenmean',
@@ -73,13 +73,13 @@ def init(scatters):
         Zg = my.gamecolors(T, R, P, S)
         for a, alpha in enumerate(alphas):
             for l, loges in enumerate(logess):
-                scatters[f, 0, a, l].axes.set_facecolor(Zg[a, l])
-                scatters[f, 1, a, l].set_sizes([CG[a, l]])
-                scatters[f, 2, a, l].set_sizes([MG[a, l]])
+                artists[f, 0, a, l].axes.set_facecolor(Zg[a, l])
+                artists[f, 1, a, l].set_sizes([CG[a, l]])
+                artists[f, 2, a, l].set_sizes([MG[a, l]])
 
-    return scatters.flatten()
+    return artists.flatten()
 
-def update(t, scatters):
+def update(t, artists):
         
     for f, folder in enumerate(folders):
         for c, trait in enumerate(traits):
@@ -97,11 +97,11 @@ def update(t, scatters):
 
             for (a, l), _ in np.ndenumerate(Z):
                 bgcolor = cm.viridis(Z[a, l]/my.a2max)
-                scatters[f, c + 1, a, l].axes.set_facecolor(bgcolor)
+                artists[f, c + 1, a, l].axes.set_facecolor(bgcolor)
     if movie:
         fig.texts[2].set_text(f't\n{t}')
 
-    return scatters.flatten()
+    return artists.flatten()
 
 # Data
 

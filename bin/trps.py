@@ -24,7 +24,7 @@ plotsize = 8
 
 # Add data to figure
 
-def update(distance, lines):
+def update(distance, artists):
 
     lows = a2eqs[0] + distance*(a2eqs[1] - a2eqs[0])
     highs = a2eqs[0] + (distance + 1.0/nframes)*(a2eqs[1] - a2eqs[0])
@@ -41,9 +41,9 @@ def update(distance, lines):
     y = np.stack((Tn, Rn, Pn, Sn), axis=-1)
 
     for (a, r, i), _ in np.ndenumerate(y):
-        lines[a, r].set_ydata(y[a, r])
+        artists[a, r].set_ydata(y[a, r])
 
-    return lines.flatten()
+    return artists.flatten()
 
 # Data
 

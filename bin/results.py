@@ -33,7 +33,7 @@ plotsize = 4
 
 # Add data to figure
 
-def update(t, images):
+def update(t, artists):
     for f, folder in enumerate(folders):
         df = dfs[f]
         if movie:
@@ -47,10 +47,10 @@ def update(t, images):
             Z = Z.sort_index(axis=0, ascending=False)
             if 'Grain' in trait:
                 Z = 1.0 - Z
-            images[f, c].set_array(Z) 
+            artists[f, c].set_array(Z) 
     if movie:
         fig.texts[2].set_text(f't\n{t}')
-    return images.flatten()
+    return artists.flatten()
 
 # Data
 

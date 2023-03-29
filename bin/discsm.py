@@ -31,7 +31,7 @@ plotsize = 8
 
 # Add data to figure
 
-def init(scatters):
+def init(artists):
 
     for f, folder in enumerate(folders):
         df = dfs[f, 0]
@@ -71,13 +71,13 @@ def init(scatters):
         Zg = my.gamecolors(T, R, P, S)
         for a, alpha in enumerate(alphas):
             for l, loges in enumerate(logess):
-                scatters[f, 0, a, l].axes.set_facecolor(Zg[a, l])
-                scatters[f, 1, a, l].set_sizes([CG[a, l]])
-                scatters[f, 2, a, l].set_sizes([MG[a, l]])
+                artists[f, 0, a, l].axes.set_facecolor(Zg[a, l])
+                artists[f, 1, a, l].set_sizes([CG[a, l]])
+                artists[f, 2, a, l].set_sizes([MG[a, l]])
 
-    return scatters.flatten()
+    return artists.flatten()
 
-def update(t, scatters):
+def update(t, artists):
         
     for f, folder in enumerate(folders):
         for c, trait in enumerate(traits):
@@ -95,11 +95,11 @@ def update(t, scatters):
 
             for (a, l), _ in np.ndenumerate(Z):
                 bgcolor = cm.viridis(Z[a, l]/my.a2max)
-                scatters[f, c + 1, a, l].axes.set_facecolor(bgcolor)
+                artists[f, c + 1, a, l].axes.set_facecolor(bgcolor)
     if movie:
         fig.texts[2].set_text(f't\n{t}')
 
-    return scatters.flatten()
+    return artists.flatten()
 
 # Data
 
@@ -205,36 +205,38 @@ if movie:
              ha='right')
 
 # Assign axs objects to variables
-# (PathCollection artists to scatters)
+# (PathCollection)
 
-scatters = np.empty(axs.shape, dtype=object)
+artists = np.empty(axs.shape, dtype=object) 
 x = [0.5]
 y = [0.5]
 dummy_z = [0.0]
+frames = ts
+frame0 = ts[-1]
 
 for f, folder in enumerate(folders):
     for c, title in enumerate(titles):
         for a, alpha in enumerate(alphas):
             for l, loges in enumerate(logess):
                 ax = axs[f, c, a, l] 
-                scatters[f, c, a, l] = ax.scatter(x,
-                                                  y,
-                                                  color='white',
-                                                  s=dummy_z)
+                artists[f, c, a, l] = ax.scatter(x,
+                                                 y,
+                                                 color='white',
+                                                 s=dummy_z)
 
 # Add data and save figure
 
-init(scatters,)
+init(artists,)
 
 if movie:
     ani = FuncAnimation(fig,
                         update,
-                        frames=ts,
-                        fargs=(scatters,),
+                        frames=frames,
+                        fargs=(artists,),
                         blit=True)
     ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
 else:
-    update(ts[-1], scatters,)
+    update(frame0, artists,)
     plt.savefig(filename + '.png', transparent=False)
 
 plt.close()

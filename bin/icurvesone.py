@@ -127,7 +127,7 @@ for r in range(0, num, step):
                           fontsize=ticklabels)
 
 # Assign axs objects to variables
-# (Line2D objects to lines)
+# (Line2D)
 
 budgets = np.empty(axs.shape, dtype=object)
 icurves = np.empty(axs.shape, dtype=object)

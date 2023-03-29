@@ -22,7 +22,7 @@ titles = ['Games',
           'Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
 vmaxs = [my.a2max,
-              my.a2max]
+         my.a2max]
 folders = ['given100', 'given95', 'given50']
 subfolders = ['none', 'p', 'r']
 

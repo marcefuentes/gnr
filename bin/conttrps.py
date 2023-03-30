@@ -26,6 +26,7 @@ titles = ['Games',
 folders = ['given100', 'given95', 'given50']
 subfolders = ['p', 'r']
 
+theory = False
 movie = False
 plotsize = 8
 
@@ -33,12 +34,18 @@ plotsize = 8
 
 def init(artists):
 
-    highs = getZ(ts[-1], dfsocial, 'a2Seenmean')
-    highs = highs.to_numpy()
+    if theory:
+        highs = my.a2eq(0.0, AA, RR)
+    else:
+        highs = getZ(ts[-1], dfsocial, 'a2Seenmean')
+        highs = highs.to_numpy()
 
     for f, folder in enumerate(folders):
-        lows = getZ(ts[-1], dfprivates[f], 'a2Seenmean')
-        lows = lows.to_numpy()
+        if theory:
+            lows = my.a2eq(given, AA, RR)
+        else:
+            lows = getZ(ts[-1], dfprivates[f], 'a2Seenmean')
+            lows = lows.to_numpy()
         given = dftraits[0, 0].Given.iloc[0]
         T = my.fitness(highs, lows, given, AA, RR)
         R = my.fitness(highs, highs, given, AA, RR)

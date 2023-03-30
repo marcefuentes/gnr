@@ -7,6 +7,8 @@ R1 = 2.0
 R2 = 2.0
 a1max = 1.0
 a2max = 1.0
+wmax = 2.0 # For R1 = 2.0, R2 = 2.0, a1max = 1.0, a2max = 1.0,
+           # given = 1.0 and any values of alpha and rho
 Rq = R2/R1
 b = a2max/a1max
 alphamin = 0.1

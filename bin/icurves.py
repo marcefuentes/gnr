@@ -17,7 +17,7 @@ filename = thisscript.split('.')[0]
 
 givens = [0.0, 0.5, 0.95]
 
-vmax = 2.0
+vmax = my.wmax
 num = 3     # Number of subplot rows & columns
 numa2 = 256 # Number of points along each curve
 n_ic = 5    # Number of indifference curves

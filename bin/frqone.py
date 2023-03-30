@@ -23,7 +23,7 @@ traits = ['a2Seen',
           'w']
 titles = ['Effort to get $\it{B}$',
           'Fitness']
-vmaxs = [my.a2max, 2.0]
+vmaxs = [my.a2max, my.wmax]
 folders = ['none', 'p']
 
 alpha = 0.7

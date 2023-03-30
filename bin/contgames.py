@@ -24,7 +24,7 @@ titles = ['Games',
           'Severity of\nsocial dilemma', 
           'Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
-vmaxs = [2.0, my.a2max, my.a2max]
+vmaxs = [my.wmax, my.a2max, my.a2max]
 folders = ['given100', 'given95', 'given50']
 subfolders = ['p', 'r']
 

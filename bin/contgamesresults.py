@@ -20,9 +20,10 @@ filename = thisscript.split('.')[0]
 traits = ['ChooseGrainmean',
           'MimicGrainmean']
 titles = ['Games',
+          'Severity of\nsocial dilemma', 
           'Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
-vmaxs = [my.a2max, my.a2max]
+vmaxs = [2.0, my.a2max, my.a2max]
 folders = ['given100', 'given95', 'given50']
 subfolders = ['p', 'r']
 
@@ -50,35 +51,42 @@ def init(artists):
     return artists.flatten()
 
 def update(t, artists):
+    Zsocial = getZ(t, dfsocial, 'wmean')
     for f, folder in enumerate(folders):
+        Z = getZ(t, dfprivates[f], 'wmean')
+        Z = Zsocial - Z       
+        artists[f, 0].set_array(Z)
         for c, trait in enumerate(traits):
-            df = dftraits[f, c]
-            if movie:
-                m = df.Time == t
-                df = df.loc[m]
-            Z = pd.pivot_table(df,
-                               values=trait,
-                               index='alpha',
-                               columns='logES')
-            Z = Z.sort_index(axis=0, ascending=False)
+            Z = getZ(t, dftraits[f, c], trait)
             if 'Grain' in trait:
                 Z = 1.0 - Z
-            artists[f, c].set_array(Z)
+            artists[f, c + 1].set_array(Z)
     if movie:
         fig.texts[2].set_text(f't\n{t}')
     return artists.flatten()
 
+def getZ(t, df, trait):
+    if movie:
+        m = df.Time == t
+        df = df.loc[m]
+    Z = pd.pivot_table(df,
+                       values=trait,
+                       index='alpha',
+                       columns='logES')
+    Z = Z.sort_index(axis=0, ascending=False)
+    return Z
+
 # Data
+
+filelist = glob(os.path.join('given00', 'none', '*.csv'))
+df = [my.read_file(file, movie) for file in filelist]
+dfsocial = pd.concat(df, ignore_index=True)
 
 dfprivates = np.empty(len(folders), dtype=object)
 for f, folder in enumerate(folders):
     filelist = glob(os.path.join(folder, 'none', '*.csv'))
     df = [my.read_file(file, movie) for file in filelist]
     dfprivates[f] = pd.concat(df, ignore_index=True)
-
-filelist = glob(os.path.join(folder, 'given0', '*.csv'))
-df = [my.read_file(file, movie) for file in filelist]
-dfsocial = pd.concat(df, ignore_index=True)
 
 dftraits = np.empty((len(folders), len(subfolders)), dtype=object)
 for f, folder in enumerate(folders):
@@ -133,10 +141,9 @@ axgames = np.empty((len(folders),
                     nr,
                     nc),
                    dtype=object)
-axs = np.empty((len(folders),
-               len(traits)), 
-               dtype=object)
-
+axtraits = np.empty((len(folders),
+                     len(titles) - 1), 
+                    dtype=object)
 
 for f, folder in enumerate(folders):
     grid = outergrid[f, 0].subgridspec(nrows=nr,
@@ -144,16 +151,16 @@ for f, folder in enumerate(folders):
                                        wspace=0,
                                        hspace=0)
     axgames[f] = grid.subplots()
-    for c, trait in enumerate(traits):
+    for c in range(len(titles) - 1):
         grid = outergrid[f, c + 1].subgridspec(nrows=1,
                                                ncols=1)
-        axs[f, c] = grid.subplots()
+        axtraits[f, c] = grid.subplots()
 
 left_x = axgames[0, 0, 0].get_position().x0
-right_x = axs[-1, -1].get_position().x1
+right_x = axtraits[-1, -1].get_position().x1
 center_x = (left_x + right_x) / 2
-top_y = axs[0, 0].get_position().y1
-bottom_y = axs[-1, -1].get_position().y0
+top_y = axtraits[0, 0].get_position().y1
+bottom_y = axtraits[-1, -1].get_position().y0
 center_y = (top_y + bottom_y) / 2
 fig.supxlabel(xlabel,
               x=center_x,
@@ -195,23 +202,23 @@ for f, folder in enumerate(folders):
         if folder == folders[-1]:
             axgames[f, -1, l].set_xticklabels([f'{logess[l]:.0f}'],
                                               fontsize=ticklabels)
-    for c, trait in enumerate(traits):
-        axs[f, c].set(xticks=xticks, yticks=yticks)
-        axs[f, c].set(xticklabels=[], yticklabels=[])
-        axs[f, c].text(0,
-                       letterposition,
-                       chr(letter),
-                       transform=axs[f, c].transAxes,
-                       fontsize=plotsize*5,
-                       weight='bold')
+    for c in range(len(titles) - 1):
+        axtraits[f, c].set(xticks=xticks, yticks=yticks)
+        axtraits[f, c].set(xticklabels=[], yticklabels=[])
+        axtraits[f, c].text(0,
+                            letterposition,
+                            chr(letter),
+                            transform=axtraits[f, c].transAxes,
+                            fontsize=plotsize*5,
+                            weight='bold')
         letter += 1
         if folder == folders[0]:
-            axs[f, c].set_title(titles[c + 1],
+            axtraits[f, c].set_title(titles[c + 1],
                                 pad=plotsize*9,
                                 fontsize=plotsize*5)
         if folder == folders[-1]:
-            axs[f, c].set_xticklabels(xticklabels,
-                                      fontsize=ticklabels)
+            axtraits[f, c].set_xticklabels(xticklabels,
+                                           fontsize=ticklabels)
 
 if movie:
     fig.text(right_x,
@@ -225,7 +232,7 @@ if movie:
 # (AxesImage)
 
 artistsgames = np.empty_like(axgames)
-artists = np.empty_like(axs)
+artiststraits = np.empty_like(axtraits)
 dummy_Zg = np.empty((ext, ext, 4), dtype=np.float32)
 dummy_Z = np.empty((nr, nc), dtype=np.float32)
 frames = ts
@@ -237,10 +244,10 @@ for f, folder in enumerate(folders):
             ax = axgames[f, a, l]
             artistsgames[f, a, l] = ax.imshow(dummy_Zg,
                                               extent=extent)
-    for c, trait in enumerate(traits):
-        artists[f, c] = axs[f, c].imshow(dummy_Z,
-                                         vmin=0,
-                                         vmax=vmaxs[c])
+    for c in range(len(titles) - 1):
+        artiststraits[f, c] = axtraits[f, c].imshow(dummy_Z,
+                                                    vmin=0,
+                                                    vmax=vmaxs[c])
 
 # Add data and save figure
 
@@ -250,11 +257,11 @@ if movie:
     ani = FuncAnimation(fig,
                         update,
                         frames=frames,
-                        fargs=(artists,),
+                        fargs=(artiststraits,),
                         blit=True)
     ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
 else:
-    update(frame0, artists,)
+    update(frame0, artiststraits,)
     plt.savefig(filename + '.png', transparent=False)
 
 plt.close()

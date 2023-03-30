@@ -39,7 +39,6 @@ bins = 64
 def update(t, artists):
     for f, folder in enumerate(folders):
         df = dffrqs[f]
-
         if movie:
             m = df.Time == t
             df = df.loc[m]

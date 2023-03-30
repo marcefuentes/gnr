@@ -38,7 +38,6 @@ def update(t, artists):
     for f, folder in enumerate(folders):
         for c, trait in enumerate(traits):
             df = dffrqs[f, c]
-
             if movie:
                 m = df.Time == t
                 df = df.loc[m]

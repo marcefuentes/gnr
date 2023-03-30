@@ -71,12 +71,12 @@ xmin = df['logES'].min()
 xmax = df['logES'].max()
 ymin = df['alpha'].min()
 ymax = df['alpha'].max()
-xticklabels = [f'{xmin:2.0f}',
-               f'{(xmin + xmax)/2.0:2.0f}',
-               f'{xmax:2.0f}']
-yticklabels = [f'{ymax:3.1f}',
-               f'{(ymin + ymax)/2.0:3.1f}',
-               f'{ymin:3.1f}']
+xticklabels = [f'{xmin:.0f}',
+               f'{(xmin + xmax)/2.0:.0f}',
+               f'{xmax:.0f}']
+yticklabels = [f'{ymax:.1f}',
+               f'{(ymin + ymax)/2.0:.1f}',
+               f'{ymin:.1f}']
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 

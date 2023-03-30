@@ -27,7 +27,7 @@ folders = ['given100', 'given95', 'given50']
 subfolders = ['p', 'r']
 
 movie = False
-plotsize = 8
+plotsize = 6
 
 # Add data to figure
 
@@ -39,7 +39,7 @@ def init(artists):
     for f, folder in enumerate(folders):
         lows = getZ(ts[-1], dfprivates[f], 'a2Seenmean')
         lows = lows.to_numpy()
-        given = dftraits[0, 0].Given.iloc[0]
+        given = dftraits[f, 0].Given.iloc[0]
         T = my.fitness(highs, lows, given, AA, RR)
         R = my.fitness(highs, highs, given, AA, RR)
         P = my.fitness(lows, lows, given, AA, RR)

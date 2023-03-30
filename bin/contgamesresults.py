@@ -79,21 +79,18 @@ def getZ(t, df, trait):
 # Data
 
 filelist = glob(os.path.join('given00', 'none', '*.csv'))
-df = [my.read_file(file, movie) for file in filelist]
-dfsocial = pd.concat(df, ignore_index=True)
+dfsocial = my.read_files(filelist, movie)
 
 dfprivates = np.empty(len(folders), dtype=object)
 for f, folder in enumerate(folders):
     filelist = glob(os.path.join(folder, 'none', '*.csv'))
-    df = [my.read_file(file, movie) for file in filelist]
-    dfprivates[f] = pd.concat(df, ignore_index=True)
+    dfprivates[f] = my.read_files(filelist, movie)
 
 dftraits = np.empty((len(folders), len(subfolders)), dtype=object)
 for f, folder in enumerate(folders):
     for c, subfolder in enumerate(subfolders):
         filelist = glob(os.path.join(folder, subfolder, '*.csv'))
-        df = [my.read_file(file, movie) for file in filelist]
-        dftraits[f, c] = pd.concat(df, ignore_index=True)
+        dftraits[f, c] = my.read_files(filelist, movie)
 
 df = dfsocial
 ts = df.Time.unique()
@@ -167,7 +164,7 @@ fig.supxlabel(xlabel,
               y=bottom_y*0.3,
               fontsize=biglabels)
 fig.supylabel(ylabel,
-              x=left_x*0.4,
+              x=left_x*0.5,
               y=center_y,
               fontsize=biglabels)
 

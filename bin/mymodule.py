@@ -208,8 +208,12 @@ def indifference(qs, w, alpha, rho):
                 q2[i] = pow((A - B)/alpha, 1.0/rho)
     return q2
 
-def read_file(file, alltimes):
-    df = pd.read_csv(file)
-    if not alltimes:
-        df = df.tail(1)
-    return df
+def read_files(filelist, alltimes):
+    df_list = [None] * len(filelist)
+    for i, file in enumerate(filelist):
+        df = pd.read_csv(file)
+        if not alltimes:
+            df = df.tail(1)
+        df_list[i] = df
+    dfc = pd.concat(df_list, ignore_index=True)
+    return dfc

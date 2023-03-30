@@ -217,3 +217,14 @@ def read_files(filelist, alltimes):
         df_list[i] = df
     dfc = pd.concat(df_list, ignore_index=True)
     return dfc
+
+def getZ(t, df, trait):
+    m = df.Time == t
+    Z = pd.pivot_table(df.loc[m],
+                       values=trait,
+                       index='alpha',
+                       columns='logES')
+    Z = Z.sort_index(axis=0, ascending=False)
+    Z = Z.to_numpy()
+    return Z
+

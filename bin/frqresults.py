@@ -58,10 +58,9 @@ def update(t, artists):
 # Data
 
 dfs = np.empty(len(folders), dtype=object) 
-for i, folder in enumerate(folders):
+for f, folder in enumerate(folders):
     filelist = glob(os.path.join(folder, '*.frq'))
-    df = [my.read_file(file, movie) for file in filelist]
-    dfs[i] = pd.concat(df, ignore_index=True)
+    dfs[f] = my.read_files(filelist, movie)
 
 df = dfs[1]
 ts = df.Time.unique()

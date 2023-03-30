@@ -48,19 +48,12 @@ def update(distance, artists):
 # Data
 
 a2eqs = np.empty(len(folders), dtype=object)
-for i, folder in enumerate(folders):
+for f, folder in enumerate(folders):
     filelist = glob(os.path.join(folder, 'none', '*.csv'))
-    df = [my.read_file(file, False) for file in filelist]
-    df = pd.concat(df, ignore_index=True)
-    if i == 0:
-        given = df.Given.iloc[0]
-    a = pd.pivot_table(df,
-                       values='a2Seenmean',
-                       index='alpha',
-                       columns='logES')
-    a = a.sort_index(axis=0, ascending=False)
-    a2eqs[i] = a.to_numpy()
+    df = my.read_files(filelist, False)
+    a2eqs[f] = my.getZ(1, df, 'a2Seenmean')
 
+given = df[0].Given.iloc[0]
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 logess = np.sort(pd.unique(df.logES))
 nr = len(alphas)

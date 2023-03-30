@@ -34,10 +34,8 @@ plotsize = 6
 def init(artists):
 
     for f, folder in enumerate(folders):
-        lows = getZ(ts[0], dftraits[f, 0], 'a2low')
-        lows = lows.to_numpy()
-        highs = getZ(ts[0], dftraits[f, 0], 'a2high')
-        highs = highs.to_numpy()
+        lows = my.getZ(ts[0], dftraits[f, 0], 'a2low')
+        highs = my.getZ(ts[0], dftraits[f, 0], 'a2high')
         given = dftraits[f, 0].Given.iloc[0]
         T = my.fitness(highs, lows, given, AA, RR)
         R = my.fitness(highs, highs, given, AA, RR)
@@ -71,8 +69,7 @@ def init(artists):
 def update(t, artists):
     for f, folder in enumerate(folders):
         for c, trait in enumerate(traits):
-            Z = getZ(t, dftraits[f, c], trait)
-            Z = Z.to_numpy()
+            Z = my.getZ(t, dftraits[f, c], trait)
             if 'Grain' in trait:
                 Z = 1.0 - Z
             for (a, l), _ in np.ndenumerate(Z):
@@ -81,17 +78,6 @@ def update(t, artists):
     if movie:
         fig.texts[2].set_text(f't\n{t}')
     return artists.flatten()
-
-def getZ(t, df, trait):
-    if movie:
-        m = df.Time == t
-        df = df.loc[m]
-    Z = pd.pivot_table(df,
-                       values=trait,
-                       index='alpha',
-                       columns='logES')
-    Z = Z.sort_index(axis=0, ascending=False)
-    return Z
 
 # Data
 

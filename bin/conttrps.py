@@ -37,15 +37,13 @@ def init(artists):
     if theory:
         highs = my.a2eq(0.0, AA, RR)
     else:
-        highs = getZ(ts[-1], dfsocial, 'a2Seenmean')
-        highs = highs.to_numpy()
+        highs = my.getZ(ts[-1], dfsocial, 'a2Seenmean')
 
     for f, folder in enumerate(folders):
         if theory:
             lows = my.a2eq(given, AA, RR)
         else:
-            lows = getZ(ts[-1], dfprivates[f], 'a2Seenmean')
-            lows = lows.to_numpy()
+            lows = my.getZ(ts[-1], dfprivates[f], 'a2Seenmean')
         given = dftraits[0, 0].Given.iloc[0]
         T = my.fitness(highs, lows, given, AA, RR)
         R = my.fitness(highs, highs, given, AA, RR)
@@ -79,8 +77,7 @@ def init(artists):
 def update(t, artists):
     for f, folder in enumerate(folders):
         for c, trait in enumerate(traits):
-            Z = getZ(t, dftraits[f, c], trait)
-            Z = Z.to_numpy()
+            Z = my.getZ(t, dftraits[f, c], trait)
             if 'Grain' in trait:
                 Z = 1.0 - Z
             for (a, l), _ in np.ndenumerate(Z):
@@ -89,17 +86,6 @@ def update(t, artists):
     if movie:
         fig.texts[2].set_text(f't\n{t}')
     return artists.flatten()
-
-def getZ(t, df, trait):
-    if movie:
-        m = df.Time == t
-        df = df.loc[m]
-    Z = pd.pivot_table(df,
-                       values=trait,
-                       index='alpha',
-                       columns='logES')
-    Z = Z.sort_index(axis=0, ascending=False)
-    return Z
 
 # Data
 

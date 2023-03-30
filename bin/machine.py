@@ -25,8 +25,7 @@ subfolders = ['none', 'p', 'r']
 # Data
 
 filelist = glob('given00/none/*.csv')
-df = [my.read_file(file, False) for file in filelist]
-df = pd.concat(df, ignore_index=True)
+df = my.read_files(filelist, False)
 df = df.sort_values(['alpha', 'logES'])
 high = df['a2Seenmean'].values
 high = np.tile(high, (len(folders), 1)).flatten()
@@ -36,9 +35,7 @@ for folder in folders:
     df_list = []
     for subfolder in subfolders:
         filelist = glob(os.path.join(folder, subfolder, '*.csv'))
-        df = [my.read_file(file, False) for file in filelist]
-        df_concat = pd.concat(df, ignore_index=True)
-        df_list.append(df_concat)
+        df_list.append(my.read_files(filelist, False)
     dfs.append(df_list)
 
 dfns = []

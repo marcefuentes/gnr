@@ -22,7 +22,8 @@ colormap = {
     'white' :       [1.0, 1.0, 1.0, 1.0],
     'grey' :        [0.7, 0.7, 0.7, 1.0],
     'greyTS' :      [0.9, 0.9, 0.9, 1.0],
-    'red' :         [1.0, 0.0, 0.0, 1.0],
+    'red' :         [0.7, 0.1, 0.1, 1.0],
+    'redTS' :       [1.0, 0.5, 0.5, 1.0],
     'harmonyTS' :   [1.0, 0.0, 0.0, 1.0],
     'snowdrift' :   [0.7, 0.0, 0.7, 1.0],
     'snowdriftTS' : [1.0, 0.3, 1.0, 1.0],
@@ -33,7 +34,7 @@ colormap = {
     'deadlock' :    [0.9, 1.0, 0.9, 1.0],
 }
 
-def grey(T, R, P, S):
+def red(T, R, P, S):
     m = (P == S)
     return m
 
@@ -73,10 +74,10 @@ def diagonal(T, R, P, S):
     m = (T == R) & (R == P) & (P == S)
     return m
 
-def greycolors(T, R, P, S, Z):
-    m = grey(T, R, P, S)
-    Z[m] = colormap['grey']
-    Z[TS(m, T, R, S)] = colormap['greyTS']
+def redcolors(T, R, P, S, Z):
+    m = red(T, R, P, S)
+    Z[m] = colormap['red']
+    Z[TS(m, T, R, S)] = colormap['redTS']
     Z[diagonal(T, R, P, S)] = colormap['white']
     return Z
 
@@ -133,7 +134,7 @@ def nodilemmacolorsg(T, R, P, S):
 
 def gamecolors(T, R, P, S):
     Z = np.full([*T.shape, 4], colormap['red'])
-    Z = greycolors(T, R, P, S, Z)
+    #Z = greycolors(T, R, P, S, Z)
     Z = harmonycolors(T, R, P, S, Z)
     Z = deadlockcolors(T, R, P, S, Z)
     Z = prisonercolors(T, R, P, S, Z)

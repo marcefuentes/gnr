@@ -24,7 +24,7 @@ titles = ['Games',
           'Sensitivity for\nmimicking partner']
 vmaxs = [my.a2max, my.a2max]
 folders = ['given100', 'given95', 'given50']
-subfolders = ['none', 'p', 'r']
+subfolders = ['p', 'r']
 
 movie = False
 plotsize = 6
@@ -35,8 +35,7 @@ ext = 256
 def init(artists):
 
     for f, folder in enumerate(folders):
-        df = dfs[f, 0]
-        given = df.Given.iloc[0]
+        given = dfprivates[f].Given.iloc[0]
         for a, alpha in enumerate(alphas):
             AA = np.full(X.shape, alpha)
             for l, (rho, loges) in enumerate(zip(rhos, logess)):
@@ -53,7 +52,7 @@ def init(artists):
 def update(t, artists):
     for f, folder in enumerate(folders):
         for c, trait in enumerate(traits):
-            df = dfs[f, c + 1]
+            df = dftraits[f, c]
             if movie:
                 m = df.Time == t
                 df = df.loc[m]
@@ -71,20 +70,31 @@ def update(t, artists):
 
 # Data
 
-dfs = np.empty((len(folders), len(subfolders)), dtype=object)
-for i, folder in enumerate(folders):
-    for j, subfolder in enumerate(subfolders):
+dfprivates = np.empty(len(folders), dtype=object)
+for f, folder in enumerate(folders):
+    filelist = glob(os.path.join(folder, 'none', '*.csv'))
+    df = [my.read_file(file, movie) for file in filelist]
+    dfprivates[f] = pd.concat(df, ignore_index=True)
+
+filelist = glob(os.path.join(folder, 'given0', '*.csv'))
+df = [my.read_file(file, movie) for file in filelist]
+dfsocial = pd.concat(df, ignore_index=True)
+
+dftraits = np.empty((len(folders), len(subfolders)), dtype=object)
+for f, folder in enumerate(folders):
+    for c, subfolder in enumerate(subfolders):
         filelist = glob(os.path.join(folder, subfolder, '*.csv'))
         df = [my.read_file(file, movie) for file in filelist]
-        dfs[i, j] = pd.concat(df, ignore_index=True)
+        dftraits[f, c] = pd.concat(df, ignore_index=True)
 
-df = dfs[0, 0]
+df = dfsocial
 ts = df.Time.unique()
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 logess = np.sort(pd.unique(df.logES))
 nr = len(alphas)
 nc = len(logess)
 rhos = 1.0 - 1.0/pow(2.0, logess)
+
 x = np.linspace(0.0, my.a2max, num=ext)
 y = np.flip(x)
 X, Y = np.meshgrid(x, y)

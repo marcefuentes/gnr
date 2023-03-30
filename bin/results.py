@@ -6,6 +6,7 @@ import time
 
 from matplotlib.animation import FuncAnimation
 import matplotlib.pyplot as plt
+import matplotlib.transforms
 import numpy as np
 import pandas as pd
 
@@ -35,16 +36,8 @@ plotsize = 4
 
 def update(t, artists):
     for f, folder in enumerate(folders):
-        df = dfs[f]
-        if movie:
-            m = df.Time == t
-            df = df.loc[m]
         for c, trait in enumerate(traits):
-            Z = pd.pivot_table(df,
-                               values=trait,
-                               index='alpha',
-                               columns='logES')
-            Z = Z.sort_index(axis=0, ascending=False)
+            Z = my.getZ(t, dfs[f], trait)
             if 'Grain' in trait:
                 Z = 1.0 - Z
             artists[f, c].set_array(Z) 
@@ -108,6 +101,9 @@ fig.supylabel(ylabel,
               y=center_y,
               fontsize=biglabels)
 
+dx = -2/72.; dy = 0/72.
+offset = matplotlib.transforms.ScaledTranslation(dx, dy, fig.dpi_scale_trans)
+
 letterposition = 1.035
 for i, ax in enumerate(fig.get_axes()):
     ax.set(xticks=xticks, yticks=yticks)
@@ -125,6 +121,8 @@ for c, title in enumerate(titles):
     axs[0, c].set_title(title, pad=plotsize*10, fontsize=plotsize*5)
     axs[-1, c].set_xticklabels(xticklabels,
                                fontsize=ticklabels)
+    for label in axs[-1, c].xaxis.get_majorticklabels():
+        label.set_transform(label.get_transform() + offset)
 
 if movie:
     fig.text(right_x,

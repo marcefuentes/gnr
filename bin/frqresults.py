@@ -5,6 +5,7 @@ import os
 import re
 import time
 
+from matplotlib import cm
 from matplotlib.animation import FuncAnimation
 import matplotlib.pyplot as plt
 import numpy as np
@@ -26,6 +27,7 @@ titles = ['Effort to get $\it{B}$',
           'Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner',
           'Fitness']
+vmaxs = [my.a2max, my.a2max, my.a2max, 2.0]
 folders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
 
 movie = False
@@ -36,33 +38,46 @@ bins = 64
 
 def update(t, artists):
     for f, folder in enumerate(folders):
-        df = dfs[f]
+        df = dffrqs[f]
+        dfmean = dfmeans[f]
+
         if movie:
             m = df.Time == t
             df = df.loc[m]
         for c, trait in enumerate(traits):
+            Z = my.getZ(t, dfmeans[f], trait + 'mean')
+            if 'Grain' in trait:
+                Z = 1.0 - Z
             for a, alpha in enumerate(alphas):
                 for l, loges in enumerate(logess):
                     m = (df.alpha == alpha) & (df.logES == loges)
                     d = df.loc[m]
+                    m = (dfmean.alpha == alpha) & (dfmean.logES == loges)
+                    dmean = dfmean.loc[m]
                     freq_a = [col for col in d.columns if re.match(fr'^{trait}\d+$', col)]
                     y = d.loc[:, freq_a]
                     y = y.values[0]
                     y = y.flatten()
                     artists[f, c, a, l].set_ydata(y)
+                    bgcolor = cm.viridis(Z[a, l]/vmaxs[c])
+                    artists[f, c, a, l].axes.set_facecolor(bgcolor)
     if movie:
         fig.texts[2].set_text(f't\n{t}')
-
     return artists.flatten()
 
 # Data
 
-dfs = np.empty(len(folders), dtype=object) 
+dffrqs = np.empty(len(folders), dtype=object) 
 for f, folder in enumerate(folders):
     filelist = glob(os.path.join(folder, '*.frq'))
-    dfs[f] = my.read_files(filelist, movie)
+    dffrqs[f] = my.read_files(filelist, movie)
 
-df = dfs[1]
+dfmeans = np.empty(len(folders), dtype=object) 
+for f, folder in enumerate(folders):
+    filelist = glob(os.path.join(folder, '*.csv'))
+    dfmeans[f] = my.read_files(filelist, movie)
+
+df = dffrqs[1]
 ts = df.Time.unique()
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 logess = np.sort(pd.unique(df.logES))
@@ -110,7 +125,7 @@ bottom_y = axs[-1, -1, -1, -1].get_position().y0
 center_y = (top_y + bottom_y) / 2
 fig.supxlabel(xlabel,
               x=center_x,
-              y=bottom_y*0.5,
+              y=bottom_y*0.6,
               fontsize=biglabels)
 fig.supylabel(ylabel,
               x=left_x*0.4,
@@ -132,18 +147,18 @@ for f, folder in enumerate(folders):
                                   weight='bold',
                                   loc='left')
         if f == 0:
-            axs[f, c, 0, 10].set_title(title,
+            axs[0, c, 0, 10].set_title(title,
                                        pad=plotsize*9,
                                        fontsize=plotsize*5)
         for a in range(0, nr, step):
             axs[f, c, a, 0].set(yticks=[ylim[1]/2.0], yticklabels=[])
             if c == 0:
-                axs[f, c, a, 0].set_yticklabels([alphas[a]],
+                axs[f, 0, a, 0].set_yticklabels([alphas[a]],
                                                 fontsize=ticklabels)
         for l in range(0, nc, step):
             axs[f, c, -1, l].set(xticks=[xlim[1]/2.0], xticklabels=[])
             if folder == folders[-1]:
-                axs[f, c, -1, l].set_xticklabels([f'{logess[l]:.0f}'],
+                axs[-1, c, -1, l].set_xticklabels([f'{logess[l]:.0f}'],
                                                  fontsize=ticklabels)
 
 if movie:
@@ -168,7 +183,7 @@ for f, folder in enumerate(folders):
         for a, alpha in enumerate(alphas):
             for l, loges in enumerate(logess):
                 ax = axs[f, c, a, l] 
-                artists[f, c, a, l], = ax.plot(x, dummy_y)
+                artists[f, c, a, l], = ax.plot(x, dummy_y, c='white')
 
 # Add data and save figure
 

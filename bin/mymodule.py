@@ -134,12 +134,12 @@ def nodilemmacolorsg(T, R, P, S):
 
 def gamecolors(T, R, P, S):
     Z = np.full([*T.shape, 4], colormap['red'])
-    #Z = greycolors(T, R, P, S, Z)
+    Z = redcolors(T, R, P, S, Z)
     Z = harmonycolors(T, R, P, S, Z)
     Z = deadlockcolors(T, R, P, S, Z)
     Z = prisonercolors(T, R, P, S, Z)
     Z = snowdriftcolors(T, R, P, S, Z)
-    Z= leadercolors(T, R, P, S, Z)
+    Z = leadercolors(T, R, P, S, Z)
     return Z
 
 def equilibrium(T, R, P, S, low, high, a2, weq):

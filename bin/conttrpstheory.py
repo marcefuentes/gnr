@@ -20,10 +20,11 @@ filename = thisscript.split('.')[0]
 
 traits = ['ChooseGrainmean',
           'MimicGrainmean']
-titles = ['Sensitivity for\nchoosing partner',
+titles = ['Games',
+          'Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
 folders = ['given100', 'given95', 'given50']
-subfolders = ['none', 'p', 'r']
+subfolders = ['p', 'r']
 
 movie = False
 plotsize = 8
@@ -35,12 +36,8 @@ def init(artists):
     highs = my.a2eq(0.0, AA, RR)
 
     for f, folder in enumerate(folders):
-        df = dfs[f, 0]
-        if movie:
-            m = df.Time == ts[-1]
-            df = df.loc[m]
-        given = df.Given.iloc[0]
         lows = my.a2eq(given, AA, RR)
+        given = dftraits[0, 0].Given.iloc[0]
         T = my.fitness(highs, lows, given, AA, RR)
         R = my.fitness(highs, highs, given, AA, RR)
         P = my.fitness(lows, lows, given, AA, RR)
@@ -58,9 +55,12 @@ def init(artists):
         m = lows > highs
         linecolor[m] = red[m]
 
-        for c, trait in enumerate(traits):
+        Zg = my.gamecolors(T, R, P, S)
+        for c, title in enumerate(titles):
             for (a, l, i), _ in np.ndenumerate(y):
                 artists[f, c, a, l].set_ydata(y[a, l])
+                if c == 0:
+                    artists[f, c, a, l].axes.set_facecolor(Zg[a, l])
                 lcolor = linecolor[a, l] 
                 artists[f, c, a, l].set_color(lcolor)
                 artists[f, c, a, l].set_markerfacecolor(lcolor)
@@ -68,43 +68,39 @@ def init(artists):
     return artists.flatten()
 
 def update(t, artists):
-        
     for f, folder in enumerate(folders):
         for c, trait in enumerate(traits):
-            df = dfs[f, c + 1]
-            if movie:
-                m = df.Time == t
-                df = df.loc[m]
-            Z = pd.pivot_table(df,
-                               values=trait,
-                               index='alpha',
-                               columns='logES')
-            Z = Z.sort_index(axis=0, ascending=False)
+            Z = getZ(t, dftraits[f, c], trait)
             Z = Z.to_numpy()
-            Z = 1.0 - Z
-
+            if 'Grain' in trait:
+                Z = 1.0 - Z
             for (a, l), _ in np.ndenumerate(Z):
                 bgcolor = cm.viridis(Z[a, l]/my.a2max)
-                artists[f, c, a, l].axes.set_facecolor(bgcolor)
+                artists[f, c + 1, a, l].axes.set_facecolor(bgcolor)
     if movie:
         fig.texts[2].set_text(f't\n{t}')
-
     return artists.flatten()
+
+def getZ(t, df, trait):
+    if movie:
+        m = df.Time == t
+        df = df.loc[m]
+    Z = pd.pivot_table(df,
+                       values=trait,
+                       index='alpha',
+                       columns='logES')
+    Z = Z.sort_index(axis=0, ascending=False)
+    return Z
 
 # Data
 
-filelist = glob('given00/none/*.csv')
-df = [my.read_file(file, False) for file in filelist]
-dfsocial = pd.concat(df, ignore_index=True)
-
-dfs = np.empty((len(folders), len(subfolders)), dtype=object)
-for i, folder in enumerate(folders):
-    for j, subfolder in enumerate(subfolders):
+dftraits = np.empty((len(folders), len(subfolders)), dtype=object)
+for f, folder in enumerate(folders):
+    for c, subfolder in enumerate(subfolders):
         filelist = glob(os.path.join(folder, subfolder, '*.csv'))
-        df = [my.read_file(file, movie) for file in filelist]
-        dfs[i, j] = pd.concat(df, ignore_index=True)
+        dftraits[f, c] = my.read_files(filelist, movie)
 
-df = dfs[0, 0]
+df = dftraits[0, 0]
 ts = df.Time.unique()
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 logess = np.sort(pd.unique(df.logES))
@@ -137,7 +133,7 @@ axs = np.empty((len(folders),
                 len(titles),
                 nr,
                 nc),
-                dtype=object)
+               dtype=object)
 
 for f, folder in enumerate(folders):
     for c, title in enumerate(titles):
@@ -158,7 +154,7 @@ fig.supxlabel(xlabel,
               y=bottom_y*0.3,
               fontsize=biglabels)
 fig.supylabel(ylabel,
-              x=left_x*0.1,
+              x=left_x*0.4,
               y=center_y,
               fontsize=biglabels)
 

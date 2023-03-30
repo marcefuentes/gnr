@@ -92,7 +92,7 @@ for f, folder in enumerate(folders):
         filelist = glob(os.path.join(folder, subfolder, '*.csv'))
         dftraits[f, c] = my.read_files(filelist, movie)
 
-df = dfsocial
+df = dftraits[0, 0]
 ts = df.Time.unique()
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 logess = np.sort(pd.unique(df.logES))

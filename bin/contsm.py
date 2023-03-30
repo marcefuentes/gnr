@@ -37,9 +37,9 @@ def init(artists):
     highs = highs.to_numpy()
 
     for f, folder in enumerate(folders):
-        given = dfprivates[f].Given.iloc[0]
         lows = getZ(ts[-1], dfprivates[f], 'a2Seenmean')
         lows = lows.to_numpy()
+        given = dftraits[0, 0].Given.iloc[0]
         T = my.fitness(highs, lows, given, AA, RR)
         R = my.fitness(highs, highs, given, AA, RR)
         P = my.fitness(lows, lows, given, AA, RR)
@@ -108,7 +108,7 @@ for f, folder in enumerate(folders):
         filelist = glob(os.path.join(folder, subfolder, '*.csv'))
         dftraits[f, c] = my.read_files(filelist, movie)
 
-df = dfsocial
+df = dftraits[0, 0]
 ts = df.Time.unique()
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 logess = np.sort(pd.unique(df.logES))

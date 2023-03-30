@@ -176,10 +176,6 @@ for f, folder in enumerate(folders):
                                fontsize=plotsize*5,
                                weight='bold')
     letter += 1
-    if folder == folders[0]:
-        axgames[f, 0, 10].set_title(titles[0],
-                                    pad=plotsize*9,
-                                    fontsize=plotsize*5)
     for a in range(0, nr, step):
         axgames[f, a, 0].set(yticks=[ext/2.0])
         axgames[f, a, 0].set_yticklabels([f'{alphas[a]:.1f}'],
@@ -189,12 +185,7 @@ for f, folder in enumerate(folders):
                                          fontsize=ticklabels)
     for l in range(0, nc, step):
         axgames[f, -1, l].set(xticks=[ext/2.0], xticklabels=[]) 
-        if folder == folders[-1]:
-            axgames[f, -1, l].set_xticklabels([f'{logess[l]:.0f}'],
-                                              fontsize=ticklabels)
     for c in range(len(titles) - 1):
-        axtraits[f, c].set(xticks=xticks, yticks=yticks)
-        axtraits[f, c].set(xticklabels=[], yticklabels=[])
         axtraits[f, c].text(0,
                             letterposition,
                             chr(letter),
@@ -202,15 +193,22 @@ for f, folder in enumerate(folders):
                             fontsize=plotsize*5,
                             weight='bold')
         letter += 1
-        if folder == folders[0]:
-            axtraits[f, c].set_title(titles[c + 1],
-                                pad=plotsize*9,
-                                fontsize=plotsize*5)
-        if folder == folders[-1]:
-            axtraits[f, c].set_xticklabels(xticklabels,
-                                           fontsize=ticklabels)
-            for label in axtraits[f, c].xaxis.get_majorticklabels():
-                label.set_transform(label.get_transform() + offset)
+        axtraits[f, c].set(xticks=xticks, yticks=yticks)
+        axtraits[f, c].set(xticklabels=[], yticklabels=[])
+axgames[0, 0, 10].set_title(titles[0],
+                            pad=plotsize*9,
+                            fontsize=plotsize*5)
+for l in range(0, nc, step):
+    axgames[-1, -1, l].set_xticklabels([f'{logess[l]:.0f}'],
+                                       fontsize=ticklabels)
+for c in range(len(titles) - 1):
+    axtraits[0, c].set_title(titles[c + 1],
+                             pad=plotsize*9,
+                             fontsize=plotsize*5)
+    axtraits[-1, c].set_xticklabels(xticklabels,
+                                   fontsize=ticklabels)
+    for label in axtraits[-1, c].xaxis.get_majorticklabels():
+        label.set_transform(label.get_transform() + offset)
 
 if movie:
     fig.text(right_x,

@@ -209,7 +209,6 @@ for c in range(len(titles) - 1):
                                    fontsize=ticklabels)
     for label in axtraits[-1, c].xaxis.get_majorticklabels():
         label.set_transform(label.get_transform() + offset)
-
 if movie:
     fig.text(right_x,
              bottom_y*0.5,

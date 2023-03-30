@@ -24,7 +24,7 @@ titles = ['Games',
           'Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
 folders = ['given100', 'given95', 'given50']
-subfolders = ['none', 'p', 'r']
+subfolders = ['p', 'r']
 
 movie = False
 plotsize = 8
@@ -33,24 +33,12 @@ plotsize = 8
 
 def init(artists):
 
-    highs = pd.pivot_table(dfsocial,
-                           values='a2Seenmean',
-                           index='alpha',
-                           columns='logES')
-    highs = highs.sort_index(axis=0, ascending=False)
+    highs = getZ(ts[-1], dfsocial, 'a2Seenmean')
     highs = highs.to_numpy()
 
     for f, folder in enumerate(folders):
-        df = dfs[f, 0]
-        if movie:
-            m = df.Time == ts[-1]
-            df = df.loc[m]
-        given = df.Given.iloc[0]
-        lows = pd.pivot_table(df,
-                              values='a2Seenmean',
-                              index='alpha',
-                              columns='logES')
-        lows = lows.sort_index(axis=0, ascending=False)
+        given = dfprivates[f].Given.iloc[0]
+        lows = getZ(ts[-1], dfprivates[f], 'a2Seenmean')
         lows = lows.to_numpy()
         T = my.fitness(highs, lows, given, AA, RR)
         R = my.fitness(highs, highs, given, AA, RR)
@@ -80,43 +68,47 @@ def init(artists):
     return artists.flatten()
 
 def update(t, artists):
-        
     for f, folder in enumerate(folders):
         for c, trait in enumerate(traits):
-            df = dfs[f, c + 1]
-            if movie:
-                m = df.Time == t
-                df = df.loc[m]
-            Z = pd.pivot_table(df,
-                               values=trait,
-                               index='alpha',
-                               columns='logES')
-            Z = Z.sort_index(axis=0, ascending=False)
+            Z = getZ(t, dftraits[f, c], trait)
             Z = Z.to_numpy()
-            Z = 1.0 - Z
-
+            if 'Grain' in trait:
+                Z = 1.0 - Z
             for (a, l), _ in np.ndenumerate(Z):
                 bgcolor = cm.viridis(Z[a, l]/my.a2max)
                 artists[f, c + 1, a, l].axes.set_facecolor(bgcolor)
     if movie:
         fig.texts[2].set_text(f't\n{t}')
-
     return artists.flatten()
+
+def getZ(t, df, trait):
+    if movie:
+        m = df.Time == t
+        df = df.loc[m]
+    Z = pd.pivot_table(df,
+                       values=trait,
+                       index='alpha',
+                       columns='logES')
+    Z = Z.sort_index(axis=0, ascending=False)
+    return Z
 
 # Data
 
-filelist = glob('given00/none/*.csv')
-df = [my.read_file(file, False) for file in filelist]
-dfsocial = pd.concat(df, ignore_index=True)
+filelist = glob(os.path.join('given00', 'none', '*.csv'))
+dfsocial = my.read_files(filelist, movie)
 
-dfs = np.empty((len(folders), len(subfolders)), dtype=object)
-for i, folder in enumerate(folders):
-    for j, subfolder in enumerate(subfolders):
+dfprivates = np.empty(len(folders), dtype=object)
+for f, folder in enumerate(folders):
+    filelist = glob(os.path.join(folder, 'none', '*.csv'))
+    dfprivates[f] = my.read_files(filelist, movie)
+
+dftraits = np.empty((len(folders), len(subfolders)), dtype=object)
+for f, folder in enumerate(folders):
+    for c, subfolder in enumerate(subfolders):
         filelist = glob(os.path.join(folder, subfolder, '*.csv'))
-        df = [my.read_file(file, movie) for file in filelist]
-        dfs[i, j] = pd.concat(df, ignore_index=True)
+        dftraits[f, c] = my.read_files(filelist, movie)
 
-df = dfs[0, 0]
+df = dfsocial
 ts = df.Time.unique()
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 logess = np.sort(pd.unique(df.logES))

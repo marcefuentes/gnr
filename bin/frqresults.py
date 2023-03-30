@@ -39,7 +39,6 @@ bins = 64
 def update(t, artists):
     for f, folder in enumerate(folders):
         df = dffrqs[f]
-        dfmean = dfmeans[f]
 
         if movie:
             m = df.Time == t
@@ -52,8 +51,6 @@ def update(t, artists):
                 for l, loges in enumerate(logess):
                     m = (df.alpha == alpha) & (df.logES == loges)
                     d = df.loc[m]
-                    m = (dfmean.alpha == alpha) & (dfmean.logES == loges)
-                    dmean = dfmean.loc[m]
                     freq_a = [col for col in d.columns if re.match(fr'^{trait}\d+$', col)]
                     y = d.loc[:, freq_a]
                     y = y.values[0]

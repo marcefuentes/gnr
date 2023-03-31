@@ -40,7 +40,7 @@ def init(artists):
         given = dftraits[f, 0].Given.iloc[0]
         for a, alpha in enumerate(alphas):
             AA = np.full(X.shape, alpha)
-            for l, (rho, loges) in enumerate(zip(rhos, logess)):
+            for l, rho in enumerate(rhos):
                 RR = np.full(X.shape, rho)
                 T = my.fitness(Y, X, given, AA, RR)
                 R = my.fitness(Y, Y, given, AA, RR)

@@ -52,20 +52,26 @@ def update(t, artists):
                 R = my.fitness(a2s, a2s, given, alpha, rho)
                 P = my.fitness(xaxis, xaxis, given, alpha, rho)
                 S = my.fitness(xaxis, a2s, given, alpha, rho)
+                Ti = my.fitness(xaxis, a2s, given, alpha, rho)
+                Ri = my.fitness(xaxis, xaxis, given, alpha, rho)
+                Pi = my.fitness(a2s, a2s, given, alpha, rho)
+                Si = my.fitness(a2s, xaxis, given, alpha, rho)
+
                 m = xaxis > a2s
-                H = T
-                T[m] = S[m]
-                S[m] = H[m]
-                H = R
-                R[m] = P[m]
-                P[m] = H[m]
+                T[m] = Ti[m]
+                R[m] = Ri[m]
+                P[m] = Pi[m]
+                S[m] = Si[m]
 
                 z = my.gamecolors(T, R, P, S)
                 y = np.full(xaxis.shape, w)
                 artists[f, 0, a, l].set_offsets(np.column_stack((xaxis, y)))
                 artists[f, 0, a, l].set_color(z)
+                artists[f, 0, a, l].set_sizes([6])
 
-                y = my.fitness(xaxis, a2s, given, alpha, rho)
+                y = my.fitness(xaxis, xaxis, given, alpha, rho)
+                m = xaxis < a2s
+                y[m] = -1.0
                 m = y < w
                 co = np.full(xaxis.shape, 'white')
                 co[m] = orange[m]
@@ -216,6 +222,7 @@ for f, folder in enumerate(folders):
                 ax = axs[f, c, a, l] 
                 artists[f, c, a, l] = ax.scatter(xaxis,
                                                  dummy_y,
+                                                 marker='s',
                                                  color='white',
                                                  s=1)
 

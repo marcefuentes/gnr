@@ -26,10 +26,10 @@ titles = ['Effort to get $\it{B}$',
 vmaxs = [my.a2max, my.wmax]
 folders = ['none', 'p']
 
-alpha = 0.7
-loges = 3.5
+alpha = 0.66
+loges = 1.0
 movie = False
-plotsize = 8
+plotsize = 6
 bins = 64
 
 # Add data to figure
@@ -57,7 +57,7 @@ def update(t, artists):
             bgcolor = cm.viridis(y/vmaxs[c])
             artists[f, c].axes.set_facecolor(bgcolor)
     if movie:
-        fig.texts[2].set_text(f't\n{t}')
+        fig.texts[1].set_text(f't\n{t}')
     return artists.flatten()
 
 # Data

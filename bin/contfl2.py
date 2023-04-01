@@ -115,7 +115,7 @@ logess = np.sort(pd.unique(df.logES))
 nr = len(alphas)
 nc = len(logess)
 rhos = 1.0 - 1.0/pow(2.0, logess)
-xaxis = np.linspace(0.0, my.a2max, num=numa2)
+xaxis = np.linspace(0.01, my.a2max - 0.01, num=numa2)
 cmap = ListedColormap(['black', 'yellow'])
 
 # Figure properties

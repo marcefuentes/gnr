@@ -61,7 +61,7 @@ def update(t, lines, images):
                 y[m] = None
                 norm = BoundaryNorm([0.0, w], cmap.N)
                 points = np.array([xaxis, y]).T.reshape(-1, 1, 2)
-                segments = np.hstack([points[:-1], points[1:]])
+                segments = np.concatenate([points[:-1], points[1:]], axis=1)
                 lc = LineCollection(segments,
                                     cmap=cmap,
                                     norm=norm,

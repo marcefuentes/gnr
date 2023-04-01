@@ -34,6 +34,7 @@ numa2 = 64
 theory = False
 movie = False
 plotsize = 6
+bgcolor = [0.0, 0.5, 0.7, 1.0]
 
 # Add data to figure
 
@@ -55,27 +56,29 @@ def update(t, lines, images):
 
                 y = my.fitness(xaxis, xaxis, given, alpha, rho)
                 m = xaxis < a2s
-                y[m] = -1.0
+                y[m] = None
                 norm = BoundaryNorm([0.0, w], cmap.N)
                 points = np.array([xaxis, y]).T.reshape(-1, 1, 2)
                 segments = np.hstack([points[:-1], points[1:]])
-                lc = LineCollection(segments, cmap=cmap, norm=norm)
-                lc.set_array(y)
-                lc.set_linewidth(1)
+                lc = LineCollection(segments,
+                                    cmap=cmap,
+                                    norm=norm,
+                                    linewidth=2,
+                                    array=y)
                 ax = lines[f, 0, a, l].axes
                 ax.add_collection(lc)
-                lines[f, 0, a, l].set_ydata(y)
 
                 y = my.fitness(xaxis, xaxis, given, alpha, rho) 
                 norm = BoundaryNorm([0.0, w], cmap.N)
                 points = np.array([xaxis, y]).T.reshape(-1, 1, 2)
                 segments = np.concatenate([points[:-1], points[1:]], axis=1)
-                lc = LineCollection(segments, cmap=cmap, norm=norm)
-                lc.set_array(y)
-                lc.set_linewidth(1)
+                lc = LineCollection(segments,
+                                    cmap=cmap,
+                                    norm=norm,
+                                    linewidth=2,
+                                    array=y)
                 ax = lines[f, 1, a, l].axes
                 ax.add_collection(lc)
-                lines[f, 1, a, l].set_ydata(y)
 
         for c, trait in enumerate(traits):
             Z = my.getZ(t, dftraits[f, c], trait)
@@ -197,7 +200,7 @@ for f, folder in enumerate(folders):
                 for axis in ['top','bottom','left','right']:
                     axlines[f, c, a, l].spines[axis].set_linewidth(0.1)
                 axlines[f, c, a, l].set(xlim=xlim, ylim=ylim)
-                axlines[f, c, a, l].set_facecolor([0.0, 0.7, 0.7, 1.0])
+                axlines[f, c, a, l].set_facecolor(bgcolor)
         axlines[f, c, 0, 0].set_title(chr(letter),
                                       pad=plotsize*5/3,
                                       fontsize=plotsize*5,
@@ -255,7 +258,7 @@ if movie:
 lines = np.empty_like(axlines)
 images = np.empty_like(aximages)
 dummy_Z = np.empty((nr, nc), dtype=float)
-dummy_y = np.zeros_like(xaxis)
+dummy_y = np.empty_like(xaxis)
 frames = ts
 frame0 = ts[-1]
 
@@ -265,8 +268,7 @@ for f, folder in enumerate(folders):
             for l, loges in enumerate(logess):
                 ax = axlines[f, c, a, l]
                 lines[f, c, a, l], = ax.plot(xaxis,
-                                             dummy_y,
-                                             color='white')
+                                             dummy_y)
     for c, trait in enumerate(traits):
         ax = aximages[f, c]
         images[f, c] = ax.imshow(dummy_Z,

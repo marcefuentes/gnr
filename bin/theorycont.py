@@ -16,7 +16,7 @@ filename = thisscript.split('.')[0]
 titles = ['Games',
           '2$\it{R}$ - $\it{T}$ - $\it{P}$',
           '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
-givens = np.linspace(0.5, 1.0, num=1)
+givens = np.linspace(0.95, 1.0, num=1)
 #givens = np.linspace(0.0, 1.0, num=21)
 
 num = 21    # Number of subplot rows & columns
@@ -99,15 +99,16 @@ for given in givens:
         AA = np.full([ext, ext], alpha)
         for j, rho in enumerate(rhos):
 
-            xmin = 0.0
+            xmin = my.a2eq(given, alpha, rho)
             xmax = my.a2eq(given, alpha, rho)
             ymin = my.a2eq(0.0, alpha, rho)
+            ymin = 0.0
             ymax = my.a2max
             x = np.linspace(xmin, xmax, num=ext)
             y = np.linspace(ymax, ymin, num=ext)
             X, Y = np.meshgrid(x, y)
-            G = np.full([ext, ext, 4], my.colormap['transparent'])
-            G[X >= Y] = [0.9, 0.9, 0.9, 1.0]
+            #G = np.full([ext, ext, 4], my.colormap['transparent'])
+            #G[X >= Y] = [0.9, 0.9, 0.9, 1.0]
             RR = np.full([ext, ext], rho)
             T = my.fitness(Y, X, given, AA, RR)
             R = my.fitness(Y, Y, given, AA, RR)
@@ -115,18 +116,19 @@ for given in givens:
             S = my.fitness(X, Y, given, AA, RR)
 
             Z = my.gamecolors(T, R, P, S)
-            Z[X >= Y] = [0.9, 0.9, 0.9, 1.0]
+            #Z[X >= Y] = [0.9, 0.9, 0.9, 1.0]
             axss[0][i][j].imshow(Z, extent=extent)
 
-            Z = 2.0*R - T - P
+            Z = R - S
+            #Z = 2.0*R - T - P
             axss[1][i][j].imshow(Z, extent=extent, vmin=-1, vmax=1)
-            axss[1][i][j].imshow(G, extent=extent)
+            #axss[1][i][j].imshow(G, extent=extent)
 
             Z = T + S - 2.0*R
             m = R < P
             Z[m] = T[m] + S[m] - 2.0*P[m]
             axss[2][i][j].imshow(Z, extent=extent, vmin=-1, vmax=1)
-            axss[2][i][j].imshow(G, extent=extent)
+            #axss[2][i][j].imshow(G, extent=extent)
 
     text = fig.text(0.85,
                     0.02,

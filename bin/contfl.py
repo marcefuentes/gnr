@@ -33,7 +33,7 @@ plotsize = 8
 
 # Add data to figure
 
-def update(t, artists):
+def update(t, lines):
 
     for f, folder in enumerate(folders):
         given = dfprivates[f].Given.iloc[0]
@@ -65,9 +65,9 @@ def update(t, artists):
 
                 z = my.gamecolors(T, R, P, S)
                 y = np.full(xaxis.shape, w)
-                artists[f, 0, a, l].set_offsets(np.column_stack((xaxis, y)))
-                artists[f, 0, a, l].set_color(z)
-                artists[f, 0, a, l].set_sizes([6])
+                lines[f, 0, a, l].set_offsets(np.column_stack((xaxis, y)))
+                lines[f, 0, a, l].set_color(z)
+                lines[f, 0, a, l].set_sizes([6])
 
                 y = my.fitness(xaxis, xaxis, given, alpha, rho)
                 m = xaxis < a2s
@@ -75,26 +75,27 @@ def update(t, artists):
                 m = y < w
                 co = np.full(xaxis.shape, 'white')
                 co[m] = orange[m]
-                artists[f, 1, a, l].set_offsets(np.column_stack((xaxis, y)))
-                artists[f, 1, a, l].set_color(co)
+                lines[f, 1, a, l].set_offsets(np.column_stack((xaxis, y)))
+                lines[f, 1, a, l].set_color(co)
 
                 y = my.fitness(xaxis, xaxis, given, alpha, rho) 
                 m = y < w
                 co = np.full(xaxis.shape, 'white')
                 co[m] = orange[m]
-                artists[f, 2, a, l].set_offsets(np.column_stack((xaxis, y)))
-                artists[f, 2, a, l].set_color(co)
+                lines[f, 2, a, l].set_offsets(np.column_stack((xaxis, y)))
+                lines[f, 2, a, l].set_color(co)
+
         for c, trait in enumerate(traits):
             Z = my.getZ(t, dftraits[f, c], trait)
             if 'Grain' in trait:
                 Z = 1.0 - Z
             for (a, l), _ in np.ndenumerate(Z):
                 bgcolor = cm.viridis(Z[a, l]/my.a2max)
-                artists[f, c + 1, a, l].axes.set_facecolor(bgcolor)
+                lines[f, c + 1, a, l].axes.set_facecolor(bgcolor)
     if movie:
         fig.texts[2].set_text(f't\n{t}')
 
-    return artists.flatten()
+    return lines.flatten()
 
 # Data
 
@@ -208,7 +209,7 @@ if movie:
 # Assign axs objects to variables
 # (PathCollection)
 
-artists = np.empty_like(axs) 
+lines = np.empty_like(axs) 
 xaxis = np.linspace(0.0, my.a2max, num=numa2)
 orange = np.full(xaxis.shape, 'red')
 dummy_y = np.zeros_like(xaxis)
@@ -220,7 +221,7 @@ for f, folder in enumerate(folders):
         for a, alpha in enumerate(alphas):
             for l, loges in enumerate(logess):
                 ax = axs[f, c, a, l] 
-                artists[f, c, a, l] = ax.scatter(xaxis,
+                lines[f, c, a, l] = ax.scatter(xaxis,
                                                  dummy_y,
                                                  marker='s',
                                                  color='white',
@@ -232,11 +233,11 @@ if movie:
     ani = FuncAnimation(fig,
                         update,
                         frames=frames,
-                        fargs=(artists,),
+                        fargs=(lines,),
                         blit=True)
     ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
 else:
-    update(frame0, artists,)
+    update(frame0, lines,)
     plt.savefig(filename + '.png', transparent=False)
 
 plt.close()

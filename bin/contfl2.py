@@ -55,6 +55,8 @@ def update(t, lines, images):
                 a2s = np.full(xaxis.shape, a2privates[a, l])
 
                 y = my.fitness(xaxis, xaxis, given, alpha, rho)
+                m = y < w
+                y[m] = None
                 m = xaxis < a2s
                 y[m] = None
                 norm = BoundaryNorm([0.0, w], cmap.N)

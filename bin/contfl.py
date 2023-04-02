@@ -4,9 +4,11 @@ from glob import glob
 import os
 import time
 
-from matplotlib import cm
 from matplotlib.animation import FuncAnimation
+from matplotlib.collections import LineCollection
+from matplotlib.colors import ListedColormap, BoundaryNorm
 import matplotlib.pyplot as plt
+import matplotlib.transforms
 import numpy as np
 import pandas as pd
 
@@ -18,29 +20,32 @@ filename = thisscript.split('.')[0]
 
 # Options
 
+predictors = ['Fitness of\npartner choosers',
+              'Fitness of\nreciprocators']
 traits = ['ChooseGrainmean',
           'MimicGrainmean']
-titles = ['Games',
-          'Sensitivity for\nchoosing partner',
-          'Sensitivity for\nmimicking partner']
+titles_traits = ['Sensitivity for\nchoosing partner',
+                 'Sensitivity for\nmimicking partner']
+vmaxs = [my.a2max, my.a2max]
 folders = ['given100', 'given95', 'given50']
 subfolders = ['p', 'r']
 
 numa2 = 64
 theory = False
 movie = False
-plotsize = 8
+plotsize = 6
+bgcolor = [0.0, 0.5, 0.7, 1.0]
 
 # Add data to figure
 
-def update(t, lines):
+def update(t, lines, images):
 
     for f, folder in enumerate(folders):
         given = dfprivates[f].Given.iloc[0]
         if theory:
             a2privates = my.a2eq(given, AA, RR)
             ws = my.fitness(a2privates, a2privates, given, AA, RR)
-        else:
+        else: 
             a2privates = my.getZ(t, dfprivates[f], 'a2Seenmean')
             ws = my.getZ(t, dfprivates[f], 'wmean')
 
@@ -48,54 +53,44 @@ def update(t, lines):
             for l, rho in enumerate(rhos):
                 w = ws[a, l]
                 a2s = np.full(xaxis.shape, a2privates[a, l])
-                T = my.fitness(a2s, xaxis, given, alpha, rho)
-                R = my.fitness(a2s, a2s, given, alpha, rho)
-                P = my.fitness(xaxis, xaxis, given, alpha, rho)
-                S = my.fitness(xaxis, a2s, given, alpha, rho)
-                Ti = my.fitness(xaxis, a2s, given, alpha, rho)
-                Ri = my.fitness(xaxis, xaxis, given, alpha, rho)
-                Pi = my.fitness(a2s, a2s, given, alpha, rho)
-                Si = my.fitness(a2s, xaxis, given, alpha, rho)
-
-                m = xaxis > a2s
-                T[m] = Ti[m]
-                R[m] = Ri[m]
-                P[m] = Pi[m]
-                S[m] = Si[m]
-
-                z = my.gamecolors(T, R, P, S)
-                y = np.full(xaxis.shape, w)
-                lines[f, 0, a, l].set_offsets(np.column_stack((xaxis, y)))
-                lines[f, 0, a, l].set_color(z)
-                lines[f, 0, a, l].set_sizes([6])
 
                 y = my.fitness(xaxis, xaxis, given, alpha, rho)
-                m = xaxis < a2s
-                y[m] = -1.0
                 m = y < w
-                co = np.full(xaxis.shape, 'white')
-                co[m] = orange[m]
-                lines[f, 1, a, l].set_offsets(np.column_stack((xaxis, y)))
-                lines[f, 1, a, l].set_color(co)
+                y[m] = None
+                m = xaxis < a2s
+                y[m] = None
+                norm = BoundaryNorm([0.0, w], cmap.N)
+                points = np.array([xaxis, y]).T.reshape(-1, 1, 2)
+                segments = np.concatenate([points[:-1], points[1:]], axis=1)
+                lc = LineCollection(segments,
+                                    cmap=cmap,
+                                    norm=norm,
+                                    linewidth=2,
+                                    array=y)
+                ax = lines[f, 0, a, l].axes
+                ax.add_collection(lc)
 
                 y = my.fitness(xaxis, xaxis, given, alpha, rho) 
-                m = y < w
-                co = np.full(xaxis.shape, 'white')
-                co[m] = orange[m]
-                lines[f, 2, a, l].set_offsets(np.column_stack((xaxis, y)))
-                lines[f, 2, a, l].set_color(co)
+                norm = BoundaryNorm([0.0, w], cmap.N)
+                points = np.array([xaxis, y]).T.reshape(-1, 1, 2)
+                segments = np.concatenate([points[:-1], points[1:]], axis=1)
+                lc = LineCollection(segments,
+                                    cmap=cmap,
+                                    norm=norm,
+                                    linewidth=2,
+                                    array=y)
+                ax = lines[f, 1, a, l].axes
+                ax.add_collection(lc)
 
         for c, trait in enumerate(traits):
             Z = my.getZ(t, dftraits[f, c], trait)
             if 'Grain' in trait:
                 Z = 1.0 - Z
-            for (a, l), _ in np.ndenumerate(Z):
-                bgcolor = cm.viridis(Z[a, l]/my.a2max)
-                lines[f, c + 1, a, l].axes.set_facecolor(bgcolor)
+            images[f, c].set_array(Z)
     if movie:
         fig.texts[2].set_text(f't\n{t}')
 
-    return lines.flatten()
+    return np.concatenate([lines.flatten(), images.flatten()]) 
 
 # Data
 
@@ -120,11 +115,12 @@ logess = np.sort(pd.unique(df.logES))
 nr = len(alphas)
 nc = len(logess)
 rhos = 1.0 - 1.0/pow(2.0, logess)
-RR, AA = np.meshgrid(rhos, alphas)
+xaxis = np.linspace(0.01, my.a2max - 0.01, num=numa2)
+cmap = ListedColormap(['black', 'yellow'])
 
 # Figure properties
 
-width = plotsize*len(titles)
+width = plotsize*(len(predictors) + len(traits))
 height = plotsize*len(folders)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
@@ -133,6 +129,18 @@ ticklabels = plotsize*4
 xlim = [0.0, my.a2max]
 ylim = [0.0, my.wmax]
 step = int(nr/2)
+xticks = [0, nc/2 - 0.5, nc - 1]
+yticks = [0, nr/2 - 0.5, nr - 1]
+xmin = logess[0]
+xmax = logess[-1]
+ymin = alphas[-1]
+ymax = alphas[0]
+xticklabels = [f'{xmin:2.0f}',
+               f'{(xmin + xmax)/2.0:2.0f}',
+               f'{xmax:2.0f}']
+yticklabels = [f'{ymax:3.1f}',
+               f'{(ymin + ymax)/2.0:3.1f}',
+               f'{ymin:3.1f}']
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
@@ -140,64 +148,103 @@ plt.rcParams['ps.fonttype'] = 42
 
 fig = plt.figure(figsize=(width, height))
 outergrid = fig.add_gridspec(nrows=len(folders),
-                             ncols=len(titles))
-axs = np.empty((len(folders),
-                len(titles),
-                nr,
-                nc),
-               dtype=object)
+                             ncols=len(predictors) + len(traits))
+axlines = np.empty((len(folders),
+                    len(predictors),
+                    nr,
+                    nc),
+                   dtype=object)
+aximages = np.empty((len(folders),
+                     len(traits)), 
+                    dtype=object)
 
 for f, folder in enumerate(folders):
-    for c, title in enumerate(titles):
+    for c, predictor in enumerate(predictors):
         grid = outergrid[f, c].subgridspec(nrows=nr,
                                            ncols=nc,
                                            wspace=0,
                                            hspace=0)
-        axs[f, c] = grid.subplots()
+        axlines[f, c] = grid.subplots()
+    for c, trait in enumerate(traits):
+        grid = outergrid[f, len(predictors) + c].subgridspec(nrows=1,
+                                                 ncols=1)
+        aximages[f, c] = grid.subplots()
 
-left_x = axs[0, 0, 0, 0].get_position().x0
-right_x = axs[-1, -1, -1, -1].get_position().x1
+left_x = axlines[0, 0, 0, 0].get_position().x0
+right_x = aximages[-1, -1].get_position().x1
 center_x = (left_x + right_x) / 2
-top_y = axs[0, 0, 0, 0].get_position().y1
-bottom_y = axs[-1, -1, -1, -1].get_position().y0
+top_y = aximages[0, 0].get_position().y1
+bottom_y = aximages[-1, -1].get_position().y0
 center_y = (top_y + bottom_y) / 2
 fig.supxlabel(xlabel,
               x=center_x,
               y=bottom_y*0.3,
               fontsize=biglabels)
 fig.supylabel(ylabel,
-              x=left_x*0.4,
+              x=left_x*0.5,
               y=center_y,
               fontsize=biglabels)
 
+dx = -3/72.; dy = 0/72.
+offset = matplotlib.transforms.ScaledTranslation(dx,
+                                                 dy,
+                                                 fig.dpi_scale_trans)
+
 for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])
-    ax.set(xlim=xlim, ylim=ylim)
-    for axis in ['top','bottom','left','right']:
-        ax.spines[axis].set_linewidth(0.1)
 
+letter = ord('a')
+letterposition = 1.035
 for f, folder in enumerate(folders):
-    for c, title in enumerate(titles):
-        letter = ord('a') + f*len(titles) + c
-        axs[f, c, 0, 0].set_title(chr(letter),
-                                  fontsize=plotsize*5,
-                                  pad = 11,
-                                  weight='bold',
-                                  loc='left')
+    for c, predictor in enumerate(predictors): 
+        for a, alpha in enumerate(alphas):
+            for l, loges in enumerate(logess):
+                for axis in ['top','bottom','left','right']:
+                    axlines[f, c, a, l].spines[axis].set_linewidth(0.1)
+                axlines[f, c, a, l].set(xlim=xlim, ylim=ylim)
+                axlines[f, c, a, l].set_facecolor(bgcolor)
+        axlines[f, c, 0, 0].set_title(chr(letter),
+                                      pad=plotsize*5/3,
+                                      fontsize=plotsize*5,
+                                      weight='bold')
+        letter += 1
         if f == 0:
-            axs[0, c, 0, 10].set_title(title,
-                                       pad=plotsize*9,
-                                       fontsize=plotsize*5)
-        for a in range(0, nr, step):
-            axs[f, c, a, 0].set(yticks=[ylim[1]/2.0], yticklabels=[])
-            if c == 0:
-                axs[f, 0, a, 0].set_yticklabels([alphas[a]],
-                                                fontsize=ticklabels)
+            axlines[0, c, 0, 10].set_title(predictor,
+                                           pad=plotsize*9,
+                                           fontsize=plotsize*5)
+        if c == 0:
+            for a in range(0, nr, step):
+                axlines[f, 0, a, 0].set(yticks=[my.wmax/2.0])
+                axlines[f, 0, a, 0].set_yticklabels([f'{alphas[a]:.1f}'],
+                                                    rotation='horizontal',
+                                                    horizontalalignment='right',
+                                                    verticalalignment='center',
+                                                    fontsize=ticklabels)
         for l in range(0, nc, step):
-            axs[f, c, -1, l].set(xticks=[xlim[1]/2.0], xticklabels=[])
-            if folder == folders[-1]:
-                axs[-1, c, -1, l].set_xticklabels([f'{logess[l]:.0f}'],
-                                                 fontsize=ticklabels)
+            axlines[f, c, -1, l].set(xticks=[my.a2max/2.0], xticklabels=[]) 
+        if folder == folders[-1]:
+            for l in range(0, nc, step):
+                axlines[-1, c, -1, l].set_xticklabels([f'{logess[l]:.0f}'],
+                                                      fontsize=ticklabels)
+    for c, titles_trait in enumerate(titles_traits):
+        aximages[f, c].text(0,
+                            letterposition,
+                            chr(letter),
+                            transform=aximages[f, c].transAxes,
+                            fontsize=plotsize*5,
+                            weight='bold')
+        letter += 1
+        aximages[f, c].set(xticks=xticks, yticks=yticks)
+        aximages[f, c].set(xticklabels=[], yticklabels=[])
+        if f == 0:
+            aximages[0, c].set_title(titles_trait,
+                                     pad=plotsize*9,
+                                     fontsize=plotsize*5)
+        if folder == folders[-1]:
+            aximages[-1, c].set_xticklabels(xticklabels,
+                                            fontsize=ticklabels)
+            for label in aximages[-1, c].xaxis.get_majorticklabels():
+                label.set_transform(label.get_transform() + offset)
 if movie:
     fig.text(right_x,
              bottom_y*0.5,
@@ -207,25 +254,28 @@ if movie:
              ha='right')
 
 # Assign axs objects to variables
-# (PathCollection)
+# (Line2D)
+# (AxesImage)
 
-lines = np.empty_like(axs) 
-xaxis = np.linspace(0.0, my.a2max, num=numa2)
-orange = np.full(xaxis.shape, 'red')
-dummy_y = np.zeros_like(xaxis)
+lines = np.empty_like(axlines)
+images = np.empty_like(aximages)
+dummy_Z = np.empty((nr, nc), dtype=float)
+dummy_y = np.empty_like(xaxis)
 frames = ts
 frame0 = ts[-1]
 
 for f, folder in enumerate(folders):
-    for c, title in enumerate(titles):
+    for c, predictor in enumerate(predictors):
         for a, alpha in enumerate(alphas):
             for l, loges in enumerate(logess):
-                ax = axs[f, c, a, l] 
-                lines[f, c, a, l] = ax.scatter(xaxis,
-                                                 dummy_y,
-                                                 marker='s',
-                                                 color='white',
-                                                 s=1)
+                ax = axlines[f, c, a, l]
+                lines[f, c, a, l], = ax.plot(xaxis,
+                                             dummy_y)
+    for c, trait in enumerate(traits):
+        ax = aximages[f, c]
+        images[f, c] = ax.imshow(dummy_Z,
+                                 vmin=0,
+                                 vmax=vmaxs[c])
 
 # Add data and save figure
 
@@ -233,11 +283,11 @@ if movie:
     ani = FuncAnimation(fig,
                         update,
                         frames=frames,
-                        fargs=(lines,),
+                        fargs=(lines, images,),
                         blit=True)
     ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
 else:
-    update(frame0, lines,)
+    update(frame0, lines, images,)
     plt.savefig(filename + '.png', transparent=False)
 
 plt.close()

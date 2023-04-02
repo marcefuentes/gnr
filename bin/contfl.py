@@ -54,12 +54,9 @@ def update(t, lines, images):
                 w = ws[a, l]
                 a2s = np.full(xaxis.shape, a2privates[a, l])
 
-                y = my.fitness(xaxis, xaxis, given, alpha, rho)
-                m = y < w
-                y[m] = None
-                m = xaxis < a2s
-                y[m] = None
-                norm = BoundaryNorm([0.0, w], cmap.N)
+                y = my.fitness(xaxis, a2s, given, alpha, rho)
+                cmap = ListedColormap(['yellow', 'black'])
+                norm = BoundaryNorm([0.0, 1.0], cmap.N)
                 points = np.array([xaxis, y]).T.reshape(-1, 1, 2)
                 segments = np.concatenate([points[:-1], points[1:]], axis=1)
                 lc = LineCollection(segments,
@@ -71,6 +68,7 @@ def update(t, lines, images):
                 ax.add_collection(lc)
 
                 y = my.fitness(xaxis, xaxis, given, alpha, rho) 
+                cmap = ListedColormap(['black', 'yellow'])
                 norm = BoundaryNorm([0.0, w], cmap.N)
                 points = np.array([xaxis, y]).T.reshape(-1, 1, 2)
                 segments = np.concatenate([points[:-1], points[1:]], axis=1)
@@ -116,7 +114,6 @@ nr = len(alphas)
 nc = len(logess)
 rhos = 1.0 - 1.0/pow(2.0, logess)
 xaxis = np.linspace(0.01, my.a2max - 0.01, num=numa2)
-cmap = ListedColormap(['black', 'yellow'])
 
 # Figure properties
 

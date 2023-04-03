@@ -101,13 +101,16 @@ fig.supylabel(ylabel,
               y=center_y,
               fontsize=biglabels)
 
-dx = -2/72.; dy = 0/72.
-offset = matplotlib.transforms.ScaledTranslation(dx, dy, fig.dpi_scale_trans)
+ox = -2/72.
+oy = 0/72.
+offset = matplotlib.transforms.ScaledTranslation(ox, oy, fig.dpi_scale_trans)
 
 letterposition = 1.035
 for i, ax in enumerate(fig.get_axes()):
     ax.set(xticks=xticks, yticks=yticks)
     ax.set(xticklabels=[], yticklabels=[])
+    for axis in ['top', 'bottom', 'left', 'right']:
+        ax.spines[axis].set_linewidth(0.1)
     letter = ord('a') + i
     ax.text(0,
             letterposition,

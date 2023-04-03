@@ -103,6 +103,8 @@ logess = np.sort(pd.unique(df.logES))
 nr = len(alphas)
 nc = len(logess)
 rhos = 1.0 - 1.0/pow(2.0, logess)
+if theory:
+    RR, AA = np.meshgrid(rhos, alphas)
 xaxis = np.linspace(0.01, my.a2max - 0.01, num=numa2)
 
 # Figure properties
@@ -193,12 +195,6 @@ for f, folder in enumerate(folders):
                 for axis in ['top', 'bottom', 'left', 'right']:
                     axlines[f, c, a, l].spines[axis].set_linewidth(0.1)
                 axlines[f, c, a, l].set(xlim=xlim, ylim=ylim)
-                #axlines[f, c, a, l].set_facecolor(bgcolor)
-            #axlines[f, c, a, 0].spines['left'].set_linewidth(initial_linewidth)
-            #axlines[f, c, a, -1].spines['right'].set_linewidth(initial_linewidth)
-        #for l, loges in enumerate(logess):
-            #axlines[f, c, 0, l].spines['top'].set_linewidth(initial_linewidth)
-            #axlines[f, c, -1, l].spines['bottom'].set_linewidth(initial_linewidth)
         axlines[f, c, 0, 0].set_title(chr(letter),
                                       pad=plotsize*5/3,
                                       fontsize=plotsize*5,

@@ -48,7 +48,7 @@ def update(t, artists):
             #ws = my.getZ(t, dfprivates[f], 'wmean')
             ws = my.fitness(a2privates, a2privates, given, AA, RR)
 
-        Z = my.wmax/2.0 - my.fitness(dx, a2privates, given, AA, RR)
+        Z = my.fitness(a2privates, dx, given, AA, RR) - my.fitness(dx, a2privates, given, AA, RR)
         m = Z < 0.0
         Z[m] = zeros[m]
         artists[f, 0].set_array(Z)

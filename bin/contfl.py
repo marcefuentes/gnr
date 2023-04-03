@@ -5,6 +5,7 @@ import os
 import time
 
 from matplotlib.animation import FuncAnimation
+from matplotlib import cm
 from matplotlib.collections import LineCollection
 from matplotlib.colors import ListedColormap, BoundaryNorm
 import matplotlib.pyplot as plt
@@ -39,7 +40,6 @@ bgcolor = [0.0, 0.5, 0.7, 1.0]
 # Add data to figure
 
 def update(t, lines, images):
-
     for f, folder in enumerate(folders):
         given = dfprivates[f].Given.iloc[0]
         if theory:
@@ -48,27 +48,17 @@ def update(t, lines, images):
         else: 
             a2privates = my.getZ(t, dfprivates[f], 'a2Seenmean')
             ws = my.getZ(t, dfprivates[f], 'wmean')
-
         for a, alpha in enumerate(alphas):
             for l, rho in enumerate(rhos):
                 w = ws[a, l]
                 a2s = np.full(xaxis.shape, a2privates[a, l])
-
                 y = my.fitness(xaxis, a2s, given, alpha, rho)
-                cmap = ListedColormap(['yellow', 'black'])
-                norm = BoundaryNorm([0.0, 1.0], cmap.N)
-                points = np.array([xaxis, y]).T.reshape(-1, 1, 2)
-                segments = np.concatenate([points[:-1], points[1:]], axis=1)
-                lc = LineCollection(segments,
-                                    cmap=cmap,
-                                    norm=norm,
-                                    linewidth=2,
-                                    array=y)
-                ax = lines[f, 0, a, l].axes
-                ax.add_collection(lc)
+                color = cm.viridis((my.wmax - y[0])/my.wmax)
+                lines[f, 0, a, l].set_ydata(y)
+                lines[f, 0, a, l].axes.set_facecolor(color)
 
                 y = my.fitness(xaxis, xaxis, given, alpha, rho) 
-                cmap = ListedColormap(['black', 'yellow'])
+                cmap = ListedColormap(['blue', 'yellow'])
                 norm = BoundaryNorm([0.0, w], cmap.N)
                 points = np.array([xaxis, y]).T.reshape(-1, 1, 2)
                 segments = np.concatenate([points[:-1], points[1:]], axis=1)
@@ -76,10 +66,10 @@ def update(t, lines, images):
                                     cmap=cmap,
                                     norm=norm,
                                     linewidth=2,
+                                    #facecolor= 'white',
                                     array=y)
                 ax = lines[f, 1, a, l].axes
                 ax.add_collection(lc)
-
         for c, trait in enumerate(traits):
             Z = my.getZ(t, dftraits[f, c], trait)
             if 'Grain' in trait:
@@ -87,7 +77,6 @@ def update(t, lines, images):
             images[f, c].set_array(Z)
     if movie:
         fig.texts[2].set_text(f't\n{t}')
-
     return np.concatenate([lines.flatten(), images.flatten()]) 
 
 # Data
@@ -182,9 +171,9 @@ fig.supylabel(ylabel,
               y=center_y,
               fontsize=biglabels)
 
-dx = -3/72.; dy = 0/72.
-offset = matplotlib.transforms.ScaledTranslation(dx,
-                                                 dy,
+ox = -3/72.; oy = 0/72.
+offset = matplotlib.transforms.ScaledTranslation(ox,
+                                                 oy,
                                                  fig.dpi_scale_trans)
 
 for ax in fig.get_axes():
@@ -199,7 +188,7 @@ for f, folder in enumerate(folders):
                 for axis in ['top','bottom','left','right']:
                     axlines[f, c, a, l].spines[axis].set_linewidth(0.1)
                 axlines[f, c, a, l].set(xlim=xlim, ylim=ylim)
-                axlines[f, c, a, l].set_facecolor(bgcolor)
+                #axlines[f, c, a, l].set_facecolor(bgcolor)
         axlines[f, c, 0, 0].set_title(chr(letter),
                                       pad=plotsize*5/3,
                                       fontsize=plotsize*5,
@@ -267,7 +256,8 @@ for f, folder in enumerate(folders):
             for l, loges in enumerate(logess):
                 ax = axlines[f, c, a, l]
                 lines[f, c, a, l], = ax.plot(xaxis,
-                                             dummy_y)
+                                             dummy_y,
+                                             color='white')
     for c, trait in enumerate(traits):
         ax = aximages[f, c]
         images[f, c] = ax.imshow(dummy_Z,

@@ -5,6 +5,8 @@ import os
 import time
 
 from matplotlib.animation import FuncAnimation
+from matplotlib.collections import LineCollection
+from matplotlib.colors import ListedColormap, BoundaryNorm
 import matplotlib.pyplot as plt
 import matplotlib.transforms
 import numpy as np
@@ -18,44 +20,79 @@ filename = thisscript.split('.')[0]
 
 # Options
 
-traits = ['a2Seenmean',
-          'ChooseGrainmean',
-          'MimicGrainmean',
-          'wmean']
-titles = ['Effort to get $\it{B}$',
+traits = ['ChooseGrainmean',
+          'MimicGrainmean']
+titles = ['Fitness',
+          'Fitness',
           'Sensitivity for\nchoosing partner',
-          'Sensitivity for\nmimicking partner',
-          'Fitness']
-vmaxs = [my.a2max, my.a2max, my.a2max, my.wmax]
-folders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
+          'Sensitivity for\nmimicking partner']
+vmaxs = [my.wmax/2.0, my.wmax/2.0, my.a2max, my.a2max]
+folders = ['given100', 'given95', 'given50']
+subfolders = ['p', 'r']
 
+dx = 0.01
+theory = False
 movie = False
-plotsize = 4
+plotsize = 6
 
 # Add data to figure
 
 def update(t, artists):
     for f, folder in enumerate(folders):
+        given = dfprivates[f].Given.iloc[0]
+        if theory:
+            a2privates = my.a2eq(given, AA, RR)
+            ws = my.fitness(a2privates, a2privates, given, AA, RR)
+        else: 
+            a2privates = my.getZ(t, dfprivates[f], 'a2Seenmean')
+            #ws = my.getZ(t, dfprivates[f], 'wmean')
+            ws = my.fitness(a2privates, a2privates, given, AA, RR)
+
+        Z = my.wmax/2.0 - my.fitness(dx, a2privates, given, AA, RR)
+        m = Z < 0.0
+        Z[m] = zeros[m]
+        artists[f, 0].set_array(Z)
+
+        Z = my.fitness(a2privates, a2privates, given, AA, RR)
+        Z = Z - my.fitness(dx, dx, given, AA, RR)
+        m = Z < 0.0
+        Z[m] = zeros[m]
+        artists[f, 1].set_array(Z)
         for c, trait in enumerate(traits):
-            Z = my.getZ(t, dfs[f], trait)
+            Z = my.getZ(t, dftraits[f, c], trait)
             if 'Grain' in trait:
                 Z = 1.0 - Z
-            artists[f, c].set_array(Z) 
+            artists[f, c + 2].set_array(Z)
     if movie:
         fig.texts[2].set_text(f't\n{t}')
-    return artists.flatten()
+    return artists.flatten() 
 
 # Data
 
-dfs = np.empty(len(folders), dtype=object) 
-for f, folder in enumerate(folders):
-    filelist = glob(os.path.join(folder, '*.csv'))
-    dfs[f] = my.read_files(filelist, movie)
+filelist = glob(os.path.join('given00', 'none', '*.csv'))
+dfsocial = my.read_files(filelist, movie)
 
-df = dfs[1]
+dfprivates = np.empty(len(folders), dtype=object)
+for f, folder in enumerate(folders):
+    filelist = glob(os.path.join(folder, 'none', '*.csv'))
+    dfprivates[f] = my.read_files(filelist, movie)
+
+dftraits = np.empty((len(folders), len(subfolders)), dtype=object)
+for f, folder in enumerate(folders):
+    for c, subfolder in enumerate(subfolders):
+        filelist = glob(os.path.join(folder, subfolder, '*.csv'))
+        dftraits[f, c] = my.read_files(filelist, movie)
+
+df = dftraits[0, 0]
 ts = df.Time.unique()
-nr = df['alpha'].nunique()
-nc = df['logES'].nunique()
+alphas = np.sort(pd.unique(df.alpha))[::-1]
+logess = np.sort(pd.unique(df.logES))
+nr = len(alphas)
+nc = len(logess)
+rhos = 1.0 - 1.0/pow(2.0, logess)
+RR, AA = np.meshgrid(rhos, alphas)
+zeros = np.zeros(AA.shape)
+dx = np.full(AA.shape, dx)
 
 # Figure properties
 
@@ -67,10 +104,10 @@ biglabels = plotsize*5 + height/4
 ticklabels = plotsize*4
 xticks = [0, nc/2 - 0.5, nc - 1]
 yticks = [0, nr/2 - 0.5, nr - 1]
-xmin = df['logES'].min()
-xmax = df['logES'].max()
-ymin = df['alpha'].min()
-ymax = df['alpha'].max()
+xmin = logess[0]
+xmax = logess[-1]
+ymin = alphas[-1]
+ymax = alphas[0]
 xticklabels = [f'{xmin:.0f}',
                f'{(xmin + xmax)/2.0:.0f}',
                f'{xmax:.0f}']
@@ -101,8 +138,8 @@ fig.supylabel(ylabel,
               y=center_y,
               fontsize=biglabels)
 
-dx = -2/72.; dy = 0/72.
-offset = matplotlib.transforms.ScaledTranslation(dx, dy, fig.dpi_scale_trans)
+ox = -2/72.; oy = 0/72.
+offset = matplotlib.transforms.ScaledTranslation(ox, oy, fig.dpi_scale_trans)
 
 letterposition = 1.035
 for i, ax in enumerate(fig.get_axes()):

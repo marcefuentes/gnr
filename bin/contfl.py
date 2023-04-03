@@ -21,8 +21,8 @@ filename = thisscript.split('.')[0]
 
 # Options
 
-predictors = ['Fitness of\npartner choosers',
-              'Fitness of\nreciprocators']
+predictors = ['$\it{T}$, $\it{S}$',
+              '$\it{R}$, $\it{P}$']
 traits = ['ChooseGrainmean',
           'MimicGrainmean']
 titles_traits = ['Sensitivity for\nchoosing partner',
@@ -35,7 +35,8 @@ numa2 = 64
 theory = False
 movie = False
 plotsize = 6
-bgcolor = [0.0, 0.5, 0.7, 1.0]
+lemmon = (0.8, 0.9, 0.5)
+bgcolor = (0.0, 0.5, 0.7, 1.0)
 
 # Add data to figure
 
@@ -45,7 +46,7 @@ def update(t, lines, images):
         if theory:
             a2privates = my.a2eq(given, AA, RR)
             ws = my.fitness(a2privates, a2privates, given, AA, RR)
-        else: 
+        else:
             a2privates = my.getZ(t, dfprivates[f], 'a2Seenmean')
             ws = my.getZ(t, dfprivates[f], 'wmean')
         for a, alpha in enumerate(alphas):
@@ -57,8 +58,8 @@ def update(t, lines, images):
                 lines[f, 0, a, l].set_ydata(y)
                 lines[f, 0, a, l].axes.set_facecolor(color)
 
-                y = my.fitness(xaxis, xaxis, given, alpha, rho) 
-                cmap = ListedColormap(['blue', 'yellow'])
+                y = my.fitness(xaxis, xaxis, given, alpha, rho)
+                cmap = ListedColormap(['green', lemmon])
                 norm = BoundaryNorm([0.0, w], cmap.N)
                 points = np.array([xaxis, y]).T.reshape(-1, 1, 2)
                 segments = np.concatenate([points[:-1], points[1:]], axis=1)
@@ -77,7 +78,7 @@ def update(t, lines, images):
             images[f, c].set_array(Z)
     if movie:
         fig.texts[2].set_text(f't\n{t}')
-    return np.concatenate([lines.flatten(), images.flatten()]) 
+    return np.concatenate([lines.flatten(), images.flatten()])
 
 # Data
 
@@ -153,7 +154,7 @@ for f, folder in enumerate(folders):
         axlines[f, c] = grid.subplots()
     for c, trait in enumerate(traits):
         grid = outergrid[f, len(predictors) + c].subgridspec(nrows=1,
-                                                 ncols=1)
+                                                             ncols=1)
         aximages[f, c] = grid.subplots()
 
 left_x = axlines[0, 0, 0, 0].get_position().x0
@@ -171,7 +172,8 @@ fig.supylabel(ylabel,
               y=center_y,
               fontsize=biglabels)
 
-ox = -3/72.; oy = 0/72.
+ox = -3/72.
+oy = 0/72.
 offset = matplotlib.transforms.ScaledTranslation(ox,
                                                  oy,
                                                  fig.dpi_scale_trans)
@@ -181,14 +183,22 @@ for ax in fig.get_axes():
 
 letter = ord('a')
 letterposition = 1.035
+initial_linewidth = axlines[0, 0, 0, 0].spines['top'].get_linewidth()
 for f, folder in enumerate(folders):
-    for c, predictor in enumerate(predictors): 
+    for c, predictor in enumerate(predictors):
+        for axis in ['top', 'bottom', 'left', 'right']:
+            aximages[f, c].spines[axis].set_linewidth(0.1)
         for a, alpha in enumerate(alphas):
             for l, loges in enumerate(logess):
-                for axis in ['top','bottom','left','right']:
+                for axis in ['top', 'bottom', 'left', 'right']:
                     axlines[f, c, a, l].spines[axis].set_linewidth(0.1)
                 axlines[f, c, a, l].set(xlim=xlim, ylim=ylim)
                 #axlines[f, c, a, l].set_facecolor(bgcolor)
+            #axlines[f, c, a, 0].spines['left'].set_linewidth(initial_linewidth)
+            #axlines[f, c, a, -1].spines['right'].set_linewidth(initial_linewidth)
+        #for l, loges in enumerate(logess):
+            #axlines[f, c, 0, l].spines['top'].set_linewidth(initial_linewidth)
+            #axlines[f, c, -1, l].spines['bottom'].set_linewidth(initial_linewidth)
         axlines[f, c, 0, 0].set_title(chr(letter),
                                       pad=plotsize*5/3,
                                       fontsize=plotsize*5,
@@ -234,7 +244,7 @@ for f, folder in enumerate(folders):
 if movie:
     fig.text(right_x,
              bottom_y*0.5,
-             f't\n0',
+             't\n0',
              fontsize=biglabels,
              color='grey',
              ha='right')

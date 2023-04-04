@@ -4,10 +4,7 @@ from glob import glob
 import os
 import time
 
-from matplotlib.animation import FuncAnimation
 from matplotlib import cm
-from matplotlib.collections import LineCollection
-from matplotlib.colors import ListedColormap, BoundaryNorm
 import matplotlib.pyplot as plt
 import matplotlib.transforms
 import numpy as np
@@ -33,68 +30,26 @@ subfolders = ['p', 'r']
 
 numa2 = 64
 theory = False
-movie = False
 plotsize = 6
-
-# Add data to figure
-
-def update(t, lines, images):
-    for f, folder in enumerate(folders):
-        given = dfprivates[f].Given.iloc[0]
-        if theory:
-            a2privates = my.a2eq(given, AA, RR)
-            ws = my.fitness(a2privates, a2privates, given, AA, RR)
-        else:
-            a2privates = my.getZ(t, dfprivates[f], 'a2Seenmean')
-            ws = my.getZ(t, dfprivates[f], 'wmean')
-        for a, alpha in enumerate(alphas):
-            for e, rho in enumerate(rhos):
-                w = ws[a, e]
-                a2s = np.full(xaxis.shape, a2privates[a, e])
-                y = my.fitness(xaxis, a2s, given, alpha, rho)
-                color = cm.viridis((my.wmax - y[0])/my.wmax)
-                lines[f, 0, a, e].set_ydata(y)
-                lines[f, 0, a, e].axes.set_facecolor(color)
-
-                y = my.fitness(xaxis, xaxis, given, alpha, rho)
-                cmap = ListedColormap(['cyan', 'yellow'])
-                norm = BoundaryNorm([0.0, w], cmap.N)
-                points = np.array([xaxis, y]).T.reshape(-1, 1, 2)
-                segments = np.concatenate([points[:-1], points[1:]], axis=1)
-                lc = LineCollection(segments,
-                                    cmap=cmap,
-                                    norm=norm,
-                                    linewidth=2,
-                                    array=y)
-                ax = lines[f, 1, a, e].axes
-                ax.add_collection(lc)
-        for c, trait in enumerate(traits):
-            Z = my.getZ(t, dftraits[f, c], trait)
-            if 'Grain' in trait:
-                Z = 1.0 - Z
-            images[f, c].set_array(Z)
-    if movie:
-        fig.texts[2].set_text(f't\n{t}')
-    return np.concatenate([lines.flatten(), images.flatten()])
 
 # Data
 
 filelist = glob(os.path.join('given00', 'none', '*.csv'))
-dfsocial = my.read_files(filelist, movie)
+dfsocial = my.read_files(filelist, False)
 
 dfprivates = np.empty(len(folders), dtype=object)
 for f, folder in enumerate(folders):
     filelist = glob(os.path.join(folder, 'none', '*.csv'))
-    dfprivates[f] = my.read_files(filelist, movie)
+    dfprivates[f] = my.read_files(filelist, False)
 
 dftraits = np.empty((len(folders), len(subfolders)), dtype=object)
 for f, folder in enumerate(folders):
     for c, subfolder in enumerate(subfolders):
         filelist = glob(os.path.join(folder, subfolder, '*.csv'))
-        dftraits[f, c] = my.read_files(filelist, movie)
+        dftraits[f, c] = my.read_files(filelist, False)
 
 df = dftraits[0, 0]
-ts = df.Time.unique()
+t = df.Time.max()
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 logess = np.sort(pd.unique(df.logES))
 nr = len(alphas)
@@ -240,51 +195,41 @@ for f, folder in enumerate(folders):
                                             fontsize=ticklabels)
             for label in aximages[-1, c].xaxis.get_majorticklabels():
                 label.set_transform(label.get_transform() + offset)
-if movie:
-    fig.text(right_x,
-             bottom_y*0.5,
-             't\n0',
-             fontsize=midlabels,
-             color='grey',
-             ha='right')
 
-# Assign axs objects to variables
-# (Line2D)
-# (AxesImage)
-
-lines = np.empty_like(axlines)
-images = np.empty_like(aximages)
-dummy_Z = np.empty((nr, nc), dtype=float)
-dummy_y = np.full(xaxis.shape, -1.)
-frames = ts
-frame0 = ts[-1]
+# Add data to figure
 
 for f, folder in enumerate(folders):
-    for c, predictor in enumerate(predictors):
-        for a, alpha in enumerate(alphas):
-            for e, loges in enumerate(logess):
-                ax = axlines[f, c, a, e]
-                lines[f, c, a, e], = ax.plot(xaxis,
-                                             dummy_y,
-                                             'black')
+    given = dfprivates[f].Given.iloc[0]
+    if theory:
+        a2privates = my.a2eq(given, AA, RR)
+        ws = my.fitness(a2privates, a2privates, given, AA, RR)
+    else:
+        a2privates = my.getZ(t, dfprivates[f], 'a2Seenmean')
+        ws = my.getZ(t, dfprivates[f], 'wmean')
+    for a, alpha in enumerate(alphas):
+        for e, rho in enumerate(rhos):
+            w = ws[a, e]
+            a2s = np.full(xaxis.shape, a2privates[a, e])
+            y = my.fitness(xaxis, a2s, given, alpha, rho)
+            color = cm.viridis((my.wmax - y[0])/my.wmax)
+            axlines[f, 0, a, e].plot(xaxis, y, color='black')
+            axlines[f, 0, a, e].set_facecolor(color)
+
+            ax = axlines[f, 1, a, e]
+            y = my.fitness(xaxis, xaxis, given, alpha, rho)
+            below_w = y < w
+            above_w = y > w
+            ax.fill_between(xaxis, y, w, where=above_w, interpolate=True, color='yellow')
+            ax.fill_between(xaxis, y, w, where=below_w, interpolate=True, color='cyan')
     for c, trait in enumerate(traits):
-        ax = aximages[f, c]
-        images[f, c] = ax.imshow(dummy_Z,
-                                 vmin=0,
-                                 vmax=vmaxs[c])
+        Z = my.getZ(t, dftraits[f, c], trait)
+        if 'Grain' in trait:
+            Z = 1.0 - Z
+        aximages[f, c].imshow(Z,
+                              vmin=0,
+                              vmax=vmaxs[c])
 
-# Add data and save figure
-
-if movie:
-    ani = FuncAnimation(fig,
-                        update,
-                        frames=frames,
-                        fargs=(lines, images,),
-                        blit=True)
-    ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
-else:
-    update(frame0, lines, images,)
-    plt.savefig(filename + '.png', transparent=False)
+plt.savefig(filename + '.png', transparent=False)
 
 plt.close()
 

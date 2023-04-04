@@ -39,7 +39,7 @@ def update(t, artists):
         for c, trait in enumerate(traits):
             Z = my.getZ(t, dfs[f], trait)
             if 'Grain' in trait:
-                Z = 1.0 - Z
+                Z = 1. - Z
             artists[f, c].set_array(Z) 
     if movie:
         fig.texts[2].set_text(f't\n{t}')
@@ -63,8 +63,9 @@ width = plotsize*len(titles)
 height = plotsize*len(folders)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
-biglabels = plotsize*5 + height/4
-ticklabels = plotsize*4
+biglabel = plotsize*6
+letterlabel = plotsize*5
+ticklabel = plotsize*4
 xticks = [0, nc/2 - 0.5, nc - 1]
 yticks = [0, nr/2 - 0.5, nr - 1]
 xmin = df['logES'].min()
@@ -72,10 +73,10 @@ xmax = df['logES'].max()
 ymin = df['alpha'].min()
 ymax = df['alpha'].max()
 xticklabels = [f'{xmin:.0f}',
-               f'{(xmin + xmax)/2.0:.0f}',
+               f'{(xmin + xmax)/2.:.0f}',
                f'{xmax:.0f}']
 yticklabels = [f'{ymax:.1f}',
-               f'{(ymin + ymax)/2.0:.1f}',
+               f'{(ymin + ymax)/2.:.1f}',
                f'{ymin:.1f}']
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
@@ -88,18 +89,18 @@ fig, axs = plt.subplots(nrows=len(folders),
 
 left_x = axs[0, 0].get_position().x0
 right_x = axs[-1, -1].get_position().x1
-center_x = (left_x + right_x) / 2
+center_x = (left_x + right_x) / 2.
 top_y = axs[0, 0].get_position().y1
 bottom_y = axs[-1, -1].get_position().y0
-center_y = (top_y + bottom_y) / 2
+center_y = (top_y + bottom_y) / 2.
 fig.supxlabel(xlabel,
               x=center_x,
               y=bottom_y*0.6,
-              fontsize=biglabels)
+              fontsize=biglabel)
 fig.supylabel(ylabel,
               x=left_x*0.4,
               y=center_y,
-              fontsize=biglabels)
+              fontsize=biglabel)
 
 ox = -2/72.
 oy = 0/72.
@@ -116,14 +117,14 @@ for i, ax in enumerate(fig.get_axes()):
             letterposition,
             chr(letter),
             transform=ax.transAxes,
-            fontsize=plotsize*5,
+            fontsize=letterlabel,
             weight='bold')
 for f, folder in enumerate(folders):
-    axs[f, 0].set_yticklabels(yticklabels, fontsize=ticklabels)
+    axs[f, 0].set_yticklabels(yticklabels, fontsize=ticklabel)
 for c, title in enumerate(titles):
-    axs[0, c].set_title(title, pad=plotsize*10, fontsize=plotsize*5)
+    axs[0, c].set_title(title, pad=plotsize*10, fontsize=letterlabel)
     axs[-1, c].set_xticklabels(xticklabels,
-                               fontsize=ticklabels)
+                               fontsize=ticklabel)
     for label in axs[-1, c].xaxis.get_majorticklabels():
         label.set_transform(label.get_transform() + offset)
 
@@ -131,7 +132,7 @@ if movie:
     fig.text(right_x,
              bottom_y*0.5,
              f't\n0',
-             fontsize=biglabels,
+             fontsize=biglabel,
              color='grey',
              ha='right')
 

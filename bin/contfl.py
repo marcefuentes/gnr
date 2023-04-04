@@ -169,7 +169,7 @@ for f, folder in enumerate(folders):
         for e in range(0, nc, step):
             axlines[f, c, -1, e].set(xticks=[my.a2max/2.], xticklabels=[]) 
         if folder == folders[-1]:
-            for l in range(0, nc, step):
+            for e in range(0, nc, step):
                 axlines[-1, c, -1, e].set_xticklabels([f'{logess[e]:.0f}'],
                                                       fontsize=ticklabel)
         if c == 1:

@@ -59,7 +59,7 @@ def update(t, lines, images):
                 lines[f, 0, a, l].axes.set_facecolor(color)
 
                 y = my.fitness(xaxis, xaxis, given, alpha, rho)
-                cmap = ListedColormap(['green', lemmon])
+                cmap = ListedColormap(['black', lemmon])
                 norm = BoundaryNorm([0.0, w], cmap.N)
                 points = np.array([xaxis, y]).T.reshape(-1, 1, 2)
                 segments = np.concatenate([points[:-1], points[1:]], axis=1)
@@ -67,7 +67,6 @@ def update(t, lines, images):
                                     cmap=cmap,
                                     norm=norm,
                                     linewidth=2,
-                                    #facecolor= 'white',
                                     array=y)
                 ax = lines[f, 1, a, l].axes
                 ax.add_collection(lc)
@@ -113,7 +112,9 @@ width = plotsize*(len(predictors) + len(traits))
 height = plotsize*len(folders)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
-biglabels = plotsize*5 + height/4
+biglabels = plotsize*7
+midlabels = plotsize*6
+letterlabels = plotsize*5
 ticklabels = plotsize*4
 xlim = [0.0, my.a2max]
 ylim = [0.0, my.wmax]
@@ -197,13 +198,13 @@ for f, folder in enumerate(folders):
                 axlines[f, c, a, l].set(xlim=xlim, ylim=ylim)
         axlines[f, c, 0, 0].set_title(chr(letter),
                                       pad=plotsize*5/3,
-                                      fontsize=plotsize*5,
+                                      fontsize=letterlabels,
                                       weight='bold')
         letter += 1
         if f == 0:
             axlines[0, c, 0, 10].set_title(predictor,
                                            pad=plotsize*9,
-                                           fontsize=plotsize*5)
+                                           fontsize=midlabels)
         if c == 0:
             for a in range(0, nr, step):
                 axlines[f, 0, a, 0].set(yticks=[my.wmax/2.0])
@@ -223,7 +224,7 @@ for f, folder in enumerate(folders):
                             letterposition,
                             chr(letter),
                             transform=aximages[f, c].transAxes,
-                            fontsize=plotsize*5,
+                            fontsize=letterlabels,
                             weight='bold')
         letter += 1
         aximages[f, c].set(xticks=xticks, yticks=yticks)
@@ -231,7 +232,7 @@ for f, folder in enumerate(folders):
         if f == 0:
             aximages[0, c].set_title(titles_trait,
                                      pad=plotsize*9,
-                                     fontsize=plotsize*5)
+                                     fontsize=midlabels)
         if folder == folders[-1]:
             aximages[-1, c].set_xticklabels(xticklabels,
                                             fontsize=ticklabels)
@@ -241,7 +242,7 @@ if movie:
     fig.text(right_x,
              bottom_y*0.5,
              't\n0',
-             fontsize=biglabels,
+             fontsize=midlabels,
              color='grey',
              ha='right')
 

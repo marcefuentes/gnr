@@ -35,8 +35,6 @@ numa2 = 64
 theory = False
 movie = False
 plotsize = 6
-lemmon = (0.8, 0.9, 0.5)
-bgcolor = (0.0, 0.5, 0.7, 1.0)
 
 # Add data to figure
 
@@ -50,16 +48,16 @@ def update(t, lines, images):
             a2privates = my.getZ(t, dfprivates[f], 'a2Seenmean')
             ws = my.getZ(t, dfprivates[f], 'wmean')
         for a, alpha in enumerate(alphas):
-            for l, rho in enumerate(rhos):
-                w = ws[a, l]
-                a2s = np.full(xaxis.shape, a2privates[a, l])
+            for e, rho in enumerate(rhos):
+                w = ws[a, e]
+                a2s = np.full(xaxis.shape, a2privates[a, e])
                 y = my.fitness(xaxis, a2s, given, alpha, rho)
                 color = cm.viridis((my.wmax - y[0])/my.wmax)
-                lines[f, 0, a, l].set_ydata(y)
-                lines[f, 0, a, l].axes.set_facecolor(color)
+                lines[f, 0, a, e].set_ydata(y)
+                lines[f, 0, a, e].axes.set_facecolor(color)
 
                 y = my.fitness(xaxis, xaxis, given, alpha, rho)
-                cmap = ListedColormap(['black', lemmon])
+                cmap = ListedColormap(['cyan', 'yellow'])
                 norm = BoundaryNorm([0.0, w], cmap.N)
                 points = np.array([xaxis, y]).T.reshape(-1, 1, 2)
                 segments = np.concatenate([points[:-1], points[1:]], axis=1)
@@ -68,7 +66,7 @@ def update(t, lines, images):
                                     norm=norm,
                                     linewidth=2,
                                     array=y)
-                ax = lines[f, 1, a, l].axes
+                ax = lines[f, 1, a, e].axes
                 ax.add_collection(lc)
         for c, trait in enumerate(traits):
             Z = my.getZ(t, dftraits[f, c], trait)
@@ -192,10 +190,10 @@ for f, folder in enumerate(folders):
         for axis in ['top', 'bottom', 'left', 'right']:
             aximages[f, c].spines[axis].set_linewidth(0.1)
         for a, alpha in enumerate(alphas):
-            for l, loges in enumerate(logess):
+            for e, loges in enumerate(logess):
                 for axis in ['top', 'bottom', 'left', 'right']:
-                    axlines[f, c, a, l].spines[axis].set_linewidth(0.1)
-                axlines[f, c, a, l].set(xlim=xlim, ylim=ylim)
+                    axlines[f, c, a, e].spines[axis].set_linewidth(0.1)
+                axlines[f, c, a, e].set(xlim=xlim, ylim=ylim)
         axlines[f, c, 0, 0].set_title(chr(letter),
                                       pad=plotsize*5/3,
                                       fontsize=letterlabels,
@@ -213,12 +211,16 @@ for f, folder in enumerate(folders):
                                                     horizontalalignment='right',
                                                     verticalalignment='center',
                                                     fontsize=ticklabels)
-        for l in range(0, nc, step):
-            axlines[f, c, -1, l].set(xticks=[my.a2max/2.0], xticklabels=[]) 
+        for e in range(0, nc, step):
+            axlines[f, c, -1, e].set(xticks=[my.a2max/2.0], xticklabels=[]) 
         if folder == folders[-1]:
             for l in range(0, nc, step):
-                axlines[-1, c, -1, l].set_xticklabels([f'{logess[l]:.0f}'],
+                axlines[-1, c, -1, e].set_xticklabels([f'{logess[e]:.0f}'],
                                                       fontsize=ticklabels)
+        if c == 1:
+            for a, alpha in enumerate(alphas):
+                for e, loges in enumerate(logess):
+                    axlines[f, 1, a, e].set_facecolor('black')
     for c, titles_trait in enumerate(titles_traits):
         aximages[f, c].text(0,
                             letterposition,
@@ -253,18 +255,18 @@ if movie:
 lines = np.empty_like(axlines)
 images = np.empty_like(aximages)
 dummy_Z = np.empty((nr, nc), dtype=float)
-dummy_y = np.empty_like(xaxis)
+dummy_y = np.full(xaxis.shape, -1.)
 frames = ts
 frame0 = ts[-1]
 
 for f, folder in enumerate(folders):
     for c, predictor in enumerate(predictors):
         for a, alpha in enumerate(alphas):
-            for l, loges in enumerate(logess):
-                ax = axlines[f, c, a, l]
-                lines[f, c, a, l], = ax.plot(xaxis,
+            for e, loges in enumerate(logess):
+                ax = axlines[f, c, a, e]
+                lines[f, c, a, e], = ax.plot(xaxis,
                                              dummy_y,
-                                             color='white')
+                                             'black')
     for c, trait in enumerate(traits):
         ax = aximages[f, c]
         images[f, c] = ax.imshow(dummy_Z,

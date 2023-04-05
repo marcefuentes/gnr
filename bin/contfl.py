@@ -113,12 +113,14 @@ for f, folder in enumerate(folders):
                                                              ncols=1)
         aximages[f, c] = grid.subplots()
 
+# Apply properties
+
 left_x = axlines[0, 0, 0, 0].get_position().x0
 right_x = aximages[-1, -1].get_position().x1
-center_x = (left_x + right_x) / 2.
+center_x = (left_x + right_x)/2.
 top_y = aximages[0, 0].get_position().y1
 bottom_y = aximages[-1, -1].get_position().y0
-center_y = (top_y + bottom_y) / 2.
+center_y = (top_y + bottom_y)/2.
 fig.supxlabel(xlabel,
               x=center_x,
               y=bottom_y*0.3,
@@ -196,9 +198,10 @@ for f, folder in enumerate(folders):
             for label in aximages[-1, c].xaxis.get_majorticklabels():
                 label.set_transform(label.get_transform() + offset)
 
-# Add data to figure
+# Add data
 
 for f, folder in enumerate(folders):
+
     given = dfprivates[f].Given.iloc[0]
     if theory:
         a2privates = my.a2eq(given, AA, RR)
@@ -206,14 +209,18 @@ for f, folder in enumerate(folders):
     else:
         a2privates = my.getZ(t, dfprivates[f], 'a2Seenmean')
         ws = my.getZ(t, dfprivates[f], 'wmean')
+
     for a, alpha in enumerate(alphas):
         for e, rho in enumerate(rhos):
+
             w = ws[a, e]
             a2s = np.full(xaxis.shape, a2privates[a, e])
+
+            ax = axlines[f, 0, a, e]
             y = my.fitness(xaxis, a2s, given, alpha, rho)
             color = cm.viridis((my.wmax - y[0])/my.wmax)
-            axlines[f, 0, a, e].plot(xaxis, y, color='black')
-            axlines[f, 0, a, e].set_facecolor(color)
+            ax.plot(xaxis, y, color='black')
+            ax.set_facecolor(color)
 
             ax = axlines[f, 1, a, e]
             y = my.fitness(xaxis, xaxis, given, alpha, rho)
@@ -223,6 +230,7 @@ for f, folder in enumerate(folders):
                             interpolate=True, color='yellow')
             ax.fill_between(xaxis, y, w, where=below_w,
                             interpolate=True, color='cyan')
+
     for c, trait in enumerate(traits):
         Z = my.getZ(t, dftraits[f, c], trait)
         if 'Grain' in trait:
@@ -230,6 +238,8 @@ for f, folder in enumerate(folders):
         aximages[f, c].imshow(Z,
                               vmin=0,
                               vmax=vmaxs[c])
+
+# Finish
 
 plt.savefig(filename + '.png', transparent=False)
 

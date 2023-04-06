@@ -173,10 +173,6 @@ for f, folder in enumerate(folders):
             for e in range(0, nc, step):
                 axlines[-1, c, -1, e].set_xticklabels([f'{logess[e]:.0f}'],
                                                       fontsize=ticklabel)
-        if c == 1:
-            for a, alpha in enumerate(alphas):
-                for e, loges in enumerate(logess):
-                    axlines[f, 1, a, e].set_facecolor((0.4, 0.4, 0.4, 1.))
     for c, titles_trait in enumerate(titles_traits):
         aximages[f, c].text(0,
                             letterposition,
@@ -198,11 +194,6 @@ for f, folder in enumerate(folders):
                 label.set_transform(label.get_transform() + offset)
 
 # Add data
-if theory:
-    a2socials = my.a2eq(0., AA, RR)
-else:
-    a2socials = my.getZ(t, dfsocial, 'a2Seenmean')
-wss = my.fitness(a2socials, a2socials, 0., AA, RR) 
 
 for f, folder in enumerate(folders):
 
@@ -211,28 +202,39 @@ for f, folder in enumerate(folders):
         a2privates = my.a2eq(given, AA, RR)
     else:
         a2privates = my.getZ(t, dfprivates[f], 'a2Seenmean')
-    ws = my.fitness(a2privates, a2privates, given, AA, RR)
+        wmean = my.getZ(t, dfprivates[f], 'wmean')
+    wpp = my.fitness(a2privates, a2privates, given, AA, RR)
 
     for a, alpha in enumerate(alphas):
         for e, rho in enumerate(rhos):
 
-            w = ws[a, e]
+            w = wpp[a, e]
             a2s = np.full(xaxis.shape, a2privates[a, e])
 
             ax = axlines[f, 0, a, e]
             y = my.fitness(xaxis, a2s, given, alpha, rho)
-            color = cm.viridis((my.wmax - y[0])/my.wmax)
+            wsum = 0.
+            j = 0
+            for i in range(numa2):
+                if xaxis[i] < a2s[i]:
+                    wsum += w - y[i]
+                    j += 1
+            if wsum < 0:
+                wsum = 0
+            color = cm.viridis(wsum/(w*j))
             ax.plot(xaxis, y, color='black')
             ax.set_facecolor(color)
 
             ax = axlines[f, 1, a, e]
             y = my.fitness(xaxis, xaxis, given, alpha, rho)
-            below_w = y < w
-            above_w = y > w
-            ax.fill_between(xaxis, y, w, where=above_w,
-                            interpolate=True, color='yellow')
-            ax.fill_between(xaxis, y, w, where=below_w,
-                            interpolate=True, color='black')
+            wsum = 0.
+            for i in range(numa2):
+                wsum += y[i] - w
+            if wsum < 0:
+                wsum = 0
+            color = cm.viridis(wsum/(w*numa2))
+            ax.plot(xaxis, y, color='black')
+            ax.set_facecolor(color)
 
     for c, trait in enumerate(traits):
         Z = my.getZ(t, dftraits[f, c], trait)

@@ -143,8 +143,6 @@ letterposition = 1.035
 initial_linewidth = axlines[0, 0, 0, 0].spines['top'].get_linewidth()
 for f, folder in enumerate(folders):
     for c, predictor in enumerate(predictors):
-        for axis in ['top', 'bottom', 'left', 'right']:
-            aximages[f, c].spines[axis].set_linewidth(0.1)
         for a, alpha in enumerate(alphas):
             for e, loges in enumerate(logess):
                 for axis in ['top', 'bottom', 'left', 'right']:
@@ -178,6 +176,8 @@ for f, folder in enumerate(folders):
                 for e, loges in enumerate(logess):
                     axlines[f, 1, a, e].set_facecolor((0.4, 0.4, 0.4, 1.))
     for c, titles_trait in enumerate(titles_traits):
+        for axis in ['top', 'bottom', 'left', 'right']:
+            aximages[f, c].spines[axis].set_linewidth(0.1)
         aximages[f, c].text(0,
                             letterposition,
                             chr(letter),
@@ -211,28 +211,27 @@ for f, folder in enumerate(folders):
         a2privates = my.a2eq(given, AA, RR)
     else:
         a2privates = my.getZ(t, dfprivates[f], 'a2Seenmean')
-    ws = my.fitness(a2privates, a2privates, given, AA, RR)
+    wps = my.fitness(a2privates, a2privates, given, AA, RR)
 
     for a, alpha in enumerate(alphas):
         for e, rho in enumerate(rhos):
 
-            w = ws[a, e]
             a2s = np.full(xaxis.shape, a2privates[a, e])
 
-            ax = axlines[f, 0, a, e]
             y = my.fitness(xaxis, a2s, given, alpha, rho)
             color = cm.viridis((my.wmax - y[0])/my.wmax)
-            ax.plot(xaxis, y, color='black')
+            ax = axlines[f, 0, a, e]
+            ax.plot(xaxis, y, color='black', linewidth=0.7)
+            y = my.fitness(a2s, xaxis, given, alpha, rho)
+            ax.plot(xaxis, y, color='black', linewidth=0.7)
             ax.set_facecolor(color)
 
-            ax = axlines[f, 1, a, e]
             y = my.fitness(xaxis, xaxis, given, alpha, rho)
-            below_w = y < w
-            above_w = y > w
-            ax.fill_between(xaxis, y, w, where=above_w,
-                            interpolate=True, color='yellow')
-            ax.fill_between(xaxis, y, w, where=below_w,
-                            interpolate=True, color='black')
+            color = cm.viridis(wss[a, e] - wps[a, e])
+            ax = axlines[f, 1, a, e]
+            ax.plot(xaxis, y, color='black', linewidth=0.7)
+            ax.axhline(wps[a, e], color='black', linewidth=0.7)
+            ax.set_facecolor(color)
 
     for c, trait in enumerate(traits):
         Z = my.getZ(t, dftraits[f, c], trait)

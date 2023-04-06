@@ -177,7 +177,7 @@ for f, folder in enumerate(folders):
         if c == 1:
             for a, alpha in enumerate(alphas):
                 for e, loges in enumerate(logess):
-                    axlines[f, 1, a, e].set_facecolor((0.3, 0.3, 0.3, 1.))
+                    axlines[f, 1, a, e].set_facecolor((0.4, 0.4, 0.4, 1.))
     for c, titles_trait in enumerate(titles_traits):
         aximages[f, c].text(0,
                             letterposition,
@@ -229,7 +229,7 @@ for f, folder in enumerate(folders):
             ax.fill_between(xaxis, y, w, where=above_w,
                             interpolate=True, color='yellow')
             ax.fill_between(xaxis, y, w, where=below_w,
-                            interpolate=True, color='cyan')
+                            interpolate=True, color='black')
 
     for c, trait in enumerate(traits):
         Z = my.getZ(t, dftraits[f, c], trait)

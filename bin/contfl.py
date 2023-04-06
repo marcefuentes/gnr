@@ -55,8 +55,7 @@ logess = np.sort(pd.unique(df.logES))
 nr = len(alphas)
 nc = len(logess)
 rhos = 1. - 1./pow(2., logess)
-if theory:
-    RR, AA = np.meshgrid(rhos, alphas)
+RR, AA = np.meshgrid(rhos, alphas)
 xaxis = np.linspace(0.01, my.a2max - 0.01, num=numa2)
 
 # Figure properties

@@ -166,13 +166,14 @@ for f, folder in enumerate(folders):
         for a in range(0, nr, step):
             axs[f, c, a, 0].set(yticks=[ylim[1]/2.0], yticklabels=[])
             if c == 0:
-        axs[f, 0, a, 0].set_yticklabels([alphas[a]],
-                                        fontsize=ticklabels)
-    for l in range(0, nc, step):
-            axs[f, c, -1, l].set(xticks=[xlim[1]/2.0], xticklabels=[])
-            if folder == folders[-1]:
-                axs[f, c, -1, l].set_xticklabels([f'{logess[l]:.0f}'],
-                                          fontsize=ticklabels)
+                axs[f, 0, a, 0].set_yticklabels([alphas[a]],
+                                                fontsize=ticklabels)
+        for e in range(0, nc, step):
+            axs[f, c, -1, e].set(xticks=[xlim[1]/2.0], xticklabels=[])
+        if folder == folders[-1]:
+            for e in range(0, nc, step):
+                axs[f, c, -1, e].set_xticklabels([f'{logess[e]:.0f}'],
+                                                 fontsize=ticklabels)
 if movie:
     fig.text(right_x,
              bottom_y*0.5,

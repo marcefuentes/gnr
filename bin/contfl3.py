@@ -198,6 +198,7 @@ for f, folder in enumerate(folders):
                 label.set_transform(label.get_transform() + offset)
 
 # Add data
+
 if theory:
     a2socials = my.a2eq(0., AA, RR)
 else:

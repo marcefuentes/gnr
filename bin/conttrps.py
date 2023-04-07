@@ -5,7 +5,6 @@ import os
 import time
 
 from matplotlib import cm
-from matplotlib.animation import FuncAnimation
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -27,104 +26,44 @@ folders = ['given100', 'given95', 'given50']
 subfolders = ['p', 'r']
 
 theory = False
-movie = False
 plotsize = 8
-
-# Add data to figure
-
-def init(artists):
-
-    if theory:
-        highs = my.a2eq(0.0, AA, RR)
-    else:
-        highs = my.getZ(ts[-1], dfsocial, 'a2Seenmean')
-
-    for f, folder in enumerate(folders):
-        if theory:
-            lows = my.a2eq(given, AA, RR)
-        else:
-            lows = my.getZ(ts[-1], dfprivates[f], 'a2Seenmean')
-        highs = lows + 0.025
-        given = dftraits[0, 0].Given.iloc[0]
-        T = my.fitness(highs, lows, given, AA, RR)
-        R = my.fitness(highs, highs, given, AA, RR)
-        P = my.fitness(lows, lows, given, AA, RR)
-        S = my.fitness(lows, highs, given, AA, RR)
-        y = np.stack((T, R, P, S), axis=-1)
-
-        Ma = np.maximum.reduce([T, R, P, S])
-        Mi = np.minimum.reduce([T, R, P, S])
-        Tn = (T - Mi)*2./(Ma - Mi)
-        Rn = (R - Mi)*2./(Ma - Mi)
-        Pn = (P - Mi)*2./(Ma - Mi)
-        Sn = (S - Mi)*2./(Ma - Mi)
-        yn = np.stack((Tn, Rn, Pn, Sn), axis=-1)
-
-        linecolor = np.full(highs.shape, 'white')
-        red = np.full(highs.shape, 'red')
-        m = lows > highs
-        linecolor[m] = red[m]
-
-        Zg = my.gamecolors(T, R, P, S)
-        for c, title in enumerate(titles):
-            for (a, l, i), _ in np.ndenumerate(y):
-                if c == 0:
-                    artists[f, c, a, l].set_ydata(y[a, l])
-                    artists[f, c, a, l].axes.set_facecolor(Zg[a, l])
-                else:
-                    artists[f, c, a, l].set_ydata(yn[a, l])
-                lcolor = linecolor[a, l] 
-                artists[f, c, a, l].set_color(lcolor)
-                artists[f, c, a, l].set_markerfacecolor(lcolor)
-
-    return artists.flatten()
-
-def update(t, artists):
-    for f, folder in enumerate(folders):
-        for c, trait in enumerate(traits):
-            Z = my.getZ(t, dftraits[f, c], trait)
-            if 'Grain' in trait:
-                Z = 1.0 - Z
-            for (a, l), _ in np.ndenumerate(Z):
-                bgcolor = cm.viridis(Z[a, l]/my.a2max)
-                artists[f, c + 1, a, l].axes.set_facecolor(bgcolor)
-    if movie:
-        fig.texts[2].set_text(f't\n{t}')
-    return artists.flatten()
 
 # Data
 
 filelist = glob(os.path.join('given00', 'none', '*.csv'))
-dfsocial = my.read_files(filelist, movie)
+dfsocial = my.read_files(filelist, False)
 
 dfprivates = np.empty(len(folders), dtype=object)
 for f, folder in enumerate(folders):
     filelist = glob(os.path.join(folder, 'none', '*.csv'))
-    dfprivates[f] = my.read_files(filelist, movie)
+    dfprivates[f] = my.read_files(filelist, False)
 
 dftraits = np.empty((len(folders), len(subfolders)), dtype=object)
 for f, folder in enumerate(folders):
     for c, subfolder in enumerate(subfolders):
         filelist = glob(os.path.join(folder, subfolder, '*.csv'))
-        dftraits[f, c] = my.read_files(filelist, movie)
+        dftraits[f, c] = my.read_files(filelist, False)
 
 df = dftraits[0, 0]
-ts = df.Time.unique()
+t = df.Time.max()
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 logess = np.sort(pd.unique(df.logES))
 nr = len(alphas)
 nc = len(logess)
-rhos = 1.0 - 1.0/pow(2.0, logess)
+rhos = 1. - 1./pow(2., logess)
 RR, AA = np.meshgrid(rhos, alphas)
+xaxis = [1, 4]
 
 # Figure properties
 
-width = plotsize*len(titles)
+width = plotsize*len(traits)
 height = plotsize*len(folders)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
-biglabels = plotsize*5 + height/4
-ticklabels = plotsize*4
+biglabel = plotsize*7
+midlabel = plotsize*6
+letterlabel = plotsize*5
+ticklabel = plotsize*4
 xlim = [0, 5]
 #ylim = [-0.1, 1.1]
 ylim = [0.0, 2.0]
@@ -136,15 +75,15 @@ plt.rcParams['ps.fonttype'] = 42
 
 fig = plt.figure(figsize=(width, height))
 outergrid = fig.add_gridspec(nrows=len(folders),
-                             ncols=len(titles))
+                             ncols=len(traits))
 axs = np.empty((len(folders),
-                len(titles),
+                len(traits),
                 nr,
                 nc),
                dtype=object)
 
 for f, folder in enumerate(folders):
-    for c, title in enumerate(titles):
+    for c, trait in enumerate(traits):
         grid = outergrid[f, c].subgridspec(nrows=nr,
                                            ncols=nc,
                                            wspace=0,
@@ -160,11 +99,11 @@ center_y = (top_y + bottom_y) / 2
 fig.supxlabel(xlabel,
               x=center_x,
               y=bottom_y*0.3,
-              fontsize=biglabels)
+              fontsize=biglabel)
 fig.supylabel(ylabel,
               x=left_x*0.4,
               y=center_y,
-              fontsize=biglabels)
+              fontsize=biglabel)
 
 for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])
@@ -173,69 +112,76 @@ for ax in fig.get_axes():
         ax.spines[axis].set_linewidth(0.1)
 
 for f, folder in enumerate(folders):
-    for c, title in enumerate(titles):
-        letter = ord('a') + f*len(titles) + c
+    for c, trait in enumerate(traits):
+        letter = ord('a') + f*len(traits) + c
         axs[f, c, 0, 0].set_title(chr(letter),
-                                  fontsize=plotsize*5,
+                                  fontsize=letterlabel,
                                   pad = 11,
                                   weight='bold',
                                   loc='left')
         if f == 0:
-            axs[0, c, 0, 10].set_title(title,
+            axs[0, c, 0, 10].set_title(titles[c],
                                        pad=plotsize*9,
-                                       fontsize=plotsize*5)
+                                       fontsize=midlabel)
         for a in range(0, nr, step):
             axs[f, c, a, 0].set(yticks=[ylim[1]/2.0], yticklabels=[])
             if c == 0:
                 axs[f, 0, a, 0].set_yticklabels([alphas[a]],
-                                                fontsize=ticklabels)
-        for l in range(0, nc, step):
-            axs[f, c, -1, l].set(xticks=[xlim[1]/2.0], xticklabels=[])
+                                                fontsize=ticklabel)
+        for e in range(0, nc, step):
+            axs[f, c, -1, e].set(xticks=[xlim[1]/2.0], xticklabels=[])
             if folder == folders[-1]:
-                axs[f, c, -1, l].set_xticklabels([f'{logess[l]:.0f}'],
-                                                 fontsize=ticklabels)
-if movie:
-    fig.text(right_x,
-             bottom_y*0.5,
-             f't\n0',
-             fontsize=biglabels,
-             color='grey',
-             ha='right')
+                axs[f, c, -1, e].set_xticklabels([f'{logess[e]:.0f}'],
+                                                 fontsize=ticklabel)
 
-# Assign axs objects to variables
-# (Line2D)
+# Add data
 
-artists = np.empty_like(axs) 
-xaxis = [1, 2, 3, 4]
-dummy_y = np.zeros_like(xaxis)
-frames = ts
-frame0 = ts[-1]
+if theory:
+    highs = my.a2eq(0.0, AA, RR)
+else:
+    highs = my.getZ(t, dfsocial, 'a2Seenmean')
 
 for f, folder in enumerate(folders):
-    for c, title in enumerate(titles):
+
+    if theory:
+        lows = my.a2eq(given, AA, RR)
+    else:
+        lows = my.getZ(t, dfprivates[f], 'a2Seenmean')
+    highs = lows + 0.025
+    given = dftraits[0, 0].Given.iloc[0]
+    T = my.fitness(highs, lows, given, AA, RR)
+    R = my.fitness(highs, highs, given, AA, RR)
+    P = my.fitness(lows, lows, given, AA, RR)
+    S = my.fitness(lows, highs, given, AA, RR)
+    y = np.stack((T, R, P, S), axis=-1)
+
+    Ma = np.maximum.reduce([T, R, P, S])
+    Mi = np.minimum.reduce([T, R, P, S])
+    Tn = (T - Mi)*2./(Ma - Mi)
+    Rn = (R - Mi)*2./(Ma - Mi)
+    Pn = (P - Mi)*2./(Ma - Mi)
+    Sn = (S - Mi)*2./(Ma - Mi)
+    yn = np.stack((Rn, Pn), axis=-1)
+
+    for c, trait in enumerate(traits):
+        Z = my.getZ(t, dftraits[f, c], trait)
+        if 'Grain' in trait:
+            Z = 1. - Z
         for a, alpha in enumerate(alphas):
-            for l, loges in enumerate(logess):
-                ax = axs[f, c, a, l] 
-                artists[f, c, a, l], = ax.plot(xaxis,
-                                               dummy_y,
-                                               linewidth=1,
-                                               marker='o',
-                                               markersize=plotsize/3)
+            for e, rho in enumerate(rhos):
+                ax = axs[f, c, a, e]
+                ax.plot(xaxis,
+                        yn[a, e],
+                        linewidth=1,
+                        marker='o',
+                        markersize=3,
+                        c='white')
+                bgcolor = cm.viridis(Z[a, e]/my.a2max)
+                ax.set_facecolor(bgcolor)
 
-# Add data and save figure
+# Finish
 
-init(artists,)
-
-if movie:
-    ani = FuncAnimation(fig,
-                        update,
-                        frames=frames,
-                        fargs=(artists,),
-                        blit=True)
-    ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
-else:
-    update(frame0, artists,)
-    plt.savefig(filename + '.png', transparent=False)
+plt.savefig(filename + '.png', transparent=False)
 
 plt.close()
 

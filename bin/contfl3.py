@@ -227,7 +227,7 @@ for f, folder in enumerate(folders):
             ax.set_facecolor(color)
 
             y = my.fitness(xaxis, xaxis, given, alpha, rho)
-            color = cm.viridis(wss[a, e] - wps[a, e])
+            color = cm.viridis((wss[a, e] - wps[a, e])/my.wmax)
             ax = axlines[f, 1, a, e]
             ax.plot(xaxis, y, color='black', linewidth=0.7)
             ax.axhline(wps[a, e], color='black', linewidth=0.7)

@@ -51,7 +51,7 @@ nr = len(alphas)
 nc = len(logess)
 rhos = 1. - 1./pow(2., logess)
 RR, AA = np.meshgrid(rhos, alphas)
-xaxis = [1, 4]
+xaxis = [0, 5]
 
 # Figure properties
 

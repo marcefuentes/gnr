@@ -44,19 +44,22 @@ def init(artists):
             lows = my.a2eq(given, AA, RR)
         else:
             lows = my.getZ(ts[-1], dfprivates[f], 'a2Seenmean')
+        highs = lows + 0.025
         given = dftraits[0, 0].Given.iloc[0]
         T = my.fitness(highs, lows, given, AA, RR)
         R = my.fitness(highs, highs, given, AA, RR)
         P = my.fitness(lows, lows, given, AA, RR)
         S = my.fitness(lows, highs, given, AA, RR)
-        #Ma = np.maximum.reduce([T, R, P, S])
-        #Mi = np.minimum.reduce([T, R, P, S])
-        #Tn = (T - Mi)/(Ma - Mi)
-        #Rn = (R - Mi)/(Ma - Mi)
-        #Pn = (P - Mi)/(Ma - Mi)
-        #Sn = (S - Mi)/(Ma - Mi)
-        Tn, Rn, Pn, Sn = T, R, P, S
-        y = np.stack((Tn, Rn, Pn, Sn), axis=-1)
+        y = np.stack((T, R, P, S), axis=-1)
+
+        Ma = np.maximum.reduce([T, R, P, S])
+        Mi = np.minimum.reduce([T, R, P, S])
+        Tn = (T - Mi)*2./(Ma - Mi)
+        Rn = (R - Mi)*2./(Ma - Mi)
+        Pn = (P - Mi)*2./(Ma - Mi)
+        Sn = (S - Mi)*2./(Ma - Mi)
+        yn = np.stack((Tn, Rn, Pn, Sn), axis=-1)
+
         linecolor = np.full(highs.shape, 'white')
         red = np.full(highs.shape, 'red')
         m = lows > highs
@@ -65,9 +68,11 @@ def init(artists):
         Zg = my.gamecolors(T, R, P, S)
         for c, title in enumerate(titles):
             for (a, l, i), _ in np.ndenumerate(y):
-                artists[f, c, a, l].set_ydata(y[a, l])
                 if c == 0:
+                    artists[f, c, a, l].set_ydata(y[a, l])
                     artists[f, c, a, l].axes.set_facecolor(Zg[a, l])
+                else:
+                    artists[f, c, a, l].set_ydata(yn[a, l])
                 lcolor = linecolor[a, l] 
                 artists[f, c, a, l].set_color(lcolor)
                 artists[f, c, a, l].set_markerfacecolor(lcolor)

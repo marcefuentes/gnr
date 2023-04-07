@@ -19,8 +19,7 @@ filename = thisscript.split('.')[0]
 
 traits = ['ChooseGrainmean',
           'MimicGrainmean']
-titles = ['Games',
-          'Sensitivity for\nchoosing partner',
+titles = ['Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
 folders = ['given100', 'given95', 'given50']
 subfolders = ['p', 'r']
@@ -101,7 +100,7 @@ fig.supxlabel(xlabel,
               y=bottom_y*0.3,
               fontsize=biglabel)
 fig.supylabel(ylabel,
-              x=left_x*0.4,
+              x=left_x*0.1,
               y=center_y,
               fontsize=biglabel)
 
@@ -142,40 +141,42 @@ else:
     highs = my.getZ(t, dfsocial, 'a2Seenmean')
 
 for f, folder in enumerate(folders):
-
+    given = dftraits[0, 0].Given.iloc[0]
     if theory:
-        lows = my.a2eq(given, AA, RR)
+        low = my.a2eq(given, AA, RR)
     else:
         lows = my.getZ(t, dfprivates[f], 'a2Seenmean')
     highs = lows + 0.025
-    given = dftraits[0, 0].Given.iloc[0]
-    T = my.fitness(highs, lows, given, AA, RR)
-    R = my.fitness(highs, highs, given, AA, RR)
-    P = my.fitness(lows, lows, given, AA, RR)
-    S = my.fitness(lows, highs, given, AA, RR)
-    y = np.stack((T, R, P, S), axis=-1)
-
-    Ma = np.maximum.reduce([T, R, P, S])
-    Mi = np.minimum.reduce([T, R, P, S])
-    Tn = (T - Mi)*2./(Ma - Mi)
-    Rn = (R - Mi)*2./(Ma - Mi)
-    Pn = (P - Mi)*2./(Ma - Mi)
-    Sn = (S - Mi)*2./(Ma - Mi)
-    yn = np.stack((Rn, Pn), axis=-1)
 
     for c, trait in enumerate(traits):
+
         Z = my.getZ(t, dftraits[f, c], trait)
         if 'Grain' in trait:
             Z = 1. - Z
+        low = lows[a, e]
+        high = highs[a, e]
         for a, alpha in enumerate(alphas):
             for e, rho in enumerate(rhos):
+                T = my.fitness(high, low, given, alpha, rho)
+                R = my.fitness(high, high, given, alpha, rho)
+                P = my.fitness(low, low, given, alpha, rho)
+                S = my.fitness(low, high, given, alpha, rho)
+
+                Ma = np.maximum.reduce([T, R, P, S])
+                Mi = np.minimum.reduce([T, R, P, S])
+                Tn = (T - Mi)*2./(Ma - Mi)
+                Rn = (R - Mi)*2./(Ma - Mi)
+                Pn = (P - Mi)*2./(Ma - Mi)
+                Sn = (S - Mi)*2./(Ma - Mi)
+                yn = (Rn, Pn)
+
                 ax = axs[f, c, a, e]
                 ax.plot(xaxis,
-                        yn[a, e],
+                        yn,
                         linewidth=1,
-                        marker='o',
-                        markersize=3,
-                        c='white')
+                        #marker='o',
+                        #markersize=3,
+                        c='black')
                 bgcolor = cm.viridis(Z[a, e]/my.a2max)
                 ax.set_facecolor(bgcolor)
 

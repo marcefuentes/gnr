@@ -64,7 +64,6 @@ midlabel = plotsize*6
 letterlabel = plotsize*5
 ticklabel = plotsize*4
 xlim = [0, 5]
-#ylim = [-0.1, 1.1]
 ylim = [0.0, 2.0]
 step = int(nr/2)
 plt.rcParams['pdf.fonttype'] = 42
@@ -135,47 +134,38 @@ for f, folder in enumerate(folders):
 
 # Add data
 
-if theory:
-    highs = my.a2eq(0.0, AA, RR)
-else:
-    highs = my.getZ(t, dfsocial, 'a2Seenmean')
+highs = my.getZ(t, dfsocial, 'a2Seenmean')
+R = my.fitness(highs, highs, 0., AA, RR)
 
 for f, folder in enumerate(folders):
-    given = dftraits[0, 0].Given.iloc[0]
-    if theory:
-        low = my.a2eq(given, AA, RR)
-    else:
-        lows = my.getZ(t, dfprivates[f], 'a2Seenmean')
-    highs = lows + 0.025
+    given = dfprivates[f].Given.iloc[0]
+    lows = my.getZ(t, dfprivates[f], 'a2Seenmean')
+#    highs = lows + 0.025
+    T = my.fitness(highs, lows, given, AA, RR)
+    S = my.fitness(lows, highs, given, AA, RR)
+    P = my.fitness(lows, lows, 0., AA, RR)
+    Ma = np.maximum.reduce([T, R, P, S])
+    Mi = np.minimum.reduce([T, R, P, S])
+    Tn = (T - Mi)*2./(Ma - Mi)
+    Rn = (R - Mi)*2./(Ma - Mi)
+    Pn = (P - Mi)*2./(Ma - Mi)
+    Sn = (S - Mi)*2./(Ma - Mi)
+    y = (R, P)
+    yn = (Rn, Pn)
 
     for c, trait in enumerate(traits):
 
         Z = my.getZ(t, dftraits[f, c], trait)
         if 'Grain' in trait:
             Z = 1. - Z
-        low = lows[a, e]
-        high = highs[a, e]
         for a, alpha in enumerate(alphas):
             for e, rho in enumerate(rhos):
-                T = my.fitness(high, low, given, alpha, rho)
-                R = my.fitness(high, high, given, alpha, rho)
-                P = my.fitness(low, low, given, alpha, rho)
-                S = my.fitness(low, high, given, alpha, rho)
-
-                Ma = np.maximum.reduce([T, R, P, S])
-                Mi = np.minimum.reduce([T, R, P, S])
-                Tn = (T - Mi)*2./(Ma - Mi)
-                Rn = (R - Mi)*2./(Ma - Mi)
-                Pn = (P - Mi)*2./(Ma - Mi)
-                Sn = (S - Mi)*2./(Ma - Mi)
-                yn = (Rn, Pn)
-
+                y = (R[a, e], P[a, e])
+                yn = (Rn[a, e], Pn[a, e])
                 ax = axs[f, c, a, e]
                 ax.plot(xaxis,
-                        yn,
+                        y,
                         linewidth=1,
-                        #marker='o',
-                        #markersize=3,
                         c='black')
                 bgcolor = cm.viridis(Z[a, e]/my.a2max)
                 ax.set_facecolor(bgcolor)

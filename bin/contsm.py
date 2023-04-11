@@ -33,22 +33,21 @@ plotsize = 6
 
 def init(artists):
 
-    highs = my.getZ(ts[-1], dfsocial, 'a2Seenmean')
-
     for f, folder in enumerate(folders):
         lows = my.getZ(ts[-1], dfprivates[f], 'a2Seenmean')
+        highs = lows + 0.01
         given = dftraits[f, 0].Given.iloc[0]
         T = my.fitness(highs, lows, given, AA, RR)
         R = my.fitness(highs, highs, given, AA, RR)
         P = my.fitness(lows, lows, given, AA, RR)
         S = my.fitness(lows, highs, given, AA, RR)
 
-        CG = (R - P)*plotsize*10
+        CG = (S - P + 0.02)*plotsize*400
         zeros = np.zeros_like(CG)
         #m = my.harmony(T, R, P, S) | my.deadlock(T, R, P, S) | my.snowdrift(T, R, P, S)
         #CG[m] = zeros[m]
-        m = CG < 0.0
-        CG[m] = zeros[m]
+        #m = CG < 0.0
+        #CG[m] = zeros[m]
         #MG = (P - S)*plotsize*10
         MG = (highs - lows)*plotsize*10 
         m = MG < 0.0

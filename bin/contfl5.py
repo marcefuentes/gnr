@@ -137,6 +137,13 @@ for f, folder in enumerate(folders):
 
 # Add data
 
+if theory:
+    a2socials = my.a2eq(0., AA, RR)
+else:
+    a2socials = my.getZ(t, dfsocial, 'a2Seenmean')
+#wsocials = my.fitness(a2socials, a2socials, given, AA, RR)
+wsocials = my.getZ(t, dfsocial, 'wmean')
+
 for f, folder in enumerate(folders):
 
     given = dfprivates[f].Given.iloc[0]
@@ -144,8 +151,8 @@ for f, folder in enumerate(folders):
         a2privates = my.a2eq(given, AA, RR)
     else:
         a2privates = my.getZ(t, dfprivates[f], 'a2Seenmean')
-    wps = my.fitness(a2privates, a2privates, given, AA, RR)
-    ws = my.getZ(t, dfprivates[f], 'wmean')
+    #wprivates = my.fitness(a2privates, a2privates, given, AA, RR)
+    wprivates = my.getZ(t, dfprivates[f], 'wmean')
 
     Z = np.empty((len(traits), len(alphas), len(rhos)), dtype=float)
     for c, trait in enumerate(traits):
@@ -161,14 +168,22 @@ for f, folder in enumerate(folders):
             y = my.fitness(a2s, xaxis, given, alpha, rho)
             ax = axs[f, 0, a, e]
             ax.plot(xaxis, y, color='white', linewidth=0.7)
-            ax.plot(a2privates[a, e], wps[a, e], marker='o', markersize=1, color='white')
+            ax.plot(a2privates[a, e],
+                    wprivates[a, e],
+                    marker='o',
+                    markersize=1,
+                    color='white')
             color = cm.viridis(Z[0, a, e]/my.a2max)
             ax.set_facecolor(color)
 
             y = my.fitness(xaxis, xaxis, given, alpha, rho)
             ax = axs[f, 1, a, e]
             ax.plot(xaxis, y, color='white', linewidth=0.7)
-            ax.plot(a2privates[a, e], wps[a, e], marker='o', markersize=1, color='white')
+            ax.plot(a2privates[a, e],
+                    wprivates[a, e],
+                    marker='o',
+                    markersize=1,
+                    color='white')
             color = cm.viridis(Z[1, a, e]/my.a2max)
             ax.set_facecolor(color)
 

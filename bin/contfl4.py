@@ -215,22 +215,21 @@ for f, folder in enumerate(folders):
 
             a2s = np.full(xaxis.shape, a2privates[a, e])
 
-            R = my.fitness(xaxis, xaxis, given, alpha, rho)
-
             y = my.fitness(a2s, xaxis, given, alpha, rho)
             color = cm.viridis((wss[a, e] - wps[a, e])/my.wmax)
             ax = axlines[f, 0, a, e]
-            #ax.plot(xaxis, R, color='black', linewidth=0.7)
             ax.plot(xaxis, y, color='green', linewidth=0.7)
-            ax.plot(a2privates[a, e], wps[a, e], marker='o', markersize=2, color='green')
+            ax.plot(a2privates[a, e], wps[a, e], marker='o', markersize=1, color='green')
+            y = my.fitness(xaxis, a2s, given, alpha, rho)
+            ax.plot(xaxis, y, color='orange', linewidth=0.7)
+            color = cm.viridis((wss[a, e] - wps[a, e])/my.wmax)
             #ax.set_facecolor(color)
 
             y = my.fitness(xaxis, xaxis, given, alpha, rho)
             color = cm.viridis((my.wmax - y[0])/my.wmax)
             ax = axlines[f, 1, a, e]
-            #ax.plot(xaxis, R, color='black', linewidth=0.7)
             ax.plot(xaxis, y, color='green', linewidth=0.7)
-            ax.plot(a2privates[a, e], wps[a, e], marker='o', markersize=2, color='green')
+            ax.plot(a2privates[a, e], wps[a, e], marker='o', markersize=1, color='green')
             #ax.set_facecolor(color)
 
     for c, trait in enumerate(traits):

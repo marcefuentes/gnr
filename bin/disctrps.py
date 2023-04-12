@@ -102,8 +102,10 @@ width = plotsize*len(titles)
 height = plotsize*len(folders)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
-biglabels = plotsize*5 + height/4
-ticklabels = plotsize*4
+biglabel = plotsize*7
+midlabel = plotsize*6
+letterlabel = plotsize*5
+ticklabel = plotsize*4
 xlim = [0, 5]
 #ylim = [-0.1, 1.1]
 ylim = [0.0, 2.0]
@@ -139,11 +141,11 @@ center_y = (top_y + bottom_y) / 2
 fig.supxlabel(xlabel,
               x=center_x,
               y=bottom_y*0.3,
-              fontsize=biglabels)
+              fontsize=biglabel)
 fig.supylabel(ylabel,
               x=left_x*0.4,
               y=center_y,
-              fontsize=biglabels)
+              fontsize=biglabel)
 
 for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])
@@ -155,25 +157,25 @@ for f, folder in enumerate(folders):
     for c, title in enumerate(titles):
         letter = ord('a') + f*len(titles) + c
         axs[f, c, 0, 0].set_title(chr(letter),
-                                  fontsize=plotsize*5,
+                                  fontsize=lettersize,
                                   pad = 11,
                                   weight='bold',
                                   loc='left')
         if f == 0:
             axs[0, c, 0, 10].set_title(title,
                                        pad=plotsize*9,
-                                       fontsize=plotsize*5)
+                                       fontsize=midlabel)
         for a in range(0, nr, step):
             axs[f, c, a, 0].set(yticks=[ylim[1]/2.0], yticklabels=[])
             if c == 0:
                 axs[f, 0, a, 0].set_yticklabels([alphas[a]],
-                                                fontsize=ticklabels)
+                                                fontsize=ticklabel)
         for e in range(0, nc, step):
             axs[f, c, -1, e].set(xticks=[xlim[1]/2.0], xticklabels=[])
         if folder == folders[-1]:
             for e in range(0, nc, step):
                 axs[f, c, -1, e].set_xticklabels([f'{logess[e]:.0f}'],
-                                                 fontsize=ticklabels)
+                                                 fontsize=ticklabel)
 if movie:
     fig.text(right_x,
              bottom_y*0.5,

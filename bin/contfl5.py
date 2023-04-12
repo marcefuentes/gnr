@@ -151,8 +151,8 @@ for f, folder in enumerate(folders):
         a2privates = my.a2eq(given, AA, RR)
     else:
         a2privates = my.getZ(t, dfprivates[f], 'a2Seenmean')
-    #wprivates = my.fitness(a2privates, a2privates, given, AA, RR)
-    wprivates = my.getZ(t, dfprivates[f], 'wmean')
+    wprivates = my.fitness(a2privates, a2privates, given, AA, RR)
+    #wprivates = my.getZ(t, dfprivates[f], 'wmean')
 
     Z = np.empty((len(traits), len(alphas), len(rhos)), dtype=float)
     for c, trait in enumerate(traits):

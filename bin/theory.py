@@ -25,7 +25,7 @@ vmaxs = [my.a2max,
          my.wmax,
          my.wmax]
 givens = [1.0, 0.95, 0.5, 0.]
-nr = 21
+nr = 1024
 nc = nr
 plotsize = 4
 

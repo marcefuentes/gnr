@@ -18,17 +18,17 @@ filename = thisscript.split('.')[0]
 
 # Options
 
-traits = ['a2Seenmean',
-          'ChooseGrainmean',
+traits = ['ChooseGrainmean',
           'MimicGrainmean',
           'wmean']
-titles = ['Effort to get $\it{B}$',
-          'Sensitivity for\nchoosing partner',
+titles = ['Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner',
-          'Fitness']
-vmaxs = [my.a2max, my.a2max, my.a2max, my.wmax]
+          'Severity of\nsocial dilemma']
+vmaxs = [my.a2max,
+         my.a2max,
+         my.wmax]
 folders = ['given100', 'given95', 'given50', 'given00']
-subfolder = 'p8r'
+subfolder = 'pr'
 
 movie = False
 plotsize = 4
@@ -36,11 +36,14 @@ plotsize = 4
 # Add data to figure
 
 def update(t, artists):
+    wsocial = my.getZ(t, dfs[-1], 'wmean')
     for f, folder in enumerate(folders):
         for c, trait in enumerate(traits):
             Z = my.getZ(t, dfs[f], trait)
             if 'Grain' in trait:
                 Z = 1. - Z
+            if 'w' in trait:
+                Z = wsocial - Z
             artists[f, c].set_array(Z) 
     if movie:
         fig.texts[2].set_text(f't\n{t}')
@@ -96,10 +99,10 @@ bottom_y = axs[-1, -1].get_position().y0
 center_y = (top_y + bottom_y) / 2.
 fig.supxlabel(xlabel,
               x=center_x,
-              y=bottom_y*0.6,
+              y=bottom_y*0.5,
               fontsize=biglabel)
 fig.supylabel(ylabel,
-              x=left_x*0.4,
+              x=left_x*0.3,
               y=center_y,
               fontsize=biglabel)
 

@@ -28,7 +28,7 @@ vmaxs = [my.a2max,
          my.a2max,
          my.wmax]
 folders = ['given100', 'given95', 'given50', 'given00']
-subfolder = 'r'
+subfolder = 'p8'
 
 movie = False
 plotsize = 4

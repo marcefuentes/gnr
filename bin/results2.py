@@ -24,14 +24,14 @@ traits = ['ChooseGrainmean',
           'wmean']
 titles = ['Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner',
-          'Relief of\nsocial dilemma',
-          'Remaining\nsocial dilemma']
+          'Fitness gain',
+          'Fitness deficit']
 vmaxs = [my.a2max,
          my.a2max,
          my.wmax/2.,
          my.wmax/2.]
 folders = ['given100', 'given95', 'given50', 'given00']
-subfolder = 'p'
+subfolder = 'p8r'
 
 movie = False
 plotsize = 4
@@ -45,10 +45,10 @@ def update(t, artists):
             Z = my.getZ(t, dfs[f], trait)
             if 'Grain' in trait:
                 Z = 1. - Z
-            if 'Relief' in titles[c]:
+            if 'gain' in titles[c]:
                 wnull = my.getZ(t, dfnulls[f], 'wmean')
                 Z = Z - wnull
-            if 'Remaining' in titles[c]:
+            if 'deficit' in titles[c]:
                 Z = wsocial - Z
             artists[f, c].set_array(Z) 
     if movie:
@@ -78,7 +78,7 @@ width = plotsize*len(titles)
 height = plotsize*len(folders)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
-biglabel = plotsize*6
+biglabel = plotsize*7
 letterlabel = plotsize*5
 ticklabel = plotsize*4
 xticks = [0, nc/2 - 0.5, nc - 1]
@@ -110,7 +110,7 @@ bottom_y = axs[-1, -1].get_position().y0
 center_y = (top_y + bottom_y) / 2.
 fig.supxlabel(xlabel,
               x=center_x,
-              y=bottom_y*0.5,
+              y=bottom_y*0.3,
               fontsize=biglabel)
 fig.supylabel(ylabel,
               x=left_x*0.3,

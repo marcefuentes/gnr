@@ -19,7 +19,7 @@ filename = thisscript.split('.')[0]
 
 titles = ['Effort to get $\it{B}$',
           'Fitness',
-          'Severity of\nsocial dilemma']
+          'Fitness deficit']
 subfolder = 'none'
 vmaxs = [my.a2max,
          my.wmax,

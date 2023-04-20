@@ -20,15 +20,18 @@ filename = thisscript.split('.')[0]
 
 traits = ['ChooseGrainmean',
           'MimicGrainmean',
+          'wmean',
           'wmean']
 titles = ['Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner',
-          'Severity of\nsocial dilemma']
+          'Relief of\nsocial dilemma',
+          'Remaining\nsocial dilemma']
 vmaxs = [my.a2max,
          my.a2max,
-         my.wmax]
+         my.wmax/2.,
+         my.wmax/2.]
 folders = ['given100', 'given95', 'given50', 'given00']
-subfolder = 'p8'
+subfolder = 'p'
 
 movie = False
 plotsize = 4
@@ -42,7 +45,10 @@ def update(t, artists):
             Z = my.getZ(t, dfs[f], trait)
             if 'Grain' in trait:
                 Z = 1. - Z
-            if 'w' in trait:
+            if 'Relief' in titles[c]:
+                wnull = my.getZ(t, dfnulls[f], 'wmean')
+                Z = Z - wnull
+            if 'Remaining' in titles[c]:
                 Z = wsocial - Z
             artists[f, c].set_array(Z) 
     if movie:
@@ -50,6 +56,11 @@ def update(t, artists):
     return artists.flatten()
 
 # Data
+
+dfnulls = np.empty(len(folders), dtype=object) 
+for f, folder in enumerate(folders):
+    filelist = glob(os.path.join(folder, 'none', '*.csv'))
+    dfnulls[f] = my.read_files(filelist, movie)
 
 dfs = np.empty(len(folders), dtype=object) 
 for f, folder in enumerate(folders):

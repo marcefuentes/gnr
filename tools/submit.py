@@ -41,8 +41,11 @@ else:
     print("No jobs to submit")
 
 # Update last_job_submitted.txt
-with open("last_job_submitted.txt", "w") as f:
-    f.write(str(last_job))
+if last_job == 541:
+    os.remove("last_job_submitted.txt")
+else:
+    with open("last_job_submitted.txt", "w") as f:
+        f.write(str(last_job))
 
 # Print the number of available slots in the batch queue
 available_slots = available_slots - num_jobs_to_submit

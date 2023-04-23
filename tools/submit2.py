@@ -47,15 +47,19 @@ for queue, maxsubmit in zip(queues, maxsubmits):
             os.remove(job_file)
             folder_name = os.path.basename(path)
             folder_index = folders.index(folder_name)
-            if folder_index < len(folders) - 1:
-                next_folder = folders[folder_index + 1]
-                os.chdir('../' + next_folder)
-                path = os.getcwd()
-                print(f"Active folder is now {path}")
-                with open(folder_file, 'w') as f:
-                    f.write(path)
-                last_job = job_min
-            else:
+            changed_dir = False
+            for folder in folders[folder_index:]:
+                next_folder = os.path.join('../', folder)
+                if os.path.isdir(next_folder):
+                    os.chdir(next_folder)
+                    changed_dir = True
+                    path = os.getcwd()
+                    print(f"Active folder is now {path}")
+                    with open(folder_file, 'w') as f:
+                        f.write(path)
+                    last_job = job_min
+                    break
+            if not changed_dir:
                 print("All jobs completed")
                 os.remove(folder_file)
                 exit()

@@ -44,10 +44,10 @@ for queue, maxsubmit in zip(queues, maxsubmits):
     num_jobs_in_queue = int(output.decode().strip())
     print(f"{num_jobs_in_queue} jobs in queue")
     available_slots = maxsubmit - num_jobs_in_queue
+    print(f"{available_slots} slots available")
 
     while available_slots > 0:
 
-        print(f"{available_slots} slots available")
         if last_job == job_max:
             os.remove(job_file)
             folder_name = os.path.basename(path)
@@ -85,11 +85,13 @@ for queue, maxsubmit in zip(queues, maxsubmits):
                         "--array", array,
                         "job.sh"])
         print(f"with jobs {first_job} to {last_job}")
-        available_slots = available_slots - num_jobs_to_submit
-        num_jobs_in_queue = num_jobs_in_queue + num_jobs_to_submit
-        print(f"{num_jobs_in_queue} jobs in queue")
+        #available_slots = available_slots - num_jobs_to_submit
 
-    print(f"{available_slots} slots available")
+        output = subprocess.check_output(f"squeue -t RUNNING,PENDING -r -o '%j' | grep -E '^{queue}' | wc -l", shell=True)
+        num_jobs_in_queue = int(output.decode().strip())
+        print(f"{num_jobs_in_queue} jobs in queue")
+        available_slots = maxsubmit - num_jobs_in_queue
+        print(f"{available_slots} slots available")
 
 print("")
 

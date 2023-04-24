@@ -15,7 +15,7 @@ if os.path.isfile(folder_file):
     with open(folder_file, "r") as f:
         path = f.read().strip()
     path_folders = path.split('/')
-    new_path = '/'.join(path_folders[8:])
+    new_path = '/'.join(path_folders[11:])
     print(f"\nActive folder is {new_path}")
     os.chdir(path)
     if os.path.isfile(job_file):
@@ -61,7 +61,7 @@ for queue, maxsubmit in zip(queues, maxsubmits):
                     last_job = job_min
                     path = os.getcwd()
                     path_folders = path.split('/')
-                    new_path = '/'.join(path_folders[8:])
+                    new_path = '/'.join(path_folders[11:])
                     print(f"Active folder is now {new_path}")
                     with open(job_file, 'w') as f:
                         f.write(str(job_min))

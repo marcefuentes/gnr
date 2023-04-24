@@ -14,14 +14,16 @@ folder_file = "/home/ulc/ba/mfu/code/gnr/results/active_folder.tmp"
 if os.path.isfile(folder_file):
     with open(folder_file, "r") as f:
         path = f.read().strip()
-    print(f"\nActive folder is {path}")
+    path_folders = path.split('/')
+    new_path = '/'.join(path_folders[8:])
+    print(f"\nActive folder is {new_path}")
     os.chdir(path)
     if os.path.isfile(job_file):
         with open(job_file, "r") as f:
             last_job = int(f.read().strip())
             print(f"Last submitted job is {last_job}")
     else:
-        print("There is no file with last submitted job")
+        print(f"{job_file} does not exist")
         exit()
 else:
     user_input = input("There is no active folder. Continue? (y/n): ")
@@ -29,7 +31,9 @@ else:
         exit()
     last_job = job_min
     path = os.getcwd()
-    print(f"Active folder is now {path}")
+    path_folders = path.split('/')
+    new_path = '/'.join(path_folders[8:])
+    print(f"\nActive folder is {new_path}")
     with open(folder_file, "w") as f:
         f.write(path)
 
@@ -56,10 +60,12 @@ for queue, maxsubmit in zip(queues, maxsubmits):
                     changed_dir = True
                     last_job = job_min
                     path = os.getcwd()
-                    print(f"Active folder is now {path}")
-                    with open(folder_file, 'w') as f:
-                        f.write(str(job_min))
+                    path_folders = path.split('/')
+                    new_path = '/'.join(path_folders[8:])
+                    print(f"Active folder is now {new_path}")
                     with open(job_file, 'w') as f:
+                        f.write(str(job_min))
+                    with open(folder_file, 'w') as f:
                         f.write(path)
                     break
             if not changed_dir:

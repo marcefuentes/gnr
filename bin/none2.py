@@ -20,13 +20,15 @@ filename = thisscript.split('.')[0]
 titles = ['Effort to get $\it{B}$\nin theory',
           'Effort to get $\it{B}$\nin simulations',
           'Fitness\nin theory',
-          'Fitness\nin simulations']
+          'Fitness\nin simulations',
+          'Fitness deficit\nin simulations']
 givens_theory = [1.0, 0.95, 0.5, 0.]
 givens = ['given100', 'given95', 'given50', 'given00']
 vmaxs = [my.a2max,
          my.a2max,
          my.wmax,
-         my.wmax]
+         my.wmax,
+         my.wmax/1.]
 plotsize = 4
 
 # Data
@@ -86,7 +88,7 @@ fig.supxlabel(xlabel,
               y=bottom_y*0.4,
               fontsize=biglabel)
 fig.supylabel(ylabel,
-              x=left_x*0.35,
+              x=left_x*0.5,
               y=center_y,
               fontsize=biglabel)
 
@@ -117,7 +119,8 @@ for c, title in enumerate(titles):
         label.set_transform(label.get_transform() + offset)
 
 # Add data to figure
-
+ 
+wsocial = my.getZ(t, dfs[-1], 'wmean') 
 for g, given in enumerate(givens_theory):
     a2_theory = my.a2eq(given, AA, RR)
     axs[g, 0].imshow(a2_theory, vmin=0, vmax=vmaxs[0])
@@ -127,6 +130,8 @@ for g, given in enumerate(givens_theory):
     axs[g, 2].imshow(w_theory, vmin=0, vmax=vmaxs[2])
     w = my.getZ(t, dfs[g], 'wmean')
     axs[g, 3].imshow(w, vmin=0, vmax=vmaxs[3])
+    w = wsocial - w
+    axs[g, 4].imshow(w, vmin=0, vmax=vmaxs[4])
         
 plt.savefig(filename + '.png', transparent=False)
 

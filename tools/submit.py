@@ -84,8 +84,9 @@ for queue, maxsubmit in zip(queues, maxsubmits):
                         "-C", queue,
                         "--array", array,
                         "job.sh"])
+        with open(job_file, "w") as f:
+            f.write(str(last_job))
         print(f"with jobs {first_job} to {last_job}")
-        #available_slots = available_slots - num_jobs_to_submit
 
         output = subprocess.check_output(f"squeue -t RUNNING,PENDING -r -o '%j' | grep -E '^{queue}' | wc -l", shell=True)
         num_jobs_in_queue = int(output.decode().strip())
@@ -95,5 +96,3 @@ for queue, maxsubmit in zip(queues, maxsubmits):
 
 print("")
 
-with open(job_file, "w") as f:
-    f.write(str(last_job))

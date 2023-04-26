@@ -28,10 +28,10 @@ titles = ['Sensitivity for\nchoosing partner',
           'Fitness deficit']
 vmaxs = [my.a2max,
          my.a2max,
-         my.wmax/2.,
-         my.wmax/2.]
+         my.wmax,
+         my.wmax]
 folders = ['given100', 'given95', 'given50', 'given00']
-subfolder = 'p8r'
+subfolder = 'pr'
 
 movie = False
 plotsize = 4

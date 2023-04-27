@@ -26,7 +26,7 @@ titles = ['Sensitivity for\nchoosing partner',
           'Severity of\nsocial dilemma']
 vmaxs = [my.a2max,
          my.a2max,
-         my.wmax/2.]
+         my.wmax]
 folders = ['p', 'r', 'pr', 'p8r']
 
 movie = False

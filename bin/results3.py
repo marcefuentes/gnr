@@ -26,8 +26,9 @@ titles = ['Sensitivity for\nchoosing partner',
           'Severity of\nsocial dilemma']
 vmaxs = [my.a2max,
          my.a2max,
-         my.wmax]
-folders = ['pr', 'p8r', 'prd']
+         my.wmax/2.]
+#folders = ['p', 'r', 'pr', 'p8r']
+folders = ['pr']
 
 movie = False
 plotsize = 4
@@ -101,7 +102,7 @@ bottom_y = axs[-1, -1].get_position().y0
 center_y = (top_y + bottom_y) / 2.
 fig.supxlabel(xlabel,
               x=center_x,
-              y=bottom_y*0.3,
+              y=bottom_y*0.5,
               fontsize=biglabel)
 fig.supylabel(ylabel,
               x=left_x*0.3,
@@ -159,8 +160,6 @@ for f, folder in enumerate(folders):
 # Add data and save figure
 
 if movie:
-    update(ts, artists,)
-    plt.savefig(filename + '.png', transparent=False)
     ani = FuncAnimation(fig,
                         update,
                         frames=frames,

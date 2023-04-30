@@ -17,7 +17,7 @@ filename = thisscript.split('.')[0]
 # Options
 
 givens = np.linspace(0.0, 1.0, num=21)
-#givens = [0.95]
+givens = [0.95]
 
 vmax = my.wmax
 num = 3     # Number of subplot rows & columns
@@ -33,7 +33,7 @@ def update(given, budgets, icurves):
     w = my.fitness(a2private, a2private, given, AA, RR)
     q2_partner = a2private*my.R2
     budget_own = budget0*(1.0 - given)
-    axs[0, int(num/2)].title.set_text(f'{given*100:.0f}%')
+    #axs[0, int(num/2)].title.set_text(f'{given*100:.0f}%')
 
     for a, alpha in enumerate(alphas):
         for r, rho in enumerate(rhos):
@@ -71,8 +71,8 @@ width = plotsize
 height = plotsize
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
-biglabels = plotsize*5 + height/4
-ticklabels = plotsize*3.5
+biglabels = plotsize*4
+ticklabels = plotsize*3
 xlim=[0.0, my.a1max*my.R1]
 ylim=[0.0, my.a2max*my.R2]
 step = int(num/2)
@@ -113,9 +113,9 @@ for ax in fig.get_axes():
     ax.set(xlim=xlim, ylim=ylim)
     for axis in ['top','bottom','left','right']:
         ax.spines[axis].set_linewidth(0.2)
-axs[0, int(num/2)].set_title(f'0',
-                             pad=plotsize*5,
-                             fontsize=plotsize*5)
+#axs[0, int(num/2)].set_title(f'0',
+#                             pad=plotsize*5,
+#                             fontsize=plotsize*5)
 for a in range(0, num, step):
     axs[a, 0].set_ylabel(f'{alphas[a]:.1f}',
                          rotation='horizontal',

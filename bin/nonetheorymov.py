@@ -18,55 +18,46 @@ filename = thisscript.split('.')[0]
 
 # Options
 
-traits = ['ChooseGrainmean',
-          'MimicGrainmean',
-          'wmean']
-titles = ['Sensitivity for\nchoosing partner',
-          'Sensitivity for\nmimicking partner',
-          'Severity of\nsocial dilemma']
+titles = ['Effort to get $\it{B}$',
+          'Fitness',
+          'Fitness deficit']
+subfolder = 'none'
 vmaxs = [my.a2max,
-         my.a2max,
+         my.wmax,
          my.wmax]
-folders = ['p', 'r', 'pr', 'p8r']
 
-movie = False
+givens = np.linspace(0., 1., num=42)
+movie = True
 plotsize = 4
 
 # Add data to figure
 
-def update(t, artists):
-    wsocial = my.getZ(t, dfsocial, 'wmean')
-    for f, folder in enumerate(folders):
-        for c, trait in enumerate(traits):
-            Z = my.getZ(t, dfs[f], trait)
-            if 'Grain' in trait:
-                Z = 1. - Z
-            if 'wmean' in trait:
-                Z = wsocial - Z
-            artists[f, c].set_array(Z) 
+def update(given, artists):
+    a2 = my.a2eq(given, AA, RR)
+    w = my.fitness(a2, a2, given, AA, RR)
+    dif = wsocial - w
+    artists[0].set_array(a2)
+    artists[1].set_array(w)
+    artists[2].set_array(dif)
     if movie:
-        fig.texts[2].set_text(f't\n{t}')
+        fig.texts[2].set_text(f'Given {given*100:.0f}%')
     return artists.flatten()
 
 # Data
 
-filelist = glob(os.path.join('given0', '*.csv'))
-dfsocial = my.read_files(filelist, movie)
-
-dfs = np.empty(len(folders), dtype=object) 
-for f, folder in enumerate(folders):
-    filelist = glob(os.path.join(folder, '*.csv'))
-    dfs[f] = my.read_files(filelist, movie)
-
-df = dfs[1]
-ts = df.Time.unique()
-nr = df['alpha'].nunique()
-nc = df['logES'].nunique()
+nr = 21
+nc = nr
+alphas = np.linspace(my.alphamax, my.alphamin, num=nr)
+logess = np.linspace(my.logesmin, my.logesmax, num=nc)
+rhos = 1. - 1./pow(2., logess)
+RR, AA = np.meshgrid(rhos, alphas)
+a2social = my.a2eq(0., AA, RR)
+wsocial = my.fitness(a2social, a2social, 0., AA, RR)
 
 # Figure properties
 
 width = plotsize*len(titles)
-height = plotsize*len(folders)
+height = plotsize
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 biglabel = plotsize*6
@@ -74,10 +65,10 @@ letterlabel = plotsize*5
 ticklabel = plotsize*4
 xticks = [0, nc/2 - 0.5, nc - 1]
 yticks = [0, nr/2 - 0.5, nr - 1]
-xmin = df['logES'].min()
-xmax = df['logES'].max()
-ymin = df['alpha'].min()
-ymax = df['alpha'].max()
+xmin = my.logesmin
+xmax = my.logesmax
+ymin = my.alphamin
+ymax = my.alphamax
 xticklabels = [f'{xmin:.0f}',
                f'{(xmin + xmax)/2.:.0f}',
                f'{xmax:.0f}']
@@ -89,26 +80,27 @@ plt.rcParams['ps.fonttype'] = 42
 
 # Create figure
 
-fig, axs = plt.subplots(nrows=len(folders),
+fig, axs = plt.subplots(nrows=1,
                         ncols=len(titles),
                         figsize=(width, height))
+plt.subplots_adjust(top=0.80, bottom=0.25, wspace=0.3)
 
-left_x = axs[0, 0].get_position().x0
-right_x = axs[-1, -1].get_position().x1
+left_x = axs[0].get_position().x0
+right_x = axs[-1].get_position().x1
 center_x = (left_x + right_x) / 2.
-top_y = axs[0, 0].get_position().y1
-bottom_y = axs[-1, -1].get_position().y0
+top_y = axs[0].get_position().y1
+bottom_y = axs[0].get_position().y0
 center_y = (top_y + bottom_y) / 2.
 fig.supxlabel(xlabel,
               x=center_x,
-              y=bottom_y*0.5,
+              y=bottom_y*0.2,
               fontsize=biglabel)
 fig.supylabel(ylabel,
-              x=left_x*0.3,
+              x=left_x*0.4,
               y=center_y,
               fontsize=biglabel)
 
-ox = -2/72.
+ox = 0/72.
 oy = 0/72.
 offset = matplotlib.transforms.ScaledTranslation(ox, oy, fig.dpi_scale_trans)
 
@@ -125,19 +117,18 @@ for i, ax in enumerate(fig.get_axes()):
             transform=ax.transAxes,
             fontsize=letterlabel,
             weight='bold')
-for f, folder in enumerate(folders):
-    axs[f, 0].set_yticklabels(yticklabels, fontsize=ticklabel)
+axs[0].set_yticklabels(yticklabels, fontsize=ticklabel)
 for c, title in enumerate(titles):
-    axs[0, c].set_title(title, pad=plotsize*10, fontsize=letterlabel)
-    axs[-1, c].set_xticklabels(xticklabels,
+    axs[c].set_title(title, pad=plotsize*7, fontsize=letterlabel)
+    axs[c].set_xticklabels(xticklabels,
                                fontsize=ticklabel)
-    for label in axs[-1, c].xaxis.get_majorticklabels():
+    for label in axs[c].xaxis.get_majorticklabels():
         label.set_transform(label.get_transform() + offset)
 
 if movie:
     fig.text(right_x,
-             bottom_y*0.5,
-             f't\n0',
+             bottom_y*0.2,
+             f'Given',
              fontsize=biglabel,
              color='grey',
              ha='right')
@@ -147,14 +138,13 @@ if movie:
 
 artists = np.empty_like(axs) 
 dummy_Z = np.empty((nr, nc), dtype=float)
-frames = ts
-frame0 = ts[-1]
+frames = givens
+frame0 = givens[-1]
 
-for f, folder in enumerate(folders):
-    for c, title in enumerate(titles):
-        artists[f, c] = axs[f, c].imshow(dummy_Z,
-                                         vmin=0,
-                                         vmax=vmaxs[c])
+for c, title in enumerate(titles):
+    artists[c] = axs[c].imshow(dummy_Z,
+                               vmin=0,
+                               vmax=vmaxs[c])
 
 # Add data and save figure
 

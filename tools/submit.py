@@ -3,13 +3,15 @@
 import os
 import subprocess
 
+
 folders = ['none', 'p', 'p8', 'p8r', 'pr', 'r']
 queues = ['epyc', 'clk']
-maxsubmits = [200, 400]
+maxsubmits = [200, 250]
 job_min = 100
 job_max = 541
 job_file = "last_submitted_job.tmp"
 folder_file = "/home/ulc/ba/mfu/code/gnr/results/active_folder.tmp"
+slurm_file = "/home/ulc/ba/mfu/code/gnr/results/job.sh"
 
 if os.path.isfile(folder_file):
     with open(folder_file, "r") as f:
@@ -83,7 +85,7 @@ for queue, maxsubmit in zip(queues, maxsubmits):
                         "--output", f"{job_name}.%j.out",
                         "-C", queue,
                         "--array", array,
-                        "job.sh"])
+                        slurm_file])
         with open(job_file, "w") as f:
             f.write(str(last_job))
         print(f"with jobs {first_job} to {last_job}")

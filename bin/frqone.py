@@ -107,6 +107,7 @@ fig, axs = plt.subplots(nrows=len(folders),
                         ncols=len(titles),
                         figsize=(width, height))
 
+fig.subplots_adjust(bottom=0.3)
 left_x = axs[0, 0].get_position().x0
 right_x = axs[-1, -1].get_position().x1
 center_x = (left_x + right_x) / 2.

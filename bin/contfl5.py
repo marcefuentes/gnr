@@ -165,24 +165,25 @@ for f, folder in enumerate(folders):
 
             a2s = np.full(xaxis.shape, a2privates[a, e])
 
-            y = my.fitness(a2s, xaxis, given, alpha, rho)
             ax = axs[f, 0, a, e]
+            y = my.fitness(a2s, a2s, given, alpha, rho)
+            y = y - my.fitness(a2s, xaxis, given, alpha, rho)
             ax.plot(xaxis, y, color='white', linewidth=0.7)
-            ax.plot(a2privates[a, e],
-                    wprivates[a, e],
-                    marker='o',
-                    markersize=1,
-                    color='white')
+            #ax.plot(a2privates[a, e],
+            #        wprivates[a, e],
+            #        marker='o',
+            #        markersize=1.5,
+            #        color='white')
             color = cm.viridis(Z[0, a, e]/my.a2max)
             ax.set_facecolor(color)
 
-            y = my.fitness(xaxis, xaxis, given, alpha, rho)
             ax = axs[f, 1, a, e]
+            y = my.fitness(xaxis, xaxis, given, alpha, rho)
             ax.plot(xaxis, y, color='white', linewidth=0.7)
             ax.plot(a2privates[a, e],
                     wprivates[a, e],
                     marker='o',
-                    markersize=1,
+                    markersize=1.5,
                     color='white')
             color = cm.viridis(Z[1, a, e]/my.a2max)
             ax.set_facecolor(color)

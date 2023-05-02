@@ -20,10 +20,12 @@ filename = thisscript.split('.')[0]
 # Options
 
 traits = ['a2Seen',
+          'ChooseGrain',
           'w']
 titles = ['Effort to get $\it{B}$',
+          'Sensitivity for\nchoosing partner',
           'Fitness']
-vmaxs = [my.a2max, my.wmax]
+vmaxs = [my.a2max, my.a2max, my.wmax]
 folders = ['none', 'p']
 
 alpha = 0.66
@@ -54,6 +56,8 @@ def update(t, artists):
             y = y.flatten()
             artists[f, c].set_ydata(y)
             y = dmean[trait + 'mean'].iloc[0]
+            if 'Grain' in trait:
+                y = my.a2max - y
             bgcolor = cm.viridis(y/vmaxs[c])
             artists[f, c].axes.set_facecolor(bgcolor)
     if movie:
@@ -81,8 +85,9 @@ rho = 1.0 - 1.0/pow(2, loges)
 width = plotsize*len(titles)
 height = plotsize*len(folders)
 ylabel = 'Frequency'
-biglabels = plotsize*5 + height/4
-ticklabels = plotsize*3
+biglabel = plotsize*5
+letterlabel = plotsize*5
+ticklabel = plotsize*3
 xlim = [0, bins - 1]
 ylim = [0, 0.2]
 xticks = [xlim[0], xlim[1]/2.0, xlim[1]]
@@ -104,40 +109,42 @@ fig, axs = plt.subplots(nrows=len(folders),
 
 left_x = axs[0, 0].get_position().x0
 right_x = axs[-1, -1].get_position().x1
-center_x = (left_x + right_x) / 2
+center_x = (left_x + right_x) / 2.
 top_y = axs[0, 0].get_position().y1
 bottom_y = axs[-1, -1].get_position().y0
-center_y = (top_y + bottom_y) / 2
+center_y = (top_y + bottom_y) / 2.
 fig.supylabel(ylabel,
               x=left_x*0.1,
               y=center_y,
-              fontsize=biglabels)
+              fontsize=biglabel)
 
 letterposition = 1.035
 for i, ax in enumerate(fig.get_axes()):
     ax.set(xticks=xticks, yticks=yticks)
     ax.set(xticklabels=[], yticklabels=[])
+    for axis in ['top', 'bottom', 'left', 'right']:
+        ax.spines[axis].set_linewidth(0.1)
     letter = ord('a') + i
     ax.text(0,
             letterposition,
             chr(letter),
             transform=ax.transAxes,
-            fontsize=plotsize*5,
+            fontsize=letterlabel,
             weight='bold')
     ax.set(xlim=xlim, ylim=ylim)
 for f, folder in enumerate(folders):
-    axs[f, 0].set_yticklabels(yticklabels, fontsize=ticklabels)
+    axs[f, 0].set_yticklabels(yticklabels, fontsize=ticklabel)
 for c, title in enumerate(titles):
     axs[-1, c].set_xlabel(title,
-                          labelpad=plotsize*3,
-                          fontsize=plotsize*5)
+                          labelpad=plotsize*2,
+                          fontsize=letterlabel)
     axs[-1, c].set_xticklabels(xticklabels[c],
-                               fontsize=ticklabels)
+                               fontsize=ticklabel)
 if movie:
     fig.text(right_x,
              bottom_y*0.5,
              f't\n0',
-             fontsize=biglabels,
+             fontsize=biglabel,
              color='grey',
              ha='right')
 

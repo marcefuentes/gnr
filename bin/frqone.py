@@ -107,7 +107,7 @@ fig, axs = plt.subplots(nrows=len(folders),
                         ncols=len(titles),
                         figsize=(width, height))
 
-fig.subplots_adjust(bottom=0.3)
+fig.subplots_adjust(bottom=0.15)
 left_x = axs[0, 0].get_position().x0
 right_x = axs[-1, -1].get_position().x1
 center_x = (left_x + right_x) / 2.
@@ -115,7 +115,7 @@ top_y = axs[0, 0].get_position().y1
 bottom_y = axs[-1, -1].get_position().y0
 center_y = (top_y + bottom_y) / 2.
 fig.supylabel(ylabel,
-              x=left_x*0.1,
+              x=left_x*0.3,
               y=center_y,
               fontsize=biglabel)
 

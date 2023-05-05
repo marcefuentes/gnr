@@ -56,9 +56,9 @@ for queue, maxsubmit in zip(queues, maxsubmits):
     num_jobs_in_queue = int(output.decode().strip())
     print(f"{num_jobs_in_queue} jobs in queue")
     logging.info(f"{num_jobs_in_queue} jobs in queue")
-    available_slots = maxsubmit - num_jobs_in_queue
-    print(f"{available_slots} slots available")
-    logging.info(f"{available_slots} slots available")
+    available_slots = maxsubmit - num_jobs_in_queue 
+    print(f"{available_slots} slots available (estimate)")
+    logging.info(f"{available_slots} slots available (estimate)")
 
     while available_slots > 0:
 
@@ -110,8 +110,8 @@ for queue, maxsubmit in zip(queues, maxsubmits):
         print(f"{num_jobs_in_queue} jobs in queue")
         logging.info(f"{num_jobs_in_queue} jobs in queue")
         available_slots = maxsubmit - num_jobs_in_queue
-        print(f"{available_slots} slots available")
-        logging.info(f"{available_slots} slots available")
+        print(f"{available_slots} slots available (estimate)")
+        logging.info(f"{available_slots} slots available (estimate)")
 
 print("")
 

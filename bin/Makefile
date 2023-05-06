@@ -4,8 +4,8 @@ CFLAGS := -g -std=gnu99 -Wall -Wextra -Wpedantic -Wno-unused-parameter \
           -Wno-unused-function -Wshadow -Wwrite-strings -I../src -I../dtnorm/src
 
 # Optimization and profiling flags
-#opt := -DNDEBUG -O3  -finline-functions  # For full optimization
-opt := -O0 -fno-inline-functions -DDEBUG     # For debugging
+opt := -DNDEBUG -O3  -finline-functions  # For full optimization
+#opt := -O0 -fno-inline-functions -DDEBUG     # For debugging
 #prof := -pg -rdynamic                    # For profiling
 prof :=
 CFLAGS += $(opt) $(prof)

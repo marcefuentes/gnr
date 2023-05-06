@@ -7,5 +7,6 @@ gnr
 *.ics
 *.frq
 charts/
+dtnorm/src/dtnorm.d
 dtnorm/
 results/

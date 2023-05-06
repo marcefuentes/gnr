@@ -1,6 +1,7 @@
 depend
 gnr
 *.o
+*.d
 *.gl2
 *.pyc
 *.ics

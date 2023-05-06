@@ -1,6 +1,5 @@
 depend
 gnr
-*.d
 *.o
 *.gl2
 *.pyc

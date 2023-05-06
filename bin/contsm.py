@@ -181,7 +181,7 @@ for f, folder in enumerate(folders):
 if movie:
     fig.text(right_x,
              bottom_y*0.5,
-             f't\n0',
+             't\n0',
              fontsize=biglabels,
              color='grey',
              ha='right')

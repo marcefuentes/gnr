@@ -144,7 +144,7 @@ for c, title in enumerate(titles):
 if movie:
     fig.text(right_x,
              bottom_y*0.5,
-             f't\n0',
+             't\n0',
              fontsize=biglabel,
              color='grey',
              ha='right')

@@ -26,9 +26,9 @@ titles = ['Sensitivity for\nchoosing partner',
           'Severity of\nsocial dilemma']
 vmaxs = [my.a2max,
          my.a2max,
-         my.wmax/2.]
-#folders = ['p', 'r', 'pr', 'p8r']
-folders = ['p', 'pr']
+         my.wmax]
+folders = ['p', 'r', 'pr', 'p8r']
+#folders = ['p', 'pr']
 
 movie = False
 plotsize = 4
@@ -138,7 +138,7 @@ for c, title in enumerate(titles):
 if movie:
     fig.text(right_x,
              bottom_y*0.5,
-             f't\n0',
+             't\n0',
              fontsize=biglabel,
              color='grey',
              ha='right')

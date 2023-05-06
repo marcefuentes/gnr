@@ -28,7 +28,7 @@ vmaxs = [my.a2max,
          my.a2max,
          my.wmax/2.]
 #folders = ['p', 'r', 'pr', 'p8r']
-folders = ['pr']
+folders = ['p', 'pr']
 
 movie = False
 plotsize = 4

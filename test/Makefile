@@ -1,80 +1,51 @@
+# Compiler and compiler flags
+CC = gcc
+CFLAGS := -g -std=gnu99 -Wall -Wextra -Wpedantic -Wno-unused-parameter \
+          -Wno-unused-function -Wshadow -Wwrite-strings -I../src -I../dtnorm/src
+
+# Optimization and profiling flags
 #opt := -DNDEBUG -O3  -finline-functions  # For full optimization
-opt :=  -O0 -fno-inline-functions -DDEBUG     # For debugging
+opt := -O0 -fno-inline-functions -DDEBUG     # For debugging
 #prof := -pg -rdynamic                    # For profiling
 prof :=
-incl := -I/usr/local/include -I/opt/local/include -I../src -I../dtnorm/src
-tests := gnr
+CFLAGS += $(opt) $(prof)
 
-# Flags to determine the warning messages issued by the compiler
-warn := \
- -Wall \
- -Wcast-align \
- -Wcast-qual \
- -Wmissing-declarations \
- -Wmissing-prototypes \
- -Wnested-externs \
- -Wpointer-arith \
- -Wstrict-prototypes \
- -Wno-unused-parameter \
- -Wno-unused-function \
- -Wshadow \
- -Wundef \
- -Wwrite-strings
-
-CFLAGS := -g -std=gnu99 $(warn) $(incl) $(opt) $(prof) $(osargs)
-
-lib := -L/usr/local/lib -lgsl -lgslcblas -lpthread -lm
+# Libraries
+LIBS := -L/usr/local/lib -lgsl -lgslcblas -lpthread -lm
 
 # Name of the final executable
 TARGET = gnr
 
-# Create the list of directories
-SOURCEDIRS = ../src ../dtnorm/src
+# Directories and sources
+VPATH = ../src ../dtnorm/src
+SOURCES = $(wildcard $(VPATH:%=%/*.c))
+OBJS = $(SOURCES:%.c=%.o)
+DEPS = $(OBJS:%.o=%.d)
 
 # Generate the GCC includes parameters by adding -I before each source folder
-INCLUDES = $(foreach dir, $(SOURCEDIRS), $(addprefix -I, $(dir)))
-VPATH = $(SOURCEDIRS)
+INCLUDES = $(foreach dir, $(VPATH), $(addprefix -I, $(dir)))
 
-# Create a list of *.c sources in DIRS
-SOURCES = $(foreach dir,$(SOURCEDIRS),$(wildcard $(dir)/*.c))
+# Generate rules to build each object file
+%.o: %.c sim.h
+	@echo Building $@
+	$(CC) $(CFLAGS) $(INCLUDES) -c -o $@ $< -MMD
 
-# Define objects for all sources
-OBJS := $(SOURCES:.c=.o)
-
-# Define dependencies files for all objects
-DEPS = $(OBJS:.o=.d)
-
-# Name of compiler
-CC = gcc
-
-SEP=/
-PSEP = $(strip $(SEP))
-
-# Define the function that will generate each rule
-define generateRules
-$(1)/%.o: %.c
-	@echo Building $$@
-	$(CC) $(CFLAGS) -c $$(INCLUDES) -o $$(subst /,$$(PSEP),$$@) $$(subst /,$$(PSEP),$$<) -MMD
-endef
-
-.PHONY: all clean directories
-
-all: directories $(TARGET)
-
+# Build the final executable
 $(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) $(lib) $(OBJS) -o $(TARGET)
+	$(CC) $(CFLAGS) $(LIBS) $(OBJS) -o $(TARGET)
 
 # Include dependencies
 -include $(DEPS)
 
-# Generate rules
-$(call generateRules, $(OBJ))
+.PHONY: all clean test
 
-test : $(tests)
+all: $(TARGET)
+
+test: $(TARGET)
 	-./$(TARGET) t
 	@echo Completed all tests.
 
-# Remove all objects, dependencies and executable files generated during the build
 clean:
-	rm -f ../src/*.o ../dtnorm/src/*.o $(TARGET)
+	rm -f $(OBJS) $(DEPS) $(TARGET)
 	@echo Cleaned.
+

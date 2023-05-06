@@ -1,5 +1,5 @@
-#opt := -DNDEBUG -O3  -finline-functions  # For full optimization
-opt :=  -O0 -fno-inline-functions -DDEBUG     # For debugging
+opt := -DNDEBUG -O3  -finline-functions  # For full optimization
+#opt :=  -O0 -fno-inline-functions -DDEBUG     # For debugging
 #prof := -pg -rdynamic                    # For profiling
 prof :=
 incl := -I/usr/local/include -I/opt/local/include -I../src -I../dtnorm/src
@@ -69,10 +69,6 @@ $(TARGET): $(OBJS)
 
 # Generate rules
 $(call generateRules, $(OBJ))
-
-test : $(tests)
-	-./$(TARGET) t
-	@echo Completed all tests.
 
 # Remove all objects, dependencies and executable files generated during the build
 clean:

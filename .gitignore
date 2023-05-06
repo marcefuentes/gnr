@@ -1,12 +1,11 @@
 depend
 gnr
+*.d
 *.o
 *.gl2
 *.pyc
 *.ics
 *.frq
 charts/
-final/
-final_link
+dtnorm/
 results/
-test2/

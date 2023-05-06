@@ -76,8 +76,8 @@ for queue, maxsubmit in zip(queues, maxsubmits):
                     path = os.getcwd()
                     path_folders = path.split('/')
                     new_path = '/'.join(path_folders[11:])
-                    print(f"Active folder is now {new_path}")
-                    logging.info(f"Active folder is now {new_path}")
+                    print(f"Moving to folder {new_path}")
+                    logging.info(f"Moving to folder {new_path}")
                     with open(job_file, 'w') as f:
                         f.write(str(job_min))
                     with open(folder_file, 'w') as f:

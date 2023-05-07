@@ -7,7 +7,8 @@ import logging
 
 folders = ['none', 'p', 'p8', 'p8r', 'pr', 'r']
 queues = ['epyc', 'clk']
-maxsubmits = [200, 250]
+qos_names = ['epyc_medium', 'clk_medium']
+
 job_min = 100
 job_max = 541
 job_file = "last_submitted_job.tmp"
@@ -17,6 +18,15 @@ log_file = "/home/ulc/ba/mfu/submit.log"
 logging.basicConfig(filename=log_file,
                     level=logging.DEBUG,
                     format='%(asctime)s %(levelname)s: %(message)s')
+
+def get_qos_max_submit(qos_name):
+    command = ["sacctmgr", "-p", "show", "qos", "format=name,maxsubmit"]
+    output = subprocess.check_output(command).decode().strip()
+    for line in output.split("\n"):
+        if line.startswith(qos_name):
+            fields = line.strip().split("|")
+            return int(fields[1])
+    print(f"QOS '{qos_name}' not found")
 
 if os.path.isfile(folder_file):
     with open(folder_file, "r") as f:
@@ -48,7 +58,7 @@ else:
     with open(folder_file, "w") as f:
         f.write(path)
 
-for queue, maxsubmit in zip(queues, maxsubmits):
+for queue, qos_name in zip(queues, qos_names):
 
     print(f"\n\033[96m{queue}:\033[0m")
     logging.info(f"{queue}:")
@@ -56,9 +66,10 @@ for queue, maxsubmit in zip(queues, maxsubmits):
     num_jobs_in_queue = int(output.decode().strip())
     print(f"{num_jobs_in_queue} jobs in queue")
     logging.info(f"{num_jobs_in_queue} jobs in queue")
+    maxsubmit = get_qos_max_submit(qos_name)
     available_slots = maxsubmit - num_jobs_in_queue 
-    print(f"{available_slots} slots available (estimate)")
-    logging.info(f"{available_slots} slots available (estimate)")
+    print(f"{available_slots} slots available")
+    logging.info(f"{available_slots} slots available")
 
     while available_slots > 0:
 
@@ -110,8 +121,8 @@ for queue, maxsubmit in zip(queues, maxsubmits):
         print(f"{num_jobs_in_queue} jobs in queue")
         logging.info(f"{num_jobs_in_queue} jobs in queue")
         available_slots = maxsubmit - num_jobs_in_queue
-        print(f"{available_slots} slots available (estimate)")
-        logging.info(f"{available_slots} slots available (estimate)")
+        print(f"{available_slots} slots available")
+        logging.info(f"{available_slots} slots available")
 
 print("")
 

@@ -18,7 +18,28 @@ logging.basicConfig(filename=log_file,
                     level=logging.DEBUG,
                     format='%(asctime)s %(levelname)s: %(message)s')
 
-def get_qos_max_submit(qos_name):
+def get_qos_max_submit(queue):
+    command = ["sacctmgr", "-p", "show", "qos", "format=name,maxwall"]
+    output = subprocess.check_output(command).decode().strip()
+    for line in output.split("\n"):
+        if line.startswith(qos_name + "_short"):
+            fields = line.strip().split("|")
+            maxwall = int(fields[1])
+            break
+    if maxwall is None:
+        print(f"QOS '{qos_name}' not found")
+        logging.error(f"QOS '{qos_name}' not found")
+        exit()
+    with open(slurm_file, "r") as f:
+        for line in f:
+            if line.startswith("#SBATCH --time="):
+                time_str = line.strip().split("=")[1]
+                hours = int(time_str.split(":")[0])
+                if hours < maxwall:
+                    qos_name = queue + "_short"
+                else:
+                    qos_name = queue + "_medium"
+                break
     command = ["sacctmgr", "-p", "show", "qos", "format=name,maxsubmit"]
     output = subprocess.check_output(command).decode().strip()
     for line in output.split("\n"):
@@ -65,17 +86,7 @@ for queue in queues:
     num_jobs_in_queue = int(output.decode().strip())
     print(f"{num_jobs_in_queue} jobs in queue")
     logging.info(f"{num_jobs_in_queue} jobs in queue")
-    with open(slurm_file, "r") as f:
-        for line in f:
-            if line.startswith("#SBATCH --time="):
-                time_str = line.strip().split("=")[1]
-                hours = int(time_str.split(":")[0])
-                if hours < 6:
-                    qos_name = queue + "_short"
-                else:
-                    qos_name = queue + "_medium"
-                break
-    maxsubmit = get_qos_max_submit(qos_name)
+    maxsubmit = get_qos_max_submit(queue)
     available_slots = maxsubmit - num_jobs_in_queue 
     print(f"{available_slots} slots available")
     logging.info(f"{available_slots} slots available")

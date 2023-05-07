@@ -7,7 +7,6 @@ import logging
 
 folders = ['none', 'p', 'p8', 'p8r', 'pr', 'r']
 queues = ['epyc', 'clk']
-qos_names = ['epyc_medium', 'clk_medium']
 
 job_min = 100
 job_max = 541
@@ -58,7 +57,7 @@ else:
     with open(folder_file, "w") as f:
         f.write(path)
 
-for queue, qos_name in zip(queues, qos_names):
+for queue in queues:
 
     print(f"\n\033[96m{queue}:\033[0m")
     logging.info(f"{queue}:")
@@ -66,6 +65,16 @@ for queue, qos_name in zip(queues, qos_names):
     num_jobs_in_queue = int(output.decode().strip())
     print(f"{num_jobs_in_queue} jobs in queue")
     logging.info(f"{num_jobs_in_queue} jobs in queue")
+    with open(slurm_file, "r") as f:
+        for line in f:
+            if line.startswith("#SBATCH --time="):
+                time_str = line.strip().split("=")[1]
+                hours = int(time_str.split(":")[0])
+                if hours < 6:
+                    qos_name = queue + "_short"
+                else:
+                    qos_name = queue + "_medium"
+                break
     maxsubmit = get_qos_max_submit(qos_name)
     available_slots = maxsubmit - num_jobs_in_queue 
     print(f"{available_slots} slots available")

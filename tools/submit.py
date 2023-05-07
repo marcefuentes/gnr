@@ -21,10 +21,11 @@ logging.basicConfig(filename=log_file,
 def get_qos_max_submit(queue):
     command = ["sacctmgr", "-p", "show", "qos", "format=name,maxwall"]
     output = subprocess.check_output(command).decode().strip()
+    qos_name = queue + "_short"
     for line in output.split("\n"):
-        if line.startswith(qos_name + "_short"):
+        if line.startswith(qos_name):
             fields = line.strip().split("|")
-            maxwall = int(fields[1])
+            maxwall = int(fields[1].split(":")[0])
             break
     if maxwall is None:
         print(f"QOS '{qos_name}' not found")
@@ -35,9 +36,7 @@ def get_qos_max_submit(queue):
             if line.startswith("#SBATCH --time="):
                 time_str = line.strip().split("=")[1]
                 hours = int(time_str.split(":")[0])
-                if hours < maxwall:
-                    qos_name = queue + "_short"
-                else:
+                if hours >= maxwall:
                     qos_name = queue + "_medium"
                 break
     command = ["sacctmgr", "-p", "show", "qos", "format=name,maxsubmit"]

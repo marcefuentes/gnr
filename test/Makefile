@@ -40,6 +40,9 @@ SOURCES = $(foreach dir,$(SOURCEDIRS),$(wildcard $(dir)/*.c))
 
 # Define objects for all sources
 OBJS := $(SOURCES:.c=.o)
+sim.o: sim.c sim.h
+	@echo Building $@
+	$(CC) $(CFLAGS) -c $(INCLUDES) -o $(subst /,$(PSEP),$@) $(subst /,$(PSEP),$<) -MMD
 
 # Define dependencies files for all objects
 DEPS = $(OBJS:.o=.d)

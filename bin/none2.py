@@ -17,8 +17,8 @@ filename = thisscript.split('.')[0]
 
 # Options
 
-titles = ['Effort to get $\it{B}$\nin theory',
-          'Effort to get $\it{B}$\nin simulations',
+titles = ['Production of $\it{B}$\nin theory',
+          'Production of $\it{B}$\nin simulations',
           'Fitness\nin theory',
           'Fitness\nin simulations',
           'Fitness deficit\nin simulations']
@@ -53,9 +53,9 @@ width = plotsize*len(titles)
 height = plotsize*len(givens)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
-biglabel = plotsize*6
-letterlabel = plotsize*5
-ticklabel = plotsize*4
+biglabel = plotsize*7
+letterlabel = plotsize*6
+ticklabel = plotsize*5
 xticks = [0, nc/2 - 0.5, nc - 1]
 yticks = [0, nr/2 - 0.5, nr - 1]
 xmin = my.logesmin

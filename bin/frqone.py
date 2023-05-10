@@ -22,7 +22,7 @@ filename = thisscript.split('.')[0]
 traits = ['a2Seen',
           'ChooseGrain',
           'w']
-titles = ['Effort to get $\it{B}$',
+titles = ['Production of $\it{B}$',
           'Sensitivity for\nchoosing partner',
           'Fitness']
 vmaxs = [my.a2max, my.a2max, my.wmax]

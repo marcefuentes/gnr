@@ -7,6 +7,7 @@ import logging
 hours = 15
 folders = ['none', 'p', 'p8', 'p8r', 'pr', 'r']
 queues = ['epyc', 'clk']
+executable = "/home/ulc/ba/mfu/code/gnr/bin/gnr"
 
 job_min = 100
 job_max = 541
@@ -121,7 +122,7 @@ for queue in queues:
         subprocess.run(["sbatch",
                         "--job-name", job_name,
                         "--output", f"{job_name}.%j.out",
-                        "-C", queue,
+                        "--constraint", queue,
                         "--nodes=1",
                         "--tasks=1",
                         "--time", job_time,
@@ -129,7 +130,7 @@ for queue in queues:
                         "--mail-type=begin,end",
                         "--mail-user=marcelinofuentes@gmail.com",
                         "--array", job_array,
-                        "--wrap", f"srun $HOME/code/gnr/bin/gnr ${{SLURM_ARRAY_TASK_ID}}"])
+                        "--wrap", f"srun {executable} ${{SLURM_ARRAY_TASK_ID}}"])
         with open(job_file, "w") as f:
             f.write(str(last_job))
         print(f"with jobs {first_job} to {last_job}")

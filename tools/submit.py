@@ -72,8 +72,8 @@ else:
         f.write(path)
 
 for queue in queues:
-
-    print(f"\n\033[96m{queue}:\033[0m")
+    print(f"\n\033[1m\033[96m{queue}:\033[0m")
+    #print(f"\n\033[96m{queue}:\033[0m")
     logging.info(f"{queue}:")
     output = subprocess.check_output(f"squeue -t RUNNING,PENDING -r -o '%j' | grep -E '^{queue}' | wc -l", shell=True)
     num_jobs_in_queue = int(output.decode().strip())

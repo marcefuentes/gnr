@@ -119,22 +119,25 @@ for queue in queues:
         last_job = last_job + num_jobs_to_submit
         job_array = f"{first_job}-{last_job}"
         job_time = f"{hours}:59:00"
-        subprocess.run(["sbatch",
-                        "--job-name", job_name,
-                        "--output", f"{job_name}.%j.out",
-                        "--constraint", queue,
-                        "--nodes=1",
-                        "--tasks=1",
-                        "--time", job_time,
-                        "--mem=4MB",
-                        "--mail-type=begin,end",
-                        "--mail-user=marcelinofuentes@gmail.com",
-                        "--array", job_array,
-                        "--wrap", f"srun {executable} ${{SLURM_ARRAY_TASK_ID}}"])
+        cmd = ["sbatch",
+               "--job-name", job_name,
+               "--output", f"{job_name}.%j.out",
+               "--constraint", queue,
+               "--nodes=1",
+               "--tasks=1",
+               "--time", job_time,
+               "--mem=4MB",
+               "--mail-type=begin,end",
+               "--mail-user=marcelinofuentes@gmail.com",
+               "--array", job_array,
+               "--wrap", f"srun {executable} ${{SLURM_ARRAY_TASK_ID}}"]
+        print(f"Submitting jobs {first_job} to {last_job}")
+        logging.info(f"Submitting jobs {first_job} to {last_job}")
+        result = subprocess.run(cmd, stdout=subprocess.PIPE)
+        print(result.stdout.decode().strip())
+        logging.info(result.stdout.decode().strip())
         with open(job_file, "w") as f:
             f.write(str(last_job))
-        print(f"with jobs {first_job} to {last_job}")
-        logging.info(f"with jobs {first_job} to {last_job}")
 
         output = subprocess.check_output(f"squeue -t RUNNING,PENDING -r -o '%j' | grep -E '^{queue}' | wc -l", shell=True)
         num_jobs_in_queue = int(output.decode().strip())

@@ -46,28 +46,25 @@ if os.path.isfile(folder_file):
         path = f.read().strip()
     path_folders = path.split('/')
     new_path = '/'.join(path_folders[11:])
-    print(f"\nActive folder is {new_path}")
-    logging.info(f"Active folder is {new_path}")
     os.chdir(path)
     if os.path.isfile(job_file):
         with open(job_file, "r") as f:
             last_job = int(f.read().strip())
-            print(f"Last submitted job is {last_job}")
-            logging.info(f"Last submitted job is {last_job}")
+            print(f"\nLast submitted job is {last_job} in {new_path}")
+            logging.info(f"Last submitted job is {last_job} in {new_path}")
     else:
         print(f"{job_file} does not exist")
         logging.error(f"{job_file} does not exist")
         exit()
 else:
-    user_input = input("There is no active folder. Continue? (y/n): ")
+    user_input = input("Submit jobs in current folder? (y/n): ")
     if user_input.lower() == 'n':
         exit()
     last_job = job_min
     path = os.getcwd()
     path_folders = path.split('/')
     new_path = '/'.join(path_folders[8:])
-    print(f"\nActive folder is {new_path}")
-    logging.info(f"Active folder is {new_path}")
+    logging.info(f"Submitting jobs in {new_path}")
     with open(folder_file, "w") as f:
         f.write(path)
 
@@ -106,6 +103,7 @@ for queue in queues:
             if not changed_dir:
                 print("All jobs completed")
                 logging.info("All jobs completed")
+                print(f"{available_slots} slots available")
                 os.remove(folder_file)
                 exit()
 
@@ -134,15 +132,7 @@ for queue in queues:
         logging.info(result.stdout.decode().strip())
         with open(job_file, "w") as f:
             f.write(str(last_job))
-
-        output = subprocess.check_output(f"squeue -t RUNNING -r -o '%j' | grep -E '^{queue}' | wc -l", shell=True)
-        num_jobs_running = int(output.decode().strip())
-        print(f"{num_jobs_running} jobs running")
-        output = subprocess.check_output(f"squeue -t PENDING -r -o '%j' | grep -E '^{queue}' | wc -l", shell=True)
-        num_jobs_pending = int(output.decode().strip())
-        print(f"{num_jobs_pending} jobs pending")
-        available_slots = maxsubmit - num_jobs_running - num_jobs_pending
-        print(f"{available_slots} slots available")
+        available_slots -= num_jobs_to_submit 
 
 print("")
 

@@ -73,16 +73,12 @@ else:
 
 for queue in queues:
     print(f"\n\033[1m\033[96m{queue}:\033[0m")
-    #print(f"\n\033[96m{queue}:\033[0m")
-    logging.info(f"{queue}:")
     output = subprocess.check_output(f"squeue -t RUNNING,PENDING -r -o '%j' | grep -E '^{queue}' | wc -l", shell=True)
     num_jobs_in_queue = int(output.decode().strip())
     print(f"{num_jobs_in_queue} jobs in queue")
-    logging.info(f"{num_jobs_in_queue} jobs in queue")
     maxsubmit = get_qos_max_submit(queue)
     available_slots = maxsubmit - num_jobs_in_queue 
     print(f"{available_slots} slots available")
-    logging.info(f"{available_slots} slots available")
 
     while available_slots > 0:
 
@@ -139,13 +135,14 @@ for queue in queues:
         with open(job_file, "w") as f:
             f.write(str(last_job))
 
-        output = subprocess.check_output(f"squeue -t RUNNING,PENDING -r -o '%j' | grep -E '^{queue}' | wc -l", shell=True)
-        num_jobs_in_queue = int(output.decode().strip())
-        print(f"{num_jobs_in_queue} jobs in queue")
-        logging.info(f"{num_jobs_in_queue} jobs in queue")
-        available_slots = maxsubmit - num_jobs_in_queue
+        output = subprocess.check_output(f"squeue -t RUNNING -r -o '%j' | grep -E '^{queue}' | wc -l", shell=True)
+        num_jobs_running = int(output.decode().strip())
+        print(f"{num_jobs_running} jobs running")
+        output = subprocess.check_output(f"squeue -t PENDING -r -o '%j' | grep -E '^{queue}' | wc -l", shell=True)
+        num_jobs_pending = int(output.decode().strip())
+        print(f"{num_jobs_pending} jobs pending")
+        available_slots = maxsubmit - num_jobs_running - num_jobs_pending
         print(f"{available_slots} slots available")
-        logging.info(f"{available_slots} slots available")
 
 print("")
 

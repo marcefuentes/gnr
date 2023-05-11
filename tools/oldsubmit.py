@@ -4,7 +4,7 @@ import os
 import subprocess
 import logging
 
-hours = 15
+
 folders = ['none', 'p', 'p8', 'p8r', 'pr', 'r']
 queues = ['epyc', 'clk']
 
@@ -12,6 +12,7 @@ job_min = 100
 job_max = 541
 job_file = "last_submitted_job.tmp"
 folder_file = "/home/ulc/ba/mfu/code/gnr/results/active_folder.tmp"
+slurm_file = "/home/ulc/ba/mfu/code/gnr/results/job.sh"
 log_file = "/home/ulc/ba/mfu/submit.log"
 logging.basicConfig(filename=log_file,
                     level=logging.DEBUG,
@@ -30,8 +31,14 @@ def get_qos_max_submit(queue):
         print(f"QOS '{qos_name}' not found")
         logging.error(f"QOS '{qos_name}' not found")
         exit()
-    if hours >= maxwall:
-        qos_name = queue + "_medium"
+    with open(slurm_file, "r") as f:
+        for line in f:
+            if line.startswith("#SBATCH --time="):
+                time_str = line.strip().split("=")[1]
+                hours = int(time_str.split(":")[0])
+                if hours >= maxwall:
+                    qos_name = queue + "_medium"
+                break
     command = ["sacctmgr", "-p", "show", "qos", "format=name,maxsubmit"]
     output = subprocess.check_output(command).decode().strip()
     for line in output.split("\n"):
@@ -116,20 +123,13 @@ for queue in queues:
         job_name = f"{queue}-{os.getcwd().split('/')[-1]}"
         first_job = last_job + 1
         last_job = last_job + num_jobs_to_submit
-        job_array = f"{first_job}-{last_job}"
-        job_time = f"{hours}:59:00"
+        array = f"{first_job}-{last_job}"
         subprocess.run(["sbatch",
                         "--job-name", job_name,
                         "--output", f"{job_name}.%j.out",
                         "-C", queue,
-                        "--nodes=1",
-                        "--tasks=1",
-                        "--time", job_time,
-                        "--mem=4MB",
-                        "--mail-type=begin,end",
-                        "--mail-user=marcelinofuentes@gmail.com",
-                        "--array", job_array,
-                        "--wrap", f"srun $HOME/code/gnr/bin/gnr ${{SLURM_ARRAY_TASK_ID}}"])
+                        "--array", array,
+                        slurm_file])
         with open(job_file, "w") as f:
             f.write(str(last_job))
         print(f"with jobs {first_job} to {last_job}")

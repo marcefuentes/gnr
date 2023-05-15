@@ -4,7 +4,7 @@ import os
 import subprocess
 import logging
 
-hours = 15
+hours = 18
 folders = ['none', 'p', 'p8', 'p8r', 'pr', 'r']
 queues = ['epyc', 'clk']
 executable = "/home/ulc/ba/mfu/code/gnr/bin/gnr"

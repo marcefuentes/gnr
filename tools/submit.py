@@ -17,6 +17,11 @@ log_file = "/home/ulc/ba/mfu/submit.log"
 logging.basicConfig(filename=log_file,
                     level=logging.DEBUG,
                     format='%(asctime)s %(levelname)s: %(message)s')
+blue = "\033[94m"
+cyan = "\033[96m"
+red = "\033[91m"
+bold = "\033[1m"
+reset_format = "\033[0m"
 
 def get_qos_max_submit(queue):
     command = ["sacctmgr", "-p", "show", "qos", "format=name,maxwall"]
@@ -28,7 +33,7 @@ def get_qos_max_submit(queue):
             maxwall = int(fields[1].split(":")[0])
             break
     if maxwall is None:
-        print(f"QOS '{qos_name}' not found")
+        print(f"{red}QOS {qos_name} not found{reset_format}")
         logging.error(f"QOS '{qos_name}' not found")
         exit()
     if hours >= maxwall:
@@ -39,7 +44,7 @@ def get_qos_max_submit(queue):
         if line.startswith(qos_name):
             fields = line.strip().split("|")
             return int(fields[1])
-    print(f"QOS '{qos_name}' not found")
+    print(f"{red}QOS {qos_name} not found{reset_format}")
 
 if os.path.isfile(folder_file):
     with open(folder_file, "r") as f:
@@ -50,10 +55,10 @@ if os.path.isfile(folder_file):
     if os.path.isfile(job_file):
         with open(job_file, "r") as f:
             last_job = int(f.read().strip())
-            print(f"\nLast submitted job is {last_job} in {new_path}")
+            print(f"\n{blue}Last submitted job is {last_job} in {new_path}{reset_format}")
             logging.info(f"Last submitted job is {last_job} in {new_path}")
     else:
-        print(f"{job_file} does not exist")
+        print(f"\n{red}{job_file} does not exist{reset_format}")
         logging.error(f"{job_file} does not exist")
         exit()
 else:
@@ -69,13 +74,13 @@ else:
         f.write(path)
 
 for queue in queues:
-    print(f"\n\033[1m\033[96m{queue}:\033[0m")
+    print(f"{bold}{cyan}\n{queue}:\n{reset_format}")
     output = subprocess.check_output(f"squeue -t RUNNING,PENDING -r -o '%j' | grep -E '^{queue}' | wc -l", shell=True)
     num_jobs_in_queue = int(output.decode().strip())
-    print(f"{num_jobs_in_queue} jobs in queue")
+    print(f"{blue}{num_jobs_in_queue} jobs in queue{reset_format}")
     maxsubmit = get_qos_max_submit(queue)
     available_slots = maxsubmit - num_jobs_in_queue 
-    print(f"{available_slots} slots available")
+    print(f"{blue}{available_slots} slots available{reset_format}")
 
     while available_slots > 0:
 
@@ -93,7 +98,7 @@ for queue in queues:
                     path = os.getcwd()
                     path_folders = path.split('/')
                     new_path = '/'.join(path_folders[11:])
-                    print(f"Moving to folder {new_path}")
+                    print(f"{blue}Moving to folder {new_path}{reset_format}")
                     logging.info(f"Moving to folder {new_path}")
                     with open(job_file, 'w') as f:
                         f.write(str(job_min))
@@ -101,9 +106,9 @@ for queue in queues:
                         f.write(path)
                     break
             if not changed_dir:
-                print("All jobs completed")
+                print("{blue}All jobs completed{reset_format}")
                 logging.info("All jobs completed")
-                print(f"{available_slots} slots available")
+                print(f"{blue}{available_slots} slots available{reset_format}")
                 os.remove(folder_file)
                 exit()
 
@@ -125,7 +130,7 @@ for queue in queues:
                "--mail-user=marcelinofuentes@gmail.com",
                "--array", job_array,
                "--wrap", f"srun {executable} ${{SLURM_ARRAY_TASK_ID}}"]
-        print(f"Submitting jobs {first_job} to {last_job}")
+        print(f"{blue}Submitting jobs {first_job} to {last_job}{reset_format}")
         logging.info(f"Submitting jobs {first_job} to {last_job}")
         result = subprocess.run(cmd, stdout=subprocess.PIPE)
         print(result.stdout.decode().strip())

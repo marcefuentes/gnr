@@ -6,7 +6,7 @@ import logging
 
 hours = 18
 folders = ['none', 'p', 'p8', 'p8r', 'pr', 'r']
-queues = ['epyc', 'clk']
+queues = ['clk', 'epyc']
 executable = "/home/ulc/ba/mfu/code/gnr/bin/gnr"
 
 job_min = 100
@@ -106,7 +106,7 @@ for queue in queues:
                         f.write(path)
                     break
             if not changed_dir:
-                print(f"{blue}All jobs completed{reset_format}")
+                print(f"{bold}{blue}All jobs completed{reset_format}")
                 logging.info("All jobs completed")
                 print(f"{blue}{available_slots} slots available{reset_format}")
                 os.remove(folder_file)

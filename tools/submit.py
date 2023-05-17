@@ -74,7 +74,7 @@ else:
         f.write(path)
 
 for queue in queues:
-    print(f"{bold}{cyan}\n{queue}:\n{reset_format}")
+    print(f"{bold}{cyan}\n{queue}:{reset_format}")
     output = subprocess.check_output(f"squeue -t RUNNING,PENDING -r -o '%j' | grep -E '^{queue}' | wc -l", shell=True)
     num_jobs_in_queue = int(output.decode().strip())
     print(f"{blue}{num_jobs_in_queue} jobs in queue{reset_format}")
@@ -106,7 +106,7 @@ for queue in queues:
                         f.write(path)
                     break
             if not changed_dir:
-                print("{blue}All jobs completed{reset_format}")
+                print(f"{blue}All jobs completed{reset_format}")
                 logging.info("All jobs completed")
                 print(f"{blue}{available_slots} slots available{reset_format}")
                 os.remove(folder_file)

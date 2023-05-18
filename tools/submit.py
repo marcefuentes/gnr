@@ -20,6 +20,7 @@ logging.basicConfig(filename=log_file,
 blue = "\033[94m"
 cyan = "\033[96m"
 red = "\033[91m"
+yellow = "\033[33m"
 bold = "\033[1m"
 reset_format = "\033[0m"
 
@@ -106,7 +107,7 @@ for queue in queues:
                         f.write(path)
                     break
             if not changed_dir:
-                print(f"{bold}{blue}All jobs completed{reset_format}")
+                print(f"{bold}{yellow}All jobs completed{reset_format}")
                 logging.info("All jobs completed")
                 print(f"{blue}{available_slots} slots available{reset_format}")
                 os.remove(folder_file)

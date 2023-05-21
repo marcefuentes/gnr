@@ -109,7 +109,7 @@ for queue in queues:
             if not changed_dir:
                 print(f"{bold}{yellow}All jobs completed{reset_format}")
                 logging.info("All jobs completed")
-                print(f"{blue}{available_slots} slots available{reset_format}")
+                print(f"{blue}{available_slots} slots available{reset_format}\n")
                 os.remove(folder_file)
                 exit()
 

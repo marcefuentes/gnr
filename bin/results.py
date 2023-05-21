@@ -23,7 +23,7 @@ traits = ['ChooseGrainmean',
           'wmean']
 titles = ['Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner',
-          'Severity of\nsocial dilemma']
+          'Fitness deficit']
 vmaxs = [my.a2max,
          my.a2max,
          my.wmax]

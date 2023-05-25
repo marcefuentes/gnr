@@ -24,11 +24,11 @@ titles = ['Effort to get $\it{B}$',
                'Sensitivity for\nchoosing partner',
                'Sensitivity for\nmimicking partner',
                'Fitness']
-vmaxs = [my.a2max,
-              my.a2max,
-              my.a2max,
-              my.fitness(np.array([my.a2max]),
-                               np.array([my.a2max]),
+vmaxs = [my.aBmax,
+              my.aBmax,
+              my.aBmax,
+              my.fitness(np.array([my.aBmax]),
+                               np.array([my.aBmax]),
                                np.array([0.0]),
                                np.array([0.9]),
                                np.array([5.0]))]
@@ -168,9 +168,9 @@ for i, title in enumerate(titlegs):
         for j, rho in enumerate(rhos):
 
             xmin = 0.0
-            xmax = my.a2eq(given, alpha, rho)
-            ymin = my.a2eq(0.0, alpha, rho)
-            ymax = my.a2max
+            xmax = my.aBeq(given, alpha, rho)
+            ymin = my.aBeq(0.0, alpha, rho)
+            ymax = my.aBmax
             x = np.linspace(xmin, xmax, num=ext)
             y = np.linspace(ymax, ymin, num=ext)
             X, Y = np.meshgrid(x, y)

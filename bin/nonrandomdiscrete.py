@@ -64,7 +64,7 @@ alphas = np.linspace(my.alphamax, my.alphamin, num=nr)
 logess = np.linspace(my.logesmin, my.logesmax, num=nc)
 rhos = 1.0 - 1.0/pow(2.0, logess)
 RR, AA = np.meshgrid(rhos, alphas)
-a2lows = np.linspace(0.1, 0.8, num=nframes)
+aBlows = np.linspace(0.1, 0.8, num=nframes)
 
 # Figure properties
 
@@ -140,8 +140,8 @@ if movie:
 
 artists = np.empty_like(axs) 
 dummy_Z = np.empty_like(AA)
-frames = a2lows
-frame0 = a2lows[0]
+frames = aBlows
+frame0 = aBlows[0]
 
 for g, given in enumerate(givens):
     for c, title in enumerate(titles):

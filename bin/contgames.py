@@ -24,7 +24,7 @@ titles = ['Games',
           'Severity of\nsocial dilemma', 
           'Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
-vmaxs = [my.wmax, my.a2max, my.a2max]
+vmaxs = [my.wmax, my.aBmax, my.aBmax]
 folders = ['given100', 'given095', 'given050']
 subfolders = ['p', 'r']
 
@@ -90,7 +90,7 @@ nr = len(alphas)
 nc = len(logess)
 rhos = 1.0 - 1.0/pow(2.0, logess)
 
-x = np.linspace(0.0, my.a2max, num=ext)
+x = np.linspace(0.0, my.aBmax, num=ext)
 y = np.flip(x)
 X, Y = np.meshgrid(x, y)
 

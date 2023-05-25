@@ -22,7 +22,7 @@ titles = ['Effort to get $\it{B}$',
           'Fitness',
           'Fitness deficit']
 subfolder = 'none'
-vmaxs = [my.a2max,
+vmaxs = [my.aBmax,
          my.wmax,
          my.wmax]
 
@@ -33,10 +33,10 @@ plotsize = 4
 # Add data to figure
 
 def update(given, artists):
-    a2 = my.a2eq(given, AA, RR)
-    w = my.fitness(a2, a2, given, AA, RR)
+    aB = my.aBeq(given, AA, RR)
+    w = my.fitness(aB, aB, given, AA, RR)
     dif = wsocial - w
-    artists[0].set_array(a2)
+    artists[0].set_array(aB)
     artists[1].set_array(w)
     artists[2].set_array(dif)
     if movie:
@@ -51,8 +51,8 @@ alphas = np.linspace(my.alphamax, my.alphamin, num=nr)
 logess = np.linspace(my.logesmin, my.logesmax, num=nc)
 rhos = 1. - 1./pow(2., logess)
 RR, AA = np.meshgrid(rhos, alphas)
-a2social = my.a2eq(0., AA, RR)
-wsocial = my.fitness(a2social, a2social, 0., AA, RR)
+aBsocial = my.aBeq(0., AA, RR)
+wsocial = my.fitness(aBsocial, aBsocial, 0., AA, RR)
 
 # Figure properties
 

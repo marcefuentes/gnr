@@ -23,7 +23,7 @@ traits = ['ChooseGrain',
           'MimicGrain']
 titles = ['Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
-vmaxs = [my.a2max, my.a2max]
+vmaxs = [my.aBmax, my.aBmax]
 
 folders = ['given100', 'given095', 'given050']
 subfolders = ['p', 'r']

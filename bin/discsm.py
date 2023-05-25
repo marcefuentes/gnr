@@ -34,8 +34,8 @@ plotsize = 6
 def init(artists):
 
     for f, folder in enumerate(folders):
-        lows = my.getZ(ts[0], dftraits[f, 0], 'a2low')
-        highs = my.getZ(ts[0], dftraits[f, 0], 'a2high')
+        lows = my.getZ(ts[0], dftraits[f, 0], 'aBlow')
+        highs = my.getZ(ts[0], dftraits[f, 0], 'aBhigh')
         given = dftraits[f, 0].Given.iloc[0]
         T = my.fitness(highs, lows, given, AA, RR)
         R = my.fitness(highs, highs, given, AA, RR)
@@ -70,7 +70,7 @@ def update(t, artists):
             if 'Grain' in trait:
                 Z = 1.0 - Z
             for (a, l), _ in np.ndenumerate(Z):
-                bgcolor = cm.viridis(Z[a, l]/my.a2max)
+                bgcolor = cm.viridis(Z[a, l]/my.aBmax)
                 artists[f, c + 1, a, l].axes.set_facecolor(bgcolor)
     if movie:
         fig.texts[2].set_text(f't\n{t}')

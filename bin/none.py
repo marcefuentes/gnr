@@ -21,7 +21,7 @@ titles = ['Effort to get $\it{B}$',
           'Fitness',
           'Fitness deficit']
 subfolder = 'none'
-vmaxs = [my.a2max,
+vmaxs = [my.aBmax,
          my.wmax,
          my.wmax]
 theory = False
@@ -125,20 +125,20 @@ for c, title in enumerate(titles):
 # Add data to figure
 
 if theory:
-    a2 = my.a2eq(0., AA, RR)
-    wsocial = my.fitness(a2, a2, 0., AA, RR)
+    aB = my.aBeq(0., AA, RR)
+    wsocial = my.fitness(aB, aB, 0., AA, RR)
 else:
     wsocial = my.getZ(t, dfs[-1], 'wmean')
 
 for g, given in enumerate(givens):
     if theory:
-        a2 = my.a2eq(given, AA, RR)
-        w = my.fitness(a2, a2, given, AA, RR)
+        aB = my.aBeq(given, AA, RR)
+        w = my.fitness(aB, aB, given, AA, RR)
     else:
-        a2 = my.getZ(t, dfs[g], 'a2Seenmean')
+        aB = my.getZ(t, dfs[g], 'a2Seenmean')
         w = my.getZ(t, dfs[g], 'wmean')
     dif = wsocial - w
-    axs[g, 0].imshow(a2, vmin=0, vmax=vmaxs[0])
+    axs[g, 0].imshow(aB, vmin=0, vmax=vmaxs[0])
     axs[g, 1].imshow(w, vmin=0, vmax=vmaxs[1])
     axs[g, 2].imshow(dif, vmin=0, vmax=vmaxs[2])
         

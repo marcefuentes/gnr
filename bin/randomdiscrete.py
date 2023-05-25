@@ -26,15 +26,15 @@ RR, AA = np.meshgrid(rhos, alphas)
 random.seed()
 one = random.random()
 two = random.random()
-a2low = min(one, two)
-a2high = max(one, two)
-f = open('a2.glo', 'w')
-f.write(f'a2low,{a2low}\n')
-f.write(f'a2high,{a2high}\n')
+aBlow = min(one, two)
+aBhigh = max(one, two)
+f = open('aB.glo', 'w')
+f.write(f'aBlow,{aBlow}\n')
+f.write(f'aBhigh,{aBhigh}\n')
 f.close()
 
-low = np.full([*RR.shape], a2low)
-high = np.full([*RR.shape], a2high)
+low = np.full([*RR.shape], aBlow)
+high = np.full([*RR.shape], aBhigh)
 
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
@@ -72,7 +72,7 @@ fig.supylabel(ylabel,
               fontsize=biglabels)
 fig.text(0.90,
          0.02,
-         f'{a2low:4.2f}, {a2high:4.2f}',
+         f'{aBlow:4.2f}, {aBhigh:4.2f}',
          fontsize=biglabels,
          color='grey',
          ha='right')

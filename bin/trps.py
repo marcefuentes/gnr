@@ -26,8 +26,8 @@ plotsize = 8
 
 def update(distance, artists):
 
-    lows = a2eqs[0] + distance*(a2eqs[1] - a2eqs[0])
-    highs = a2eqs[0] + (distance + 1.0/nframes)*(a2eqs[1] - a2eqs[0])
+    lows = aBeqs[0] + distance*(aBeqs[1] - aBeqs[0])
+    highs = aBeqs[0] + (distance + 1.0/nframes)*(aBeqs[1] - aBeqs[0])
     T = my.fitness(highs, lows, given, AA, RR)
     R = my.fitness(highs, highs, given, AA, RR)
     P = my.fitness(lows, lows, given, AA, RR)
@@ -47,11 +47,11 @@ def update(distance, artists):
 
 # Data
 
-a2eqs = np.empty(len(folders), dtype=object)
+aBeqs = np.empty(len(folders), dtype=object)
 for f, folder in enumerate(folders):
     filelist = glob(os.path.join(folder, 'none', '*.csv'))
     df = my.read_files(filelist, False)
-    a2eqs[f] = my.getZ(1, df, 'a2Seenmean')
+    aBeqs[f] = my.getZ(1, df, 'a2Seenmean')
 
 given = df[0].Given.iloc[0]
 alphas = np.sort(pd.unique(df.alpha))[::-1]

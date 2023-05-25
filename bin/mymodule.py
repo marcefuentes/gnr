@@ -3,14 +3,14 @@
 import numpy as np
 import pandas as pd
 
-R1 = 2.0
-R2 = 2.0
+RA = 2.0
+RB = 2.0
 a1max = 1.0
-a2max = 1.0
-wmax = 2.0 # For R1 = 2.0, R2 = 2.0, a1max = 1.0, a2max = 1.0,
+aBmax = 1.0
+wmax = 2.0 # For RA = 2.0, RB = 2.0, a1max = 1.0, aBmax = 1.0,
            # given = 1.0 and any values of alpha and rho
-Rq = R2/R1
-b = a2max/a1max
+Rq = RB/RA
+b = aBmax/a1max
 alphamin = 0.1
 alphamax = 0.9
 logesmin = -5.0
@@ -144,34 +144,34 @@ def gamecolors(T, R, P, S):
     Z = leadercolors(T, R, P, S, Z)
     return Z
 
-def equilibrium(T, R, P, S, low, high, a2, weq):
+def equilibrium(T, R, P, S, low, high, aB, weq):
 
     # Harmony
     m = (R > T) & (S > P) 
-    a2[m] = high[m]
+    aB[m] = high[m]
     weq[m] = R[m]
 
     # Deadlock or prisoner's dilemma
     m = (T >= R) & (P >= S) 
-    a2[m] = low[m]
+    aB[m] = low[m]
     weq[m] = P[m]
 
     # Snowdrift (chicken) or leader
     m = (T > R) & (S > P)
     weq[m] = (P[m] - S[m])/(R[m] - S[m] - T[m] + P[m])
-    a2[m] = high[m]*weq[m] + low[m]*(1.0 - weq[m])
+    aB[m] = high[m]*weq[m] + low[m]*(1.0 - weq[m])
     weq[m] = (T[m] + S[m])*weq[m]*(1.0 - weq[m]) + R[m]*weq[m]*weq[m] + P[m]*(1.0 - weq[m])*(1.0 - weq[m])
 
     pass
 
 def fitness(x, y, given, alpha, rho):
-    q1 = (a2max - y)*R1/b
-    q2 = y*R2*(1.0 - given) + x*R2*given
-    w = q1*q2
-    if not isinstance(q1, np.ndarray):
-        q1 = np.array([q1])
-    if not isinstance(q2, np.ndarray):
-        q2 = np.array([q2])
+    qA = (aBmax - y)*RA/b
+    qB = y*RB*(1.0 - given) + x*RB*given
+    w = qA*qB
+    if not isinstance(qA, np.ndarray):
+        qA = np.array([qA])
+    if not isinstance(qB, np.ndarray):
+        qB = np.array([qB])
     if not isinstance(w, np.ndarray):
         w = np.array([w])
     if not isinstance(alpha, np.ndarray):
@@ -179,36 +179,36 @@ def fitness(x, y, given, alpha, rho):
     if not isinstance(rho, np.ndarray):
         rho = np.full(w.shape, rho)
     m = (w > 0.0) & (rho == 0.0)
-    w[m] = pow(q1[m], 1.0 - alpha[m])*pow(q2[m], alpha[m])
+    w[m] = pow(qA[m], 1.0 - alpha[m])*pow(qB[m], alpha[m])
     m = ((w > 0.0) & (rho < 0.0)) | (rho > 0.0)
-    w[m] = pow((1.0 - alpha[m])*pow(q1[m], rho[m]) + alpha[m]*pow(q2[m], rho[m]), 1.0/rho[m])
+    w[m] = pow((1.0 - alpha[m])*pow(qA[m], rho[m]) + alpha[m]*pow(qB[m], rho[m]), 1.0/rho[m])
     return w
 
-def a2eq(given, alpha, rho):
+def aBeq(given, alpha, rho):
     if given < 1.0:
         MRT = b*Rq*(1.0 - given)
         Q = Rq*pow(MRT*alpha/(1.0 - alpha), 1.0/(rho - 1.0))
-        a2 = a2max/(1.0 + Q*b)
+        aB = aBmax/(1.0 + Q*b)
     else:
-        a2 = alpha*0.0
-    return a2
+        aB = alpha*0.0
+    return aB
 
 def indifference(qs, w, alpha, rho):
-    q2 = np.full(qs.shape, 1000.0)
+    qB = np.full(qs.shape, 1000.0)
     for i, q in enumerate(qs):
         if rho == 0.0:
-            q2[i] = pow(w/pow(q, 1.0 - alpha), 1.0/alpha)
+            qB[i] = pow(w/pow(q, 1.0 - alpha), 1.0/alpha)
         else:
             A = pow(w, rho)
             B = (1.0 - alpha)*pow(q, rho)
             if A <= B:
                 if rho < 0.0:
-                    q2[i] = 1000.0
+                    qB[i] = 1000.0
                 else:
-                    q2[i] = -0.1
+                    qB[i] = -0.1
             else:
-                q2[i] = pow((A - B)/alpha, 1.0/rho)
-    return q2
+                qB[i] = pow((A - B)/alpha, 1.0/rho)
+    return qB
 
 def read_files(filelist, alltimes):
     df_list = [None] * len(filelist)

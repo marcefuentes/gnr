@@ -24,7 +24,7 @@ traits = ['ChooseGrainmean',
           'MimicGrainmean']
 titles_traits = ['Sensitivity for\nchoosing partner',
                  'Sensitivity for\nmimicking partner']
-vmaxs = [my.a2max, my.a2max]
+vmaxs = [my.aBmax, my.aBmax]
 folders = ['given100', 'given095', 'given050']
 subfolders = ['p', 'r']
 
@@ -65,7 +65,7 @@ biglabel = plotsize*7
 midlabel = plotsize*6
 letterlabel = plotsize*5
 ticklabel = plotsize*4
-xlim = [0., my.a2max]
+xlim = [0., my.aBmax]
 ylim = [0., my.wmax]
 step = int(nr/2)
 xticks = [0, nc/2 - 0.5, nc - 1]
@@ -163,7 +163,7 @@ for f, folder in enumerate(folders):
                                                     verticalalignment='center',
                                                     fontsize=ticklabel)
         for e in range(0, nc, step):
-            axlines[f, c, -1, e].set(xticks=[my.a2max/2.], xticklabels=[]) 
+            axlines[f, c, -1, e].set(xticks=[my.aBmax/2.], xticklabels=[]) 
         if folder == folders[-1]:
             for e in range(0, nc, step):
                 axlines[-1, c, -1, e].set_xticklabels([f'{logess[e]:.0f}'],
@@ -198,8 +198,8 @@ for f, folder in enumerate(folders):
 
 for f, folder in enumerate(folders):
 
-    lows = my.getZ(t, dftraits[f, 0], 'a2low')
-    highs = my.getZ(t, dftraits[f, 0], 'a2high')
+    lows = my.getZ(t, dftraits[f, 0], 'aBlow')
+    highs = my.getZ(t, dftraits[f, 0], 'aBhigh')
     given = dftraits[f, 0].Given.iloc[0]
     T = my.fitness(highs, lows, given, AA, RR)
     R = my.fitness(highs, highs, given, AA, RR)

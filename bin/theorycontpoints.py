@@ -66,10 +66,10 @@ for i in range(0, num, step):
 for i, alpha in enumerate(alphas):
     AA = np.full([ext, ext], alpha)
     for j, rho in enumerate(rhos):
-        a2private = my.a2eq(given, alpha, rho)
-        a2social = my.a2eq(0.0, alpha, rho)
-        x = distances*a2private
-        y = a2social + distances*(my.a2max - a2social)
+        aBprivate = my.aBeq(given, alpha, rho)
+        aBsocial = my.aBeq(0.0, alpha, rho)
+        x = distances*aBprivate
+        y = aBsocial + distances*(my.aBmax - aBsocial)
         
         T = my.fitness(y, x, given, alpha, rho)
         R = my.fitness(y, y, given, alpha, rho)
@@ -87,8 +87,8 @@ for i, alpha in enumerate(alphas):
                           s=markersize,
                           color=Z)
 
-        x = np.linspace(0.0, a2private, num=ext)
-        y = np.linspace(my.a2max, a2social, num=ext)
+        x = np.linspace(0.0, aBprivate, num=ext)
+        y = np.linspace(my.aBmax, aBsocial, num=ext)
         X, Y = np.meshgrid(x, y)
         RR = np.full([ext, ext], rho)
         T = my.fitness(Y, X, given, AA, RR)

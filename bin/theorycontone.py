@@ -18,9 +18,9 @@ plotsize = 6
 
 rho = 1.0 - 1.0/pow(2, loges)
 xmin = 0.0
-xmax = my.a2eq(given, alpha, rho)
-ymin = my.a2eq(0.0, alpha, rho)
-ymax = my.a2max
+xmax = my.aBeq(given, alpha, rho)
+ymin = my.aBeq(0.0, alpha, rho)
+ymax = my.aBmax
 x = np.linspace(xmin, xmax, num=ext)
 y = np.linspace(ymax, ymin, num=ext)
 X, Y = np.meshgrid(x, y)

@@ -19,7 +19,7 @@ givens = [0.0, 0.5, 0.95]
 
 vmax = my.wmax
 num = 3     # Number of subplot rows & columns
-numa2 = 256 # Number of points along each curve
+numaB = 256 # Number of points along each curve
 n_ic = 5    # Number of indifference curves
 
 plotsize = 6
@@ -29,14 +29,14 @@ plotsize = 6
 def init(budgets, icurves):
 
     for g, given in enumerate(givens):
-        a2private = my.a2eq(given, AA, RR)
-        w = my.fitness(a2private, a2private, given, AA, RR)
-        q2_partner = a2private*my.R2
+        aBprivate = my.aBeq(given, AA, RR)
+        w = my.fitness(aBprivate, aBprivate, given, AA, RR)
+        qB_partner = aBprivate*my.RB
         budget_own = budget0*(1.0 - given)
 
         for a, alpha in enumerate(alphas):
             for r, rho in enumerate(rhos):
-                budgety = budget_own + q2_partner[a, r]*given
+                budgety = budget_own + qB_partner[a, r]*given
                 budgets[g, a, r].set_ydata(budgety)
                 icy = my.indifference(icx, w[a, r], alpha, rho)
                 icurves[g, a, r].set_ydata(icy)
@@ -51,14 +51,14 @@ alphas = np.linspace(my.alphamax, my.alphamin, num=num)
 logess = np.linspace(my.logesmin, my.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
 a1 = np.array([0.0, my.a1max])
-budgetx = a1*my.R1
-budget0 = (my.a2max - my.b*a1)*my.R2
-icx = np.linspace(0.001*my.R1,
-                  (my.a1max - 0.001)*my.R1,
-                  num=numa2)
+budgetx = a1*my.RA
+budget0 = (my.aBmax - my.b*a1)*my.RB
+icx = np.linspace(0.001*my.RA,
+                  (my.a1max - 0.001)*my.RA,
+                  num=numaB)
 RR, AA = np.meshgrid(rhos, alphas)
 ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
-ics = np.empty((num, num, n_ic, numa2), dtype=np.float64)
+ics = np.empty((num, num, n_ic, numaB), dtype=np.float64)
 for i, alpha in enumerate(alphas):
     for j, rho in enumerate(rhos):
         for k, w in enumerate(ws):
@@ -72,8 +72,8 @@ xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'
 biglabels = plotsize*5 + height/4
 ticklabels = plotsize*3.5
-xlim=[0.0, my.a1max*my.R1]
-ylim=[0.0, my.a2max*my.R2] 
+xlim=[0.0, my.a1max*my.RA]
+ylim=[0.0, my.aBmax*my.RB] 
 step = int(num/2)
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42

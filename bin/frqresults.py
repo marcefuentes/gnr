@@ -27,7 +27,7 @@ titles = ['Effort to get $\it{B}$',
           'Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner',
           'Fitness']
-vmaxs = [my.a2max, my.a2max, my.a2max, my.wmax]
+vmaxs = [my.aBmax, my.aBmax, my.aBmax, my.wmax]
 folders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
 
 movie = False

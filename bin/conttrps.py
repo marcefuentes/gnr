@@ -167,7 +167,7 @@ for f, folder in enumerate(folders):
                         y,
                         linewidth=1,
                         c='black')
-                bgcolor = cm.viridis(Z[a, e]/my.a2max)
+                bgcolor = cm.viridis(Z[a, e]/my.aBmax)
                 ax.set_facecolor(bgcolor)
 
 # Finish

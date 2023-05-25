@@ -135,8 +135,8 @@ for c, title in enumerate(titles):
 # Add data
 
 for f, folder in enumerate(folders):
-    lows = my.getZ(t, dftraits[f, 0], 'a2low')
-    highs = my.getZ(t, dftraits[f, 0], 'a2high')
+    lows = my.getZ(t, dftraits[f, 0], 'aBlow')
+    highs = my.getZ(t, dftraits[f, 0], 'aBhigh')
     given = dftraits[f, 0].Given.iloc[0]
     T = my.fitness(highs, lows, given, AA, RR)
     R = my.fitness(highs, highs, given, AA, RR)
@@ -156,7 +156,7 @@ for f, folder in enumerate(folders):
             Z = 1.0 - Z
         axs[f, c + 2].imshow(Z,
                              vmin=0,
-                             vmax=my.a2max) 
+                             vmax=my.aBmax) 
 
 # Finish
 

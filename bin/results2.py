@@ -26,8 +26,8 @@ titles = ['Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner',
           'Fitness gain',
           'Fitness deficit']
-vmaxs = [my.a2max,
-         my.a2max,
+vmaxs = [my.aBmax,
+         my.aBmax,
          my.wmax,
          my.wmax]
 folders = ['given100', 'given095', 'given050', 'given000']

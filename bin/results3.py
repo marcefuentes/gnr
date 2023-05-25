@@ -24,8 +24,8 @@ traits = ['ChooseGrainmean',
 titles = ['Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner',
           'Severity of\nsocial dilemma']
-vmaxs = [my.a2max,
-         my.a2max,
+vmaxs = [my.aBmax,
+         my.aBmax,
          my.wmax]
 folders = ['p', 'r', 'pr', 'p8r']
 #folders = ['p', 'pr']

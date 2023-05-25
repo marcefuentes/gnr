@@ -25,7 +25,7 @@ traits = ['ChooseGrainmean',
 titles_traits = ['Sensitivity for\nchoosing partner',
                  'Sensitivity for\nmimicking partner']
 vmaxs = [my.a2max, my.a2max]
-folders = ['given100', 'given95', 'given50']
+folders = ['given100', 'given095', 'given050']
 subfolders = ['p', 'r']
 
 plotsize = 6

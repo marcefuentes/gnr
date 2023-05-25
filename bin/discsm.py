@@ -23,7 +23,7 @@ traits = ['ChooseGrainmean',
 titles = ['Games',
           'Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
-folders = ['given100', 'given95', 'given50']
+folders = ['given100', 'given095', 'given050']
 subfolders = ['p', 'r']
 
 movie = False

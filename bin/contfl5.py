@@ -22,7 +22,7 @@ traits = ['ChooseGrainmean',
           'MimicGrainmean']
 titles = ['Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
-folders = ['given100', 'given95', 'given50']
+folders = ['given100', 'given095', 'given050']
 subfolders = ['p', 'r']
 
 numa2 = 64
@@ -31,7 +31,7 @@ plotsize = 6
 
 # Data
 
-filelist = glob(os.path.join('given00', 'none', '*.csv'))
+filelist = glob(os.path.join('given000', 'none', '*.csv'))
 dfsocial = my.read_files(filelist, False)
 
 dfprivates = np.empty(len(folders), dtype=object)

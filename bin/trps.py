@@ -17,7 +17,7 @@ filename = thisscript.split('.')[0]
 
 # Options
 
-folders = ['given95', 'given00']
+folders = ['given095', 'given000']
 movie = True
 nframes = 21 # Number of frames
 plotsize = 8

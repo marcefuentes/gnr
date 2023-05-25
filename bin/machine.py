@@ -19,12 +19,12 @@ start_time = time.perf_counter()
 thisscript = os.path.basename(__file__)
 filename = thisscript.split('.')[0]
 
-folders = ['given100', 'given95', 'given50']
+folders = ['given100', 'given095', 'given050']
 subfolders = ['none', 'p', 'r']
 
 # Data
 
-filelist = glob('given00/none/*.csv')
+filelist = glob('given000/none/*.csv')
 df = my.read_files(filelist, False)
 df = df.sort_values(['alpha', 'logES'])
 high = df['a2Seenmean'].values

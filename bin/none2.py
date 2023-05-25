@@ -23,7 +23,7 @@ titles = ['Production of $\it{B}$\nin theory',
           'Fitness\nin simulations',
           'Fitness deficit\nin simulations']
 givens_theory = [1.0, 0.95, 0.5, 0.]
-givens = ['given100', 'given95', 'given50', 'given00']
+givens = ['given100', 'given095', 'given050', 'given000']
 vmaxs = [my.a2max,
          my.a2max,
          my.wmax,

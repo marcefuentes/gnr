@@ -30,7 +30,7 @@ vmaxs = [my.a2max,
          my.a2max,
          my.wmax,
          my.wmax]
-folders = ['given100', 'given95', 'given50', 'given00']
+folders = ['given100', 'given095', 'given050', 'given000']
 subfolder = 'p'
 
 movie = False

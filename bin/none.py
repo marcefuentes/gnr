@@ -36,7 +36,7 @@ if theory:
     alphas = np.linspace(my.alphamax, my.alphamin, num=nr)
     logess = np.linspace(my.logesmin, my.logesmax, num=nc)
 else:
-    givens = ['given100', 'given95', 'given50', 'given00']
+    givens = ['given100', 'given095', 'given050', 'given000']
     dfs = np.empty(len(givens), dtype=object)
     for g, given in enumerate(givens):
         filelist = glob(os.path.join(given, subfolder, '*.csv'))

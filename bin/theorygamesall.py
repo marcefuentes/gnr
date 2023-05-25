@@ -22,7 +22,7 @@ traits = ['ChooseGrainmean',
           'MimicGrainmean']
 vmaxs = [my.a2max,
               my.a2max]
-folders = ['given100', 'given95', 'given50']
+folders = ['given100', 'given095', 'given050']
 subfolders = ['p', 'r']
 
 ext = 256

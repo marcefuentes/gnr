@@ -25,7 +25,7 @@ titles = ['Games',
           'Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
 vmaxs = [my.wmax, my.a2max, my.a2max]
-folders = ['given100', 'given95', 'given50']
+folders = ['given100', 'given095', 'given050']
 subfolders = ['p', 'r']
 
 movie = False
@@ -68,7 +68,7 @@ def update(t, artists):
 
 # Data
 
-filelist = glob(os.path.join('given00', 'none', '*.csv'))
+filelist = glob(os.path.join('given000', 'none', '*.csv'))
 dfsocial = my.read_files(filelist, movie)
 
 dfprivates = np.empty(len(folders), dtype=object)

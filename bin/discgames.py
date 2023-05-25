@@ -24,7 +24,7 @@ titles = ['Games',
           'Severity of\nsocial dilemma', 
           'Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
-folders = ['given100', 'given95', 'given50']
+folders = ['given100', 'given095', 'given050']
 subfolders = ['p', 'r']
 
 plotsize = 6

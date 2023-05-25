@@ -1,28 +1,24 @@
 #! /usr/bin/env python
 
 import os
-import fileinput
-import sys
 
-pattern = '*.glo'
-abs_folder_path = os.path.abspath(os.getcwd())
-parent_folder = os.path.basename(os.path.dirname(abs_folder_path))
-folder_name = os.path.basename(abs_folder_path)
-decimal_part = parent_folder[-3:]
+pattern = '.glo'
+given_folder = os.path.basename(os.getcwd())
+decimal_part = given_folder[-3:]
 given = float(decimal_part) / 100
+folders = [f for f in os.listdir(os.getcwd()) if os.path.isdir(f)]
 
-for line in fileinput.input(files=[os.path.join(abs_folder_path, f) for f in os.listdir(abs_folder_path) if f.endswith('.glo')], inplace=True, backup='',):
-    sys.stdout.write(line.replace('Given,0.0', f'Given,{given}'))
-
-if 'p' in folder_name:
-    for line in fileinput.input(files=[os.path.join(abs_folder_path, f) for f in os.listdir(abs_folder_path) if f.endswith('.glo')], inplace=True, backup='',):
-        sys.stdout.write(line.replace('PartnerChoice,0', 'PartnerChoice,1'))
-
-if 'r' in folder_name:
-    for line in fileinput.input(files=[os.path.join(abs_folder_path, f) for f in os.listdir(abs_folder_path) if f.endswith('.glo')], inplace=True, backup='',):
-        sys.stdout.write(line.replace('Reciprocity,0', 'Reciprocity,1'))
-
-if '8' in folder_name:
-    for line in fileinput.input(files=[os.path.join(abs_folder_path, f) for f in os.listdir(abs_folder_path) if f.endswith('.glo')], inplace=True, backup='',):
-        sys.stdout.write(line.replace('GroupSize,2', 'Groupsize,3'))
-
+for folder in folders:
+    for f in os.listdir(folder):
+        if f.endswith(pattern):
+            with open(os.path.join(folder, f), 'r') as file:
+                filedata = file.read()
+                filedata = filedata.replace('Given,0.0', f'Given,{given}')
+                if 'p' in folder:
+                    filedata = filedata.replace('PartnerChoice,0', 'PartnerChoice,1')
+                if 'r' in folder:
+                    filedata = filedata.replace('Reciprocity,0', 'Reciprocity,1')
+                if '8' in folder:
+                    filedata = filedata.replace('GroupSize,2', 'GroupSize,3')
+            with open(os.path.join(folder, f), 'w') as file:
+                file.write(filedata)

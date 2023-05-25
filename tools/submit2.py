@@ -93,7 +93,7 @@ for queue in queues:
             changed_dir = False
             for folder in folders[folder_index + 1:]:
                 next_folder = os.path.join('../', folder)
-                if os.path.isdir(next_folder):
+                if os.path.isdir(next_folder) and not os.path.isfile(os.path.join(next_folder, job_min + ".csv"):
                     os.chdir(next_folder)
                     changed_dir = True
                     last_job = job_min

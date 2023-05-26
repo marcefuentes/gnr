@@ -18,11 +18,12 @@ filename = thisscript.split('.')[0]
 
 # Options
 
-titles = ['Effort to get $\it{B}$',
+titles = ['Production of $\it{B}$',
+          'Byproduct help',
           'Fitness',
           'Fitness deficit']
-subfolder = 'none'
 vmaxs = [my.aBmax,
+         my.aBmax,
          my.wmax,
          my.wmax]
 
@@ -37,15 +38,16 @@ def update(given, artists):
     w = my.fitness(aB, aB, given, AA, RR)
     dif = wsocial - w
     artists[0].set_array(aB)
-    artists[1].set_array(w)
-    artists[2].set_array(dif)
+    artists[1].set_array(aB*given)
+    artists[2].set_array(w)
+    artists[3].set_array(dif)
     if movie:
         fig.texts[2].set_text(f'Given {given*100:.0f}%')
     return artists.flatten()
 
 # Data
 
-nr = 21
+nr = 513
 nc = nr
 alphas = np.linspace(my.alphamax, my.alphamin, num=nr)
 logess = np.linspace(my.logesmin, my.logesmax, num=nc)
@@ -56,7 +58,7 @@ wsocial = my.fitness(aBsocial, aBsocial, 0., AA, RR)
 
 # Figure properties
 
-width = plotsize*len(titles)
+width = plotsize*len(titles) - 2.
 height = plotsize
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Value of $\it{B}$'

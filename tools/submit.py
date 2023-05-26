@@ -107,6 +107,9 @@ for queue in queues:
                     with open(folder_file, 'w') as f:
                         f.write(path)
                     break
+                else:
+                    print(f"{red}Skipping folder {next_folder}{reset_format}")
+                    logging.info(f"Skipping folder {next_folder}")
             if not changed_dir:
                 print(f"{bold}{yellow}All jobs submitted{reset_format}")
                 logging.info("All jobs submitted")

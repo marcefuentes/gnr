@@ -8,6 +8,7 @@ hours = 23
 folders = ['none', 'p', 'p8', 'p8r', 'pr', 'r']
 queues = ['clk', 'epyc']
 executable = "/home/ulc/ba/mfu/code/gnr/bin/gnr"
+mail_user = "marcelinofuentes@gmail.com"
 
 job_min = 100
 job_max = 541
@@ -92,7 +93,7 @@ for queue in queues:
             changed_dir = False
             for folder in folders[folder_index + 1:]:
                 next_folder = os.path.join('../', folder)
-                if os.path.isdir(next_folder):
+                if os.path.isdir(next_folder) and not os.path.isfile(os.path.join(next_folder, str(job_min) + ".csv")):
                     os.chdir(next_folder)
                     changed_dir = True
                     last_job = job_min
@@ -107,8 +108,8 @@ for queue in queues:
                         f.write(path)
                     break
             if not changed_dir:
-                print(f"{bold}{yellow}All jobs completed{reset_format}")
-                logging.info("All jobs completed")
+                print(f"{bold}{yellow}All jobs submitted{reset_format}")
+                logging.info("All jobs submitted")
                 print(f"{blue}{available_slots} slots available{reset_format}\n")
                 os.remove(folder_file)
                 exit()
@@ -128,7 +129,7 @@ for queue in queues:
                "--time", job_time,
                "--mem=4MB",
                "--mail-type=begin,end",
-               "--mail-user=marcelinofuentes@gmail.com",
+               "--mail-user", mail_user,
                "--array", job_array,
                "--wrap", f"srun {executable} ${{SLURM_ARRAY_TASK_ID}}"]
         print(f"{blue}Submitting jobs {first_job} to {last_job}{reset_format}")

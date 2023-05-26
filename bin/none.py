@@ -17,11 +17,13 @@ filename = thisscript.split('.')[0]
 
 # Options
 
-titles = ['Effort to get $\it{B}$',
+titles = ['Production of $\it{B}$',
+          'Byproduct help',
           'Fitness',
           'Fitness deficit']
 subfolder = 'none'
 vmaxs = [my.aBmax,
+         my.aBmax*my.RB,
          my.wmax,
          my.wmax]
 theory = False
@@ -29,18 +31,19 @@ plotsize = 4
 
 # Data
 
+givens = [1.0, 0.95, 0.5, 0.]
+
 if theory:
-    givens = [1.0, 0.95, 0.5, 0.]
     nr = 21
     nc = nr
     alphas = np.linspace(my.alphamax, my.alphamin, num=nr)
     logess = np.linspace(my.logesmin, my.logesmax, num=nc)
 else:
-    givens = ['given100', 'given095', 'given050', 'given000']
-    dfs = np.empty(len(givens), dtype=object)
-    for g, given in enumerate(givens):
-        filelist = glob(os.path.join(given, subfolder, '*.csv'))
-        dfs[g] = my.read_files(filelist, False)
+    folders = ['given100', 'given095', 'given050', 'given000']
+    dfs = np.empty(len(folders), dtype=object)
+    for f, folder in enumerate(folders):
+        filelist = glob(os.path.join(folder, subfolder, '*.csv'))
+        dfs[f] = my.read_files(filelist, False)
 
     df = dfs[0]
     t = df.Time.max()
@@ -137,10 +140,10 @@ for g, given in enumerate(givens):
     else:
         aB = my.getZ(t, dfs[g], 'a2Seenmean')
         w = my.getZ(t, dfs[g], 'wmean')
-    dif = wsocial - w
     axs[g, 0].imshow(aB, vmin=0, vmax=vmaxs[0])
-    axs[g, 1].imshow(w, vmin=0, vmax=vmaxs[1])
-    axs[g, 2].imshow(dif, vmin=0, vmax=vmaxs[2])
+    axs[g, 1].imshow(aB*given, vmin=0, vmax=vmaxs[1])
+    axs[g, 2].imshow(w, vmin=0, vmax=vmaxs[2])
+    axs[g, 3].imshow(wsocial - w, vmin=0, vmax=vmaxs[3])
         
 plt.savefig(filename + '.png', transparent=False)
 

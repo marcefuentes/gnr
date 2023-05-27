@@ -23,7 +23,7 @@ rhos = 1.0 - 1.0/pow(2, logess)
 
 step = int(num/2)
 xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Value of $\it{B}$'
+ylabel = 'Influence of $\it{B}$'
 letter = ord('a')
 extent = 0, ext, 0, ext
 width = plotsize

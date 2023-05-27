@@ -30,7 +30,7 @@ rhos = 1.0 - 1.0/pow(2, logess)
 
 step = int(num/2)
 xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Value of $\it{B}$'
+ylabel = 'Influence of $\it{B}$'
 letter = ord('a')
 letterposition = ext*1.035
 extent = 0, ext, 7.5, ext

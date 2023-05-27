@@ -31,7 +31,7 @@ vmaxs = [my.aBmax,
          my.wmax,
          my.wmax]
 folders = ['given100', 'given095', 'given050', 'given000']
-subfolder = 'p'
+subfolder = 'r'
 
 movie = False
 plotsize = 4
@@ -77,7 +77,7 @@ nc = df['logES'].nunique()
 width = plotsize*len(titles)
 height = plotsize*len(folders)
 xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Value of $\it{B}$'
+ylabel = 'Influence of $\it{B}$'
 biglabel = plotsize*7
 letterlabel = plotsize*5
 ticklabel = plotsize*4

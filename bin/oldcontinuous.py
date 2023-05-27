@@ -62,7 +62,7 @@ RR, AA = np.meshgrid(rhos, alphas)
 
 step = int(nr/2)
 xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Value of $\it{B}$'
+ylabel = 'Influence of $\it{B}$'
 letter = ord('a')
 letterposition = 1.035
 extent = 0, ext, 7.5, ext

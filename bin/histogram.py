@@ -42,7 +42,7 @@ xmax = logess[-1]
 xlabel = 'Substitutability of $\it{B}$'
 ymin = alphas[-1]
 ymax = alphas[0]
-ylabel = 'Value of $\it{B}$'
+ylabel = 'Influence of $\it{B}$'
 xticklabels = [round(xmin),
                 round((xmin + xmax)/2),
                 round(xmax)]

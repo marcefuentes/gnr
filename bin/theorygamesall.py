@@ -54,7 +54,7 @@ X, Y = np.meshgrid(x, y)
 
 step = int(nr/2)
 xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Value of $\it{B}$'
+ylabel = 'Influence of $\it{B}$'
 letter = ord('a')
 letterposition = 1.035
 xticks = [0, nc/2-0.5, nc-1]

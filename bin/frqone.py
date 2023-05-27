@@ -90,13 +90,13 @@ letterlabel = plotsize*5
 ticklabel = plotsize*3
 xlim = [0, bins - 1]
 ylim = [0, 0.2]
-xticks = [xlim[0], xlim[1]/2.0, xlim[1]]
-yticks = [ylim[0], ylim[1]/2.0, ylim[1]]
+xticks = [xlim[0], xlim[1]/2., xlim[1]]
+yticks = [ylim[0], ylim[1]/2., ylim[1]]
 xticklabels = np.zeros((len(traits), len(xticks)))
 for c, trait in enumerate(traits):
-    xticklabels[c] = np.linspace(0.0, vmaxs[c], num=len(xticks))
+    xticklabels[c] = np.linspace(0., 1., num=len(xticks))
 yticklabels = [f'{ylim[0]:.1f}',
-               f'{ylim[1]/2.0:.1f}',
+               f'{ylim[1]/2.:.1f}',
                f'{ylim[1]:.1f}']
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42

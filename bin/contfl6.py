@@ -61,7 +61,7 @@ xaxis = np.linspace(0.01, my.aBmax - 0.01, num=numaB)
 width = plotsize*len(titles)
 height = plotsize*len(folders)
 xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Value of $\it{B}$'
+ylabel = 'Influence of $\it{B}$'
 biglabel = plotsize*7
 midlabel = plotsize*6
 letterlabel = plotsize*5

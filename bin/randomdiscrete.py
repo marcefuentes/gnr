@@ -37,7 +37,7 @@ low = np.full([*RR.shape], aBlow)
 high = np.full([*RR.shape], aBhigh)
 
 xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Value of $\it{B}$'
+ylabel = 'Influence of $\it{B}$'
 letter = ord('a')
 letterposition = 1.035
 xticks = [-0.5, ext/2-0.5, ext-0.5]

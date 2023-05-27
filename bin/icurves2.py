@@ -69,7 +69,7 @@ for i, alpha in enumerate(alphas):
 width = plotsize + 2
 height = plotsize*len(givens)
 xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Value of $\it{B}$'
+ylabel = 'Influence of $\it{B}$'
 biglabels = plotsize*5
 ticklabels = plotsize*3
 xlim=[0.0, my.a1max*my.RA]

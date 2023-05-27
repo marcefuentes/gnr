@@ -71,7 +71,7 @@ aBlows = np.linspace(0.1, 0.8, num=nframes)
 width = plotsize*len(titles)
 height = plotsize*len(givens)
 xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Value of $\it{B}$'
+ylabel = 'Influence of $\it{B}$'
 biglabels = plotsize*5 + height/4
 ticklabels = plotsize*4
 xticks = [0, nc/2 - 0.5, nc - 1]

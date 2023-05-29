@@ -1,4 +1,4 @@
-!#/usr/bin/env python
+#! /usr/bin/env python
 
 import os
 import subprocess
@@ -54,6 +54,10 @@ for file in os.listdir('.'):
             base = os.path.splitext(file)[0]
             job_array.append(base)
 
+if len(job_array) == 0:
+    print(f"{yellow}All jobs completed{reset_format}")
+    exit()
+
 path = os.getcwd()
 path_folders = path.split('/')
 new_path = '/'.join(path_folders[8:])
@@ -68,7 +72,7 @@ for queue in queues:
     available_slots = maxsubmit - num_jobs_in_queue 
     print(f"{blue}{available_slots} slots available{reset_format}")
 
-    while available_slots > 0:
+    while available_slots > 0 and len(job_array) > 0:
 
         num_jobs_to_submit = min(available_slots, len(job_array))
         first_job = job_array[0]

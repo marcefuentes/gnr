@@ -222,8 +222,8 @@ if movie:
 
 artistsgames = np.empty_like(axgames)
 artiststraits = np.empty_like(axtraits)
-dummy_Zg = np.empty((ext, ext, 4), dtype=np.float32)
-dummy_Z = np.empty((nr, nc), dtype=np.float32)
+dummy_Zg = np.zeros((ext, ext, 4))
+dummy_Z = np.zeros((nr, nc))
 frames = ts
 frame0 = ts[-1]
 

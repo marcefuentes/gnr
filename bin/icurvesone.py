@@ -59,7 +59,7 @@ icx = np.linspace(0.001*my.RA,
                   num=numaB)
 RR, AA = np.meshgrid(rhos, alphas)
 ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
-ics = np.empty((num, num, n_ic, numaB), dtype=np.float64)
+ics = np.zeros((num, num, n_ic, numaB))
 for i, alpha in enumerate(alphas):
     for j, rho in enumerate(rhos):
         for k, w in enumerate(ws):

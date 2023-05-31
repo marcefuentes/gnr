@@ -154,7 +154,7 @@ for f, folder in enumerate(folders):
 
     wprivates = my.fitness(aBprivates, aBprivates, given, AA, RR)
 
-    Z = np.empty((len(traits), len(alphas), len(rhos)), dtype=float)
+    Z = np.zeros((len(traits), len(alphas), len(rhos)))
     for c, trait in enumerate(traits):
         Z[c] = my.getZ(t, dftraits[f, c], trait)
         if 'Grain' in trait:

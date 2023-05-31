@@ -155,7 +155,7 @@ if movie:
 # (AxesImage)
 
 artists = np.empty_like(axs) 
-dummy_Z = np.empty((nr, nc), dtype=float)
+dummy_Z = np.zeros((nr, nc))
 frames = ts
 frame0 = ts[-1]
 

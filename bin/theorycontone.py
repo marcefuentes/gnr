@@ -33,8 +33,8 @@ S = my.fitness(X, Y, given, alpha, rho)
 Z = my.gamecolors(T, R, P, S)
 Z[X >= Y] = [0.9, 0.9, 0.9, 1.0]
 
-xlabel = 'Effort to get $\it{B}$'
-ylabel = 'Effort to get $\it{B}$'
+xlabel = 'Production of $\it{B}$'
+ylabel = 'Production of $\it{B}$'
 xticks = [0, ext/2.0, ext-0.5]
 yticks = [0, ext/2.0, ext-0.5]
 xticklabels = [f'{round(xmin):4.2f}',

@@ -23,7 +23,7 @@ traits = ['a2Seen',
           'ChooseGrain',
           'MimicGrain',
           'w']
-titles = ['Effort to get $\it{B}$',
+titles = ['Production of $\it{B}$',
           'Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner',
           'Fitness']

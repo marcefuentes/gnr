@@ -20,7 +20,7 @@ traits = ['a2Seenmean',
           'ChooseGrainmean',
           'MimicGrainmean',
           'wmean']
-titles = ['Effort to get $\it{B}$',
+titles = ['Production of $\it{B}$',
                'Sensitivity for\nchoosing partner',
                'Sensitivity for\nmimicking partner',
                'Fitness']

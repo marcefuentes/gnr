@@ -5,12 +5,12 @@ import pandas as pd
 
 RA = 2.0
 RB = 2.0
-a1max = 1.0
+aAmax = 1.0
 aBmax = 1.0
-wmax = 2.0 # For RA = 2.0, RB = 2.0, a1max = 1.0, aBmax = 1.0,
+wmax = 2.0 # For RA = 2.0, RB = 2.0, aAmax = 1.0, aBmax = 1.0,
            # given = 1.0 and any values of alpha and rho
 Rq = RB/RA
-b = aBmax/a1max
+b = aBmax/aAmax
 alphamin = 0.1
 alphamax = 0.9
 logesmin = -5.0

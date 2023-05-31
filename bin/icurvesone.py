@@ -51,11 +51,11 @@ def update(given, budgets, icurves):
 alphas = np.linspace(my.alphamax, my.alphamin, num=num)
 logess = np.linspace(my.logesmin, my.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
-a1 = np.array([0.0, my.a1max])
+a1 = np.array([0.0, my.aAmax])
 budgetx = a1*my.RA
 budget0 = (my.aBmax - my.b*a1)*my.RB
 icx = np.linspace(0.001*my.RA,
-                  (my.a1max - 0.001)*my.RA,
+                  (my.aAmax - 0.001)*my.RA,
                   num=numaB)
 RR, AA = np.meshgrid(rhos, alphas)
 ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
@@ -73,7 +73,7 @@ xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Influence of $\it{B}$'
 biglabels = plotsize*4
 ticklabels = plotsize*3
-xlim=[0.0, my.a1max*my.RA]
+xlim=[0.0, my.aAmax*my.RA]
 ylim=[0.0, my.aBmax*my.RB]
 step = int(num/2)
 plt.rcParams['pdf.fonttype'] = 42

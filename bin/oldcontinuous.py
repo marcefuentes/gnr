@@ -10,8 +10,8 @@ import pandas as pd
 import time
 
 start_time = time.perf_counter()
-thisscript = os.path.basename(__file__)
-filename = thisscript.split('.')[0]
+this_file = os.path.basename(__file__)
+filename = this_file.split('.')[0]
 
 titlegs = ['Games',
            '$\it{R}$ - $\it{P}$',

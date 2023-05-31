@@ -11,7 +11,7 @@ import mymodule as my
 
 start_time = time.perf_counter()
 this_file = os.path.basename(__file__)
-filename = this_file.split('.')[0]
+file_name = this_file.split('.')[0]
 
 titles = ['Games',
           '2$\it{R}$ - $\it{T}$ - $\it{P}$',
@@ -143,7 +143,7 @@ for given in givens:
 
 plt.close()
 
-iio.mimsave(filename + '.gif', frames)
+iio.mimsave(file_name + '.gif', frames)
 
 end_time = time.perf_counter()
 print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')

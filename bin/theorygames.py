@@ -8,7 +8,7 @@ import time
 
 start_time = time.perf_counter()
 this_file = os.path.basename(__file__)
-filename = this_file.split('.')[0]
+file_name = this_file.split('.')[0]
 
 givens = [1.0, 0.95, 0.5]
 
@@ -101,7 +101,7 @@ for g, given in enumerate(givens):
             Z[X >= Y] = [0.9, 0.9, 0.9, 1.0]
             axss[g][i][j].imshow(Z, extent=extent)
 
-plt.savefig(filename + '.png', transparent=False)
+plt.savefig(file_name + '.png', transparent=False)
 
 plt.close()
 

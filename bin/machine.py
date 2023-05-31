@@ -17,7 +17,7 @@ import mymodule as my
 
 start_time = time.perf_counter()
 this_file = os.path.basename(__file__)
-filename = this_file.split('.')[0]
+file_name = this_file.split('.')[0]
 
 folders = ['given100', 'given095', 'given050']
 subfolders = ['none', 'p', 'r']

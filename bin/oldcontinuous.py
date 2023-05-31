@@ -11,7 +11,7 @@ import time
 
 start_time = time.perf_counter()
 this_file = os.path.basename(__file__)
-filename = this_file.split('.')[0]
+file_name = this_file.split('.')[0]
 
 titlegs = ['Games',
            '$\it{R}$ - $\it{P}$',
@@ -212,12 +212,12 @@ for t in ts:
         frames.append(iio.imread('temp.png'))
         os.remove('temp.png')
     else:
-        plt.savefig(filename + '.png', transparent=False)
+        plt.savefig(file_name + '.png', transparent=False)
 
 plt.close()
 
 if movie:
-    iio.mimsave(filename + '.gif', frames)
+    iio.mimsave(file_name + '.gif', frames)
 
 end_time = time.perf_counter()
 print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')

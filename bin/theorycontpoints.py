@@ -8,7 +8,7 @@ import time
 
 start_time = time.perf_counter()
 this_file = os.path.basename(__file__)
-filename = this_file.split('.')[0]
+file_name = this_file.split('.')[0]
 
 given = 0.95
 num = 5    # Number of subplot rows & columns
@@ -99,7 +99,7 @@ for i, alpha in enumerate(alphas):
         Z = my.gamecolors(T, R, P, S)
         axs[i][j].imshow(Z, extent=extent, alpha=0.2)
 
-plt.savefig(filename + '.png', transparent=False)
+plt.savefig(file_name + '.png', transparent=False)
 
 plt.close()
 

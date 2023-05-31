@@ -14,7 +14,7 @@ import mymodule as my
 
 start_time = time.perf_counter()
 this_file = os.path.basename(__file__)
-filename = this_file.split('.')[0]
+file_name = this_file.split('.')[0]
 
 # Options
 
@@ -160,16 +160,16 @@ for f, folder in enumerate(folders):
 
 if movie:
     update(ts, artists,)
-    plt.savefig(filename + '.png', transparent=False)
+    plt.savefig(file_name + '.png', transparent=False)
     ani = FuncAnimation(fig,
                         update,
                         frames=frames,
                         fargs=(artists,),
                         blit=True)
-    ani.save(filename + '.mp4', writer='ffmpeg', fps=10)
+    ani.save(file_name + '.mp4', writer='ffmpeg', fps=10)
 else:
     update(frame0, artists,)
-    plt.savefig(filename + '.png', transparent=False)
+    plt.savefig(file_name + '.png', transparent=False)
 
 plt.close()
 

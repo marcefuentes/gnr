@@ -9,7 +9,7 @@ import time
 
 start_time = time.perf_counter()
 this_file = os.path.basename(__file__)
-filename = this_file.split('.')[0]
+file_name = this_file.split('.')[0]
 
 titles = ['Games',
           '$\it{R}$ - $\it{P}$',
@@ -115,7 +115,7 @@ for i, given in enumerate(givens):
     axs[i, 2].imshow(Z, vmin=-1, vmax=1)
     axs[i, 2].imshow(N)
 
-plt.savefig(filename + '.png', transparent=False)
+plt.savefig(file_name + '.png', transparent=False)
 plt.close()
 
 end_time = time.perf_counter()

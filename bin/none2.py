@@ -13,7 +13,7 @@ import mymodule as my
 
 start_time = time.perf_counter()
 this_file = os.path.basename(__file__)
-filename = this_file.split('.')[0]
+file_name = this_file.split('.')[0]
 
 # Options
 
@@ -133,7 +133,7 @@ for g, given in enumerate(givens_theory):
     w = wsocial - w
     axs[g, 4].imshow(w, vmin=0, vmax=vmaxs[4])
         
-plt.savefig(filename + '.png', transparent=False)
+plt.savefig(file_name + '.png', transparent=False)
 
 plt.close()
 

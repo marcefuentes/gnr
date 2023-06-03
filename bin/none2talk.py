@@ -73,9 +73,14 @@ plt.rcParams['ps.fonttype'] = 42
 
 # Create figure
 
-fig, axs = plt.subplots(nrows=len(givens),
+fig = plt.figure(figsize=(width, height))
+grid = fig.add_gridspec(nrows=len(givens),
                         ncols=len(titles),
-                        figsize=(width, height))
+                        left=2.0/width,
+                        wspace=3.0/width,
+                        hspace=3.0/height)
+
+axs = grid.subplots()
 
 left_x = axs[0, 0].get_position().x0
 right_x = axs[-1, -1].get_position().x1
@@ -85,10 +90,10 @@ bottom_y = axs[-1, -1].get_position().y0
 center_y = (top_y + bottom_y) / 2.
 fig.supxlabel(xlabel,
               x=center_x,
-              y=bottom_y*0.4,
+              y=bottom_y - 1.2/height,
               fontsize=biglabel)
 fig.supylabel(ylabel,
-              x=left_x*0.5,
+              x=left_x - 1.45/width,
               y=center_y,
               fontsize=biglabel)
 

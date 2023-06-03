@@ -98,11 +98,14 @@ plt.rcParams['ps.fonttype'] = 42
 
 # Create figure
 
-fig, axs = plt.subplots(nrows=len(folders),
+fig = plt.figure(figsize=(width, height))
+grid = fig.add_gridspec(nrows=len(folders),
                         ncols=len(titles),
-                        figsize=(width, height))
+                        left=2.0/width,
+                        wspace=3.0/width,
+                        hspace=3.0/height)
 
-plt.subplots_adjust(left=2.0/width, bottom=2.0/height, wspace=3.0/width, hspace=3.0/height)
+axs = grid.subplots()
 
 left_x = axs[0, 0].get_position().x0
 right_x = axs[-1, -1].get_position().x1

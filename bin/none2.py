@@ -77,6 +77,8 @@ fig, axs = plt.subplots(nrows=len(givens),
                         ncols=len(titles),
                         figsize=(width, height))
 
+plt.subplots_adjust(left=2.0/width, bottom=2.0/height, wspace=3.0/width, hspace=3.0/height)
+
 left_x = axs[0, 0].get_position().x0
 right_x = axs[-1, -1].get_position().x1
 center_x = (left_x + right_x) / 2.
@@ -88,7 +90,7 @@ fig.supxlabel(xlabel,
               y=bottom_y - 1.2/height,
               fontsize=biglabel)
 fig.supylabel(ylabel,
-              x=left_x - 1.5/width,
+              x=left_x - 1.45/width,
               y=center_y,
               fontsize=biglabel)
 

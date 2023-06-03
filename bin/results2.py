@@ -31,7 +31,7 @@ vmaxs = [my.aBmax,
          my.wmax,
          my.wmax]
 folders = ['given100', 'given095', 'given050', 'given000']
-subfolder = 'r'
+subfolder = 'p8'
 
 movie = False
 plotsize = 4
@@ -79,8 +79,8 @@ height = plotsize*len(folders)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Influence of $\it{B}$'
 biglabel = plotsize*7
-letterlabel = plotsize*5
-ticklabel = plotsize*4
+letterlabel = plotsize*6
+ticklabel = plotsize*5
 xticks = [0, nc/2 - 0.5, nc - 1]
 yticks = [0, nr/2 - 0.5, nr - 1]
 xmin = df['logES'].min()
@@ -110,14 +110,14 @@ bottom_y = axs[-1, -1].get_position().y0
 center_y = (top_y + bottom_y) / 2.
 fig.supxlabel(xlabel,
               x=center_x,
-              y=bottom_y*0.3,
+              y=bottom_y - 1.2/height,
               fontsize=biglabel)
 fig.supylabel(ylabel,
-              x=left_x*0.3,
+              x=left_x - 1.5/width,
               y=center_y,
               fontsize=biglabel)
 
-ox = -2/72.
+ox = 0/72.
 oy = 0/72.
 offset = matplotlib.transforms.ScaledTranslation(ox, oy, fig.dpi_scale_trans)
 

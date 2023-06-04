@@ -31,7 +31,7 @@ vmaxs = [my.aBmax,
          my.wmax,
          my.wmax]
 folders = ['given100', 'given095', 'given050', 'given000']
-subfolder = 'p8'
+subfolder = 'none'
 
 movie = False
 plotsize = 4
@@ -98,14 +98,9 @@ plt.rcParams['ps.fonttype'] = 42
 
 # Create figure
 
-fig = plt.figure(figsize=(width, height))
-grid = fig.add_gridspec(nrows=len(folders),
+fig, axs = plt.subplots(nrows=len(folders),
                         ncols=len(titles),
-                        left=2.0/width,
-                        wspace=3.0/width,
-                        hspace=3.0/height)
-
-axs = grid.subplots()
+                        figsize=(width, height))
 
 left_x = axs[0, 0].get_position().x0
 right_x = axs[-1, -1].get_position().x1
@@ -121,10 +116,6 @@ fig.supylabel(ylabel,
               x=left_x - 1.45/width,
               y=center_y,
               fontsize=biglabel)
-
-ox = 0/72.
-oy = 0/72.
-offset = matplotlib.transforms.ScaledTranslation(ox, oy, fig.dpi_scale_trans)
 
 letterposition = 1.035
 for i, ax in enumerate(fig.get_axes()):
@@ -145,9 +136,6 @@ for c, title in enumerate(titles):
     axs[0, c].set_title(title, pad=plotsize*10, fontsize=letterlabel)
     axs[-1, c].set_xticklabels(xticklabels,
                                fontsize=ticklabel)
-    for label in axs[-1, c].xaxis.get_majorticklabels():
-        label.set_transform(label.get_transform() + offset)
-
 if movie:
     fig.text(right_x,
              bottom_y*0.5,

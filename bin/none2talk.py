@@ -17,11 +17,11 @@ file_name = this_file.split('.')[0]
 
 # Options
 
-titles = ['',
-          '',
+titles = ['Production of $\it{B}$\nin theory',
+          'Production of $\it{B}$\nin simulations',
           'Fitness\nin theory',
-          '',
-          '']
+          'Fitness\nin simulations',
+          'Fitness deficit\nin simulations']
 givens_theory = [1.0, 0.95, 0.5, 0.]
 givens = ['given100', 'given095', 'given050', 'given000']
 vmaxs = [my.aBmax,
@@ -73,14 +73,9 @@ plt.rcParams['ps.fonttype'] = 42
 
 # Create figure
 
-fig = plt.figure(figsize=(width, height))
-grid = fig.add_gridspec(nrows=len(givens),
+fig, axs = plt.subplots(nrows=len(givens),
                         ncols=len(titles),
-                        left=2.0/width,
-                        wspace=3.0/width,
-                        hspace=3.0/height)
-
-axs = grid.subplots()
+                        figsize=(width, height))
 
 left_x = axs[0, 0].get_position().x0
 right_x = axs[-1, -1].get_position().x1
@@ -96,10 +91,6 @@ fig.supylabel(ylabel,
               x=left_x - 1.45/width,
               y=center_y,
               fontsize=biglabel)
-
-ox = 0/72.
-oy = 0/72.
-offset = matplotlib.transforms.ScaledTranslation(ox, oy, fig.dpi_scale_trans)
 
 letterposition = 1.035
 for i, ax in enumerate(fig.get_axes()):
@@ -120,9 +111,6 @@ for c, title in enumerate(titles):
     axs[0, c].set_title(title, pad=plotsize*10, fontsize=letterlabel)
     axs[-1, c].set_xticklabels(xticklabels,
                                fontsize=ticklabel)
-    for label in axs[-1, c].xaxis.get_majorticklabels():
-        label.set_transform(label.get_transform() + offset)
-
 # Add data to figure
  
 wsocial = my.getZ(t, dfs[-1], 'wmean') 
@@ -138,13 +126,13 @@ for g, given in enumerate(givens_theory):
     w = wsocial - w
     axs[g, 4].imshow(w, vmin=0, vmax=vmaxs[4])
         
-for row in range(3):
+for row in range(0):
     for col in range(5):
         axs[row, col].imshow(np.ones((nr, nc, 3)))
-axs[3, 0].imshow(np.ones((nr, nc, 3)))
-axs[3, 1].imshow(np.ones((nr, nc, 3)))
-axs[3, 3].imshow(np.ones((nr, nc, 3)))
-axs[3, 4].imshow(np.ones((nr, nc, 3)))
+#axs[3, 0].imshow(np.ones((nr, nc, 3)))
+#axs[3, 1].imshow(np.ones((nr, nc, 3)))
+#axs[3, 3].imshow(np.ones((nr, nc, 3)))
+#axs[3, 4].imshow(np.ones((nr, nc, 3)))
 
 plt.savefig(file_name + '.png', transparent=False)
 

@@ -20,14 +20,18 @@ file_name = this_file.split('.')[0]
 
 traits = ['ChooseGrainmean',
           'MimicGrainmean',
+          'wmean',
           'wmean']
 titles = ['Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner',
+          'Fitness gain',
           'Fitness deficit']
 vmaxs = [my.aBmax,
          my.aBmax,
+         my.wmax,
          my.wmax]
-folders = ['pr', 'p8r', 'prd']
+folders = ['given100', 'given095', 'given050', 'given000']
+subfolder = 'none'
 
 movie = False
 plotsize = 4
@@ -35,13 +39,16 @@ plotsize = 4
 # Add data to figure
 
 def update(t, artists):
-    wsocial = my.getZ(t, dfsocial, 'wmean')
+    wsocial = my.getZ(t, dfs[-1], 'wmean')
     for f, folder in enumerate(folders):
         for c, trait in enumerate(traits):
             Z = my.getZ(t, dfs[f], trait)
             if 'Grain' in trait:
                 Z = 1. - Z
-            if 'wmean' in trait:
+            if 'gain' in titles[c]:
+                wnull = my.getZ(t, dfnulls[f], 'wmean')
+                Z = Z - wnull
+            if 'deficit' in titles[c]:
                 Z = wsocial - Z
             artists[f, c].set_array(Z) 
     if movie:
@@ -50,15 +57,17 @@ def update(t, artists):
 
 # Data
 
-filelist = glob(os.path.join('given0', '*.csv'))
-dfsocial = my.read_files(filelist, movie)
+dfnulls = np.empty(len(folders), dtype=object) 
+for f, folder in enumerate(folders):
+    filelist = glob(os.path.join(folder, 'none', '*.csv'))
+    dfnulls[f] = my.read_files(filelist, movie)
 
 dfs = np.empty(len(folders), dtype=object) 
 for f, folder in enumerate(folders):
-    filelist = glob(os.path.join(folder, '*.csv'))
+    filelist = glob(os.path.join(folder, subfolder, '*.csv'))
     dfs[f] = my.read_files(filelist, movie)
 
-df = dfs[0]
+df = dfs[1]
 ts = df.Time.unique()
 nr = df['alpha'].nunique()
 nc = df['logES'].nunique()
@@ -69,9 +78,9 @@ width = plotsize*len(titles)
 height = plotsize*len(folders)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Influence of $\it{B}$'
-biglabel = plotsize*6
-letterlabel = plotsize*5
-ticklabel = plotsize*4
+biglabel = plotsize*7
+letterlabel = plotsize*6
+ticklabel = plotsize*5
 xticks = [0, nc/2 - 0.5, nc - 1]
 yticks = [0, nr/2 - 0.5, nr - 1]
 xmin = df['logES'].min()
@@ -101,16 +110,12 @@ bottom_y = axs[-1, -1].get_position().y0
 center_y = (top_y + bottom_y) / 2.
 fig.supxlabel(xlabel,
               x=center_x,
-              y=bottom_y*0.3,
+              y=bottom_y - 1.2/height,
               fontsize=biglabel)
 fig.supylabel(ylabel,
-              x=left_x*0.3,
+              x=left_x - 1.45/width,
               y=center_y,
               fontsize=biglabel)
-
-ox = -2/72.
-oy = 0/72.
-offset = matplotlib.transforms.ScaledTranslation(ox, oy, fig.dpi_scale_trans)
 
 letterposition = 1.035
 for i, ax in enumerate(fig.get_axes()):
@@ -131,9 +136,6 @@ for c, title in enumerate(titles):
     axs[0, c].set_title(title, pad=plotsize*10, fontsize=letterlabel)
     axs[-1, c].set_xticklabels(xticklabels,
                                fontsize=ticklabel)
-    for label in axs[-1, c].xaxis.get_majorticklabels():
-        label.set_transform(label.get_transform() + offset)
-
 if movie:
     fig.text(right_x,
              bottom_y*0.5,
@@ -159,8 +161,6 @@ for f, folder in enumerate(folders):
 # Add data and save figure
 
 if movie:
-    update(ts, artists,)
-    plt.savefig(file_name + '.png', transparent=False)
     ani = FuncAnimation(fig,
                         update,
                         frames=frames,

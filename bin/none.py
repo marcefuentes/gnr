@@ -17,40 +17,33 @@ file_name = this_file.split('.')[0]
 
 # Options
 
-titles = ['Production of $\it{B}$',
-          'Byproduct help',
-          'Fitness',
-          'Fitness deficit']
-subfolder = 'none'
+titles = ['Production of $\it{B}$\nin theory',
+          'Production of $\it{B}$\nin simulations',
+          'Fitness\nin theory',
+          'Fitness\nin simulations',
+          'Fitness deficit\nin simulations']
+givens_theory = [1.0, 0.95, 0.5, 0.]
+givens = ['given100', 'given095', 'given050', 'given000']
 vmaxs = [my.aBmax,
-         my.aBmax*my.RB,
+         my.aBmax,
+         my.wmax,
          my.wmax,
          my.wmax]
-theory = False
 plotsize = 4
 
 # Data
 
-givens = [1.0, 0.95, 0.5, 0.]
+dfs = np.empty(len(givens), dtype=object)
+for g, given in enumerate(givens):
+    filelist = glob(os.path.join(given, 'none', '*.csv'))
+    dfs[g] = my.read_files(filelist, False)
 
-if theory:
-    nr = 21
-    nc = nr
-    alphas = np.linspace(my.alphamax, my.alphamin, num=nr)
-    logess = np.linspace(my.logesmin, my.logesmax, num=nc)
-else:
-    folders = ['given100', 'given095', 'given050', 'given000']
-    dfs = np.empty(len(folders), dtype=object)
-    for f, folder in enumerate(folders):
-        filelist = glob(os.path.join(folder, subfolder, '*.csv'))
-        dfs[f] = my.read_files(filelist, False)
-
-    df = dfs[0]
-    t = df.Time.max()
-    alphas = np.sort(pd.unique(df.alpha))[::-1]
-    logess = np.sort(pd.unique(df.logES))
-    nr = len(alphas)
-    nc = len(logess)
+df = dfs[0]
+t = df.Time.max()
+alphas = np.sort(pd.unique(df.alpha))[::-1]
+logess = np.sort(pd.unique(df.logES))
+nr = len(alphas)
+nc = len(logess)
 rhos = 1. - 1./pow(2., logess)
 RR, AA = np.meshgrid(rhos, alphas)
 
@@ -60,9 +53,9 @@ width = plotsize*len(titles)
 height = plotsize*len(givens)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Influence of $\it{B}$'
-biglabel = plotsize*6
-letterlabel = plotsize*5
-ticklabel = plotsize*4
+biglabel = plotsize*7
+letterlabel = plotsize*6
+ticklabel = plotsize*5
 xticks = [0, nc/2 - 0.5, nc - 1]
 yticks = [0, nr/2 - 0.5, nr - 1]
 xmin = my.logesmin
@@ -92,16 +85,12 @@ bottom_y = axs[-1, -1].get_position().y0
 center_y = (top_y + bottom_y) / 2.
 fig.supxlabel(xlabel,
               x=center_x,
-              y=bottom_y*0.45,
+              y=bottom_y - 1.2/height,
               fontsize=biglabel)
 fig.supylabel(ylabel,
-              x=left_x*0.3,
+              x=left_x - 1.45/width,
               y=center_y,
               fontsize=biglabel)
-
-ox = 0/72.
-oy = 0/72.
-offset = matplotlib.transforms.ScaledTranslation(ox, oy, fig.dpi_scale_trans)
 
 letterposition = 1.035
 for i, ax in enumerate(fig.get_axes()):
@@ -122,28 +111,20 @@ for c, title in enumerate(titles):
     axs[0, c].set_title(title, pad=plotsize*10, fontsize=letterlabel)
     axs[-1, c].set_xticklabels(xticklabels,
                                fontsize=ticklabel)
-    for label in axs[-1, c].xaxis.get_majorticklabels():
-        label.set_transform(label.get_transform() + offset)
-
 # Add data to figure
-
-if theory:
-    aB = my.aBeq(0., AA, RR)
-    wsocial = my.fitness(aB, aB, 0., AA, RR)
-else:
-    wsocial = my.getZ(t, dfs[-1], 'wmean')
-
-for g, given in enumerate(givens):
-    if theory:
-        aB = my.aBeq(given, AA, RR)
-        w = my.fitness(aB, aB, given, AA, RR)
-    else:
-        aB = my.getZ(t, dfs[g], 'a2Seenmean')
-        w = my.getZ(t, dfs[g], 'wmean')
-    axs[g, 0].imshow(aB, vmin=0, vmax=vmaxs[0])
-    axs[g, 1].imshow(aB*given, vmin=0, vmax=vmaxs[1])
-    axs[g, 2].imshow(w, vmin=0, vmax=vmaxs[2])
-    axs[g, 3].imshow(wsocial - w, vmin=0, vmax=vmaxs[3])
+ 
+wsocial = my.getZ(t, dfs[-1], 'wmean') 
+for g, given in enumerate(givens_theory):
+    aB_theory = my.aBeq(given, AA, RR)
+    axs[g, 0].imshow(aB_theory, vmin=0, vmax=vmaxs[0])
+    aB = my.getZ(t, dfs[g], 'a2Seenmean')
+    axs[g, 1].imshow(aB, vmin=0, vmax=vmaxs[1])
+    w_theory = my.fitness(aB_theory, aB_theory, given, AA, RR)
+    axs[g, 2].imshow(w_theory, vmin=0, vmax=vmaxs[2])
+    w = my.getZ(t, dfs[g], 'wmean')
+    axs[g, 3].imshow(w, vmin=0, vmax=vmaxs[3])
+    w = wsocial - w
+    axs[g, 4].imshow(w, vmin=0, vmax=vmaxs[4])
         
 plt.savefig(file_name + '.png', transparent=False)
 

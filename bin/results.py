@@ -31,7 +31,7 @@ vmaxs = [my.aBmax,
          my.wmax,
          my.wmax]
 folders = ['given100', 'given095', 'given050', 'given000']
-subfolder = 'p'
+subfolders = ['none', 'p', 'p8', 'p8r', 'pr', 'r']
 
 movie = False
 plotsize = 4
@@ -55,22 +55,17 @@ def update(t, artists):
         fig.texts[2].set_text(f't\n{t}')
     return artists.flatten()
 
-# Data
+# Data without partner choice or reciprocity
 
 dfnulls = np.empty(len(folders), dtype=object) 
 for f, folder in enumerate(folders):
     filelist = glob(os.path.join(folder, 'none', '*.csv'))
     dfnulls[f] = my.read_files(filelist, movie)
 
-dfs = np.empty(len(folders), dtype=object) 
-for f, folder in enumerate(folders):
-    filelist = glob(os.path.join(folder, subfolder, '*.csv'))
-    dfs[f] = my.read_files(filelist, movie)
-
-df = dfs[1]
+df = dfnulls[0]
 ts = df.Time.unique()
-nr = df['alpha'].nunique()
-nc = df['logES'].nunique()
+nr = df.alpha.nunique()
+nc = df.logES.nunique()
 
 # Figure properties
 
@@ -83,10 +78,10 @@ letterlabel = plotsize*6
 ticklabel = plotsize*5
 xticks = [0, nc/2 - 0.5, nc - 1]
 yticks = [0, nr/2 - 0.5, nr - 1]
-xmin = df['logES'].min()
-xmax = df['logES'].max()
-ymin = df['alpha'].min()
-ymax = df['alpha'].max()
+xmin = df.logES.min()
+xmax = df.logES.max()
+ymin = df.alpha.min()
+ymax = df.alpha.max()
 xticklabels = [f'{xmin:.0f}',
                f'{(xmin + xmax)/2.:.0f}',
                f'{xmax:.0f}']
@@ -144,32 +139,39 @@ if movie:
              color='grey',
              ha='right')
 
-# Assign axs objects to variables
-# (AxesImage)
+for subfolder in subfolders:
 
-artists = np.empty_like(axs) 
-dummy_Z = np.zeros((nr, nc))
-frames = ts
-frame0 = ts[-1]
+    # Assign axs objects to variables
+    # (AxesImage)
 
-for f, folder in enumerate(folders):
-    for c, title in enumerate(titles):
-        artists[f, c] = axs[f, c].imshow(dummy_Z,
-                                         vmin=0,
-                                         vmax=vmaxs[c])
+    dfs = np.empty(len(folders), dtype=object) 
+    for f, folder in enumerate(folders):
+        filelist = glob(os.path.join(folder, subfolder, '*.csv'))
+        dfs[f] = my.read_files(filelist, movie)
 
-# Add data and save figure
+    artists = np.empty_like(axs) 
+    dummy_Z = np.zeros((nr, nc))
+    frames = ts
+    frame0 = ts[-1]
 
-if movie:
-    ani = FuncAnimation(fig,
-                        update,
-                        frames=frames,
-                        fargs=(artists,),
-                        blit=True)
-    ani.save(file_name + '.mp4', writer='ffmpeg', fps=10)
-else:
-    update(frame0, artists,)
-    plt.savefig(file_name + '.png', transparent=False)
+    for f, folder in enumerate(folders):
+        for c, title in enumerate(titles):
+            artists[f, c] = axs[f, c].imshow(dummy_Z,
+                                             vmin=0,
+                                             vmax=vmaxs[c])
+
+    # Add data and save figure
+
+    if movie:
+        ani = FuncAnimation(fig,
+                            update,
+                            frames=frames,
+                            fargs=(artists,),
+                            blit=True)
+        ani.save(file_name + '_' + subfolder + '.mp4', writer='ffmpeg', fps=10)
+    else:
+        update(frame0, artists,)
+        plt.savefig(file_name + '_' + subfolder + '.png', transparent=False)
 
 plt.close()
 

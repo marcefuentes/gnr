@@ -139,22 +139,19 @@ if movie:
              color='grey',
              ha='right')
 
+# Assign axs objects to variables
+# (AxesImage)
+
+dfs = np.empty(len(folders), dtype=object) 
+artists = np.empty_like(axs) 
+dummy_Z = np.zeros((nr, nc))
+frames = ts
+frame0 = ts[-1]
+
 for subfolder in subfolders:
-
-    # Assign axs objects to variables
-    # (AxesImage)
-
-    dfs = np.empty(len(folders), dtype=object) 
     for f, folder in enumerate(folders):
         filelist = glob(os.path.join(folder, subfolder, '*.csv'))
         dfs[f] = my.read_files(filelist, movie)
-
-    artists = np.empty_like(axs) 
-    dummy_Z = np.zeros((nr, nc))
-    frames = ts
-    frame0 = ts[-1]
-
-    for f, folder in enumerate(folders):
         for c, title in enumerate(titles):
             artists[f, c] = axs[f, c].imshow(dummy_Z,
                                              vmin=0,

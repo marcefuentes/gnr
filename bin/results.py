@@ -31,7 +31,7 @@ vmaxs = [my.aBmax,
          my.wmax,
          my.wmax]
 folders = ['given100', 'given095', 'given050', 'given000']
-subfolder = 'none'
+subfolder = 'p'
 
 movie = False
 plotsize = 4

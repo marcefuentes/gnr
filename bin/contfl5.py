@@ -61,9 +61,9 @@ width = plotsize*len(titles)
 height = plotsize*len(folders)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Influence of $\it{B}$'
-biglabel = plotsize*7
-letterlabel = plotsize*6
-ticklabel = plotsize*5
+biglabel = plotsize*6
+letterlabel = plotsize*5
+ticklabel = plotsize*4
 xlim = [0.0, my.aBmax]
 ylim = [0.0, my.wmax]
 step = int(nr/2)
@@ -167,7 +167,7 @@ for f, folder in enumerate(folders):
             ax = axs[f, 0, a, e]
             y = my.fitness(aBs, aBs, given, alpha, rho)
             y = y - my.fitness(aBs, xaxis, given, alpha, rho)
-            ax.plot(xaxis, y, color='black', linewidth=2.0)
+            ax.plot(xaxis, y, color='black', linewidth=1.0)
             #ax.plot(aBprivates[a, e],
             #        wprivates[a, e],
             #        marker='o',
@@ -179,11 +179,11 @@ for f, folder in enumerate(folders):
 
             ax = axs[f, 1, a, e]
             y = my.fitness(xaxis, xaxis, given, alpha, rho)
-            ax.plot(xaxis, y, color='black', linewidth=2.0)
+            ax.plot(xaxis, y, color='black', linewidth=1.0)
             ax.plot(aBprivates[a, e],
                     wprivates[a, e],
                     marker='o',
-                    markersize=2.2,
+                    markersize=1.2,
                     color='white')
             color = cm.viridis(Z[1, a, e]/my.aBmax)
             rgba_color = color[0], color[1], color[2], 0.5

@@ -97,7 +97,7 @@ bottom_y = axs[-1, -1, -1, -1].get_position().y0
 center_y = (top_y + bottom_y) / 2
 fig.supxlabel(xlabel,
               x=center_x,
-              y=bottom_y*0.3,
+              y=bottom_y*0.4,
               fontsize=biglabel)
 fig.supylabel(ylabel,
               x=left_x*0.1,
@@ -121,7 +121,7 @@ for f, folder in enumerate(folders):
         if f == 0:
             axs[0, c, 0, 10].set_title(title,
                                        pad=plotsize*9,
-                                       fontsize=biglabel)
+                                       fontsize=letterlabel)
         for a in range(0, nr, step):
             axs[f, c, a, 0].set(yticks=[ylim[1]/2.0], yticklabels=[])
             if c == 0:

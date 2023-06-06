@@ -22,12 +22,12 @@ traits = ['ChooseGrainmean',
           'MimicGrainmean']
 titles = ['Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
-folders = ['given100', 'given095', 'given050']
+folders = ['given100', 'given095', 'given050', 'given000']
 subfolders = ['p', 'r']
 
 numaB = 64
 theory = False
-plotsize = 6
+plotsize = 4
 
 # Data
 
@@ -61,10 +61,9 @@ width = plotsize*len(titles)
 height = plotsize*len(folders)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Influence of $\it{B}$'
-biglabel = plotsize*6
-midlabel = plotsize*5
-letterlabel = plotsize*4
-ticklabel = plotsize*3
+biglabel = plotsize*7
+letterlabel = plotsize*6
+ticklabel = plotsize*5
 xlim = [0.0, my.aBmax]
 ylim = [0.0, my.wmax]
 step = int(nr/2)
@@ -122,7 +121,7 @@ for f, folder in enumerate(folders):
         if f == 0:
             axs[0, c, 0, 10].set_title(title,
                                        pad=plotsize*9,
-                                       fontsize=midlabel)
+                                       fontsize=biglabel)
         for a in range(0, nr, step):
             axs[f, c, a, 0].set(yticks=[ylim[1]/2.0], yticklabels=[])
             if c == 0:
@@ -168,25 +167,27 @@ for f, folder in enumerate(folders):
             ax = axs[f, 0, a, e]
             y = my.fitness(aBs, aBs, given, alpha, rho)
             y = y - my.fitness(aBs, xaxis, given, alpha, rho)
-            ax.plot(xaxis, y, color='white', linewidth=1.0)
+            ax.plot(xaxis, y, color='black', linewidth=2.0)
             #ax.plot(aBprivates[a, e],
             #        wprivates[a, e],
             #        marker='o',
             #        markersize=1.5,
             #        color='white')
             color = cm.viridis(Z[0, a, e]/my.aBmax)
-            ax.set_facecolor(color)
+            rgba_color = color[0], color[1], color[2], 0.5
+            ax.set_facecolor(rgba_color)
 
             ax = axs[f, 1, a, e]
             y = my.fitness(xaxis, xaxis, given, alpha, rho)
-            ax.plot(xaxis, y, color='white', linewidth=1.0)
+            ax.plot(xaxis, y, color='black', linewidth=2.0)
             ax.plot(aBprivates[a, e],
                     wprivates[a, e],
                     marker='o',
-                    markersize=1.0,
-                    color='black')
+                    markersize=2.2,
+                    color='white')
             color = cm.viridis(Z[1, a, e]/my.aBmax)
-            ax.set_facecolor(color)
+            rgba_color = color[0], color[1], color[2], 0.5
+            ax.set_facecolor(rgba_color)
 
 # Finish
 

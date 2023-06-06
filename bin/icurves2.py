@@ -15,7 +15,7 @@ file_name = this_file.split('.')[0]
 
 # Options
 
-givens = [0.95, 0.5, 0.0]
+givens = [1.0, 0.95, 0.5, 0.0]
 
 vmax = my.wmax
 num = 3     # Number of subplot rows & columns
@@ -107,7 +107,7 @@ bottom_y = axs[-1, -1, -1].get_position().y0
 center_y = (top_y + bottom_y) / 2
 fig.supxlabel(xlabel,
               x=center_x,
-              y=bottom_y*0.3,
+              y=bottom_y*0.5,
               fontsize=biglabels)
 fig.supylabel(ylabel,
               x=left_x*0.4,

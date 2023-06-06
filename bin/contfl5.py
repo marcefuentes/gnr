@@ -167,7 +167,7 @@ for f, folder in enumerate(folders):
             ax = axs[f, 0, a, e]
             y = my.fitness(aBs, aBs, given, alpha, rho)
             y = y - my.fitness(aBs, xaxis, given, alpha, rho)
-            ax.plot(xaxis, y, color='black', linewidth=1.0)
+            ax.plot(xaxis, y, color='black', linewidth=1.5)
             color = cm.viridis(Z[0, a, e]/my.aBmax)
             rgba_color = color[0], color[1], color[2], 0.5
             ax.set_facecolor(rgba_color)
@@ -175,7 +175,7 @@ for f, folder in enumerate(folders):
             ax = axs[f, 1, a, e]
             y = my.fitness(xaxis, xaxis, given, alpha, rho)
             mask = y < wprivates[a, e] 
-            ax.scatter(xaxis[mask], y[mask], s=0.5, c=y[mask], cmap='viridis', vmin=0, vmax=my.wmax/2.0)
+            ax.scatter(xaxis[mask], y[mask], s=0.5, c=y[mask], cmap='viridis', vmin=0, vmax=my.wmax)
             color = cm.viridis(Z[1, a, e]/my.aBmax)
             rgba_color = color[0], color[1], color[2], 0.5
             ax.set_facecolor(rgba_color)

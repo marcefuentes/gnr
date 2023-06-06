@@ -51,7 +51,7 @@ alphas = np.sort(pd.unique(df.alpha))[::-1]
 logess = np.sort(pd.unique(df.logES))
 nr = len(alphas)
 nc = len(logess)
-rhos = 1. - 1./pow(2., logess)
+rhos = 1.0 - 1.0/pow(2.0, logess)
 RR, AA = np.meshgrid(rhos, alphas)
 xaxis = np.linspace(0.01, my.aBmax - 0.01, num=numaB)
 
@@ -65,8 +65,8 @@ biglabel = plotsize*6
 midlabel = plotsize*5
 letterlabel = plotsize*4
 ticklabel = plotsize*3
-xlim = [0., my.aBmax]
-ylim = [0., my.wmax]
+xlim = [0.0, my.aBmax]
+ylim = [0.0, my.wmax]
 step = int(nr/2)
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
@@ -138,7 +138,7 @@ for f, folder in enumerate(folders):
 # Add data
 
 if theory:
-    aBsocials = my.aBeq(0., AA, RR)
+    aBsocials = my.aBeq(0.0, AA, RR)
 else:
     aBsocials = my.getZ(t, dfsocial, 'a2Seenmean')
 #wsocials = my.fitness(aBsocials, aBsocials, given, AA, RR)
@@ -158,7 +158,7 @@ for f, folder in enumerate(folders):
     for c, trait in enumerate(traits):
         Z[c] = my.getZ(t, dftraits[f, c], trait)
         if 'Grain' in trait:
-            Z[c] = 1. - Z[c]
+            Z[c] = 1.0 - Z[c]
 
     for a, alpha in enumerate(alphas):
         for e, rho in enumerate(rhos):

@@ -28,6 +28,7 @@ titles = ['Production of $\it{B}$',
 vmaxs = [my.aBmax, my.aBmax, my.wmax]
 folders = ['none', 'p']
 
+subfolder = 'given095'
 alpha = 0.66
 loges = 1.0
 movie = False
@@ -68,12 +69,12 @@ def update(t, artists):
 
 dffrqs = np.empty(len(folders), dtype=object) 
 for f, folder in enumerate(folders):
-    filelist = glob(os.path.join(folder, '*.frq'))
+    filelist = glob(os.path.join(folder, subfolder, '*.frq'))
     dffrqs[f] = my.read_files(filelist, movie)
 
 dfmeans = np.empty(len(folders), dtype=object) 
 for f, folder in enumerate(folders):
-    filelist = glob(os.path.join(folder, '*.csv'))
+    filelist = glob(os.path.join(folder, subfolder, '*.csv'))
     dfmeans[f] = my.read_files(filelist, movie)
 
 df = dffrqs[1]

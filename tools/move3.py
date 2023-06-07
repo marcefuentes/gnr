@@ -27,8 +27,6 @@ for discrete in discretes:
                 if os.path.exists(discrete + '/' + given + '/' + lmh):
                     if not os.path.exists(discrete + str(i)):
                         os.mkdir(discrete + str(i))
-                    if not os.path.exists(discrete + str(i) + '/' + given):
-                        os.mkdir(discrete + str(i) + '/' + given)
                     for npr in nprs:
                         if os.path.exists(discrete + '/' + given + '/' + lmh + '/' + npr):
                             if not os.path.exists(discrete + str(i) + '/' + npr):

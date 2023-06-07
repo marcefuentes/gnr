@@ -142,7 +142,6 @@ if movie:
 # Assign axs objects to variables
 # (AxesImage)
 
-dfs = np.empty(len(givens), dtype=object) 
 artists = np.empty_like(axs) 
 dummy_Z = np.zeros((nr, nc))
 frames = ts
@@ -150,14 +149,17 @@ frame0 = ts[-1]
 
 for folder in folders:
     for g, given in enumerate(givens):
-        filelist = glob(os.path.join(folder, given, '*.csv'))
-        dfs[g] = my.read_files(filelist, movie)
         for c, title in enumerate(titles):
             artists[g, c] = axs[g, c].imshow(dummy_Z,
                                              vmin=0,
                                              vmax=vmaxs[c])
 
     # Add data and save figure
+
+    dfs = np.empty(len(givens), dtype=object) 
+    for g, given in enumerate(givens):
+        filelist = glob(os.path.join(folder, given, '*.csv'))
+        dfs[g] = my.read_files(filelist, movie)
 
     if movie:
         ani = FuncAnimation(fig,

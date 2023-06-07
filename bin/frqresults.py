@@ -68,12 +68,8 @@ def update(t, artists):
 
 # Data without partner choice or reciprocity
 
-dfnulls = np.empty(len(givens), dtype=object) 
-for g, given in enumerate(givens):
-    filelist = glob(os.path.join('none', given, '*.csv'))
-    dfnulls[g] = my.read_files(filelist, movie)
-
-df = dfnulls[0]
+filelist = glob(os.path.join(folders[0], givens[0], '*.csv'))
+df = my.read_files(filelist, movie)
 ts = df.Time.unique()
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 logess = np.sort(pd.unique(df.logES))
@@ -169,8 +165,6 @@ if movie:
 # Assign axs objects to variables
 # (Line2D)
 
-dffrqs = np.empty(len(givens), dtype=object) 
-dfmeans = np.empty(len(givens), dtype=object) 
 artists = np.empty_like(axs) 
 x = np.arange(64)
 dummy_y = np.zeros_like(x)
@@ -179,10 +173,6 @@ frame0 = ts[-1]
 
 for folder in folders:
     for g, given in enumerate(givens):
-        filelist = glob(os.path.join(folder, given, '*.frq'))
-        dffrqs[g] = my.read_files(filelist, movie)
-        filelist = glob(os.path.join(folder, given, '*.csv'))
-        dfmeans[g] = my.read_files(filelist, movie)
         for c, title in enumerate(titles):
             for a, alpha in enumerate(alphas):
                 for e, loges in enumerate(logess):
@@ -190,6 +180,14 @@ for folder in folders:
                     artists[g, c, a, e], = ax.plot(x, dummy_y, c='white')
 
     # Add data and save figure
+
+    dffrqs = np.empty(len(givens), dtype=object) 
+    dfmeans = np.empty(len(givens), dtype=object) 
+    for g, given in enumerate(givens):
+        filelist = glob(os.path.join(folder, given, '*.frq'))
+        dffrqs[g] = my.read_files(filelist, movie)
+        filelist = glob(os.path.join(folder, given, '*.csv'))
+        dfmeans[g] = my.read_files(filelist, movie)
 
     if movie:
         ani = FuncAnimation(fig,

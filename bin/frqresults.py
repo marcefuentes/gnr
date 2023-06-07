@@ -27,8 +27,13 @@ titles = ['Production of $\it{B}$',
           'Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner',
           'Fitness']
-vmaxs = [my.aBmax, my.aBmax, my.aBmax, my.wmax]
-folders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
+vmaxs = [my.aBmax,
+         my.aBmax,
+         my.wmax,
+         my.wmax]
+givens = ['given100', 'given095', 'given050', 'given000']
+folders = ['none', 'p', 'p8', 'p8r', 'pr', 'r']
+folders = ['p']
 
 movie = False
 plotsize = 8
@@ -37,43 +42,38 @@ bins = 64
 # Add data to figure
 
 def update(t, artists):
-    for f, folder in enumerate(folders):
-        df = dffrqs[f]
+    for g, given in enumerate(givens):
+        df = dffrqs[g]
         if movie:
             m = df.Time == t
             df = df.loc[m]
         for c, trait in enumerate(traits):
-            Z = my.getZ(t, dfmeans[f], trait + 'mean')
+            Z = my.getZ(t, dfmeans[g], trait + 'mean')
             if 'Grain' in trait:
                 Z = 1.0 - Z
             for a, alpha in enumerate(alphas):
-                for l, loges in enumerate(logess):
+                for e, loges in enumerate(logess):
                     m = (df.alpha == alpha) & (df.logES == loges)
                     d = df.loc[m]
                     freq_a = [col for col in d.columns if re.match(fr'^{trait}\d+$', col)]
                     y = d.loc[:, freq_a]
                     y = y.values[0]
                     y = y.flatten()
-                    artists[f, c, a, l].set_ydata(y)
-                    bgcolor = cm.viridis(Z[a, l]/vmaxs[c])
-                    artists[f, c, a, l].axes.set_facecolor(bgcolor)
+                    artists[g, c, a, e].set_ydata(y)
+                    bgcolor = cm.viridis(Z[a, e]/vmaxs[c])
+                    artists[g, c, a, e].axes.set_facecolor(bgcolor)
     if movie:
         fig.texts[2].set_text(f't\n{t}')
     return artists.flatten()
 
-# Data
+# Data without partner choice or reciprocity
 
-dffrqs = np.empty(len(folders), dtype=object) 
-for f, folder in enumerate(folders):
-    filelist = glob(os.path.join(folder, '*.frq'))
-    dffrqs[f] = my.read_files(filelist, movie)
+dfnulls = np.empty(len(givens), dtype=object) 
+for g, given in enumerate(givens):
+    filelist = glob(os.path.join('none', given, '*.csv'))
+    dfnulls[g] = my.read_files(filelist, movie)
 
-dfmeans = np.empty(len(folders), dtype=object) 
-for f, folder in enumerate(folders):
-    filelist = glob(os.path.join(folder, '*.csv'))
-    dfmeans[f] = my.read_files(filelist, movie)
-
-df = dffrqs[1]
+df = dfnulls[0]
 ts = df.Time.unique()
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 logess = np.sort(pd.unique(df.logES))
@@ -83,11 +83,12 @@ nc = len(logess)
 # Figure properties
 
 width = plotsize*len(titles)
-height = plotsize*len(folders)
+height = plotsize*len(givens)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Influence of $\it{B}$'
-biglabels = plotsize*5 + height/4
-ticklabels = plotsize*4
+biglabel = plotsize*6
+letterlabel = plotsize*5
+ticklabel = plotsize*4
 xlim = [-2, bins + 1]
 ylim = [0, 0.25]
 step = int(nr/2)
@@ -97,21 +98,21 @@ plt.rcParams['ps.fonttype'] = 42
 # Create figure
 
 fig = plt.figure(figsize=(width, height))
-outergrid = fig.add_gridspec(nrows=len(folders),
+outergrid = fig.add_gridspec(nrows=len(givens),
                              ncols=len(titles))
-axs = np.empty((len(folders),
+axs = np.empty((len(givens),
                 len(titles),
                 nr,
                 nc),
                 dtype=object)
 
-for f, folder in enumerate(folders):
+for g, given in enumerate(givens):
     for c, title in enumerate(titles):
-        grid = outergrid[f, c].subgridspec(nrows=nr,
+        grid = outergrid[g, c].subgridspec(nrows=nr,
                                            ncols=nc,
                                            wspace=0,
                                            hspace=0)
-        axs[f, c] = grid.subplots()
+        axs[g, c] = grid.subplots()
 
 left_x = axs[0, 0, 0, 0].get_position().x0
 right_x = axs[-1, -1, -1, -1].get_position().x1
@@ -121,12 +122,12 @@ bottom_y = axs[-1, -1, -1, -1].get_position().y0
 center_y = (top_y + bottom_y) / 2
 fig.supxlabel(xlabel,
               x=center_x,
-              y=bottom_y*0.6,
-              fontsize=biglabels)
+              y=bottom_y - 1.2/height,
+              fontsize=biglabel)
 fig.supylabel(ylabel,
-              x=left_x*0.4,
+              x=left_x - 1.45/width,
               y=center_y,
-              fontsize=biglabels)
+              fontsize=biglabel)
 
 for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])
@@ -134,65 +135,72 @@ for ax in fig.get_axes():
     for axis in ['top','bottom','left','right']:
         ax.spines[axis].set_linewidth(0.1)
 
-for f, folder in enumerate(folders):
+for g, given in enumerate(givens):
     for c, title in enumerate(titles):
-        letter = ord('a') + f*len(titles) + c
-        axs[f, c, 0, 0].set_title(chr(letter),
-                                  fontsize=plotsize*5,
+        letter = ord('a') + g*len(titles) + c
+        axs[g, c, 0, 0].set_title(chr(letter),
+                                  fontsize=letterlabel,
                                   pad = 10,
                                   weight='bold',
                                   loc='left')
-        if f == 0:
+        if g == 0:
             axs[0, c, 0, 10].set_title(title,
                                        pad=plotsize*9,
-                                       fontsize=plotsize*5)
+                                       fontsize=letterlabel)
         for a in range(0, nr, step):
-            axs[f, c, a, 0].set(yticks=[ylim[1]/2.0], yticklabels=[])
+            axs[g, c, a, 0].set(yticks=[ylim[1]/2.0], yticklabels=[])
             if c == 0:
-                axs[f, 0, a, 0].set_yticklabels([alphas[a]],
-                                                fontsize=ticklabels)
-        for l in range(0, nc, step):
-            axs[f, c, -1, l].set(xticks=[xlim[1]/2.0], xticklabels=[])
-            if folder == folders[-1]:
-                axs[-1, c, -1, l].set_xticklabels([f'{logess[l]:.0f}'],
-                                                 fontsize=ticklabels)
+                axs[g, 0, a, 0].set_yticklabels([alphas[a]],
+                                                fontsize=ticklabel)
+        for e in range(0, nc, step):
+            axs[g, c, -1, e].set(xticks=[xlim[1]/2.0], xticklabels=[])
+            if given == givens[-1]:
+                axs[-1, c, -1, e].set_xticklabels([f'{logess[e]:.0f}'],
+                                                 fontsize=ticklabel)
 
 if movie:
     fig.text(right_x,
              bottom_y*0.5,
              't\n0',
-             fontsize=biglabels,
+             fontsize=biglabel,
              color='grey',
              ha='right')
 
 # Assign axs objects to variables
 # (Line2D)
 
+dffrqs = np.empty(len(givens), dtype=object) 
+dfmeans = np.empty(len(givens), dtype=object) 
 artists = np.empty_like(axs) 
 x = np.arange(64)
 dummy_y = np.zeros_like(x)
 frames = ts
 frame0 = ts[-1]
 
-for f, folder in enumerate(folders):
-    for c, title in enumerate(titles):
-        for a, alpha in enumerate(alphas):
-            for l, loges in enumerate(logess):
-                ax = axs[f, c, a, l] 
-                artists[f, c, a, l], = ax.plot(x, dummy_y, c='white')
+for folder in folders:
+    for g, given in enumerate(givens):
+        filelist = glob(os.path.join(folder, given, '*.frq'))
+        dffrqs[g] = my.read_files(filelist, movie)
+        filelist = glob(os.path.join(folder, given, '*.csv'))
+        dfmeans[g] = my.read_files(filelist, movie)
+        for c, title in enumerate(titles):
+            for a, alpha in enumerate(alphas):
+                for e, loges in enumerate(logess):
+                    ax = axs[g, c, a, e] 
+                    artists[g, c, a, e], = ax.plot(x, dummy_y, c='white')
 
-# Add data and save figure
+    # Add data and save figure
 
-if movie:
-    ani = FuncAnimation(fig,
-                        update,
-                        frames=frames,
-                        fargs=(artists,),
-                        blit=True)
-    ani.save(file_name + '.mp4', writer='ffmpeg', fps=10)
-else:
-    update(frame0, artists,)
-    plt.savefig(file_name + '.png', transparent=False)
+    if movie:
+        ani = FuncAnimation(fig,
+                            update,
+                            frames=frames,
+                            fargs=(artists,),
+                            blit=True)
+        ani.save(file_name + '_' + folder + '.mp4', writer='ffmpeg', fps=10)
+    else:
+        update(frame0, artists,)
+        plt.savefig(file_name + '_' + folder + '.png', transparent=False)
 
 plt.close()
 

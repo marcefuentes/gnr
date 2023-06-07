@@ -22,13 +22,13 @@ titles = ['Production of $\it{B}$\nin theory',
           'Fitness\nin theory',
           'Fitness\nin simulations',
           'Fitness deficit\nin simulations']
-givens_theory = [1.0, 0.95, 0.5, 0.]
-givens = ['given100', 'given095', 'given050', 'given000']
 vmaxs = [my.aBmax,
          my.aBmax,
          my.wmax,
          my.wmax,
          my.wmax]
+givens_theory = [1.0, 0.95, 0.5, 0.]
+givens = ['given100', 'given095', 'given050', 'given000']
 plotsize = 4
 
 # Data

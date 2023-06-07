@@ -22,8 +22,8 @@ traits = ['ChooseGrainmean',
           'MimicGrainmean']
 titles = ['Sensitivity for\nchoosing partner',
           'Sensitivity for\nmimicking partner']
-folders = ['given100', 'given095', 'given050', 'given000']
-subfolders = ['p', 'r']
+folders = ['p', 'r']
+givens = ['given100', 'given095', 'given050', 'given000']
 
 numaB = 64
 theory = False
@@ -31,19 +31,19 @@ plotsize = 4
 
 # Data
 
-filelist = glob(os.path.join('given000', 'none', '*.csv'))
+filelist = glob(os.path.join('none', 'given000', '*.csv'))
 dfsocial = my.read_files(filelist, False)
 
-dfprivates = np.empty(len(folders), dtype=object)
-for f, folder in enumerate(folders):
-    filelist = glob(os.path.join(folder, 'none', '*.csv'))
-    dfprivates[f] = my.read_files(filelist, False)
+dfprivates = np.empty(len(givens), dtype=object)
+for g, given in enumerate(givens):
+    filelist = glob(os.path.join('none', given, '*.csv'))
+    dfprivates[g] = my.read_files(filelist, False)
 
-dftraits = np.empty((len(folders), len(subfolders)), dtype=object)
+dftraits = np.empty((len(folders), len(givens)), dtype=object)
 for f, folder in enumerate(folders):
-    for c, subfolder in enumerate(subfolders):
-        filelist = glob(os.path.join(folder, subfolder, '*.csv'))
-        dftraits[f, c] = my.read_files(filelist, False)
+    for g, given in enumerate(givens):
+        filelist = glob(os.path.join(folder, given, '*.csv'))
+        dftraits[f, g] = my.read_files(filelist, False)
 
 df = dftraits[0, 0]
 t = df.Time.max()
@@ -58,7 +58,7 @@ xaxis = np.linspace(0.01, my.aBmax - 0.01, num=numaB)
 # Figure properties
 
 width = plotsize*len(titles)
-height = plotsize*len(folders)
+height = plotsize*len(givens)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Influence of $\it{B}$'
 biglabel = plotsize*6
@@ -73,21 +73,21 @@ plt.rcParams['ps.fonttype'] = 42
 # Create figure
 
 fig = plt.figure(figsize=(width, height))
-outergrid = fig.add_gridspec(nrows=len(folders),
+outergrid = fig.add_gridspec(nrows=len(givens),
                              ncols=len(titles))
-axs = np.empty((len(folders),
+axs = np.empty((len(givens),
                 len(titles),
                 nr,
                 nc),
                dtype=object)
 
-for f, folder in enumerate(folders):
+for g, given in enumerate(givens):
     for c, title in enumerate(titles):
-        grid = outergrid[f, c].subgridspec(nrows=nr,
+        grid = outergrid[g, c].subgridspec(nrows=nr,
                                            ncols=nc,
                                            wspace=0,
                                            hspace=0)
-        axs[f, c] = grid.subplots()
+        axs[g, c] = grid.subplots()
 
 left_x = axs[0, 0, 0, 0].get_position().x0
 right_x = axs[-1, -1, -1, -1].get_position().x1
@@ -110,28 +110,28 @@ for ax in fig.get_axes():
     for axis in ['top','bottom','left','right']:
         ax.spines[axis].set_linewidth(0.1)
 
-for f, folder in enumerate(folders):
+for g, given in enumerate(givens):
     for c, title in enumerate(titles):
-        letter = ord('a') + f*len(titles) + c
-        axs[f, c, 0, 0].set_title(chr(letter),
+        letter = ord('a') + g*len(titles) + c
+        axs[g, c, 0, 0].set_title(chr(letter),
                                   fontsize=letterlabel,
                                   pad = 11,
                                   weight='bold',
                                   loc='left')
-        if f == 0:
+        if g == 0:
             axs[0, c, 0, 10].set_title(title,
                                        pad=plotsize*9,
                                        fontsize=letterlabel)
         for a in range(0, nr, step):
-            axs[f, c, a, 0].set(yticks=[ylim[1]/2.0], yticklabels=[])
+            axs[g, c, a, 0].set(yticks=[ylim[1]/2.0], yticklabels=[])
             if c == 0:
-                axs[f, 0, a, 0].set_yticklabels([alphas[a]],
+                axs[g, 0, a, 0].set_yticklabels([alphas[a]],
                                                 fontsize=ticklabel)
         for e in range(0, nc, step):
-            axs[f, c, -1, e].set(xticks=[xlim[1]/2.0], xticklabels=[])
-        if folder == folders[-1]:
+            axs[g, c, -1, e].set(xticks=[xlim[1]/2.0], xticklabels=[])
+        if given == givens[-1]:
             for e in range(0, nc, step):
-                axs[f, c, -1, e].set_xticklabels([f'{logess[e]:.0f}'],
+                axs[g, c, -1, e].set_xticklabels([f'{logess[e]:.0f}'],
                                                  fontsize=ticklabel)
 
 # Add data
@@ -143,19 +143,19 @@ else:
 #wsocials = my.fitness(aBsocials, aBsocials, given, AA, RR)
 wsocials = my.getZ(t, dfsocial, 'wmean')
 
-for f, folder in enumerate(folders):
+for g, given in enumerate(givens):
 
-    given = dfprivates[f].Given.iloc[0]
+    given = dfprivates[g].Given.iloc[0]
     if theory:
         aBprivates = my.aBeq(given, AA, RR)
     else:
-        aBprivates = my.getZ(t, dfprivates[f], 'a2Seenmean')
+        aBprivates = my.getZ(t, dfprivates[g], 'a2Seenmean')
     wprivates = my.fitness(aBprivates, aBprivates, given, AA, RR)
-    #wprivates = my.getZ(t, dfprivates[f], 'wmean')
+    #wprivates = my.getZ(t, dfprivates[g], 'wmean')
 
     Z = np.zeros((len(traits), len(alphas), len(rhos)))
     for c, trait in enumerate(traits):
-        Z[c] = my.getZ(t, dftraits[f, c], trait)
+        Z[c] = my.getZ(t, dftraits[c, g], trait)
         if 'Grain' in trait:
             Z[c] = 1.0 - Z[c]
 
@@ -164,7 +164,7 @@ for f, folder in enumerate(folders):
 
             aBs = np.full(xaxis.shape, aBprivates[a, e])
 
-            ax = axs[f, 0, a, e]
+            ax = axs[g, 0, a, e]
             y = my.fitness(aBs, aBs, given, alpha, rho)
             y = y - my.fitness(aBs, xaxis, given, alpha, rho)
             ax.plot(xaxis, y, color='black', linewidth=1.5)
@@ -172,7 +172,7 @@ for f, folder in enumerate(folders):
             rgba_color = color[0], color[1], color[2], 0.5
             ax.set_facecolor(rgba_color)
 
-            ax = axs[f, 1, a, e]
+            ax = axs[g, 1, a, e]
             y = my.fitness(xaxis, xaxis, given, alpha, rho)
             mask = y < wprivates[a, e] 
             ax.scatter(xaxis[mask], y[mask], s=0.5, c=y[mask], cmap='viridis', vmin=0, vmax=my.wmax)

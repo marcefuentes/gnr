@@ -35,7 +35,7 @@ plotsize = 4
 
 dfs = np.empty(len(givens), dtype=object)
 for g, given in enumerate(givens):
-    filelist = glob(os.path.join(given, 'none', '*.csv'))
+    filelist = glob(os.path.join('none', given, '*.csv'))
     dfs[g] = my.read_files(filelist, False)
 
 df = dfs[0]

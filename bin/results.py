@@ -30,8 +30,8 @@ vmaxs = [my.aBmax,
          my.aBmax,
          my.wmax,
          my.wmax]
-folders = ['given100', 'given095', 'given050', 'given000']
-subfolders = ['none', 'p', 'p8', 'p8r', 'pr', 'r']
+givens = ['given100', 'given095', 'given050', 'given000']
+folders = ['none', 'p', 'p8', 'p8r', 'pr', 'r']
 
 movie = False
 plotsize = 4
@@ -40,27 +40,27 @@ plotsize = 4
 
 def update(t, artists):
     wsocial = my.getZ(t, dfs[-1], 'wmean')
-    for f, folder in enumerate(folders):
+    for g, given in enumerate(givens):
         for c, trait in enumerate(traits):
-            Z = my.getZ(t, dfs[f], trait)
+            Z = my.getZ(t, dfs[g], trait)
             if 'Grain' in trait:
                 Z = 1. - Z
             if 'gain' in titles[c]:
-                wnull = my.getZ(t, dfnulls[f], 'wmean')
+                wnull = my.getZ(t, dfnulls[g], 'wmean')
                 Z = Z - wnull
             if 'deficit' in titles[c]:
                 Z = wsocial - Z
-            artists[f, c].set_array(Z) 
+            artists[g, c].set_array(Z) 
     if movie:
         fig.texts[2].set_text(f't\n{t}')
     return artists.flatten()
 
 # Data without partner choice or reciprocity
 
-dfnulls = np.empty(len(folders), dtype=object) 
-for f, folder in enumerate(folders):
-    filelist = glob(os.path.join(folder, 'none', '*.csv'))
-    dfnulls[f] = my.read_files(filelist, movie)
+dfnulls = np.empty(len(givens), dtype=object) 
+for g, given in enumerate(givens):
+    filelist = glob(os.path.join('none', given, '*.csv'))
+    dfnulls[g] = my.read_files(filelist, movie)
 
 df = dfnulls[0]
 ts = df.Time.unique()
@@ -70,7 +70,7 @@ nc = df.logES.nunique()
 # Figure properties
 
 width = plotsize*len(titles)
-height = plotsize*len(folders)
+height = plotsize*len(givens)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Influence of $\it{B}$'
 biglabel = plotsize*7
@@ -93,7 +93,7 @@ plt.rcParams['ps.fonttype'] = 42
 
 # Create figure
 
-fig, axs = plt.subplots(nrows=len(folders),
+fig, axs = plt.subplots(nrows=len(givens),
                         ncols=len(titles),
                         figsize=(width, height))
 
@@ -125,8 +125,8 @@ for i, ax in enumerate(fig.get_axes()):
             transform=ax.transAxes,
             fontsize=letterlabel,
             weight='bold')
-for f, folder in enumerate(folders):
-    axs[f, 0].set_yticklabels(yticklabels, fontsize=ticklabel)
+for g, given in enumerate(givens):
+    axs[g, 0].set_yticklabels(yticklabels, fontsize=ticklabel)
 for c, title in enumerate(titles):
     axs[0, c].set_title(title, pad=plotsize*10, fontsize=letterlabel)
     axs[-1, c].set_xticklabels(xticklabels,
@@ -142,18 +142,18 @@ if movie:
 # Assign axs objects to variables
 # (AxesImage)
 
-dfs = np.empty(len(folders), dtype=object) 
+dfs = np.empty(len(givens), dtype=object) 
 artists = np.empty_like(axs) 
 dummy_Z = np.zeros((nr, nc))
 frames = ts
 frame0 = ts[-1]
 
-for subfolder in subfolders:
-    for f, folder in enumerate(folders):
-        filelist = glob(os.path.join(folder, subfolder, '*.csv'))
-        dfs[f] = my.read_files(filelist, movie)
+for folder in folders:
+    for g, given in enumerate(givens):
+        filelist = glob(os.path.join(folder, given, '*.csv'))
+        dfs[g] = my.read_files(filelist, movie)
         for c, title in enumerate(titles):
-            artists[f, c] = axs[f, c].imshow(dummy_Z,
+            artists[g, c] = axs[g, c].imshow(dummy_Z,
                                              vmin=0,
                                              vmax=vmaxs[c])
 
@@ -165,10 +165,10 @@ for subfolder in subfolders:
                             frames=frames,
                             fargs=(artists,),
                             blit=True)
-        ani.save(file_name + '_' + subfolder + '.mp4', writer='ffmpeg', fps=10)
+        ani.save(file_name + '_' + folder + '.mp4', writer='ffmpeg', fps=10)
     else:
         update(frame0, artists,)
-        plt.savefig(file_name + '_' + subfolder + '.png', transparent=False)
+        plt.savefig(file_name + '_' + folder + '.png', transparent=False)
 
 plt.close()
 

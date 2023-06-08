@@ -71,7 +71,8 @@ else:
     last_job = job_min
     path = os.getcwd()
     path_folders = path.split('/')
-    path_print = '/'.join(path_folders[11:])
+    path_print = '/'.join(path_folders[6:])
+    print(f"{blue}Submitting jobs in {path_print}{reset_format}")
     logging.info(f"Submitting jobs in {path_print}")
     with open(folder_file, "w") as f:
         f.write(path)
@@ -88,13 +89,17 @@ for queue in queues:
     #maxsubmit = get_qos_max_submit(queue)
     available_slots = 450 
     print(f"{blue}{available_slots} slots available{reset_format}")
+    should_break = False
 
     for folder in folders[folder_index:]:
         for subfolder in subfolders[subfolder_index:]:
-            path_folders[-2:] = [folder, subfolder]
+            path_folders[-2:] = folder, subfolder
             path = '/'.join(path_folders)
             path_print = '/'.join(path_folders[6:])
-            if os.path.isdir(path):
+            if not os.path.isdir(path):
+                print(f"{red}Skipping {path_print}{reset_format}")
+                logging.info(f"Skipping {path_print}")
+            else:
                 os.chdir(path)
                 print(f"{blue}Moving to {path_print}{reset_format}")
                 logging.info(f"Moving to {path_print}")
@@ -102,36 +107,39 @@ for queue in queues:
                     print(f"{red}Found unexpected {path_print}/{str(last_job + 1)}.csv{reset_format}")
                     exit()
                 else:
-                    if last_job == job_max:
-                        if os.path.isfile(job_file):
-                            os.remove(job_file)
+                    if last_job == job_max and os.path.isfile(job_file):
+                        os.remove(job_file)
                         last_job = job_min
-                    else
-
-                    num_jobs_to_submit = min(available_slots, job_max - last_job)
-                    job_name = f"{queue}-{os.getcwd().split('/')[-1]}"
-                    first_job = last_job + 1
-                    last_job = last_job + num_jobs_to_submit
-                    print(f"{blue}Submitting jobs {first_job} to {last_job}{reset_format}")
-                    logging.info(f"Submitting jobs {first_job} to {last_job}")
-            else:
-                print(f"{red}Skipping {path_print}{reset_format}")
-                logging.info(f"Skipping {path_print}")
-
+                    else:
+                        num_jobs_to_submit = min(available_slots, job_max - last_job)
+                        job_name = f"{queue}-{os.getcwd().split('/')[-1]}"
+                        first_job = last_job + 1
+                        last_job = last_job + num_jobs_to_submit
+                        print(f"{blue}Submitting jobs {first_job} to {last_job}{reset_format}")
+                        logging.info(f"Submitting jobs {first_job} to {last_job}")
+                        available_slots -= num_jobs_to_submit 
+                        if available_slots == 0:
+                            with open(job_file, "w") as f:
+                                f.write(str(last_job))
+                            with open(folder_file, "w") as f:
+                                f.write(path)
+                            should_break = True
+                            subfolder_index = subfolders.index(subfolder)
+                            folder_index = folders.index(folder)
+                            break
+                        else:
+                            if last_job == job_max:
+                                last_job = job_min
         if should_break:
             break
-        else:
+        if subfolder_index == len(subfolders) - 1:
             subfolder_index = 0
-        with open(job_file, "w") as f:
-            f.write(str(last_job))
-        available_slots -= num_jobs_to_submit 
-    if not changed_dir:
+    if not should_break:
         print(f"{bold}{yellow}All jobs submitted{reset_format}")
         logging.info("All jobs submitted")
         print(f"{blue}{available_slots} slots available{reset_format}\n")
         os.remove(folder_file)
         exit()
-
 
 print("")
 

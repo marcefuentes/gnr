@@ -53,16 +53,16 @@ if os.path.isfile(folder_file):
     with open(folder_file, "r") as f:
         path = f.read().strip()
     path_folders = path.split('/')
-    new_path = '/'.join(path_folders[11:])
+    path_print = '/'.join(path_folders[11:])
     os.chdir(path)
     if os.path.isfile(job_file):
         with open(job_file, "r") as f:
             last_job = int(f.read().strip())
-            print(f"\n{blue}Last submitted job is {last_job} in {new_path}{reset_format}")
-            logging.info(f"Last submitted job is {last_job} in {new_path}")
+            print(f"\n{blue}Last submitted job is {last_job} in {path_print}{reset_format}")
+            logging.info(f"Last submitted job is {last_job} in {path_print}")
     else:
-        print(f"\n{red}{job_file} does not exist{reset_format}")
-        logging.error(f"{job_file} does not exist")
+        print(f"\n{red}{job_file} does not exist in {path_print}{reset_format}")
+        logging.error(f"{job_file} does not exist in {path_print}")
         exit()
 else:
     user_input = input("Submit jobs in current folder? (y/n): ")
@@ -71,8 +71,8 @@ else:
     last_job = job_min
     path = os.getcwd()
     path_folders = path.split('/')
-    new_path = '/'.join(path_folders[8:])
-    logging.info(f"Submitting jobs in {new_path}")
+    path_print = '/'.join(path_folders[11:])
+    logging.info(f"Submitting jobs in {path_print}")
     with open(folder_file, "w") as f:
         f.write(path)
 
@@ -92,26 +92,28 @@ for queue in queues:
             path_folders = path.split('/')
             folder, subfolder = path_folders[-2], path_folders[-1]
             folder_index = folders.index(folder)
-            subfolder_index = subfolders.index(subfolder)
+            subfolder_index = subfolders.index(subfolder) + 1
             changed_dir = False
             for folder in folders[folder_index:]:
-                for subfolder in subfolders[subfolder_index + 1:]:
-                    next_path = '/'.join(path_folders[11:-2] + [folder, subfolder])
-                    next_folder = '/'.join(path_folders[11:])
-                    if os.path.isdir(next_path) and not os.path.isfile(os.path.join(next_path, str(job_min) + ".csv")):
-                        os.chdir(next_path)
+                print(folder)
+                for subfolder in subfolders[subfolder_index:]:
+                    path_folders[-2:] = [folder, subfolder]
+                    path = '/'.join(path_folders)
+                    path_print = '/'.join(path_folders[11:])
+                    if os.path.isdir(path) and not os.path.isfile(os.path.join(path, str(job_min) + ".csv")):
+                        os.chdir(path)
                         changed_dir = True
                         last_job = job_min
-                        print(f"{blue}Moving to {next_folder}{reset_format}")
-                        logging.info(f"Moving to {next_folder}")
+                        print(f"{blue}Moving to {path_print}{reset_format}")
+                        logging.info(f"Moving to {path_print}")
                         with open(job_file, 'w') as f:
                             f.write(str(job_min))
                         with open(folder_file, 'w') as f:
                             f.write(path)
                         break
                     else:
-                        print(f"{red}Skipping {next_folder}{reset_format}")
-                        logging.info(f"Skipping {next_folder}")
+                        print(f"{red}Skipping {path_print}{reset_format}")
+                        logging.info(f"Skipping {path_print}")
                 subfolder_index = 0
             if not changed_dir:
                 print(f"{bold}{yellow}All jobs submitted{reset_format}")

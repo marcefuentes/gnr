@@ -18,13 +18,13 @@ file_name = os.path.splitext(this_file)[0]
 numaB = 256 # Number of points along each curve
 n_ic = 10   # Number of indifference curves
 plotsize = 8.0 # Size of figure
-xlabel = 'Quantity of A'
-ylabel = 'Quantity of B'
+xlabel = 'Quantity of $\it{A}$'
+ylabel = 'Quantity of $\it{B}$'
 
 # Data
 
 alpha = 0.7
-loges = -1.0
+loges = -1
 rho = 1.0 - 1.0/pow(2.0, loges)
 ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
 x = np.linspace(0.001*my.RA, (my.aAmax - 0.001)*my.RA, num=numaB)
@@ -59,12 +59,12 @@ ax.set_ylim(0.0, 2.0)
 for i in range(n_ic):
     ax.plot(x, ys[i], linewidth=2.0, color=cm.viridis(ws[i]/1.5), alpha=0.2)
 # Budget line
-ax.plot([2, 0], [0, 2], linewidth=2.0, color='black', alpha=0.5)
+ax.plot([2, 0], [0, 2], linewidth=3.0, color='black')
 # Equilibrium indifference curve
 aBprivate = my.aBeq(0.0, alpha, rho)
 w = my.fitness(aBprivate, aBprivate, 0.0, alpha, rho)
 y = my.indifference(x, w, alpha, rho)
-ax.plot(x, y, linewidth=2.0, color=cm.viridis(w/1.5), alpha=1.0)
+ax.plot(x, y, linewidth=3.0, color=cm.viridis(w/1.5), alpha=1.0)
 
 # Save figure
 

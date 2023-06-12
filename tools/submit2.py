@@ -108,43 +108,43 @@ for queue in queues:
                         print(f"{red}Found unexpected {path_print}/{str(last_job + 1)}.csv{reset_format}")
                         exit()
                     else:
-                        if last_job == job_max and os.path.isfile(job_file):
-                            os.remove(job_file)
+                        num_jobs_to_submit = min(available_slots, job_max - last_job)
+                        job_name = f"{queue}-{os.getcwd().split('/')[-1]}"
+                        first_job = last_job + 1
+                        last_job = last_job + num_jobs_to_submit
+                        job_array = f"{first_job}-{last_job}"
+                        job_time = f"{hours}:59:00"
+                        cmd = ["sbatch",
+                               "--job-name", job_name,
+                               "--output", f"{job_name}.%j.out",
+                               "--constraint", queue,
+                               "--nodes=1",
+                               "--tasks=1",
+                               "--time", job_time,
+                               "--mem=4MB",
+                               "--mail-type=begin,end",
+                               "--mail-user", mail_user,
+                               "--array", job_array,
+                               "--wrap", f"srun {executable} ${{SLURM_ARRAY_TASK_ID}}"]
+                        print(f"{blue}Submitting jobs {first_job} to {last_job}{reset_format}")
+                        logging.info(f"Submitting jobs {first_job} to {last_job}")
+                        result = subprocess.run(cmd, stdout=subprocess.PIPE)
+                        print(result.stdout.decode().strip())
+                        logging.info(result.stdout.decode().strip())
+                        available_slots -= num_jobs_to_submit 
+                        if last_job == job_max:
                             last_job = job_min
-                        else:
-                            num_jobs_to_submit = min(available_slots, job_max - last_job)
-                            job_name = f"{queue}-{os.getcwd().split('/')[-1]}"
-                            first_job = last_job + 1
-                            last_job = last_job + num_jobs_to_submit
-                            job_array = f"{first_job}-{last_job}"
-                            job_time = f"{hours}:59:00"
-                            cmd = ["sbatch",
-                                   "--job-name", job_name,
-                                   "--output", f"{job_name}.%j.out",
-                                   "--constraint", queue,
-                                   "--nodes=1",
-                                   "--tasks=1",
-                                   "--time", job_time,
-                                   "--mem=4MB",
-                                   "--mail-type=begin,end",
-                                   "--mail-user", mail_user,
-                                   "--array", job_array,
-                                   "--wrap", f"srun {executable} ${{SLURM_ARRAY_TASK_ID}}"]
-                            print(f"{blue}Submitting jobs {first_job} to {last_job}{reset_format}")
-                            logging.info(f"Submitting jobs {first_job} to {last_job}")
-                            available_slots -= num_jobs_to_submit 
-                            if available_slots == 0:
-                                with open(job_file, "w") as f:
-                                    f.write(str(last_job))
-                                with open(folder_file, "w") as f:
-                                    f.write(path)
-                                should_break = True
-                                subfolder_index = subfolders.index(subfolder)
-                                folder_index = folders.index(folder)
-                                break
-                            else:
-                                if last_job == job_max:
-                                    last_job = job_min
+                            if os.path.isfile(job_file):
+                                os.remove(job_file)
+                        if available_slots == 0:
+                            with open(job_file, "w") as f:
+                                f.write(str(last_job))
+                            with open(folder_file, "w") as f:
+                                f.write(path)
+                            should_break = True
+                            subfolder_index = subfolders.index(subfolder)
+                            folder_index = folders.index(folder)
+                            break
             if should_break:
                 break
             if subfolder_index == len(subfolders) - 1:

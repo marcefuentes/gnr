@@ -2,7 +2,7 @@
 
 import os
 
-folders = ['none', 'p', 'p8', 'p8r', 'pr', 'r']
+folders = ['none', 'p', 'p8', 'p8r', 'pr', 'r', 'r8']
 subfolders = ['given000', 'given050', 'given095', 'given100']
 
 # in all directories in the current directory

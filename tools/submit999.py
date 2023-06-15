@@ -10,7 +10,7 @@ executable = "/home/ulc/ba/mfu/code/gnr/bin/gnr"
 mail_user = "marcelinofuentes@gmail.com"
 input_file_extension = ".glo"
 
-next_job_file = "/home/ulc/ba/mfu/code/gnr/results/last_submitted_job.tmp"
+last_job_file = "/home/ulc/ba/mfu/code/gnr/results/last_submitted_job.tmp"
 log_file = "/home/ulc/ba/mfu/submit.log"
 logging.basicConfig(filename=log_file,
                     level=logging.DEBUG,
@@ -64,23 +64,27 @@ def get_job_max(path):
                 job_max = basename
     return job_max
 
-def submit_jobs_in_folder(path, job_min):
+def submit_jobs_in_folder(path, last_job):
     os.chdir(path)
     job_max = get_job_max(path)
-    if job_min >= job_max:
+    if last_job == job_max:
         print(f"{yellow}No jobs to submit in this folder{reset_format}")
         logging.info(f"No jobs to submit in this folder")
-        job_min = 0
-        return job_min, available_slots
-    if job_min == 0:
+        last_job = 0
+        return last_job, available_slots
+    else if last_job == 0:
         job_min = get_job_min(path)
+    else:
+        job_min = last_job + 1
     if os.path.isfile(os.path.join(path, str(job_min) + '.csv')):
         print(f"{red}Found unexpected {str(job_min)}.csv{reset_format}")
         exit()
     num_jobs_to_submit = min(available_slots, job_max - job_min + 1)
-    job_last = job_min + num_jobs_to_submit - 1
+    last_job = job_min + num_jobs_to_submit - 1
+    print(f"{blue}Submitting jobs {job_min} to {last_job}{reset_format}")
+    logging.info(f"Submitting jobs {job_min} to {last_job}")
     job_name = f"{queue}-{os.getcwd().split('/')[-1]}"
-    job_array = f"{job_min}-{job_last}"
+    job_array = f"{job_min}-{last_job}"
     job_time = f"{hours}:59:00"
     cmd = ["sbatch",
            "--job-name", job_name,
@@ -94,14 +98,26 @@ def submit_jobs_in_folder(path, job_min):
            "--mail-user", mail_user,
            "--array", job_array,
            "--wrap", f"srun {executable} ${{SLURM_ARRAY_TASK_ID}}"]
-    print(f"{blue}Submitting jobs {job_min} to {job_last}{reset_format}")
-    logging.info(f"Submitting jobs {job_min} to {job_last}")
     result = subprocess.run(cmd, stdout=subprocess.PIPE)
     print(result.stdout.decode().strip())
     logging.info(result.stdout.decode().strip())
     available_slots -= num_jobs_to_submit
-    job_min = job_last + 1
-    return job_min, available_slots
+    return last_job, available_slots
+
+if os.path.isfile(last_job_file):
+    with open(last_job_file, "r") as f:
+        path, last_job = f.read().strip().split(",")
+else:
+    user_input = input("Submit jobs in current folder? (y/n): ")
+    if user_input.lower() == 'n':
+        exit()
+    path = os.getcwd()
+    last_job = 0
+
+path_folders = path.split('/')
+if last_job:
+    path_print = '/'.join(path_folders[-3:])
+    print(f"{blue}\nLast job submitted: {path_print}/{last_job}{reset_format}")
 
 for queue in queues:
     print(f"{bold}{cyan}\n{queue}:{reset_format}")
@@ -114,48 +130,34 @@ for queue in queues:
     print(f"{blue}{available_slots} slots available{reset_format}")
 
     if available_slots:
-        if os.path.isfile(next_job_file):
-            with open(next_job_file, "r") as f:
-                path, job_min = f.read().strip().split(",")
-        else:
-            user_input = input("Submit jobs in current folder? (y/n): ")
-            if user_input.lower() == 'n':
-                exit()
-            path = os.getcwd()
-            job_min = get_job_min(path)
-
-        path_folders = path.split('/')
         path_list = '/'.join(path_folders[:-2])
         folders = os.listdir(path_list)
         folder, subfolder = path_folders[-2], path_folders[-1]
         folder_index = 0
         while available_slots and folder_index < len(folders):
+            path_folders[-2] = folders[folder_index]
             path_list = '/'.join(path_folders[:-1])
             subfolders = os.listdir(path_list)
-            subfolder_index = 0
             while available_slots and subfolder_index < len(subfolders):
-                path_folders[-2:] = folders[folder_index],
-                                    subfolders[subfolder_index]
-                path = '/'.join(path_folders)
+                path_folders[-1] = subfolders[subfolder_index]
                 path_print = '/'.join(path_folders[-3:])
                 print(f"{blue}Working in {path_print}{reset_format}")
                 logging.info(f"Working in {path_print}")
-                job_min, available_slots = submit_jobs_in_folder(path, job_min)
+                path = '/'.join(path_folders)
+                last_job, available_slots = submit_jobs_in_folder(path, last_job)
                 subfolder_index += 1
-                if available_slots:
-                    job_min = 0
-            folder_index += 1
             subfolder_index = 0
+            folder_index += 1
 
         if folder_index == len(folders):
             print(f"{bold}{yellow}All jobs submitted{reset_format}")
             logging.info("All jobs submitted")
             print(f"{blue}{available_slots} slots available{reset_format}\n")
-            os.remove(next_job_file)
+            os.remove(last_job_file)
             exit()
         else:
-            with open(next_job_file, "w") as f:
-                f.write(f"{path},{job_min}")
+            with open(last_job_file, "w") as f:
+                f.write(f"{path},{last_job}")
 
 print("")
 

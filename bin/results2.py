@@ -30,7 +30,7 @@ vmaxs = [my.aBmax,
          my.aBmax,
          my.wmax,
          my.wmax]
-folders = ['p', 'r']
+rows = ['p', 'r']
 given = 'given100'
 
 movie = False
@@ -40,7 +40,7 @@ plotsize = 4
 
 def update(t, artists):
     wsocial = my.getZ(t, dfsocial, 'wmean')
-    for f, folder in enumerate(folders):
+    for f, row in enumerate(rows):
         for c, trait in enumerate(traits):
             Z = my.getZ(t, dfs[f], trait)
             if 'Grain' in trait:
@@ -70,7 +70,7 @@ nc = df.logES.nunique()
 # Figure properties
 
 width = plotsize*len(titles)
-height = plotsize*len(folders)
+height = plotsize*len(rows)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Influence of $\it{B}$'
 biglabel = plotsize*7
@@ -93,7 +93,7 @@ plt.rcParams['ps.fonttype'] = 42
 
 # Create figure
 
-fig, axs = plt.subplots(nrows=len(folders),
+fig, axs = plt.subplots(nrows=len(rows),
                         ncols=len(titles),
                         figsize=(width, height))
 
@@ -125,7 +125,7 @@ for i, ax in enumerate(fig.get_axes()):
             transform=ax.transAxes,
             fontsize=letterlabel,
             weight='bold')
-for f, folder in enumerate(folders):
+for f, row in enumerate(rows):
     axs[f, 0].set_yticklabels(yticklabels, fontsize=ticklabel)
 for c, title in enumerate(titles):
     axs[0, c].set_title(title, pad=plotsize*10, fontsize=letterlabel)
@@ -147,8 +147,8 @@ dummy_Z = np.zeros((nr, nc))
 frames = ts
 frame0 = ts[-1]
 
-for folder in folders:
-    for f, folder in enumerate(folders):
+for row in rows:
+    for f, row in enumerate(rows):
         for c, title in enumerate(titles):
             artists[f, c] = axs[f, c].imshow(dummy_Z,
                                              vmin=0,
@@ -156,9 +156,9 @@ for folder in folders:
 
 # Add data and save figure
 
-dfs = np.empty(len(folders), dtype=object) 
-for f, folder in enumerate(folders):
-    filelist = glob(os.path.join(folder, given, '*.csv'))
+dfs = np.empty(len(rows), dtype=object) 
+for f, row in enumerate(rows):
+    filelist = glob(os.path.join(row, given, '*.csv'))
     dfs[f] = my.read_files(filelist, movie)
 
 if movie:

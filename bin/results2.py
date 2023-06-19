@@ -30,7 +30,7 @@ vmaxs = [my.aBmax,
          my.aBmax,
          my.wmax,
          my.wmax]
-rows = ['p', 'r']
+rows = ['p', 'r', 'none']
 given = 'given100'
 
 movie = False

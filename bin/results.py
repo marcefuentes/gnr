@@ -167,10 +167,10 @@ for folder in folders:
                             frames=frames,
                             fargs=(artists,),
                             blit=True)
-        ani.save(file_name + '_' + folder + '.mp4', writer='ffmpeg', fps=10)
+        ani.save(f"{file_name}_{folder}.mp4", writer='ffmpeg', fps=10)
     else:
         update(frame0, artists,)
-        plt.savefig(file_name + '_' + folder + '.png', transparent=False)
+        plt.savefig(f"{file_name}_{folder}.png", transparent=False)
 
 plt.close()
 

@@ -17,7 +17,7 @@ file_name = this_file.split('.')[0]
 # Options
 
 givens = np.linspace(0.0, 1.0, num=21)
-givens = [0.95]
+givens = [0.0]
 
 vmax = my.wmax
 num = 3     # Number of subplot rows & columns
@@ -155,10 +155,10 @@ if len(givens) > 1:
                         frames=givens,
                         fargs=(budgets, icurves,),
                         blit=True)
-    ani.save(file_name + '.mp4', writer='ffmpeg', fps=10)
+    ani.save(f"{file_name}.mp4", writer='ffmpeg', fps=10)
 else:
     update(givens[0], budgets, icurves,)
-    plt.savefig(file_name + '.png', transparent=False)
+    plt.savefig(f"{file_name}.png", transparent=False)
 
 plt.close()
 

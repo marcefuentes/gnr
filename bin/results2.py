@@ -40,9 +40,9 @@ plotsize = 4
 
 def update(t, artists):
     wsocial = my.getZ(t, dfsocial, 'wmean')
-    for f, row in enumerate(rows):
+    for r, row in enumerate(rows):
         for c, trait in enumerate(traits):
-            Z = my.getZ(t, dfs[f], trait)
+            Z = my.getZ(t, dfs[r], trait)
             if 'Grain' in trait:
                 Z = 1. - Z
             if 'gain' in titles[c]:
@@ -50,7 +50,7 @@ def update(t, artists):
                 Z = Z - wnull
             if 'deficit' in titles[c]:
                 Z = wsocial - Z
-            artists[f, c].set_array(Z) 
+            artists[r, c].set_array(Z) 
     if movie:
         fig.texts[2].set_text(f't\n{t}')
     return artists.flatten()
@@ -125,8 +125,8 @@ for i, ax in enumerate(fig.get_axes()):
             transform=ax.transAxes,
             fontsize=letterlabel,
             weight='bold')
-for f, row in enumerate(rows):
-    axs[f, 0].set_yticklabels(yticklabels, fontsize=ticklabel)
+for r, row in enumerate(rows):
+    axs[r, 0].set_yticklabels(yticklabels, fontsize=ticklabel)
 for c, title in enumerate(titles):
     axs[0, c].set_title(title, pad=plotsize*10, fontsize=letterlabel)
     axs[-1, c].set_xticklabels(xticklabels,
@@ -148,18 +148,18 @@ frames = ts
 frame0 = ts[-1]
 
 for row in rows:
-    for f, row in enumerate(rows):
+    for r, row in enumerate(rows):
         for c, title in enumerate(titles):
-            artists[f, c] = axs[f, c].imshow(dummy_Z,
+            artists[r, c] = axs[r, c].imshow(dummy_Z,
                                              vmin=0,
                                              vmax=vmaxs[c])
 
 # Add data and save figure
 
 dfs = np.empty(len(rows), dtype=object) 
-for f, row in enumerate(rows):
+for r, row in enumerate(rows):
     filelist = glob(os.path.join(row, given, '*.csv'))
-    dfs[f] = my.read_files(filelist, movie)
+    dfs[r] = my.read_files(filelist, movie)
 
 if movie:
     ani = FuncAnimation(fig,

@@ -73,9 +73,9 @@ width = plotsize*len(titles)
 height = plotsize*len(rows)
 xlabel = 'Substitutability of $\it{B}$'
 ylabel = 'Influence of $\it{B}$'
-biglabel = plotsize*7
-letterlabel = plotsize*6
-ticklabel = plotsize*5
+biglabel = plotsize*6
+letterlabel = plotsize*5
+ticklabel = plotsize*4
 xticks = [0, nc/2 - 0.5, nc - 1]
 yticks = [0, nr/2 - 0.5, nr - 1]
 xmin = df.logES.min()
@@ -97,6 +97,8 @@ fig, axs = plt.subplots(nrows=len(rows),
                         ncols=len(titles),
                         figsize=(width, height))
 
+fig.subplots_adjust(top=0.85, bottom=0.15)
+
 left_x = axs[0, 0].get_position().x0
 right_x = axs[-1, -1].get_position().x1
 center_x = (left_x + right_x) / 2.
@@ -105,10 +107,10 @@ bottom_y = axs[-1, -1].get_position().y0
 center_y = (top_y + bottom_y) / 2.
 fig.supxlabel(xlabel,
               x=center_x,
-              y=bottom_y - 1.2/height,
+              y=bottom_y - 1.0/height,
               fontsize=biglabel)
 fig.supylabel(ylabel,
-              x=left_x - 1.45/width,
+              x=left_x - 1.2/width,
               y=center_y,
               fontsize=biglabel)
 
@@ -128,7 +130,7 @@ for i, ax in enumerate(fig.get_axes()):
 for r, row in enumerate(rows):
     axs[r, 0].set_yticklabels(yticklabels, fontsize=ticklabel)
 for c, title in enumerate(titles):
-    axs[0, c].set_title(title, pad=plotsize*10, fontsize=letterlabel)
+    axs[0, c].set_title(title, pad=plotsize*8, fontsize=letterlabel)
     axs[-1, c].set_xticklabels(xticklabels,
                                fontsize=ticklabel)
 if movie:

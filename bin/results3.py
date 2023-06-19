@@ -165,10 +165,10 @@ if movie:
                         frames=frames,
                         fargs=(artists,),
                         blit=True)
-    ani.save(file_name + '.mp4', writer='ffmpeg', fps=10)
+    ani.save(f"{file_name}.mp4", writer='ffmpeg', fps=10)
 else:
     update(frame0, artists,)
-    plt.savefig(file_name + '.png', transparent=False)
+    plt.savefig(f"{file_name}.png", transparent=False)
 
 plt.close()
 

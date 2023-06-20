@@ -11,11 +11,11 @@ import mymodule as my
 
 start_time = time.perf_counter()
 this_file = os.path.basename(__file__)
-file_name = this_file.split('.')[0]
+file_name = this_file.split(".")[0]
 
-titles = ['Games',
-          '2$\it{R}$ - $\it{T}$ - $\it{P}$',
-          '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
+titles = ["Games",
+          "2$\it{R}$ - $\it{T}$ - $\it{P}$",
+          "$\it{T}$ + $\it{S}$ - 2$\it{R}$"]
 givens = np.linspace(0.95, 1.0, num=1)
 #givens = np.linspace(0.0, 1.0, num=21)
 
@@ -29,17 +29,17 @@ logess = np.linspace(my.logesmin, my.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
 
 step = int(num/2)
-xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Influence of $\it{B}$'
-letter = ord('a')
+xlabel = "Substitutability of $\it{B}$"
+ylabel = "Influence of $\it{B}$"
+letter = ord("a")
 letterposition = ext*1.035
 extent = 0, ext, 7.5, ext
 width = plotsize*len(titles)
 height = plotsize
 biglabels = plotsize*5 + height/4
 ticklabels = plotsize*3.5
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
+plt.rcParams["pdf.fonttype"] = 42
+plt.rcParams["ps.fonttype"] = 42
 
 fig = plt.figure(figsize=(width, height))
 fig.supxlabel(xlabel,
@@ -70,23 +70,23 @@ for g, title in enumerate(titles):
                                  fontsize=plotsize*5)
     axs[0, 0].set_title(chr(letter),
                         fontsize=plotsize*5,
-                        weight='bold',
-                        loc='left')
+                        weight="bold",
+                        loc="left")
     letter += 1
 
     for ax in fig.get_axes():
         ax.set(xticks=[], yticks=[])
-        for axis in ['top','bottom','left','right']:
+        for axis in ["top","bottom","left","right"]:
             ax.spines[axis].set_linewidth(0.1)
     if g == 0:
         for i in range(0, num, step):
-            axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
-                                 rotation='horizontal',
-                                 horizontalalignment='right',
-                                 verticalalignment='center',
+            axs[i, 0].set_ylabel(f"{alphas[i]:3.1f}",
+                                 rotation="horizontal",
+                                 horizontalalignment="right",
+                                 verticalalignment="center",
                                  fontsize=ticklabels)
     for j in range(0, num, step):
-        axs[-1, j].set_xlabel(f'{logess[j]:2.0f}',
+        axs[-1, j].set_xlabel(f"{logess[j]:2.0f}",
                               x=0.45,
                               fontsize=ticklabels)
 
@@ -107,7 +107,7 @@ for given in givens:
             x = np.linspace(xmin, xmax, num=ext)
             y = np.linspace(ymax, ymin, num=ext)
             X, Y = np.meshgrid(x, y)
-            #G = np.full([ext, ext, 4], my.colormap['transparent'])
+            #G = np.full([ext, ext, 4], my.colormap["transparent"])
             #G[X >= Y] = [0.9, 0.9, 0.9, 1.0]
             RR = np.full([ext, ext], rho)
             T = my.fitness(Y, X, given, AA, RR)
@@ -132,18 +132,18 @@ for given in givens:
 
     text = fig.text(0.85,
                     0.02,
-                    'Given: ' + f'{given:4.2f}',
+                    "Given: " + f"{given:4.2f}",
                     fontsize=biglabels,
-                    color='white',
-                    ha='right')
-    plt.savefig('temp.png', transparent=False)
+                    color="white",
+                    ha="right")
+    plt.savefig("temp.png", transparent=False)
     text.remove()
-    frames.append(iio.imread('temp.png'))
-    os.remove('temp.png')
+    frames.append(iio.imread("temp.png"))
+    os.remove("temp.png")
 
 plt.close()
 
-iio.mimsave(file_name + '.gif', frames)
+iio.mimsave(file_name + ".gif", frames)
 
 end_time = time.perf_counter()
-print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')
+print(f"\nTime elapsed: {(end_time - start_time):.2f} seconds")

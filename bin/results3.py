@@ -14,21 +14,21 @@ import mymodule as my
 
 start_time = time.perf_counter()
 this_file = os.path.basename(__file__)
-file_name = this_file.split('.')[0]
+file_name = this_file.split(".")[0]
 
 # Options
 
-traits = ['ChooseGrainmean',
-          'MimicGrainmean',
-          'wmean']
-titles = ['Sensitivity for\nchoosing partner',
-          'Sensitivity for\nmimicking partner',
-          'Severity of\nsocial dilemma']
+traits = ["ChooseGrainmean",
+          "MimicGrainmean",
+          "wmean"]
+titles = ["Sensitivity for\nchoosing partner",
+          "Sensitivity for\nmimicking partner",
+          "Severity of\nsocial dilemma"]
 vmaxs = [my.aBmax,
          my.aBmax,
          my.wmax]
-folders = ['p', 'r', 'pr', 'p8r']
-#folders = ['p', 'pr']
+folders = ["p", "r", "pr", "p8r"]
+#folders = ["p", "pr"]
 
 movie = False
 plotsize = 4
@@ -36,57 +36,57 @@ plotsize = 4
 # Add data to figure
 
 def update(t, artists):
-    wsocial = my.getZ(t, dfsocial, 'wmean')
+    wsocial = my.getZ(t, dfsocial, "wmean")
     for f, folder in enumerate(folders):
         for c, trait in enumerate(traits):
             Z = my.getZ(t, dfs[f], trait)
-            if 'Grain' in trait:
+            if "Grain" in trait:
                 Z = 1. - Z
-            if 'wmean' in trait:
+            if "wmean" in trait:
                 Z = wsocial - Z
             artists[f, c].set_array(Z) 
     if movie:
-        fig.texts[2].set_text(f't\n{t}')
+        fig.texts[2].set_text(f"t\n{t}")
     return artists.flatten()
 
 # Data
 
-filelist = glob(os.path.join('given0', '*.csv'))
+filelist = glob(os.path.join("given0", "*.csv"))
 dfsocial = my.read_files(filelist, movie)
 
 dfs = np.empty(len(folders), dtype=object) 
 for f, folder in enumerate(folders):
-    filelist = glob(os.path.join(folder, '*.csv'))
+    filelist = glob(os.path.join(folder, "*.csv"))
     dfs[f] = my.read_files(filelist, movie)
 
 df = dfs[0]
 ts = df.Time.unique()
-nr = df['alpha'].nunique()
-nc = df['logES'].nunique()
+nr = df["alpha"].nunique()
+nc = df["logES"].nunique()
 
 # Figure properties
 
 width = plotsize*len(titles)
 height = plotsize*len(folders)
-xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Influence of $\it{B}$'
+xlabel = "Substitutability of $\it{B}$"
+ylabel = "Influence of $\it{B}$"
 biglabel = plotsize*6
 letterlabel = plotsize*5
 ticklabel = plotsize*4
 xticks = [0, nc/2 - 0.5, nc - 1]
 yticks = [0, nr/2 - 0.5, nr - 1]
-xmin = df['logES'].min()
-xmax = df['logES'].max()
-ymin = df['alpha'].min()
-ymax = df['alpha'].max()
-xticklabels = [f'{xmin:.0f}',
-               f'{(xmin + xmax)/2.:.0f}',
-               f'{xmax:.0f}']
-yticklabels = [f'{ymax:.1f}',
-               f'{(ymin + ymax)/2.:.1f}',
-               f'{ymin:.1f}']
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
+xmin = df["logES"].min()
+xmax = df["logES"].max()
+ymin = df["alpha"].min()
+ymax = df["alpha"].max()
+xticklabels = [f"{xmin:.0f}",
+               f"{(xmin + xmax)/2.:.0f}",
+               f"{xmax:.0f}"]
+yticklabels = [f"{ymax:.1f}",
+               f"{(ymin + ymax)/2.:.1f}",
+               f"{ymin:.1f}"]
+plt.rcParams["pdf.fonttype"] = 42
+plt.rcParams["ps.fonttype"] = 42
 
 # Create figure
 
@@ -117,15 +117,15 @@ letterposition = 1.035
 for i, ax in enumerate(fig.get_axes()):
     ax.set(xticks=xticks, yticks=yticks)
     ax.set(xticklabels=[], yticklabels=[])
-    for axis in ['top', 'bottom', 'left', 'right']:
+    for axis in ["top", "bottom", "left", "right"]:
         ax.spines[axis].set_linewidth(0.1)
-    letter = ord('a') + i
+    letter = ord("a") + i
     ax.text(0,
             letterposition,
             chr(letter),
             transform=ax.transAxes,
             fontsize=letterlabel,
-            weight='bold')
+            weight="bold")
 for f, folder in enumerate(folders):
     axs[f, 0].set_yticklabels(yticklabels, fontsize=ticklabel)
 for c, title in enumerate(titles):
@@ -138,10 +138,10 @@ for c, title in enumerate(titles):
 if movie:
     fig.text(right_x,
              bottom_y*0.5,
-             't\n0',
+             "t\n0",
              fontsize=biglabel,
-             color='grey',
-             ha='right')
+             color="grey",
+             ha="right")
 
 # Assign axs objects to variables
 # (AxesImage)
@@ -165,7 +165,7 @@ if movie:
                         frames=frames,
                         fargs=(artists,),
                         blit=True)
-    ani.save(f"{file_name}.mp4", writer='ffmpeg', fps=10)
+    ani.save(f"{file_name}.mp4", writer="ffmpeg", fps=10)
 else:
     update(frame0, artists,)
     plt.savefig(f"{file_name}.png", transparent=False)
@@ -173,4 +173,4 @@ else:
 plt.close()
 
 end_time = time.perf_counter()
-print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')
+print(f"\nTime elapsed: {(end_time - start_time):.2f} seconds")

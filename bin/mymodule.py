@@ -20,20 +20,20 @@ deathrate = pow(2, -7)
 repeats = 1.0/(1.0 - pow(1.0 - deathrate, 2.0))
 
 colormap = {
-    'transparent':  (1.0, 1.0, 1.0, 0.0),
-    'white' :       (1.0, 1.0, 1.0, 1.0),
-    'grey' :        (0.7, 0.7, 0.7, 1.0),
-    'greyTS' :      (0.9, 0.9, 0.9, 1.0),
-    'red' :         (0.7, 0.1, 0.1, 1.0),
-    'redTS' :       (1.0, 0.5, 0.5, 1.0),
-    'harmonyTS' :   (1.0, 0.0, 0.0, 1.0),
-    'snowdrift' :   (0.7, 0.0, 0.7, 1.0),
-    'snowdriftTS' : (1.0, 0.3, 1.0, 1.0),
-    'leader' :      (1.0, 0.3, 0.5, 1.0),
-    'prisoner' :    (0.0, 0.1, 0.3, 1.0),
-    'prisonerTS' :  (0.3, 0.5, 0.8, 1.0),
-    'deadlockTS' :  (0.6, 1.0, 0.6, 1.0),
-    'deadlock' :    (0.9, 1.0, 0.9, 1.0),
+    "transparent":  (1.0, 1.0, 1.0, 0.0),
+    "white" :       (1.0, 1.0, 1.0, 1.0),
+    "grey" :        (0.7, 0.7, 0.7, 1.0),
+    "greyTS" :      (0.9, 0.9, 0.9, 1.0),
+    "red" :         (0.7, 0.1, 0.1, 1.0),
+    "redTS" :       (1.0, 0.5, 0.5, 1.0),
+    "harmonyTS" :   (1.0, 0.0, 0.0, 1.0),
+    "snowdrift" :   (0.7, 0.0, 0.7, 1.0),
+    "snowdriftTS" : (1.0, 0.3, 1.0, 1.0),
+    "leader" :      (1.0, 0.3, 0.5, 1.0),
+    "prisoner" :    (0.0, 0.1, 0.3, 1.0),
+    "prisonerTS" :  (0.3, 0.5, 0.8, 1.0),
+    "deadlockTS" :  (0.6, 1.0, 0.6, 1.0),
+    "deadlock" :    (0.9, 1.0, 0.9, 1.0),
 }
 
 def red(T, R, P, S):
@@ -78,64 +78,64 @@ def diagonal(T, R, P, S):
 
 def redcolors(T, R, P, S, Z):
     m = red(T, R, P, S)
-    Z[m] = colormap['red']
-    Z[TS(m, T, R, S)] = colormap['redTS']
-    Z[diagonal(T, R, P, S)] = colormap['white']
+    Z[m] = colormap["red"]
+    Z[TS(m, T, R, S)] = colormap["redTS"]
+    Z[diagonal(T, R, P, S)] = colormap["white"]
     return Z
 
 def harmonycolors(T, R, P, S, Z):
     m = harmony(T, R, P, S)
-    Z[m] = colormap['white']
-    Z[diagonal(T, R, P, S)] = colormap['white']
+    Z[m] = colormap["white"]
+    Z[diagonal(T, R, P, S)] = colormap["white"]
     return Z
 
 def deadlockcolors(T, R, P, S, Z):
     m = deadlock(T, R, P, S)
-    Z[m] = colormap['white']
-    Z[TS(m, T, P, S)] = colormap['deadlockTS']
-    Z[diagonal(T, R, P, S)] = colormap['white']
+    Z[m] = colormap["white"]
+    Z[TS(m, T, P, S)] = colormap["deadlockTS"]
+    Z[diagonal(T, R, P, S)] = colormap["white"]
     return Z
 
 def prisonercolors(T, R, P, S, Z):
     m = prisoner(T, R, P, S)
-    Z[m] = colormap['prisoner']
-    Z[TS(m, T, R, S)] = colormap['prisonerTS']
-    Z[diagonal(T, R, P, S)] = colormap['white']
+    Z[m] = colormap["prisoner"]
+    Z[TS(m, T, R, S)] = colormap["prisonerTS"]
+    Z[diagonal(T, R, P, S)] = colormap["white"]
     return Z
 
 def prisonerTScolors(T, R, P, S, Z):
     m = prisoner(T, R, P, S)
-    Z[TS(m, T, R, S)] = colormap['prisonerTS']
-    Z[diagonal(T, R, P, S)] = colormap['white']
+    Z[TS(m, T, R, S)] = colormap["prisonerTS"]
+    Z[diagonal(T, R, P, S)] = colormap["white"]
     return Z
 
 def snowdriftcolors(T, R, P, S, Z):
     m = snowdrift(T, R, P, S)
-    Z[m] = colormap['snowdrift']
-    Z[TS(m, T, R, S)] = colormap['snowdriftTS']
-    Z[diagonal(T, R, P, S)] = colormap['white']
+    Z[m] = colormap["snowdrift"]
+    Z[TS(m, T, R, S)] = colormap["snowdriftTS"]
+    Z[diagonal(T, R, P, S)] = colormap["white"]
     return Z
 
 def leadercolors(T, R, P, S, Z):
     m = leader(T, R, P, S)
-    Z[m] = colormap['leader']
-    Z[diagonal(T, R, P, S)] = colormap['white']
+    Z[m] = colormap["leader"]
+    Z[diagonal(T, R, P, S)] = colormap["white"]
     return Z
 
 def nodilemmacolors(T, R, P, S):
-    Z = np.full([*T.shape, 4], colormap['transparent'])
+    Z = np.full([*T.shape, 4], colormap["transparent"])
     m = nodilemma(T, R, P, S)
-    Z[m] = colormap['white']
+    Z[m] = colormap["white"]
     return Z
 
 def nodilemmacolorsg(T, R, P, S):
-    Z = np.full([*T.shape, 4], colormap['transparent'])
+    Z = np.full([*T.shape, 4], colormap["transparent"])
     m = nodilemma(T, R, P, S)
-    Z[m] = colormap['grey']
+    Z[m] = colormap["grey"]
     return Z
 
 def gamecolors(T, R, P, S):
-    Z = np.full([*T.shape, 4], colormap['red'])
+    Z = np.full([*T.shape, 4], colormap["red"])
     Z = redcolors(T, R, P, S, Z)
     Z = harmonycolors(T, R, P, S, Z)
     Z = deadlockcolors(T, R, P, S, Z)
@@ -151,7 +151,7 @@ def equilibrium(T, R, P, S, low, high, aB, weq):
     aB[m] = high[m]
     weq[m] = R[m]
 
-    # Deadlock or prisoner's dilemma
+    # Deadlock or prisoner"s dilemma
     m = (T >= R) & (P >= S) 
     aB[m] = low[m]
     weq[m] = P[m]
@@ -224,8 +224,8 @@ def getZ(t, df, trait):
     m = df.Time == t
     Z = pd.pivot_table(df.loc[m],
                        values=trait,
-                       index='alpha',
-                       columns='logES')
+                       index="alpha",
+                       columns="logES")
     Z = Z.sort_index(axis=0, ascending=False)
     Z = Z.to_numpy()
     return Z

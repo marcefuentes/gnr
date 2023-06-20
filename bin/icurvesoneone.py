@@ -18,8 +18,8 @@ file_name = os.path.splitext(this_file)[0]
 numaB = 256 # Number of points along each curve
 n_ic = 10   # Number of indifference curves
 plotsize = 8.0 # Size of figure
-xlabel = 'Quantity of $\it{A}$'
-ylabel = 'Quantity of $\it{B}$'
+xlabel = "Quantity of $\it{A}$"
+ylabel = "Quantity of $\it{B}$"
 
 # Data
 
@@ -59,7 +59,7 @@ ax.set_ylim(0.0, 2.0)
 for i in range(n_ic):
     ax.plot(x, ys[i], linewidth=2.0, color=cm.viridis(ws[i]/1.5), alpha=0.2)
 # Budget line
-ax.plot([2, 0], [0, 2], linewidth=3.0, color='black')
+ax.plot([2, 0], [0, 2], linewidth=3.0, color="black")
 # Equilibrium indifference curve
 aBprivate = my.aBeq(0.0, alpha, rho)
 w = my.fitness(aBprivate, aBprivate, 0.0, alpha, rho)
@@ -68,7 +68,7 @@ ax.plot(x, y, linewidth=3.0, color=cm.viridis(w/1.5), alpha=1.0)
 
 # Save figure
 
-fig.savefig(file_name + '.png', bbox_inches='tight')
+fig.savefig(file_name + ".png", bbox_inches="tight")
 plt.close(fig)
 end_time = time.time()
 elapsed_time = end_time - start_time

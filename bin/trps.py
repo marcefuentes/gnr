@@ -13,11 +13,11 @@ import mymodule as my
 
 start_time = time.perf_counter()
 this_file = os.path.basename(__file__)
-file_name = this_file.split('.')[0]
+file_name = this_file.split(".")[0]
 
 # Options
 
-folders = ['given095', 'given000']
+folders = ["given095", "given000"]
 movie = True
 nframes = 21 # Number of frames
 plotsize = 8
@@ -49,9 +49,9 @@ def update(distance, artists):
 
 aBeqs = np.empty(len(folders), dtype=object)
 for f, folder in enumerate(folders):
-    filelist = glob(os.path.join(folder, 'none', '*.csv'))
+    filelist = glob(os.path.join(folder, "none", "*.csv"))
     df = my.read_files(filelist, False)
-    aBeqs[f] = my.getZ(1, df, 'a2Seenmean')
+    aBeqs[f] = my.getZ(1, df, "a2Seenmean")
 
 given = df[0].Given.iloc[0]
 alphas = np.sort(pd.unique(df.alpha))[::-1]
@@ -67,15 +67,15 @@ distances = np.linspace(0.0, 1.0 - 1.0/nframes, num=nframes)
 
 width = plotsize
 height = plotsize
-xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Influence of $\it{B}$'
+xlabel = "Substitutability of $\it{B}$"
+ylabel = "Influence of $\it{B}$"
 biglabels = plotsize*5 + height/4
 ticklabels = plotsize*3.5
 xlim=[0, 5]
 ylim=[-0.1, 1.1]
 step = int(nc/2)
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
+plt.rcParams["pdf.fonttype"] = 42
+plt.rcParams["ps.fonttype"] = 42
 
 # Create figure
 
@@ -108,7 +108,7 @@ fig.supylabel(ylabel,
 for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])
     ax.set(xlim=xlim, ylim=ylim)
-    for axis in ['top','bottom','left','right']:
+    for axis in ["top","bottom","left","right"]:
         ax.spines[axis].set_linewidth(0.1)
 
 for i in range(0, nc, step):
@@ -116,7 +116,7 @@ for i in range(0, nc, step):
     axs[i, 0].set_yticklabels([alphas[i]],
                               fontsize=ticklabels)
     axs[-1, i].set(xticks=[xlim[1]/2])
-    axs[-1, i].set_xticklabels([f'{logess[i]:.0f}'],
+    axs[-1, i].set_xticklabels([f"{logess[i]:.0f}"],
                                fontsize=ticklabels)
 
 # Assign axs objects to variables
@@ -134,7 +134,7 @@ for a, alpha in enumerate(alphas):
         artists[a, r], = ax.plot(xaxis,
                                  dummy_y,
                                  linewidth=1,
-                                 marker='o',
+                                 marker="o",
                                  markersize=plotsize/3)
 
 # Add data and save figure
@@ -145,12 +145,12 @@ if movie:
                         frames=frames,
                         fargs=(artists,),
                         blit=True)
-    ani.save(file_name + '.mp4', writer='ffmpeg', fps=10)
+    ani.save(file_name + ".mp4", writer="ffmpeg", fps=10)
 else:
     update(frame0, artists,)
-    plt.savefig(file_name + '.png', transparent=False)
+    plt.savefig(file_name + ".png", transparent=False)
 
 plt.close()
 
 end_time = time.perf_counter()
-print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')
+print(f"\nTime elapsed: {(end_time - start_time):.2f} seconds")

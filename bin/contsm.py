@@ -14,17 +14,17 @@ import mymodule as my
 
 start_time = time.perf_counter()
 this_file = os.path.basename(__file__)
-file_name = this_file.split('.')[0]
+file_name = this_file.split(".")[0]
 
 # Options
 
-traits = ['ChooseGrainmean',
-          'MimicGrainmean']
-titles = ['Games',
-          'Sensitivity for\nchoosing partner',
-          'Sensitivity for\nmimicking partner']
-folders = ['given100', 'given095', 'given050']
-subfolders = ['p', 'r']
+traits = ["ChooseGrainmean",
+          "MimicGrainmean"]
+titles = ["Games",
+          "Sensitivity for\nchoosing partner",
+          "Sensitivity for\nmimicking partner"]
+folders = ["given100", "given095", "given050"]
+subfolders = ["p", "r"]
 
 movie = False
 plotsize = 6
@@ -34,7 +34,7 @@ plotsize = 6
 def init(artists):
 
     for f, folder in enumerate(folders):
-        lows = my.getZ(ts[-1], dfprivates[f], 'a2Seenmean')
+        lows = my.getZ(ts[-1], dfprivates[f], "a2Seenmean")
         highs = lows + 0.01
         given = dftraits[f, 0].Given.iloc[0]
         T = my.fitness(highs, lows, given, AA, RR)
@@ -68,29 +68,29 @@ def update(t, artists):
     for f, folder in enumerate(folders):
         for c, trait in enumerate(traits):
             Z = my.getZ(t, dftraits[f, c], trait)
-            if 'Grain' in trait:
+            if "Grain" in trait:
                 Z = 1.0 - Z
             for (a, l), _ in np.ndenumerate(Z):
                 bgcolor = cm.viridis(Z[a, l]/my.aBmax)
                 artists[f, c + 1, a, l].axes.set_facecolor(bgcolor)
     if movie:
-        fig.texts[2].set_text(f't\n{t}')
+        fig.texts[2].set_text(f"t\n{t}")
     return artists.flatten()
 
 # Data
 
-filelist = glob(os.path.join('given000', 'none', '*.csv'))
+filelist = glob(os.path.join("given000", "none", "*.csv"))
 dfsocial = my.read_files(filelist, movie)
 
 dfprivates = np.empty(len(folders), dtype=object)
 for f, folder in enumerate(folders):
-    filelist = glob(os.path.join(folder, 'none', '*.csv'))
+    filelist = glob(os.path.join(folder, "none", "*.csv"))
     dfprivates[f] = my.read_files(filelist, movie)
 
 dftraits = np.empty((len(folders), len(subfolders)), dtype=object)
 for f, folder in enumerate(folders):
     for c, subfolder in enumerate(subfolders):
-        filelist = glob(os.path.join(folder, subfolder, '*.csv'))
+        filelist = glob(os.path.join(folder, subfolder, "*.csv"))
         dftraits[f, c] = my.read_files(filelist, movie)
 
 df = dftraits[0, 0]
@@ -106,15 +106,15 @@ RR, AA = np.meshgrid(rhos, alphas)
 
 width = plotsize*len(titles)
 height = plotsize*len(folders)
-xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Influence of $\it{B}$'
+xlabel = "Substitutability of $\it{B}$"
+ylabel = "Influence of $\it{B}$"
 biglabels = plotsize*5 + height/4
 ticklabels = plotsize*4
 xlim = [0, 1]
 ylim = [0, 1]
 step = int(nr/2)
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
+plt.rcParams["pdf.fonttype"] = 42
+plt.rcParams["ps.fonttype"] = 42
 
 # Create figure
 
@@ -153,17 +153,17 @@ fig.supylabel(ylabel,
 for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])
     ax.set(xlim=xlim, ylim=ylim)
-    for axis in ['top','bottom','left','right']:
+    for axis in ["top","bottom","left","right"]:
         ax.spines[axis].set_linewidth(0.1)
 
 for f, folder in enumerate(folders):
     for c, title in enumerate(titles):
-        letter = ord('a') + f*len(titles) + c
+        letter = ord("a") + f*len(titles) + c
         axs[f, c, 0, 0].set_title(chr(letter),
                                   fontsize=plotsize*5,
                                   pad = 11,
-                                  weight='bold',
-                                  loc='left')
+                                  weight="bold",
+                                  loc="left")
         if f == 0:
             axs[0, c, 0, 10].set_title(title,
                                        pad=plotsize*9,
@@ -176,15 +176,15 @@ for f, folder in enumerate(folders):
         for l in range(0, nc, step):
             axs[f, c, -1, l].set(xticks=[xlim[1]/2.0], xticklabels=[])
             if folder == folders[-1]:
-                axs[-1, c, -1, l].set_xticklabels([f'{logess[l]:.0f}'],
+                axs[-1, c, -1, l].set_xticklabels([f"{logess[l]:.0f}"],
                                                  fontsize=ticklabels)
 if movie:
     fig.text(right_x,
              bottom_y*0.5,
-             't\n0',
+             "t\n0",
              fontsize=biglabels,
-             color='grey',
-             ha='right')
+             color="grey",
+             ha="right")
 
 # Assign axs objects to variables
 # (PathCollection)
@@ -203,7 +203,7 @@ for f, folder in enumerate(folders):
                 ax = axs[f, c, a, l] 
                 artists[f, c, a, l] = ax.scatter(x,
                                                  y,
-                                                 color='white',
+                                                 color="white",
                                                  s=dummy_z)
 
 # Add data and save figure
@@ -216,12 +216,12 @@ if movie:
                         frames=frames,
                         fargs=(artists,),
                         blit=True)
-    ani.save(file_name + '.mp4', writer='ffmpeg', fps=10)
+    ani.save(file_name + ".mp4", writer="ffmpeg", fps=10)
 else:
     update(frame0, artists,)
-    plt.savefig(file_name + '.png', transparent=False)
+    plt.savefig(file_name + ".png", transparent=False)
 
 plt.close()
 
 end_time = time.perf_counter()
-print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')
+print(f"\nTime elapsed: {(end_time - start_time):.2f} seconds")

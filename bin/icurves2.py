@@ -11,7 +11,7 @@ import mymodule as my
 
 start_time = time.perf_counter()
 this_file = os.path.basename(__file__)
-file_name = this_file.split('.')[0]
+file_name = this_file.split(".")[0]
 
 # Options
 
@@ -68,15 +68,15 @@ for i, alpha in enumerate(alphas):
 
 width = plotsize + 2
 height = plotsize*len(givens)
-xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Influence of $\it{B}$'
+xlabel = "Substitutability of $\it{B}$"
+ylabel = "Influence of $\it{B}$"
 biglabels = plotsize*5
 ticklabels = plotsize*3
 xlim=[0.0, my.aAmax*my.RA]
 ylim=[0.0, my.aBmax*my.RB] 
 step = int(num/2)
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
+plt.rcParams["pdf.fonttype"] = 42
+plt.rcParams["ps.fonttype"] = 42
 
 # Create figure
 
@@ -117,24 +117,24 @@ fig.supylabel(ylabel,
 for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])
     ax.set(xlim=xlim, ylim=ylim)
-    for axis in ['top','bottom','left','right']:
+    for axis in ["top","bottom","left","right"]:
         ax.spines[axis].set_linewidth(0.2)
 
 for g, given in enumerate(givens):
-    letter = ord('a') + g
+    letter = ord("a") + g
     axs[g, 0, 0].set_title(chr(letter),
                            fontsize=plotsize*5,
-                           weight='bold',
-                           loc='left')
+                           weight="bold",
+                           loc="left")
     for a in range(0, num, step):
-        axs[g, a, 0].set_ylabel(f'{alphas[a]:.1f}',
-                                rotation='horizontal',
-                                horizontalalignment='right',
-                                verticalalignment='center',
+        axs[g, a, 0].set_ylabel(f"{alphas[a]:.1f}",
+                                rotation="horizontal",
+                                horizontalalignment="right",
+                                verticalalignment="center",
                                 fontsize=ticklabels)
     if given == givens[-1]:
         for r in range(0, num, step):
-            axs[g, -1, r].set_xlabel(f'{logess[r]:.0f}',
+            axs[g, -1, r].set_xlabel(f"{logess[r]:.0f}",
                                      fontsize=ticklabels)
 
 # Assign axs objects to variables
@@ -149,10 +149,10 @@ for g, given in enumerate(givens):
     for a, alpha in enumerate(alphas):
         for r, rho in enumerate(rhos):
             for c in range(n_ic): 
-                axs[g, a, r].plot(icx, ics[a, r, c], c='0.850')
+                axs[g, a, r].plot(icx, ics[a, r, c], c="0.850")
             budgets[g, a, r], = axs[g, a, r].plot(budgetx,
                                                   dummy_budgety,
-                                                  c='black',
+                                                  c="black",
                                                   alpha=0.8)
             icurves[g, a, r], = axs[g, a, r].plot(icx,
                                                   dummy_icy,
@@ -163,9 +163,9 @@ for g, given in enumerate(givens):
 
 init(budgets, icurves,)
 
-plt.savefig(file_name + '.png', transparent=False)
+plt.savefig(file_name + ".png", transparent=False)
 
 plt.close()
 
 end_time = time.perf_counter()
-print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')
+print(f"\nTime elapsed: {(end_time - start_time):.2f} seconds")

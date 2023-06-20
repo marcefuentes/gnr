@@ -17,24 +17,24 @@ import mymodule as my
 
 start_time = time.perf_counter()
 this_file = os.path.basename(__file__)
-file_name = this_file.split('.')[0]
+file_name = this_file.split(".")[0]
 
-folders = ['given100', 'given095', 'given050']
-subfolders = ['none', 'p', 'r']
+folders = ["given100", "given095", "given050"]
+subfolders = ["none", "p", "r"]
 
 # Data
 
-filelist = glob('given000/none/*.csv')
+filelist = glob("given000/none/*.csv")
 df = my.read_files(filelist, False)
-df = df.sort_values(['alpha', 'logES'])
-high = df['a2Seenmean'].values
+df = df.sort_values(["alpha", "logES"])
+high = df["a2Seenmean"].values
 high = np.tile(high, (len(folders), 1)).flatten()
 
 dfs = []
 for folder in folders:
     df_list = []
     for subfolder in subfolders:
-        filelist = glob(os.path.join(folder, subfolder, '*.csv'))
+        filelist = glob(os.path.join(folder, subfolder, "*.csv"))
         df_list.append(my.read_files(filelist, False)
     dfs.append(df_list)
 
@@ -44,13 +44,13 @@ for i, subfolder in enumerate(subfolders):
     dfns.append(df_concat)
 
 for df in dfns:
-    df = df.sort_values(['Given', 'alpha', 'logES'])
+    df = df.sort_values(["Given", "alpha", "logES"])
 
 df = dfns[0]
-low = df['a2Seenmean'].values
-given = df['Given'].values
-alpha = df['alpha'].values
-loges = df['logES'].values
+low = df["a2Seenmean"].values
+given = df["Given"].values
+alpha = df["alpha"].values
+loges = df["logES"].values
 rho = 1.0 - 1.0/pow(2.0, loges)
 
 T = my.fitness(high, low, given, alpha, rho)
@@ -69,8 +69,8 @@ sd = sd.astype(int)
 
 X = np.stack((T - R, R - P, R - S, P - S),axis=1)
 
-CG = dfns[1]['ChooseGrainmean'].values
-MG = dfns[2]['MimicGrainmean'].values
+CG = dfns[1]["ChooseGrainmean"].values
+MG = dfns[2]["MimicGrainmean"].values
 CG = 1.0 - CG
 MG = 1.0 - MG
 
@@ -114,7 +114,7 @@ tree = rf.estimators_[0]
 plt.figure(figsize=(20, 10))
 plot_tree(tree, filled=True, fontsize=12)
 
-plt.savefig('tree.png')
+plt.savefig("tree.png")
 
 end_time = time.perf_counter()
-print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')
+print(f"\nTime elapsed: {(end_time - start_time):.2f} seconds")

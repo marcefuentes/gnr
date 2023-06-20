@@ -14,19 +14,19 @@ import mymodule as my
 
 start_time = time.perf_counter()
 this_file = os.path.basename(__file__)
-file_name = this_file.split('.')[0]
+file_name = this_file.split(".")[0]
 
 # Options
 
-predictors = ['$\it{T}$, $\it{S}$',
-              '$\it{R}$, $\it{P}$']
-traits = ['ChooseGrainmean',
-          'MimicGrainmean']
-titles_traits = ['Sensitivity for\nchoosing partner',
-                 'Sensitivity for\nmimicking partner']
+predictors = ["$\it{T}$, $\it{S}$",
+              "$\it{R}$, $\it{P}$"]
+traits = ["ChooseGrainmean",
+          "MimicGrainmean"]
+titles_traits = ["Sensitivity for\nchoosing partner",
+                 "Sensitivity for\nmimicking partner"]
 vmaxs = [my.aBmax, my.aBmax]
-folders = ['given100', 'given095', 'given050']
-subfolders = ['p', 'r']
+folders = ["given100", "given095", "given050"]
+subfolders = ["p", "r"]
 
 numaB = 64
 theory = False
@@ -34,18 +34,18 @@ plotsize = 6
 
 # Data
 
-filelist = glob(os.path.join('given000', 'none', '*.csv'))
+filelist = glob(os.path.join("given000", "none", "*.csv"))
 dfsocial = my.read_files(filelist, False)
 
 dfprivates = np.empty(len(folders), dtype=object)
 for f, folder in enumerate(folders):
-    filelist = glob(os.path.join(folder, 'none', '*.csv'))
+    filelist = glob(os.path.join(folder, "none", "*.csv"))
     dfprivates[f] = my.read_files(filelist, False)
 
 dftraits = np.empty((len(folders), len(subfolders)), dtype=object)
 for f, folder in enumerate(folders):
     for c, subfolder in enumerate(subfolders):
-        filelist = glob(os.path.join(folder, subfolder, '*.csv'))
+        filelist = glob(os.path.join(folder, subfolder, "*.csv"))
         dftraits[f, c] = my.read_files(filelist, False)
 
 df = dftraits[0, 0]
@@ -62,8 +62,8 @@ xaxis = np.linspace(0.01, my.aBmax - 0.01, num=numaB)
 
 width = plotsize*(len(predictors) + len(traits))
 height = plotsize*len(folders)
-xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Influence of $\it{B}$'
+xlabel = "Substitutability of $\it{B}$"
+ylabel = "Influence of $\it{B}$"
 biglabel = plotsize*7
 midlabel = plotsize*6
 letterlabel = plotsize*5
@@ -77,14 +77,14 @@ xmin = logess[0]
 xmax = logess[-1]
 ymin = alphas[-1]
 ymax = alphas[0]
-xticklabels = [f'{xmin:.0f}',
-               f'{(xmin + xmax)/2.:.0f}',
-               f'{xmax:.0f}']
-yticklabels = [f'{ymax:.1f}',
-               f'{(ymin + ymax)/2:.1f}',
-               f'{ymin:.1f}']
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
+xticklabels = [f"{xmin:.0f}",
+               f"{(xmin + xmax)/2.:.0f}",
+               f"{xmax:.0f}"]
+yticklabels = [f"{ymax:.1f}",
+               f"{(ymin + ymax)/2:.1f}",
+               f"{ymin:.1f}"]
+plt.rcParams["pdf.fonttype"] = 42
+plt.rcParams["ps.fonttype"] = 42
 
 # Create figure
 
@@ -138,20 +138,20 @@ offset = matplotlib.transforms.ScaledTranslation(ox,
 for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])
 
-letter = ord('a')
+letter = ord("a")
 letterposition = 1.035
-initial_linewidth = axlines[0, 0, 0, 0].spines['top'].get_linewidth()
+initial_linewidth = axlines[0, 0, 0, 0].spines["top"].get_linewidth()
 for f, folder in enumerate(folders):
     for c, predictor in enumerate(predictors):
         for a, alpha in enumerate(alphas):
             for e, loges in enumerate(logess):
-                for axis in ['top', 'bottom', 'left', 'right']:
+                for axis in ["top", "bottom", "left", "right"]:
                     axlines[f, c, a, e].spines[axis].set_linewidth(0.1)
                 axlines[f, c, a, e].set(xlim=xlim, ylim=ylim)
         axlines[f, c, 0, 0].set_title(chr(letter),
                                       pad=plotsize*5/3,
                                       fontsize=letterlabel,
-                                      weight='bold')
+                                      weight="bold")
         letter += 1
         if f == 0:
             axlines[0, c, 0, 10].set_title(predictor,
@@ -160,26 +160,26 @@ for f, folder in enumerate(folders):
         if c == 0:
             for a in range(0, nr, step):
                 axlines[f, 0, a, 0].set(yticks=[my.wmax/2.])
-                axlines[f, 0, a, 0].set_yticklabels([f'{alphas[a]:.1f}'],
-                                                    rotation='horizontal',
-                                                    horizontalalignment='right',
-                                                    verticalalignment='center',
+                axlines[f, 0, a, 0].set_yticklabels([f"{alphas[a]:.1f}"],
+                                                    rotation="horizontal",
+                                                    horizontalalignment="right",
+                                                    verticalalignment="center",
                                                     fontsize=ticklabel)
         for e in range(0, nc, step):
             axlines[f, c, -1, e].set(xticks=[my.aBmax/2.], xticklabels=[]) 
         if folder == folders[-1]:
             for e in range(0, nc, step):
-                axlines[-1, c, -1, e].set_xticklabels([f'{logess[e]:.0f}'],
+                axlines[-1, c, -1, e].set_xticklabels([f"{logess[e]:.0f}"],
                                                       fontsize=ticklabel)
     for c, titles_trait in enumerate(titles_traits):
-        for axis in ['top', 'bottom', 'left', 'right']:
+        for axis in ["top", "bottom", "left", "right"]:
             aximages[f, c].spines[axis].set_linewidth(0.1)
         aximages[f, c].text(0,
                             letterposition,
                             chr(letter),
                             transform=aximages[f, c].transAxes,
                             fontsize=letterlabel,
-                            weight='bold')
+                            weight="bold")
         letter += 1
         aximages[f, c].set(xticks=xticks, yticks=yticks)
         aximages[f, c].set(xticklabels=[], yticklabels=[])
@@ -198,7 +198,7 @@ for f, folder in enumerate(folders):
 if theory:
     aBsocials = my.aBeq(0., AA, RR)
 else:
-    aBsocials = my.getZ(t, dfsocial, 'a2Seenmean')
+    aBsocials = my.getZ(t, dfsocial, "a2Seenmean")
 wss = my.fitness(aBsocials, aBsocials, 0., AA, RR) 
 
 for f, folder in enumerate(folders):
@@ -207,7 +207,7 @@ for f, folder in enumerate(folders):
     if theory:
         aBprivates = my.aBeq(given, AA, RR)
     else:
-        aBprivates = my.getZ(t, dfprivates[f], 'a2Seenmean')
+        aBprivates = my.getZ(t, dfprivates[f], "a2Seenmean")
     wps = my.fitness(aBprivates, aBprivates, given, AA, RR)
 
     for a, alpha in enumerate(alphas):
@@ -218,21 +218,21 @@ for f, folder in enumerate(folders):
             y = my.fitness(xaxis, aBs, given, alpha, rho)
             color = cm.viridis((my.wmax - y[0])/my.wmax)
             ax = axlines[f, 0, a, e]
-            ax.plot(xaxis, y, color='black', linewidth=0.7)
+            ax.plot(xaxis, y, color="black", linewidth=0.7)
             y = my.fitness(aBs, xaxis, given, alpha, rho)
-            ax.plot(xaxis, y, color='black', linewidth=0.7)
+            ax.plot(xaxis, y, color="black", linewidth=0.7)
             ax.set_facecolor(color)
 
             y = my.fitness(xaxis, xaxis, given, alpha, rho)
             color = cm.viridis((wss[a, e] - wps[a, e])/my.wmax)
             ax = axlines[f, 1, a, e]
-            ax.plot(xaxis, y, color='black', linewidth=0.7)
-            ax.axhline(wps[a, e], color='black', linewidth=0.7)
+            ax.plot(xaxis, y, color="black", linewidth=0.7)
+            ax.axhline(wps[a, e], color="black", linewidth=0.7)
             ax.set_facecolor(color)
 
     for c, trait in enumerate(traits):
         Z = my.getZ(t, dftraits[f, c], trait)
-        if 'Grain' in trait:
+        if "Grain" in trait:
             Z = 1. - Z
         aximages[f, c].imshow(Z,
                               vmin=0,
@@ -240,9 +240,9 @@ for f, folder in enumerate(folders):
 
 # Finish
 
-plt.savefig(file_name + '.png', transparent=False)
+plt.savefig(file_name + ".png", transparent=False)
 
 plt.close()
 
 end_time = time.perf_counter()
-print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')
+print(f"\nTime elapsed: {(end_time - start_time):.2f} seconds")

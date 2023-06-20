@@ -11,13 +11,13 @@ import mymodule as my
 
 start_time = time.perf_counter()
 this_file = os.path.basename(__file__)
-file_name = this_file.split('.')[0]
+file_name = this_file.split(".")[0]
 
 # Options
 
-titles = ['Games',
-          '$\it{R}$ - $\it{P}$',
-          '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
+titles = ["Games",
+          "$\it{R}$ - $\it{P}$",
+          "$\it{T}$ + $\it{S}$ - 2$\it{R}$"]
 givens = [1.0, 0.95, 0.50]
 distance = 0.01
 nr = 21
@@ -44,7 +44,7 @@ def update(low, artists):
         Z = 2.0*R - P - T 
         # m = R < P
         #Z[m] = T[m] - R[m]
-        #G = np.full([*Z.shape, 4], my.colormap['transparent'])
+        #G = np.full([*Z.shape, 4], my.colormap["transparent"])
         artists[g, 1].set_array(Z)
         #artists[g, 1].set_array(N)
 
@@ -55,7 +55,7 @@ def update(low, artists):
         #artists[g, 2].set_array(N)
 
     if movie:
-        fig.texts[2].set_text(f'low:{low:.2f}')
+        fig.texts[2].set_text(f"low:{low:.2f}")
     return artists.flatten()
 
 # Data
@@ -70,8 +70,8 @@ aBlows = np.linspace(0.1, 0.8, num=nframes)
 
 width = plotsize*len(titles)
 height = plotsize*len(givens)
-xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Influence of $\it{B}$'
+xlabel = "Substitutability of $\it{B}$"
+ylabel = "Influence of $\it{B}$"
 biglabels = plotsize*5 + height/4
 ticklabels = plotsize*4
 xticks = [0, nc/2 - 0.5, nc - 1]
@@ -80,14 +80,14 @@ xmin = logess[0]
 xmax = logess[-1]
 ymin = alphas[-1]
 ymax = alphas[0]
-xticklabels = [f'{xmin:2.0f}',
-               f'{(xmin + xmax)/2.0:2.0f}',
-               f'{xmax:2.0f}']
-yticklabels = [f'{ymax:3.1f}',
-               f'{(ymin + ymax)/2.0:3.1f}',
-               f'{ymin:3.1f}']
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
+xticklabels = [f"{xmin:2.0f}",
+               f"{(xmin + xmax)/2.0:2.0f}",
+               f"{xmax:2.0f}"]
+yticklabels = [f"{ymax:3.1f}",
+               f"{(ymin + ymax)/2.0:3.1f}",
+               f"{ymin:3.1f}"]
+plt.rcParams["pdf.fonttype"] = 42
+plt.rcParams["ps.fonttype"] = 42
 
 # Create figure
 
@@ -114,13 +114,13 @@ letterposition = 1.035
 for i, ax in enumerate(fig.get_axes()):
     ax.set(xticks=xticks, yticks=yticks)
     ax.set(xticklabels=[], yticklabels=[])
-    letter = ord('a') + i
+    letter = ord("a") + i
     ax.text(0,
             letterposition,
             chr(letter),
             transform=ax.transAxes,
             fontsize=plotsize*5,
-            weight='bold')
+            weight="bold")
 for g, given in enumerate(givens):
     axs[g, 0].set_yticklabels(yticklabels, fontsize=ticklabels)
 for c, title in enumerate(titles):
@@ -130,10 +130,10 @@ for c, title in enumerate(titles):
 if movie:
     fig.text(right_x,
              bottom_y*0.5,
-             't\n0',
+             "t\n0",
              fontsize=biglabels,
-             color='grey',
-             ha='right')
+             color="grey",
+             ha="right")
 
 # Assign axs objects to variables
 # (AxesImage)
@@ -157,12 +157,12 @@ if movie:
                         frames=frames,
                         fargs=(artists,),
                         blit=True)
-    ani.save(file_name + '.mp4', writer='ffmpeg', fps=10)
+    ani.save(file_name + ".mp4", writer="ffmpeg", fps=10)
 else:
     update(frame0, artists,)
-    plt.savefig(file_name + '.png', transparent=False)
+    plt.savefig(file_name + ".png", transparent=False)
 
 plt.close()
 
 end_time = time.perf_counter()
-print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')
+print(f"\nTime elapsed: {(end_time - start_time):.2f} seconds")

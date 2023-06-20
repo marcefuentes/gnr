@@ -14,18 +14,18 @@ import mymodule as my
 
 start_time = time.perf_counter()
 this_file = os.path.basename(__file__)
-file_name = this_file.split('.')[0]
+file_name = this_file.split(".")[0]
 
 # Options
 
-traits = ['ChooseGrainmean',
-          'MimicGrainmean']
-titles = ['Games',
-          'Severity of\nsocial dilemma', 
-          'Sensitivity for\nchoosing partner',
-          'Sensitivity for\nmimicking partner']
-folders = ['given100', 'given095', 'given050']
-subfolders = ['p', 'r']
+traits = ["ChooseGrainmean",
+          "MimicGrainmean"]
+titles = ["Games",
+          "Severity of\nsocial dilemma", 
+          "Sensitivity for\nchoosing partner",
+          "Sensitivity for\nmimicking partner"]
+folders = ["given100", "given095", "given050"]
+subfolders = ["p", "r"]
 
 plotsize = 6
 
@@ -34,15 +34,15 @@ plotsize = 6
 dfprivates = np.empty(len(folders), dtype=object)
 dfsocials = np.empty(len(folders), dtype=object)
 for f, folder in enumerate(folders):
-    filelist = glob(os.path.join(folder, 'none', '*.csv'))
+    filelist = glob(os.path.join(folder, "none", "*.csv"))
     dfprivates[f] = my.read_files(filelist, False)
-    filelist = glob(os.path.join(folder, 'given0', '*.csv'))
+    filelist = glob(os.path.join(folder, "given0", "*.csv"))
     dfsocials[f] = my.read_files(filelist, False)
 
 dftraits = np.empty((len(folders), len(subfolders)), dtype=object)
 for f, folder in enumerate(folders):
     for c, subfolder in enumerate(subfolders):
-        filelist = glob(os.path.join(folder, subfolder, '*.csv'))
+        filelist = glob(os.path.join(folder, subfolder, "*.csv"))
         dftraits[f, c] = my.read_files(filelist, False)
 
 df = dftraits[0, 0]
@@ -58,8 +58,8 @@ RR, AA = np.meshgrid(rhos, alphas)
 
 width = plotsize*len(titles)
 height = plotsize*len(folders)
-xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Influence of $\it{B}$'
+xlabel = "Substitutability of $\it{B}$"
+ylabel = "Influence of $\it{B}$"
 biglabel = plotsize*7
 midlabel = plotsize*6
 letterlabel = plotsize*5
@@ -70,14 +70,14 @@ xmin = logess[0]
 xmax = logess[-1]
 ymin = alphas[-1]
 ymax = alphas[0]
-xticklabels = [f'{xmin:.0f}',
-               f'{(xmin + xmax)/2.:.0f}',
-               f'{xmax:.0f}']
-yticklabels = [f'{ymax:.1f}',
-               f'{(ymin + ymax)/2:.1f}',
-               f'{ymin:.1f}']
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
+xticklabels = [f"{xmin:.0f}",
+               f"{(xmin + xmax)/2.:.0f}",
+               f"{xmax:.0f}"]
+yticklabels = [f"{ymax:.1f}",
+               f"{(ymin + ymax)/2:.1f}",
+               f"{ymin:.1f}"]
+plt.rcParams["pdf.fonttype"] = 42
+plt.rcParams["ps.fonttype"] = 42
 
 # Create figure
 
@@ -109,21 +109,21 @@ offset = matplotlib.transforms.ScaledTranslation(ox,
                                                  oy,
                                                  fig.dpi_scale_trans)
 
-letter = ord('a')
+letter = ord("a")
 letterposition = 1.035
 
 for i, ax in enumerate(fig.get_axes()):
     ax.set(xticks=xticks, yticks=yticks)
     ax.set(xticklabels=[], yticklabels=[])
-    for axis in ['top', 'bottom', 'left', 'right']:
+    for axis in ["top", "bottom", "left", "right"]:
         ax.spines[axis].set_linewidth(0.1)
-    letter = ord('a') + i
+    letter = ord("a") + i
     ax.text(0,
             letterposition,
             chr(letter),
             transform=ax.transAxes,
             fontsize=letterlabel,
-            weight='bold')
+            weight="bold")
 for f, folder in enumerate(folders):
     axs[f, 0].set_yticklabels(yticklabels, fontsize=ticklabel)
 for c, title in enumerate(titles):
@@ -135,8 +135,8 @@ for c, title in enumerate(titles):
 # Add data
 
 for f, folder in enumerate(folders):
-    lows = my.getZ(t, dftraits[f, 0], 'aBlow')
-    highs = my.getZ(t, dftraits[f, 0], 'aBhigh')
+    lows = my.getZ(t, dftraits[f, 0], "aBlow")
+    highs = my.getZ(t, dftraits[f, 0], "aBhigh")
     given = dftraits[f, 0].Given.iloc[0]
     T = my.fitness(highs, lows, given, AA, RR)
     R = my.fitness(highs, highs, given, AA, RR)
@@ -145,14 +145,14 @@ for f, folder in enumerate(folders):
     Z = my.gamecolors(T, R, P, S)
     axs[f, 0].imshow(Z)
 
-    Zsocial = my.getZ(t, dfsocials[f], 'wmean')
-    Z = my.getZ(t, dfprivates[f], 'wmean')
+    Zsocial = my.getZ(t, dfsocials[f], "wmean")
+    Z = my.getZ(t, dfprivates[f], "wmean")
     Z = Zsocial - Z       
     axs[f, 1].imshow(Z)
 
     for c, trait in enumerate(traits):
         Z = my.getZ(t, dftraits[f, c], trait)
-        if 'Grain' in trait:
+        if "Grain" in trait:
             Z = 1.0 - Z
         axs[f, c + 2].imshow(Z,
                              vmin=0,
@@ -160,9 +160,9 @@ for f, folder in enumerate(folders):
 
 # Finish
 
-plt.savefig(file_name + '.png', transparent=False)
+plt.savefig(file_name + ".png", transparent=False)
 
 plt.close()
 
 end_time = time.perf_counter()
-print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')
+print(f"\nTime elapsed: {(end_time - start_time):.2f} seconds")

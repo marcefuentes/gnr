@@ -2,7 +2,7 @@
 
 import os
 
-pattern = '.glo'
+pattern = ".glo"
 
 # loop through all folders in the current directory
 # then loop through all subfolders in each folder
@@ -21,14 +21,14 @@ for folder in folders:
         given = float(subfolder[-3:]) / 100
         for f in os.listdir(os.path.join(folder, subfolder)):
             if f.endswith(pattern):
-                with open(os.path.join(folder, subfolder, f), 'r') as file:
+                with open(os.path.join(folder, subfolder, f), "r") as file:
                     filedata = file.read()
-                    filedata = filedata.replace('Given,0.0', f'Given,{given}')
-                    if 'p' in folder:
-                        filedata = filedata.replace('PartnerChoice,0', 'PartnerChoice,1')
-                    if 'r' in folder:
-                        filedata = filedata.replace('Reciprocity,0', 'Reciprocity,1')
-                    if '8' in folder:
-                        filedata = filedata.replace('GroupSize,2', 'GroupSize,3')
-                with open(os.path.join(folder, subfolder, f), 'w') as file:
+                    filedata = filedata.replace("Given,0.0", f"Given,{given}")
+                    if "p" in folder:
+                        filedata = filedata.replace("PartnerChoice,0", "PartnerChoice,1")
+                    if "r" in folder:
+                        filedata = filedata.replace("Reciprocity,0", "Reciprocity,1")
+                    if "8" in folder:
+                        filedata = filedata.replace("GroupSize,2", "GroupSize,3")
+                with open(os.path.join(folder, subfolder, f), "w") as file:
                     file.write(filedata)

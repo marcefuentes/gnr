@@ -24,7 +24,7 @@ traits = ["ChooseGrainmean",
           "wmean"]
 titles = ["Sensitivity for\nchoosing partner",
           "Sensitivity for\nmimicking partner",
-          "Fitness",
+          "Fitness gain",
           "Fitness deficit"]
 vmaxs = [my.aBmax,
          my.aBmax,
@@ -47,7 +47,7 @@ def update(t, artists):
                 Z = 1. - Z
             if "gain" in titles[c]:
                 wnull = my.getZ(t, df, "wmean")
-                #Z = Z - wnull
+                Z = Z - wnull
             if "deficit" in titles[c]:
                 Z = wsocial - Z
             artists[r, c].set_array(Z) 

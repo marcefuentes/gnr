@@ -17,7 +17,7 @@ file_name = this_file.split(".")[0]
 # Options
 
 givens = np.linspace(0.0, 1.0, num=21)
-#givens = [1.0]
+givens = [0.0]
 
 vmax = my.wmax
 num = 3     # Number of subplot rows & columns
@@ -37,14 +37,13 @@ def update(given, budgets, icurves):
 
     for a, alpha in enumerate(alphas):
         for r, rho in enumerate(rhos):
-            aBp = np.full_like(icx, aBprivate[a, r]/2.0)
-            print(aBprivate[a, r])
             budgety = budget_own + qB_partner[a, r]*given
             budgets[0, a, r].set_ydata(budgety)
             icy = my.indifference(icx, w[a, r], alpha, rho)
             icurves[0, a, r].set_ydata(icy)
             color = cm.viridis(w[a, r]/vmax)
             icurves[0, a, r].set_color(color)
+            aBp = aBprivate[a, r]/2.0
             landscape = my.fitness(aBp, icx/2.0, given, alpha, rho)
             icurves[1, a, r].set_ydata(landscape)
 

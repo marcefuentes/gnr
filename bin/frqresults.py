@@ -29,11 +29,11 @@ titles = ["Production of $\it{B}$",
           "Fitness"]
 vmaxs = [my.aBmax,
          my.aBmax,
-         my.wmax,
+         my.aBmax,
          my.wmax]
 givens = ["given100", "given095", "given050", "given000"]
 folders = ["none", "p", "p8", "p8r", "pr", "r"]
-folders = ["p"]
+folders = ["r"]
 
 movie = False
 plotsize = 8
@@ -118,10 +118,10 @@ bottom_y = axs[-1, -1, -1, -1].get_position().y0
 center_y = (top_y + bottom_y) / 2
 fig.supxlabel(xlabel,
               x=center_x,
-              y=bottom_y - 1.2/height,
+              y=bottom_y - 1.4/height,
               fontsize=biglabel)
 fig.supylabel(ylabel,
-              x=left_x - 1.45/width,
+              x=left_x - 1.5/width,
               y=center_y,
               fontsize=biglabel)
 
@@ -195,10 +195,10 @@ for folder in folders:
                             frames=frames,
                             fargs=(artists,),
                             blit=True)
-        ani.save(file_name + "_" + folder + ".mp4", writer="ffmpeg", fps=10)
+        ani.save(f"{file_name}_{folder}.mp4", writer="ffmpeg", fps=10)
     else:
         update(frame0, artists,)
-        plt.savefig(file_name + "_" + folder + ".png", transparent=False)
+        plt.savefig(f"{file_name}_{folder}.png", transparent=False)
 
 plt.close()
 

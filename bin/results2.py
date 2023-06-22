@@ -44,7 +44,7 @@ def update(t, artists):
         for c, trait in enumerate(traits):
             Z = my.getZ(t, dfs[r], trait)
             if "Grain" in trait:
-                Z = 1. - Z
+                Z = 1.0 - Z
             if "gain" in titles[c]:
                 wnull = my.getZ(t, df, "wmean")
                 Z = Z - wnull

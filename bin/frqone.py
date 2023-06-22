@@ -26,11 +26,11 @@ titles = ["Production of $\it{B}$",
           "Sensitivity for\nchoosing partner",
           "Fitness"]
 vmaxs = [my.aBmax, my.aBmax, my.wmax]
-folders = ["none", "p"]
+folders = ["none", "r"]
 
-subfolder = "given095"
-alpha = 0.66
-loges = 1.0
+subfolder = "given100"
+alpha = 0.50
+loges = 3.5
 movie = False
 plotsize = 6
 bins = 64
@@ -175,10 +175,10 @@ if movie:
                         frames=frames,
                         fargs=(artists,),
                         blit=True)
-    ani.save(file_name + ".mp4", writer="ffmpeg", fps=10)
+    ani.save(f"{file_name}.mp4", writer="ffmpeg", fps=10)
 else:
     update(frame0, artists,)
-    plt.savefig(file_name + ".png", transparent=False)
+    plt.savefig(f"{file_name}.png", transparent=False)
 
 plt.close()
 

@@ -149,12 +149,11 @@ dummy_Z = np.zeros((nr, nc))
 frames = ts
 frame0 = ts[-1]
 
-for row in rows:
-    for r, row in enumerate(rows):
-        for c, title in enumerate(titles):
-            artists[r, c] = axs[r, c].imshow(dummy_Z,
-                                             vmin=0,
-                                             vmax=vmaxs[c])
+for r, row in enumerate(rows):
+    for c, title in enumerate(titles):
+        artists[r, c] = axs[r, c].imshow(dummy_Z,
+                                         vmin=0,
+                                         vmax=vmaxs[c])
 
 # Add data and save figure
 

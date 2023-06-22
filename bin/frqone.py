@@ -29,8 +29,8 @@ vmaxs = [my.aBmax, my.aBmax, my.wmax]
 folders = ["none", "r"]
 
 subfolder = "given100"
-alpha = 0.50
-loges = 3.5
+alpha = 0.10
+loges = 0.0
 movie = False
 plotsize = 6
 bins = 64

@@ -37,7 +37,7 @@ def get_qos_max_submit(queue):
             break
     if maxwall is None:
         print(f"{red}QOS {qos_name} not found{reset_format}")
-        logging.error(f"QOS "{qos_name}" not found")
+        logging.error(f"QOS {qos_name} not found")
         exit()
     if hours >= maxwall:
         qos_name = queue + "_medium"
@@ -83,7 +83,7 @@ subfolder_index = subfolders.index(subfolder)
 
 for queue in queues:
     print(f"{bold}{cyan}\n{queue}:{reset_format}")
-    output = subprocess.check_output(f"squeue -t RUNNING,PENDING -r -o "%j" | grep -E "^{queue}" | wc -l", shell=True)
+    output = subprocess.check_output(f"squeue -t RUNNING,PENDING -r -o '%j' | grep -E '^{queue}' | wc -l", shell=True)
     num_jobs_in_queue = int(output.decode().strip())
     print(f"{blue}{num_jobs_in_queue} jobs in queue{reset_format}")
     maxsubmit = get_qos_max_submit(queue)
@@ -109,7 +109,7 @@ for queue in queues:
                         exit()
                     else:
                         num_jobs_to_submit = min(available_slots, job_max - last_job)
-                        job_name = f"{queue}-{os.getcwd().split("/")[-1]}"
+                        job_name = f"{queue}-{os.getcwd().split('/')[-1]}"
                         first_job = last_job + 1
                         last_job = last_job + num_jobs_to_submit
                         job_array = f"{first_job}-{last_job}"

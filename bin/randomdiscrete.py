@@ -9,11 +9,11 @@ import time
 
 start_time = time.perf_counter()
 this_file = os.path.basename(__file__)
-file_name = this_file.split('.')[0]
+file_name = this_file.split(".")[0]
 
-titles = ['Games',
-          '$\it{R}$ - $\it{P}$',
-          '$\it{T}$ + $\it{S}$ - 2$\it{R}$']
+titles = ["Games",
+          "$\it{R}$ - $\it{P}$",
+          "$\it{T}$ + $\it{S}$ - 2$\it{R}$"]
 givens = [1.0, 0.95, 0.50]
 rows = givens
 ext = 21
@@ -28,17 +28,17 @@ one = random.random()
 two = random.random()
 aBlow = min(one, two)
 aBhigh = max(one, two)
-f = open('aB.glo', 'w')
-f.write(f'aBlow,{aBlow}\n')
-f.write(f'aBhigh,{aBhigh}\n')
+f = open("aB.glo", "w")
+f.write(f"aBlow,{aBlow}\n")
+f.write(f"aBhigh,{aBhigh}\n")
 f.close()
 
 low = np.full([*RR.shape], aBlow)
 high = np.full([*RR.shape], aBhigh)
 
-xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Influence of $\it{B}$'
-letter = ord('a')
+xlabel = "Substitutability of $\it{B}$"
+ylabel = "Influence of $\it{B}$"
+letter = ord("a")
 letterposition = 1.035
 xticks = [-0.5, ext/2-0.5, ext-0.5]
 yticks = [-0.5, ext/2-0.5, ext-0.5]
@@ -46,18 +46,18 @@ xmin = logess[0]
 xmax = logess[-1]
 ymin = alphas[-1]
 ymax = alphas[0]
-xticklabels = [f'{xmin:2.0f}',
-               f'{(xmin + xmax)/2.0:2.0f}',
-               f'{xmax:2.0f}']
-yticklabels = [f'{ymax:3.1f}',
-               f'{(ymin + ymax)/2.0:3.1f}',
-               f'{ymin:3.1f}']
+xticklabels = [f"{xmin:2.0f}",
+               f"{(xmin + xmax)/2.0:2.0f}",
+               f"{xmax:2.0f}"]
+yticklabels = [f"{ymax:3.1f}",
+               f"{(ymin + ymax)/2.0:3.1f}",
+               f"{ymin:3.1f}"]
 width = plotsize*len(titles)
 height = plotsize*len(rows)
 biglabels = plotsize*5 + height/4
 ticklabels = plotsize*4
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
+plt.rcParams["pdf.fonttype"] = 42
+plt.rcParams["ps.fonttype"] = 42
 
 fig, axs = plt.subplots(nrows=len(rows),
                         ncols=len(titles),
@@ -72,10 +72,10 @@ fig.supylabel(ylabel,
               fontsize=biglabels)
 fig.text(0.90,
          0.02,
-         f'{aBlow:4.2f}, {aBhigh:4.2f}',
+         f"{aBlow:4.2f}, {aBhigh:4.2f}",
          fontsize=biglabels,
-         color='grey',
-         ha='right')
+         color="grey",
+         ha="right")
 
 for ax in fig.get_axes():
     ax.set(xticks=xticks, yticks=yticks)
@@ -85,7 +85,7 @@ for ax in fig.get_axes():
             chr(letter),
             transform=ax.transAxes,
             fontsize=plotsize*5,
-            weight='bold')
+            weight="bold")
     letter += 1
 for i, row in enumerate(rows):
     axs[i, 0].set_yticklabels(yticklabels, fontsize=ticklabels)
@@ -115,8 +115,8 @@ for i, given in enumerate(givens):
     axs[i, 2].imshow(Z, vmin=-1, vmax=1)
     axs[i, 2].imshow(N)
 
-plt.savefig(file_name + '.png', transparent=False)
+plt.savefig(file_name + ".png", transparent=False)
 plt.close()
 
 end_time = time.perf_counter()
-print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')
+print(f"\nTime elapsed: {(end_time - start_time):.2f} seconds")

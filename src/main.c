@@ -41,6 +41,7 @@ int	gReciprocity;
 int	gDiscrete;
 double	ga2low, ga2high;
 int	gIndirectR;
+int	gLanguage;
 double	galpha;			
 double	glogES, grho;					// Elasticity of substitution. ES = 1/(1 - rho)
 						// CES fitness function: w = (alpha*q1^rho + (1 - alpha)*q2^rho)^(1/rho)
@@ -182,6 +183,7 @@ void read_globals (char *filename)
 	fscanf (fp, "a2low,%lf\n", &ga2low);
 	fscanf (fp, "a2high,%lf\n", &ga2high);
 	fscanf (fp, "IndirectR,%i\n", &gIndirectR);
+	fscanf (fp, "Language,%i\n", &gLanguage);
 	fscanf (fp, "alpha,%lf\n", &galpha);
 	fscanf (fp, "logES,%lf\n", &glogES);
 	fscanf (fp, "Given,%lf\n", &gGiven);
@@ -243,6 +245,7 @@ void write_globals (char *filename)
 	fprintf (fp, "Reciprocity,%i\n", gReciprocity);
 	fprintf (fp, "Discrete,%i\n", gDiscrete);
 	fprintf (fp, "IndirectR,%i\n", gIndirectR);
+	fprintf (fp, "Language,%i\n", gLanguage);
 
 	fclose (fp);
 }
@@ -378,7 +381,7 @@ double fitness (struct itype *i, struct itype *i_last)
 
 		i->age++;
 
-		if ( gIndirectR == 1 )
+		if ( gLanguage == 1 )
 		{
 			i->a2SeenSum += i->a2Decided;
 			i->a2Seen = i->a2SeenSum/i->age;

@@ -14,14 +14,14 @@ import mymodule as my
 
 start_time = time.perf_counter()
 this_file = os.path.basename(__file__)
-file_name = this_file.split('.')[0]
+file_name = this_file.split(".")[0]
 
 # Options
 
-titles = ['Production of $\it{B}$',
-          'Byproduct help',
-          'Fitness',
-          'Fitness deficit']
+titles = ["Production of $\it{B}$",
+          "Byproduct help",
+          "Fitness",
+          "Fitness deficit"]
 vmaxs = [my.aBmax,
          my.aBmax,
          my.wmax,
@@ -42,7 +42,7 @@ def update(given, artists):
     artists[2].set_array(w)
     artists[3].set_array(dif)
     if movie:
-        fig.texts[2].set_text(f'Given {given*100:.0f}%')
+        fig.texts[2].set_text(f"Given {given*100:.0f}%")
     return artists.flatten()
 
 # Data
@@ -60,8 +60,8 @@ wsocial = my.fitness(aBsocial, aBsocial, 0., AA, RR)
 
 width = plotsize*len(titles) - 2.
 height = plotsize
-xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Influence of $\it{B}$'
+xlabel = "Substitutability of $\it{B}$"
+ylabel = "Influence of $\it{B}$"
 biglabel = plotsize*6
 letterlabel = plotsize*5
 ticklabel = plotsize*4
@@ -71,14 +71,14 @@ xmin = my.logesmin
 xmax = my.logesmax
 ymin = my.alphamin
 ymax = my.alphamax
-xticklabels = [f'{xmin:.0f}',
-               f'{(xmin + xmax)/2.:.0f}',
-               f'{xmax:.0f}']
-yticklabels = [f'{ymax:.1f}',
-               f'{(ymin + ymax)/2.:.1f}',
-               f'{ymin:.1f}']
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
+xticklabels = [f"{xmin:.0f}",
+               f"{(xmin + xmax)/2.:.0f}",
+               f"{xmax:.0f}"]
+yticklabels = [f"{ymax:.1f}",
+               f"{(ymin + ymax)/2.:.1f}",
+               f"{ymin:.1f}"]
+plt.rcParams["pdf.fonttype"] = 42
+plt.rcParams["ps.fonttype"] = 42
 
 # Create figure
 
@@ -110,15 +110,15 @@ letterposition = 1.035
 for i, ax in enumerate(fig.get_axes()):
     ax.set(xticks=xticks, yticks=yticks)
     ax.set(xticklabels=[], yticklabels=[])
-    for axis in ['top', 'bottom', 'left', 'right']:
+    for axis in ["top", "bottom", "left", "right"]:
         ax.spines[axis].set_linewidth(0.1)
-    letter = ord('a') + i
+    letter = ord("a") + i
     ax.text(0,
             letterposition,
             chr(letter),
             transform=ax.transAxes,
             fontsize=letterlabel,
-            weight='bold')
+            weight="bold")
 axs[0].set_yticklabels(yticklabels, fontsize=ticklabel)
 for c, title in enumerate(titles):
     axs[c].set_title(title, pad=plotsize*7, fontsize=letterlabel)
@@ -130,10 +130,10 @@ for c, title in enumerate(titles):
 if movie:
     fig.text(right_x,
              bottom_y*0.2,
-             f'Given',
+             f"Given",
              fontsize=biglabel,
-             color='grey',
-             ha='right')
+             color="grey",
+             ha="right")
 
 # Assign axs objects to variables
 # (AxesImage)
@@ -156,12 +156,12 @@ if movie:
                         frames=frames,
                         fargs=(artists,),
                         blit=True)
-    ani.save(file_name + '.mp4', writer='ffmpeg', fps=10)
+    ani.save(file_name + ".mp4", writer="ffmpeg", fps=10)
 else:
     update(frame0, artists,)
-    plt.savefig(file_name + '.png', transparent=False)
+    plt.savefig(file_name + ".png", transparent=False)
 
 plt.close()
 
 end_time = time.perf_counter()
-print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')
+print(f"\nTime elapsed: {(end_time - start_time):.2f} seconds")

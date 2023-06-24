@@ -8,7 +8,7 @@ import time
 
 start_time = time.perf_counter()
 this_file = os.path.basename(__file__)
-file_name = this_file.split('.')[0]
+file_name = this_file.split(".")[0]
 
 given = 0.95
 num = 5    # Number of subplot rows & columns
@@ -22,16 +22,16 @@ logess = np.linspace(my.logesmin, my.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
 
 step = int(num/2)
-xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Influence of $\it{B}$'
+xlabel = "Substitutability of $\it{B}$"
+ylabel = "Influence of $\it{B}$"
 extent = 0, ext, 0, ext
 markersize = plotsize*4
 width = plotsize
 height = plotsize
 biglabels = plotsize*4
 ticklabels = plotsize*3
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
+plt.rcParams["pdf.fonttype"] = 42
+plt.rcParams["ps.fonttype"] = 42
 
 fig = plt.figure(figsize=(width, height))
 fig.supxlabel(xlabel,
@@ -55,12 +55,12 @@ axs = grid.subplots()
 for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])
 for i in range(0, num, step):
-    axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
-                         rotation='horizontal',
-                         horizontalalignment='right',
-                         verticalalignment='center',
+    axs[i, 0].set_ylabel(f"{alphas[i]:3.1f}",
+                         rotation="horizontal",
+                         horizontalalignment="right",
+                         verticalalignment="center",
                          fontsize=ticklabels)
-    axs[-1, i].set_xlabel(f'{logess[i]:2.0f}',
+    axs[-1, i].set_xlabel(f"{logess[i]:2.0f}",
                           fontsize=ticklabels)
 
 for i, alpha in enumerate(alphas):
@@ -78,12 +78,12 @@ for i, alpha in enumerate(alphas):
 
         Z = my.gamecolors(T, R, P, S)
         axs[i][j].scatter(distances*ext, distances*ext,
-                          marker='o',
+                          marker="o",
                           s=markersize,
                           color=Z)
         Z = my.nodilemmacolorsg(T, R, P, S)
         axs[i][j].scatter(distances*ext, distances*ext,
-                          marker='o',
+                          marker="o",
                           s=markersize,
                           color=Z)
 
@@ -99,9 +99,9 @@ for i, alpha in enumerate(alphas):
         Z = my.gamecolors(T, R, P, S)
         axs[i][j].imshow(Z, extent=extent, alpha=0.2)
 
-plt.savefig(file_name + '.png', transparent=False)
+plt.savefig(file_name + ".png", transparent=False)
 
 plt.close()
 
 end_time = time.perf_counter()
-print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')
+print(f"\nTime elapsed: {(end_time - start_time):.2f} seconds")

@@ -12,12 +12,12 @@ import mymodule as my
 
 start_time = time.perf_counter()
 this_file = os.path.basename(__file__)
-file_name = this_file.split('.')[0]
+file_name = this_file.split(".")[0]
 
 # Options
 
 givens = np.linspace(0.0, 1.0, num=21)
-givens = [0.95]
+givens = [0.0]
 
 vmax = my.wmax
 num = 3     # Number of subplot rows & columns
@@ -33,7 +33,7 @@ def update(given, budgets, icurves):
     w = my.fitness(aBprivate, aBprivate, given, AA, RR)
     qB_partner = aBprivate*my.RB
     budget_own = budget0*(1.0 - given)
-    #axs[0, int(num/2)].title.set_text(f'{given*100:.0f}%')
+    #axs[0, int(num/2)].title.set_text(f"{given*100:.0f}%")
 
     for a, alpha in enumerate(alphas):
         for r, rho in enumerate(rhos):
@@ -69,15 +69,15 @@ for i, alpha in enumerate(alphas):
 
 width = plotsize
 height = plotsize
-xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Influence of $\it{B}$'
+xlabel = "Substitutability of $\it{B}$"
+ylabel = "Influence of $\it{B}$"
 biglabels = plotsize*4
 ticklabels = plotsize*3
 xlim=[0.0, my.aAmax*my.RA]
 ylim=[0.0, my.aBmax*my.RB]
 step = int(num/2)
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
+plt.rcParams["pdf.fonttype"] = 42
+plt.rcParams["ps.fonttype"] = 42
 
 # Create figure
 
@@ -111,19 +111,19 @@ fig.supylabel(ylabel,
 for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])
     ax.set(xlim=xlim, ylim=ylim)
-    for axis in ['top','bottom','left','right']:
+    for axis in ["top","bottom","left","right"]:
         ax.spines[axis].set_linewidth(0.2)
-#axs[0, int(num/2)].set_title(f'0',
+#axs[0, int(num/2)].set_title(f"0",
 #                             pad=plotsize*5,
 #                             fontsize=plotsize*5)
 for a in range(0, num, step):
-    axs[a, 0].set_ylabel(f'{alphas[a]:.1f}',
-                         rotation='horizontal',
-                         horizontalalignment='right',
-                         verticalalignment='center',
+    axs[a, 0].set_ylabel(f"{alphas[a]:.1f}",
+                         rotation="horizontal",
+                         horizontalalignment="right",
+                         verticalalignment="center",
                          fontsize=ticklabels)
 for r in range(0, num, step):
-    axs[-1, r].set_xlabel(f'{logess[r]:.0f}',
+    axs[-1, r].set_xlabel(f"{logess[r]:.0f}",
                           fontsize=ticklabels)
 
 # Assign axs objects to variables
@@ -137,10 +137,10 @@ dummy_icy = np.zeros_like(icx)
 for a, alpha in enumerate(alphas):
     for r, rho in enumerate(rhos):
         for c in range(n_ic): 
-            axs[a, r].plot(icx, ics[a, r, c], c='0.850')
+            axs[a, r].plot(icx, ics[a, r, c], c="0.850")
         budgets[a, r], = axs[a, r].plot(budgetx,
                                         dummy_budgety,
-                                        c='black',
+                                        c="black",
                                         alpha=0.8)
         icurves[a, r], = axs[a, r].plot(icx,
                                         dummy_icy,
@@ -155,12 +155,12 @@ if len(givens) > 1:
                         frames=givens,
                         fargs=(budgets, icurves,),
                         blit=True)
-    ani.save(file_name + '.mp4', writer='ffmpeg', fps=10)
+    ani.save(f"{file_name}.mp4", writer="ffmpeg", fps=10)
 else:
     update(givens[0], budgets, icurves,)
-    plt.savefig(file_name + '.png', transparent=False)
+    plt.savefig(f"{file_name}.png", transparent=False)
 
 plt.close()
 
 end_time = time.perf_counter()
-print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')
+print(f"\nTime elapsed: {(end_time - start_time):.2f} seconds")

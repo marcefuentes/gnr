@@ -14,7 +14,7 @@ last_job_file = "/home/ulc/ba/mfu/code/gnr/results/last_submitted_job.tmp"
 log_file = "/home/ulc/ba/mfu/submit.log"
 logging.basicConfig(filename=log_file,
                     level=logging.DEBUG,
-                    format='%(asctime)s %(levelname)s: %(message)s')
+                    format="%(asctime)s %(levelname)s: %(message)s")
 blue = "\033[94m"
 cyan = "\033[96m"
 red = "\033[91m"
@@ -34,7 +34,7 @@ def get_qos_max_submit(queue):
             break
     if maxwall is None:
         print(f"{red}QOS {qos_name} not found{reset_format}")
-        logging.error(f"QOS '{qos_name}' not found")
+        logging.error(f"QOS "{qos_name}" not found")
         exit()
     if hours >= maxwall:
         qos_name = queue + "_medium"
@@ -76,14 +76,14 @@ def submit_jobs_in_folder(path, last_job, available_slots):
         job_min = get_job_min(path)
     else:
         job_min = last_job + 1
-    if os.path.isfile(os.path.join(path, str(job_min) + '.csv')):
+    if os.path.isfile(os.path.join(path, str(job_min) + ".csv")):
         print(f"{red}Found unexpected {str(job_min)}.csv{reset_format}")
         exit()
     num_jobs_to_submit = min(available_slots, job_max - job_min + 1)
     last_job = job_min + num_jobs_to_submit - 1
     print(f"{blue}Submitting jobs {job_min} to {last_job}{reset_format}")
     logging.info(f"Submitting jobs {job_min} to {last_job}")
-    job_name = f"{queue}-{os.getcwd().split('/')[-1]}"
+    job_name = f"{queue}-{os.getcwd().split("/")[-1]}"
     job_array = f"{job_min}-{last_job}"
     job_time = f"{hours}:59:00"
     cmd = ["sbatch",
@@ -112,32 +112,32 @@ if os.path.isfile(last_job_file):
     last_job = int(last_job)
 else:
     user_input = input("Submit jobs in current folder? (y/n): ")
-    if user_input.lower() == 'n':
+    if user_input.lower() == "n":
         exit()
     path = os.getcwd()
     last_job = 0
 
-path_folders = path.split('/')
+path_folders = path.split("/")
 
-path_list = '/'.join(path_folders[:-2])
+path_list = "/".join(path_folders[:-2])
 folders = os.listdir(path_list)
 folders.sort()
 folder = path_folders[-2]
 folder_index = folders.index(folder)
 
-path_list = '/'.join(path_folders[:-1])
+path_list = "/".join(path_folders[:-1])
 subfolders = os.listdir(path_list)
 subfolders.sort()
 subfolder = path_folders[-1]
 subfolder_index = subfolders.index(subfolder)
 
 if last_job:
-    path_print = '/'.join(path_folders[-3:])
+    path_print = "/".join(path_folders[-3:])
     print(f"{blue}\nLast job submitted: {path_print}/{last_job}{reset_format}")
 
 for queue in queues:
     print(f"{bold}{cyan}\n{queue}:{reset_format}")
-    output = subprocess.check_output(f"squeue -t RUNNING,PENDING -r -o '%j' | grep -E '^{queue}' | wc -l",
+    output = subprocess.check_output(f"squeue -t RUNNING,PENDING -r -o "%j" | grep -E "^{queue}" | wc -l",
                                      shell=True)
     num_jobs_in_queue = int(output.decode().strip())
     num_jobs_in_queue = 0

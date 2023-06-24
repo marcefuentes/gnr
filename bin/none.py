@@ -13,29 +13,29 @@ import mymodule as my
 
 start_time = time.perf_counter()
 this_file = os.path.basename(__file__)
-file_name = this_file.split('.')[0]
+file_name = this_file.split(".")[0]
 
 # Options
 
-titles = ['Production of $\it{B}$\nin theory',
-          'Production of $\it{B}$\nin simulations',
-          'Fitness\nin theory',
-          'Fitness\nin simulations',
-          'Fitness deficit\nin simulations']
+titles = ["Production of $\it{B}$\nin theory",
+          "Production of $\it{B}$\nin simulations",
+          "Fitness\nin theory",
+          "Fitness\nin simulations",
+          "Fitness deficit\nin simulations"]
 vmaxs = [my.aBmax,
          my.aBmax,
          my.wmax,
          my.wmax,
          my.wmax]
 givens_theory = [1.0, 0.95, 0.5, 0.]
-givens = ['given100', 'given095', 'given050', 'given000']
+givens = ["given100", "given095", "given050", "given000"]
 plotsize = 4
 
 # Data
 
 dfs = np.empty(len(givens), dtype=object)
 for g, given in enumerate(givens):
-    filelist = glob(os.path.join('none', given, '*.csv'))
+    filelist = glob(os.path.join("none", given, "*.csv"))
     dfs[g] = my.read_files(filelist, False)
 
 df = dfs[0]
@@ -51,8 +51,8 @@ RR, AA = np.meshgrid(rhos, alphas)
 
 width = plotsize*len(titles)
 height = plotsize*len(givens)
-xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Influence of $\it{B}$'
+xlabel = "Substitutability of $\it{B}$"
+ylabel = "Influence of $\it{B}$"
 biglabel = plotsize*7
 letterlabel = plotsize*6
 ticklabel = plotsize*5
@@ -62,14 +62,14 @@ xmin = my.logesmin
 xmax = my.logesmax
 ymin = my.alphamin
 ymax = my.alphamax
-xticklabels = [f'{xmin:.0f}',
-               f'{(xmin + xmax)/2.:.0f}',
-               f'{xmax:.0f}']
-yticklabels = [f'{ymax:.1f}',
-               f'{(ymin + ymax)/2.:.1f}',
-               f'{ymin:.1f}']
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
+xticklabels = [f"{xmin:.0f}",
+               f"{(xmin + xmax)/2.:.0f}",
+               f"{xmax:.0f}"]
+yticklabels = [f"{ymax:.1f}",
+               f"{(ymin + ymax)/2.:.1f}",
+               f"{ymin:.1f}"]
+plt.rcParams["pdf.fonttype"] = 42
+plt.rcParams["ps.fonttype"] = 42
 
 # Create figure
 
@@ -96,15 +96,15 @@ letterposition = 1.035
 for i, ax in enumerate(fig.get_axes()):
     ax.set(xticks=xticks, yticks=yticks)
     ax.set(xticklabels=[], yticklabels=[])
-    for axis in ['top', 'bottom', 'left', 'right']:
+    for axis in ["top", "bottom", "left", "right"]:
         ax.spines[axis].set_linewidth(0.1)
-    letter = ord('a') + i
+    letter = ord("a") + i
     ax.text(0,
             letterposition,
             chr(letter),
             transform=ax.transAxes,
             fontsize=letterlabel,
-            weight='bold')
+            weight="bold")
 for g, given in enumerate(givens):
     axs[g, 0].set_yticklabels(yticklabels, fontsize=ticklabel)
 for c, title in enumerate(titles):
@@ -113,22 +113,22 @@ for c, title in enumerate(titles):
                                fontsize=ticklabel)
 # Add data to figure
  
-wsocial = my.getZ(t, dfs[-1], 'wmean') 
+wsocial = my.getZ(t, dfs[-1], "wmean") 
 for g, given in enumerate(givens_theory):
     aB_theory = my.aBeq(given, AA, RR)
     axs[g, 0].imshow(aB_theory, vmin=0, vmax=vmaxs[0])
-    aB = my.getZ(t, dfs[g], 'a2Seenmean')
+    aB = my.getZ(t, dfs[g], "a2Seenmean")
     axs[g, 1].imshow(aB, vmin=0, vmax=vmaxs[1])
     w_theory = my.fitness(aB_theory, aB_theory, given, AA, RR)
     axs[g, 2].imshow(w_theory, vmin=0, vmax=vmaxs[2])
-    w = my.getZ(t, dfs[g], 'wmean')
+    w = my.getZ(t, dfs[g], "wmean")
     axs[g, 3].imshow(w, vmin=0, vmax=vmaxs[3])
     w = wsocial - w
     axs[g, 4].imshow(w, vmin=0, vmax=vmaxs[4])
         
-plt.savefig(file_name + '.png', transparent=False)
+plt.savefig(file_name + ".png", transparent=False)
 
 plt.close()
 
 end_time = time.perf_counter()
-print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')
+print(f"\nTime elapsed: {(end_time - start_time):.2f} seconds")

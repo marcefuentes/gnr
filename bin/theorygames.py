@@ -8,7 +8,7 @@ import time
 
 start_time = time.perf_counter()
 this_file = os.path.basename(__file__)
-file_name = this_file.split('.')[0]
+file_name = this_file.split(".")[0]
 
 givens = [1.0, 0.95, 0.5]
 
@@ -22,16 +22,16 @@ logess = np.linspace(my.logesmin, my.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
 
 step = int(num/2)
-xlabel = 'Substitutability of $\it{B}$'
-ylabel = 'Influence of $\it{B}$'
-letter = ord('a')
+xlabel = "Substitutability of $\it{B}$"
+ylabel = "Influence of $\it{B}$"
+letter = ord("a")
 extent = 0, ext, 0, ext
 width = plotsize
 height = plotsize*len(rows)
 biglabels = plotsize*5 + height/4
 ticklabels = plotsize*3.5
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
+plt.rcParams["pdf.fonttype"] = 42
+plt.rcParams["ps.fonttype"] = 42
 
 fig = plt.figure(figsize=(width*1.13, height))
 fig.supxlabel(xlabel,
@@ -57,23 +57,23 @@ for g, row in enumerate(rows):
     axs = grid.subplots()
     axs[0, 0].set_title(chr(letter),
                         fontsize=plotsize*5,
-                        weight='bold',
-                        loc='left')
+                        weight="bold",
+                        loc="left")
     letter += 1
     for i, alpha in enumerate(alphas):
         for j, rho in enumerate(rhos):
             axs[i, j].set(xticks=[], yticks=[])
-            for axis in ['top','bottom','left','right']:
+            for axis in ["top","bottom","left","right"]:
                 axs[i, j].spines[axis].set_linewidth(0.1)
     for i in range(0, num, step):
-        axs[i, 0].set_ylabel(f'{alphas[i]:3.1f}',
-                             rotation='horizontal',
-                             horizontalalignment='right',
-                             verticalalignment='center',
+        axs[i, 0].set_ylabel(f"{alphas[i]:3.1f}",
+                             rotation="horizontal",
+                             horizontalalignment="right",
+                             verticalalignment="center",
                              fontsize=ticklabels)
     if g == 2:
         for j in range(0, num, step):
-            axs[-1, j].set_xlabel(f'{logess[j]:2.0f}',
+            axs[-1, j].set_xlabel(f"{logess[j]:2.0f}",
                                   x=0.3,
                                   fontsize=ticklabels)
     axss.append(axs)
@@ -101,9 +101,9 @@ for g, given in enumerate(givens):
             Z[X >= Y] = [0.9, 0.9, 0.9, 1.0]
             axss[g][i][j].imshow(Z, extent=extent)
 
-plt.savefig(file_name + '.png', transparent=False)
+plt.savefig(file_name + ".png", transparent=False)
 
 plt.close()
 
 end_time = time.perf_counter()
-print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')
+print(f"\nTime elapsed: {(end_time - start_time):.2f} seconds")

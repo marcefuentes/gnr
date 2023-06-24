@@ -8,14 +8,14 @@ import logging
 # Usage: python resubmit.py
 
 hours = 15
-queues = ['clk', 'epyc']
+queues = ["clk", "epyc"]
 executable = "/home/ulc/ba/mfu/code/gnr/bin/gnr"
 mail_user = "marcelinofuentes@gmail.com"
 
 log_file = "/home/ulc/ba/mfu/submit.log"
 logging.basicConfig(filename=log_file,
                     level=logging.DEBUG,
-                    format='%(asctime)s %(levelname)s: %(message)s')
+                    format="%(asctime)s %(levelname)s: %(message)s")
 blue = "\033[94m"
 cyan = "\033[96m"
 red = "\033[91m"
@@ -34,7 +34,7 @@ def get_qos_max_submit(queue):
             break
     if maxwall is None:
         print(f"{red}QOS {qos_name} not found{reset_format}")
-        logging.error(f"QOS '{qos_name}' not found")
+        logging.error(f"QOS "{qos_name}" not found")
         exit()
     if hours >= maxwall:
         qos_name = queue + "_medium"
@@ -48,8 +48,8 @@ def get_qos_max_submit(queue):
 
 job_array = []
 
-for file in os.listdir('.'):
-    if file.endswith('.csv'):
+for file in os.listdir("."):
+    if file.endswith(".csv"):
         if sum(1 for line in open(file)) < 10:
             base = os.path.splitext(file)[0]
             job_array.append(base)
@@ -59,13 +59,13 @@ if len(job_array) == 0:
     exit()
 
 path = os.getcwd()
-path_folders = path.split('/')
-new_path = '/'.join(path_folders[8:])
+path_folders = path.split("/")
+new_path = "/".join(path_folders[8:])
 logging.info(f"Submitting failed jobs in {new_path}")
 
 for queue in queues:
     print(f"{bold}{cyan}\n{queue}:{reset_format}")
-    output = subprocess.check_output(f"squeue -t RUNNING,PENDING -r -o '%j' | grep -E '^{queue}' | wc -l", shell=True)
+    output = subprocess.check_output(f"squeue -t RUNNING,PENDING -r -o "%j" | grep -E "^{queue}" | wc -l", shell=True)
     num_jobs_in_queue = int(output.decode().strip())
     print(f"{blue}{num_jobs_in_queue} jobs in queue{reset_format}")
     maxsubmit = get_qos_max_submit(queue)
@@ -77,7 +77,7 @@ for queue in queues:
         num_jobs_to_submit = min(available_slots, len(job_array))
         first_job = job_array[0]
         last_job = job_array[num_jobs_to_submit - 1]
-        job_name = f"{queue}-{os.getcwd().split('/')[-1]}"
+        job_name = f"{queue}-{os.getcwd().split("/")[-1]}"
         job_time = f"{hours}:59:00"
         cmd = ["sbatch",
                "--job-name", job_name,
@@ -97,7 +97,7 @@ for queue in queues:
         print(result.stdout.decode().strip())
         logging.info(result.stdout.decode().strip())
         for base in job_array[:num_jobs_to_submit]:
-            for extension in ['.csv', '.frq', '.gl2']:
+            for extension in [".csv", ".frq", ".gl2"]:
                 file = base + extension
                 os.remove(file)
         del job_array[:num_jobs_to_submit]

@@ -41,7 +41,7 @@ void decide_a2 (struct itype *i, struct itype *i_last, double amax, int indirect
 		{
 			int block = (i->partner->a2Seen - i->a2Decided) / i->MimicGrain;
 
-			if ( block < 0)
+			if ( block < 0 )
 			{
 				i->a2Decided += i->MimicGrain*(block - 0.5);
 

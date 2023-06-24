@@ -8,7 +8,7 @@ import time
 
 start_time = time.perf_counter()
 this_file = os.path.basename(__file__)
-file_name = this_file.split('.')[0]
+file_name = this_file.split(".")[0]
 
 given = 0.95
 alpha = 0.5
@@ -24,7 +24,7 @@ ymax = my.aBmax
 x = np.linspace(xmin, xmax, num=ext)
 y = np.linspace(ymax, ymin, num=ext)
 X, Y = np.meshgrid(x, y)
-G = np.full([ext, ext, 4], my.colormap['transparent'])
+G = np.full([ext, ext, 4], my.colormap["transparent"])
 G[X >= Y] = [0.9, 0.9, 0.9, 1.0]
 T = my.fitness(Y, X, given, alpha, rho)
 R = my.fitness(Y, Y, given, alpha, rho)
@@ -33,23 +33,23 @@ S = my.fitness(X, Y, given, alpha, rho)
 Z = my.gamecolors(T, R, P, S)
 Z[X >= Y] = [0.9, 0.9, 0.9, 1.0]
 
-xlabel = 'Production of $\it{B}$'
-ylabel = 'Production of $\it{B}$'
+xlabel = "Production of $\it{B}$"
+ylabel = "Production of $\it{B}$"
 xticks = [0, ext/2.0, ext-0.5]
 yticks = [0, ext/2.0, ext-0.5]
-xticklabels = [f'{round(xmin):4.2f}',
-               f'{round((xmax - xmin)/2.0, 3):4.2f}',
-               f'{round(xmax, 3):4.2f}']
-yticklabels = [f'{round(ymin, 3):4.2f}',
-               f'{round((ymax + ymin)/2.0, 3):4.2f}',
-               f'{round(ymax, 3):4.2f}']
+xticklabels = [f"{round(xmin):4.2f}",
+               f"{round((xmax - xmin)/2.0, 3):4.2f}",
+               f"{round(xmax, 3):4.2f}"]
+yticklabels = [f"{round(ymin, 3):4.2f}",
+               f"{round((ymax + ymin)/2.0, 3):4.2f}",
+               f"{round(ymax, 3):4.2f}"]
 markersize = plotsize*30
 width = plotsize
 height = plotsize
 biglabels = plotsize*4
 ticklabels = plotsize*3
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
+plt.rcParams["pdf.fonttype"] = 42
+plt.rcParams["ps.fonttype"] = 42
 
 fig, ax = plt.subplots(figsize=(width, height))
 plt.subplots_adjust(left=0.2, right=0.9, top=0.9, bottom=0.2)
@@ -66,9 +66,9 @@ ax.set_yticklabels(yticklabels, fontsize=ticklabels)
 
 ax.imshow(Z)
 
-plt.savefig(file_name + '.png', transparent=False)
+plt.savefig(file_name + ".png", transparent=False)
 
 plt.close()
 
 end_time = time.perf_counter()
-print(f'\nTime elapsed: {(end_time - start_time):.2f} seconds')
+print(f"\nTime elapsed: {(end_time - start_time):.2f} seconds")

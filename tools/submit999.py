@@ -143,37 +143,35 @@ for queue in queues:
     num_jobs_in_queue = 0
     print(f"{blue}{num_jobs_in_queue} jobs in queue{reset_format}")
     maxsubmit = get_qos_max_submit(queue)
-    maxsubmit = 400
     available_slots = maxsubmit - num_jobs_in_queue 
     print(f"{blue}{available_slots} slots available{reset_format}")
 
-    if available_slots:
-        while available_slots and folder_index < len(folders):
-            path_folders[-2] = folders[folder_index]
-            path_list = '/'.join(path_folders[:-1])
-            subfolders = os.listdir(path_list)
-            while available_slots and subfolder_index < len(subfolders):
-                path_folders[-1] = subfolders[subfolder_index]
-                path_print = '/'.join(path_folders[-3:])
-                print(f"{blue}Working in {path_print}{reset_format}")
-                logging.info(f"Working in {path_print}")
-                path = '/'.join(path_folders)
-                last_job, available_slots = submit_jobs_in_folder(path, last_job, available_slots)
-                if available_slots:
+    while available_slots and folder_index < len(folders):
+        path_folders[-2] = folders[folder_index]
+        path_list = '/'.join(path_folders[:-1])
+        subfolders = os.listdir(path_list)
+        while available_slots and subfolder_index < len(subfolders):
+            path_folders[-1] = subfolders[subfolder_index]
+            path_print = '/'.join(path_folders[-3:])
+            print(f"{blue}Working in {path_print}{reset_format}")
+            logging.info(f"Working in {path_print}")
+            path = '/'.join(path_folders)
+            last_job, available_slots = submit_jobs_in_folder(path, last_job, available_slots)
+            if available_slots:
                 subfolder_index += 1
-            if subfolder_index == len(subfolders):
+        if subfolder_index == len(subfolders):
             subfolder_index = 0
-            folder_index += 1
+        folder_index += 1
 
-        if folder_index == len(folders):
-            print(f"{bold}{yellow}All jobs submitted{reset_format}")
-            logging.info("All jobs submitted")
-            print(f"{blue}{available_slots} slots available{reset_format}\n")
-            os.remove(last_job_file)
-            exit()
-        else:
-            with open(last_job_file, "w") as f:
-                f.write(f"{path},{last_job}")
+    if available_slots && folder_index == len(folders):
+        print(f"{bold}{yellow}All jobs submitted{reset_format}")
+        logging.info("All jobs submitted")
+        print(f"{blue}{available_slots} slots available{reset_format}\n")
+        os.remove(last_job_file)
+        exit()
+    else:
+        with open(last_job_file, "w") as f:
+            f.write(f"{path},{last_job}")
 
 print("")
 

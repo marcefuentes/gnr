@@ -40,9 +40,6 @@ SOURCES = $(foreach dir,$(SOURCEDIRS),$(wildcard $(dir)/*.c))
 
 # Define objects for all sources
 OBJS := $(SOURCES:.c=.o)
-sim.o: sim.c sim.h
-	@echo Building $@
-	$(CC) $(CFLAGS) -c $(INCLUDES) -o $(subst /,$(PSEP),$@) $(subst /,$(PSEP),$<) -MMD
 
 # Define dependencies files for all objects
 DEPS = $(OBJS:.o=.d)
@@ -55,7 +52,7 @@ PSEP = $(strip $(SEP))
 
 # Define the function that will generate each rule
 define generateRules
-$(1)/%.o: %.c
+$(1)/%.o: %.c $(1)/sim.h
 	@echo Building $$@
 	$(CC) $(CFLAGS) -c $$(INCLUDES) -o $$(subst /,$$(PSEP),$$@) $$(subst /,$$(PSEP),$$<) -MMD
 endef
@@ -71,7 +68,7 @@ $(TARGET): $(OBJS)
 -include $(DEPS)
 
 # Generate rules
-$(call generateRules, $(OBJ))
+$(foreach dir, $(SOURCEDIRS), $(eval $(call generateRules, $(dir))))
 
 test : $(tests)
 	-./$(TARGET) t

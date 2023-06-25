@@ -25,7 +25,7 @@ titletraits = ['Effort to get $\it{B}$',
                 'Sensitivity for\nchoosing partner',
                 'Sensitivity for\nmimicking partner',
                 'Fitness']
-folders = ['given0', 'none', 'p', 'r', 'pr', 'p8r']
+folders = ['given0', 'none', 'p', 'r', 'pr', 'pr8']
 
 movie = False
 

@@ -27,7 +27,7 @@ titles = ["Sensitivity for\nchoosing partner",
 vmaxs = [my.aBmax,
          my.aBmax,
          my.wmax]
-folders = ["p", "r", "pr", "p8r"]
+folders = ["p", "r", "pr", "pr8"]
 #folders = ["p", "pr"]
 
 movie = False

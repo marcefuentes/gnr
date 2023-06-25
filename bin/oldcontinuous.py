@@ -32,7 +32,7 @@ vmaxs = [my.aBmax,
                                np.array([0.0]),
                                np.array([0.9]),
                                np.array([5.0]))]
-folders = ["given0", "none", "p", "r", "pr", "p8r"]
+folders = ["given0", "none", "p", "r", "pr", "pr8"]
 
 movie = False
 ext = 256

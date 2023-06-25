@@ -2,7 +2,7 @@
 
 import os
 
-folders = ["none", "p", "p8", "p8r", "pr", "r"]
+folders = ["none", "p", "p8", "pr8", "pr", "r"]
 subfolders = ["given000", "given050", "given095", "given100"]
 
 # Create folders and the 4 subfolders in each

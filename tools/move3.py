@@ -4,7 +4,7 @@ import os
 
 givens = ["given000", "given050", "given095", "given100"]
 lmhs = ["low", "mid", "high"]
-nprs = ["none", "p", "p8", "p8r", "pr", "r"]
+nprs = ["none", "p", "p8", "pr8", "pr", "r"]
 
 # Create a list of npr names in the current npr that start with discrete and have a number after
 discretes = []

@@ -5,7 +5,7 @@ import subprocess
 import logging
 
 
-folders = ["none", "p", "p8", "p8r", "pr", "r"]
+folders = ["none", "p", "p8", "pr8", "pr", "r"]
 queues = ["epyc", "clk"]
 
 job_min = 100

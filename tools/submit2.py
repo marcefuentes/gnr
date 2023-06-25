@@ -5,7 +5,7 @@ import subprocess
 import logging
 
 hours = 23
-folders = ["none", "p", "p8", "p8r", "pr", "r", "r8", "rx"]
+folders = ["none", "p", "p8", "p8r", "pr", "r", "r8"]
 subfolders = ["given000", "given050", "given095", "given100"]
 queues = ["clk", "epyc"]
 executable = "/home/ulc/ba/mfu/code/gnr/bin/gnr"

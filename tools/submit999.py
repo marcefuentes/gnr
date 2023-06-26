@@ -70,15 +70,14 @@ def submit_jobs_in_folder(path, last_job, available_slots):
     if last_job == job_max:
         print(f"{yellow}No jobs to submit in this folder{reset_format}")
         logging.info(f"No jobs to submit in this folder")
-        last_job = 0
-        return last_job, available_slots
+        return 0, available_slots
     if last_job == 0:
         job_min = get_job_min(path)
     else:
         job_min = last_job + 1
     if os.path.isfile(os.path.join(path, str(job_min) + ".csv")):
-        print(f"{red}Found unexpected {str(job_min)}.csv{reset_format}")
-        exit()
+        print(f"{red}Found {str(job_min)}.csv. Skipping this folder{reset_format}")
+        return 0, available_slots
     num_jobs_to_submit = min(available_slots, job_max - job_min + 1)
     last_job = job_min + num_jobs_to_submit - 1
     print(f"{blue}Submitting jobs {job_min} to {last_job}{reset_format}")

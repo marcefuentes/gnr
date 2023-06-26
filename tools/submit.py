@@ -110,7 +110,7 @@ for queue in queues:
                         exit()
                     else:
                         num_jobs_to_submit = min(available_slots, job_max - last_job)
-                        job_name = f"{queue}-{os.getcwd().split('/')[-1]}"
+                        job_name = f"{queue}-{last_job}"
                         first_job = last_job + 1
                         last_job = last_job + num_jobs_to_submit
                         job_array = f"{first_job}-{last_job}"

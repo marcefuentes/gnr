@@ -139,7 +139,6 @@ for queue in queues:
     output = subprocess.check_output(f"squeue -t RUNNING,PENDING -r -o '%j' | grep -E '^{queue}' | wc -l",
                                      shell=True)
     num_jobs_in_queue = int(output.decode().strip())
-    num_jobs_in_queue = 0
     print(f"{blue}{num_jobs_in_queue} jobs in queue{reset_format}")
     maxsubmit = get_qos_max_submit(queue)
     available_slots = maxsubmit - num_jobs_in_queue 
@@ -162,7 +161,7 @@ for queue in queues:
             subfolder_index = 0
         folder_index += 1
 
-    if available_slots && folder_index == len(folders):
+    if available_slots and folder_index == len(folders):
         print(f"{bold}{yellow}All jobs submitted{reset_format}")
         logging.info("All jobs submitted")
         print(f"{blue}{available_slots} slots available{reset_format}\n")

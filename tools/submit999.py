@@ -5,7 +5,6 @@ import subprocess
 import logging
 
 hours = 23
-givens = ["given000", "given050", "given095", "given100"]
 queues = ["clk", "epyc"]
 executable = "/home/ulc/ba/mfu/code/gnr/bin/gnr"
 mail_user = "marcelinofuentes@gmail.com"
@@ -137,7 +136,7 @@ def submit_jobs(free_slots, given, last_job):
             else:
                 print(f"{bold}{yellow}All jobs submitted{reset_format}")
                 logging.info("All jobs submitted")
-                print(f"{blue}{free_slots} slots free{reset_format}\n")
+                print(f"{blue}{free_slots} free slots{reset_format}\n")
                 exit()
 
     return free_slots, given, last_job

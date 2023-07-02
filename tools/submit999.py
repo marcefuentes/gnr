@@ -48,13 +48,13 @@ def get_free_slots2(queue):
             fields = line.strip().split("|")
             total_slots = int(fields[1])
             break
-    print(f"{blue}{filled_slots} jobs in queue{reset_format}")
 
     output = subprocess.check_output(f"squeue -t RUNNING,PENDING -r -o '%j' | grep -E '^{queue}' | wc -l",
                                      shell=True)
     filled_slots = int(output.decode().strip())
+    print(f"{blue}{filled_slots} queued jobs{reset_format}")
     free_slots = total_slots - filled_slots
-    print(f"{blue}{free_slots} slots free{reset_format}")
+    print(f"{blue}{free_slots} free slots{reset_format}")
     return free_slots
 
 def get_job_min(path):

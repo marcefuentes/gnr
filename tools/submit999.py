@@ -25,7 +25,7 @@ bold = "\033[1m"
 reset_format = "\033[0m"
 
 
-def get_free_slots2(queue):
+def get_free_slots(queue):
     command = ["sacctmgr", "-p", "show", "qos", "format=name,maxwall"]
     output = subprocess.check_output(command).decode().strip()
     qos_name = queue + "_short"

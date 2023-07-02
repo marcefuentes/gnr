@@ -23,7 +23,7 @@ bold = "\033[1m"
 reset_format = "\033[0m"
 
 
-def get_qos_max_submit(queue):
+def qos_max_submit(queue):
     command = ["sacctmgr", "-p", "show", "qos", "format=name,maxwall"]
     output = subprocess.check_output(command).decode().strip()
     qos_name = queue + "_short"
@@ -46,7 +46,13 @@ def get_qos_max_submit(queue):
             return int(fields[1])
     print(f"{red}QOS {qos_name} not found{reset_format}")
 
-def get_job_min(path):
+def num_jobs(queue):
+    output = subprocess.check_output(f"squeue -t RUNNING,PENDING -r -o '%j' | grep -E '^{queue}' | wc -l",
+                                     shell=True)
+    num_jobs_in_queue = int(output.decode().strip())
+    return num_jobs_in_queue
+
+def job_min(path):
     job_min = 9999
     for file in os.listdir(path):
         if file.endswith(input_file_extension):
@@ -55,7 +61,7 @@ def get_job_min(path):
                 job_min = basename
     return job_min
 
-def get_job_max(path):
+def job_max(path):
     job_max = 0
     for file in os.listdir(path):
         if file.endswith(input_file_extension):
@@ -64,15 +70,15 @@ def get_job_max(path):
                 job_max = basename
     return job_max
 
-def submit_jobs_in_folder(path, last_job, available_slots):
+def submit_jobs(path, last_job, available_slots):
     os.chdir(path)
-    job_max = get_job_max(path)
+    job_max = job_max(path)
     if last_job == job_max:
         print(f"{yellow}No jobs to submit in this folder{reset_format}")
         logging.info(f"No jobs to submit in this folder")
         return 0, available_slots
     if last_job == 0:
-        job_min = get_job_min(path)
+        job_min = job_min(path)
     else:
         job_min = last_job + 1
     if os.path.isfile(os.path.join(path, str(job_min) + ".csv")):
@@ -136,11 +142,9 @@ if last_job:
 
 for queue in queues:
     print(f"{bold}{cyan}\n{queue}:{reset_format}")
-    output = subprocess.check_output(f"squeue -t RUNNING,PENDING -r -o '%j' | grep -E '^{queue}' | wc -l",
-                                     shell=True)
-    num_jobs_in_queue = int(output.decode().strip())
+    num_jobs_in_queue = num_jobs(queue)
     print(f"{blue}{num_jobs_in_queue} jobs in queue{reset_format}")
-    maxsubmit = get_qos_max_submit(queue)
+    maxsubmit = qos_max_submit(queue)
     available_slots = maxsubmit - num_jobs_in_queue 
     print(f"{blue}{available_slots} slots available{reset_format}")
 
@@ -154,7 +158,7 @@ for queue in queues:
             print(f"{blue}Working in {path_print}{reset_format}")
             logging.info(f"Working in {path_print}")
             path = '/'.join(path_folders)
-            last_job, available_slots = submit_jobs_in_folder(path, last_job, available_slots)
+            last_job, available_slots = submit_jobs(path, last_job, available_slots)
             if available_slots:
                 subfolder_index += 1
         if subfolder_index == len(subfolders):

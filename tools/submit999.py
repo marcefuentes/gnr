@@ -5,6 +5,8 @@ import subprocess
 import logging
 
 hours = 23
+mechanisms = ["none", "p", "pr", "r", "p8", "pr8", "r8"]
+givens = ["given000", "given050", "given095", "given100"]
 queues = ["clk", "epyc"]
 executable = "/home/ulc/ba/mfu/code/gnr/bin/gnr"
 mail_user = "marcelinofuentes@gmail.com"
@@ -23,7 +25,7 @@ bold = "\033[1m"
 reset_format = "\033[0m"
 
 
-def qos_max_submit(queue):
+def get_free_slots2(queue):
     command = ["sacctmgr", "-p", "show", "qos", "format=name,maxwall"]
     output = subprocess.check_output(command).decode().strip()
     qos_name = queue + "_short"
@@ -34,25 +36,28 @@ def qos_max_submit(queue):
             break
     if maxwall is None:
         print(f"{red}QOS {qos_name} not found{reset_format}")
-        logging.error(f"QOS '{qos_name}' not found")
+        logging.error(f"QOS {qos_name} not found")
         exit()
     if hours >= maxwall:
         qos_name = queue + "_medium"
+
     command = ["sacctmgr", "-p", "show", "qos", "format=name,maxsubmit"]
     output = subprocess.check_output(command).decode().strip()
     for line in output.split("\n"):
         if line.startswith(qos_name):
             fields = line.strip().split("|")
-            return int(fields[1])
-    print(f"{red}QOS {qos_name} not found{reset_format}")
+            total_slots = int(fields[1])
+            break
+    print(f"{blue}{filled_slots} jobs in queue{reset_format}")
 
-def num_jobs(queue):
     output = subprocess.check_output(f"squeue -t RUNNING,PENDING -r -o '%j' | grep -E '^{queue}' | wc -l",
                                      shell=True)
-    num_jobs_in_queue = int(output.decode().strip())
-    return num_jobs_in_queue
+    filled_slots = int(output.decode().strip())
+    free_slots = total_slots - filled_slots
+    print(f"{blue}{free_slots} slots free{reset_format}")
+    return free_slots
 
-def job_min(path):
+def get_job_min(path):
     job_min = 9999
     for file in os.listdir(path):
         if file.endswith(input_file_extension):
@@ -61,7 +66,7 @@ def job_min(path):
                 job_min = basename
     return job_min
 
-def job_max(path):
+def get_job_max(path):
     job_max = 0
     for file in os.listdir(path):
         if file.endswith(input_file_extension):
@@ -70,21 +75,21 @@ def job_max(path):
                 job_max = basename
     return job_max
 
-def submit_jobs(path, last_job, available_slots):
+def submit_jobs(path, last_job, free_slots):
     os.chdir(path)
-    job_max = job_max(path)
+    job_max = get_job_max(path)
     if last_job == job_max:
         print(f"{yellow}No jobs to submit in this folder{reset_format}")
         logging.info(f"No jobs to submit in this folder")
-        return 0, available_slots
+        return 0, free_slots
     if last_job == 0:
-        job_min = job_min(path)
+        job_min = get_job_min(path)
     else:
         job_min = last_job + 1
     if os.path.isfile(os.path.join(path, str(job_min) + ".csv")):
         print(f"{red}Found {str(job_min)}.csv. Skipping this folder{reset_format}")
-        return 0, available_slots
-    num_jobs_to_submit = min(available_slots, job_max - job_min + 1)
+        return 0, free_slots
+    num_jobs_to_submit = min(free_slots, job_max - job_min + 1)
     last_job = job_min + num_jobs_to_submit - 1
     print(f"{blue}Submitting jobs {job_min} to {last_job}{reset_format}")
     logging.info(f"Submitting jobs {job_min} to {last_job}")
@@ -106,10 +111,10 @@ def submit_jobs(path, last_job, available_slots):
     result = subprocess.run(cmd, stdout=subprocess.PIPE)
     print(result.stdout.decode().strip())
     logging.info(result.stdout.decode().strip())
-    available_slots -= num_jobs_to_submit
-    if available_slots and last_job == job_max:
+    free_slots -= num_jobs_to_submit
+    if free_slots and last_job == job_max:
         last_job = 0
-    return last_job, available_slots
+    return last_job, free_slots
 
 if os.path.isfile(last_job_file):
     with open(last_job_file, "r") as f:
@@ -121,20 +126,10 @@ else:
         exit()
     path = os.getcwd()
     last_job = 0
-
 path_folders = path.split("/")
-
-path_list = "/".join(path_folders[:-2])
-folders = os.listdir(path_list)
-folders.sort()
-folder = path_folders[-2]
-folder_index = folders.index(folder)
-
-path_list = "/".join(path_folders[:-1])
-subfolders = os.listdir(path_list)
-subfolders.sort()
-subfolder = path_folders[-1]
-subfolder_index = subfolders.index(subfolder)
+mechanism, given = path_folders[-2], path_folders[-1]
+mechanism_index = mechanisms.index(mechanism)
+given_index = givens.index(given)
 
 if last_job:
     path_print = "/".join(path_folders[-3:])
@@ -142,33 +137,32 @@ if last_job:
 
 for queue in queues:
     print(f"{bold}{cyan}\n{queue}:{reset_format}")
-    num_jobs_in_queue = num_jobs(queue)
-    print(f"{blue}{num_jobs_in_queue} jobs in queue{reset_format}")
-    maxsubmit = qos_max_submit(queue)
-    available_slots = maxsubmit - num_jobs_in_queue 
-    print(f"{blue}{available_slots} slots available{reset_format}")
+    free_slots = get_free_slots(queue) 
 
-    while available_slots and folder_index < len(folders):
-        path_folders[-2] = folders[folder_index]
-        path_list = '/'.join(path_folders[:-1])
-        subfolders = os.listdir(path_list)
-        while available_slots and subfolder_index < len(subfolders):
-            path_folders[-1] = subfolders[subfolder_index]
+    while free_slots and mechanism_index < len(mechanisms):
+        path_folders[-2] = mechanisms[mechanism_index]
+        while free_slots and given_index < len(givens):
+            path_folders[-1] = givens[given_index]
+            path = '/'.join(path_folders)
             path_print = '/'.join(path_folders[-3:])
+            if os.path.isdir(path):
             print(f"{blue}Working in {path_print}{reset_format}")
             logging.info(f"Working in {path_print}")
-            path = '/'.join(path_folders)
-            last_job, available_slots = submit_jobs(path, last_job, available_slots)
-            if available_slots:
-                subfolder_index += 1
-        if subfolder_index == len(subfolders):
-            subfolder_index = 0
-        folder_index += 1
+                last_job, free_slots = submit_jobs(path, last_job, free_slots)
+            else:
+                print(f"{red}Skipping {path_print}{reset_format}")
+                logging.info(f"Skipping {path_print}")
+            if free_slots:
+                given_index += 1
+        if given_index == len(givens):
+            given_index = 0
+        if free_slots:
+            mechanism_index += 1
 
-    if available_slots and folder_index == len(folders):
+    if free_slots and mechanism_index == len(mechanisms):
         print(f"{bold}{yellow}All jobs submitted{reset_format}")
         logging.info("All jobs submitted")
-        print(f"{blue}{available_slots} slots available{reset_format}\n")
+        print(f"{blue}{free_slots} slots free{reset_format}\n")
         os.remove(last_job_file)
         exit()
     else:

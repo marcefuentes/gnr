@@ -6,6 +6,7 @@ import logging
 
 hours = 23
 folders = ["none", "p", "p8", "pr8", "pr", "r", "r8"]
+folders = ["p8", "r8"]
 #subfolders = ["given000", "given050", "given095", "given100"]
 subfolders = ["given100"]
 queues = ["clk", "epyc"]

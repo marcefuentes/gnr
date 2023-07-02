@@ -23,6 +23,15 @@ yellow = "\033[33m"
 bold = "\033[1m"
 reset_format = "\033[0m"
 
+def folder_list(path):
+    folders = []
+    for item in os.listdir(path):
+        item_path = os.path.join(path, item)
+        if os.path.isdir(item_path):
+            folders.append(item_path)
+    folders.sort(key=lambda x: os.path.getctime(x))
+    return folders
+
 def get_free_slots(queue):
     return 250
 
@@ -112,32 +121,16 @@ def submit_jobs(finished, given, last_job, free_slots):
     if last_job == job_max:
         last_job = 0
         mechanism = os.path.dirname(given)
-        givens = []
-        for item in os.listdir(mechanism):
-            item_path = os.path.join(mechanism, item)
-            if os.path.isdir(item_path):
-                givens.append(item_path)
-        givens.sort(key=lambda x: os.path.getctime(x))
+        givens = folder_list(mechanism)
         given_index = givens.index(given)
         if given_index + 1 < len(givens):
             given = givens[given_index + 1]
         else:
-            mechanisms = []
-            parent = os.path.dirname(mechanism)
-            for item in os.listdir(parent):
-                item_path = os.path.join(parent, item)
-                if os.path.isdir(item_path):
-                    mechanisms.append(item_path)
-            mechanisms.sort(key=lambda x: os.path.getctime(x))
+            mechanisms = folder_list(os.path.dirname(mechanism))
             mechanism_index = mechanisms.index(mechanism)
             if mechanism_index + 1 < len(mechanisms):
                 mechanism = mechanisms[mechanism_index + 1]
-                givens = []
-                for item in os.listdir(mechanism):
-                    item_path = os.path.join(mechanism, item)
-                    if os.path.isdir(item_path):
-                        givens.append(item_path)
-                givens.sort(key=lambda x: os.path.getctime(x))
+                givens = folder_list(mechanism)
                 given = givens[0]
             else:
                 finished = 1
@@ -159,19 +152,8 @@ for queue in queues:
             user_input = input("Submit jobs in current folder? (y/n): ")
             if user_input.lower() == "n":
                 exit()
-            path = os.getcwd()
-            mechanisms = []
-            for item in os.listdir(path):
-                item_path = os.path.join(path, item)
-                if os.path.isdir(item_path):
-                    mechanisms.append(item_path)
-            mechanisms.sort(key=lambda x: os.path.getctime(x))
-            givens = []
-            for item in os.listdir(mechanisms[0]):
-                item_path = os.path.join(mechanisms[0], item)
-                if os.path.isdir(item_path):
-                    givens.append(item_path)
-            givens.sort(key=lambda x: os.path.getctime(x))
+            mechanisms = folder_list(os.getcwd())
+            givens = folder_list(mechanisms[0])
             given = givens[0]
             last_job = 0
         given_folders = given.split("/")

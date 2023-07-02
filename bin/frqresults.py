@@ -31,9 +31,8 @@ vmaxs = [my.aBmax,
          my.aBmax,
          my.aBmax,
          my.wmax]
-givens = ["given100", "given095", "given050", "given000"]
-folders = ["none", "p", "p8", "pr8", "pr", "r"]
-folders = ["r"]
+rows = ["pr", "p", "r", "none"]
+given = "given100"
 
 movie = False
 plotsize = 8
@@ -42,13 +41,13 @@ bins = 64
 # Add data to figure
 
 def update(t, artists):
-    for g, given in enumerate(givens):
-        df = dffrqs[g]
+    for r, row in enumerate(rows):
+        df = dffrqs[r]
         if movie:
             m = df.Time == t
             df = df.loc[m]
         for c, trait in enumerate(traits):
-            Z = my.getZ(t, dfmeans[g], trait + "mean")
+            Z = my.getZ(t, dfmeans[r], trait + "mean")
             if "Grain" in trait:
                 Z = 1.0 - Z
             for a, alpha in enumerate(alphas):
@@ -59,17 +58,21 @@ def update(t, artists):
                     y = d.loc[:, freq_a]
                     y = y.values[0]
                     y = y.flatten()
-                    artists[g, c, a, e].set_ydata(y)
+                    artists[r, c, a, e].set_ydata(y)
                     bgcolor = cm.viridis(Z[a, e]/vmaxs[c])
-                    artists[g, c, a, e].axes.set_facecolor(bgcolor)
+                    artists[r, c, a, e].axes.set_facecolor(bgcolor)
     if movie:
         fig.texts[2].set_text(f"t\n{t}")
     return artists.flatten()
 
 # Data without partner choice or reciprocity
 
-filelist = glob(os.path.join(folders[0], givens[0], "*.csv"))
+filelist = glob(os.path.join("none", "given000", "*.csv"))
+dfsocial = my.read_files(filelist, movie)
+
+filelist = glob(os.path.join("none", given, "*.csv"))
 df = my.read_files(filelist, movie)
+
 ts = df.Time.unique()
 alphas = np.sort(pd.unique(df.alpha))[::-1]
 logess = np.sort(pd.unique(df.logES))
@@ -79,7 +82,7 @@ nc = len(logess)
 # Figure properties
 
 width = plotsize*len(titles)
-height = plotsize*len(givens)
+height = plotsize*len(rows)
 xlabel = "Substitutability of $\it{B}$"
 ylabel = "Influence of $\it{B}$"
 biglabel = plotsize*6
@@ -94,21 +97,21 @@ plt.rcParams["ps.fonttype"] = 42
 # Create figure
 
 fig = plt.figure(figsize=(width, height))
-outergrid = fig.add_gridspec(nrows=len(givens),
+outergrid = fig.add_gridspec(nrows=len(rows),
                              ncols=len(titles))
-axs = np.empty((len(givens),
+axs = np.empty((len(rows),
                 len(titles),
                 nr,
                 nc),
                 dtype=object)
 
-for g, given in enumerate(givens):
+for r, row in enumerate(rows):
     for c, title in enumerate(titles):
-        grid = outergrid[g, c].subgridspec(nrows=nr,
+        grid = outergrid[r, c].subgridspec(nrows=nr,
                                            ncols=nc,
                                            wspace=0,
                                            hspace=0)
-        axs[g, c] = grid.subplots()
+        axs[r, c] = grid.subplots()
 
 left_x = axs[0, 0, 0, 0].get_position().x0
 right_x = axs[-1, -1, -1, -1].get_position().x1
@@ -131,29 +134,28 @@ for ax in fig.get_axes():
     for axis in ["top","bottom","left","right"]:
         ax.spines[axis].set_linewidth(0.1)
 
-for g, given in enumerate(givens):
+for r, row in enumerate(rows):
     for c, title in enumerate(titles):
-        letter = ord("a") + g*len(titles) + c
-        axs[g, c, 0, 0].set_title(chr(letter),
+        letter = ord("a") + r*len(titles) + c
+        axs[r, c, 0, 0].set_title(chr(letter),
                                   fontsize=letterlabel,
                                   pad = 10,
                                   weight="bold",
                                   loc="left")
-        if g == 0:
+        if r == 0:
             axs[0, c, 0, 10].set_title(title,
                                        pad=plotsize*9,
                                        fontsize=letterlabel)
         for a in range(0, nr, step):
-            axs[g, c, a, 0].set(yticks=[ylim[1]/2.0], yticklabels=[])
+            axs[r, c, a, 0].set(yticks=[ylim[1]/2.0], yticklabels=[])
             if c == 0:
-                axs[g, 0, a, 0].set_yticklabels([alphas[a]],
+                axs[r, 0, a, 0].set_yticklabels([alphas[a]],
                                                 fontsize=ticklabel)
         for e in range(0, nc, step):
-            axs[g, c, -1, e].set(xticks=[xlim[1]/2.0], xticklabels=[])
-            if given == givens[-1]:
+            axs[r, c, -1, e].set(xticks=[xlim[1]/2.0], xticklabels=[])
+            if row == rows[-1]:
                 axs[-1, c, -1, e].set_xticklabels([f"{logess[e]:.0f}"],
                                                  fontsize=ticklabel)
-
 if movie:
     fig.text(right_x,
              bottom_y*0.5,
@@ -171,34 +173,33 @@ dummy_y = np.zeros_like(x)
 frames = ts
 frame0 = ts[-1]
 
-for folder in folders:
-    for g, given in enumerate(givens):
-        for c, title in enumerate(titles):
-            for a, alpha in enumerate(alphas):
-                for e, loges in enumerate(logess):
-                    ax = axs[g, c, a, e] 
-                    artists[g, c, a, e], = ax.plot(x, dummy_y, c="white")
+for r, row in enumerate(rows):
+    for c, title in enumerate(titles):
+        for a, alpha in enumerate(alphas):
+            for e, loges in enumerate(logess):
+                ax = axs[r, c, a, e] 
+                artists[r, c, a, e], = ax.plot(x, dummy_y, c="white")
 
-    # Add data and save figure
+# Add data and save figure
 
-    dffrqs = np.empty(len(givens), dtype=object) 
-    dfmeans = np.empty(len(givens), dtype=object) 
-    for g, given in enumerate(givens):
-        filelist = glob(os.path.join(folder, given, "*.frq"))
-        dffrqs[g] = my.read_files(filelist, movie)
-        filelist = glob(os.path.join(folder, given, "*.csv"))
-        dfmeans[g] = my.read_files(filelist, movie)
+dffrqs = np.empty(len(rows), dtype=object) 
+dfmeans = np.empty(len(rows), dtype=object) 
+for r, row in enumerate(rows):
+    filelist = glob(os.path.join(row, given, "*.frq"))
+    dffrqs[r] = my.read_files(filelist, movie)
+    filelist = glob(os.path.join(row, given, "*.csv"))
+    dfmeans[r] = my.read_files(filelist, movie)
 
-    if movie:
-        ani = FuncAnimation(fig,
-                            update,
-                            frames=frames,
-                            fargs=(artists,),
-                            blit=True)
-        ani.save(f"{file_name}_{folder}.mp4", writer="ffmpeg", fps=10)
-    else:
-        update(frame0, artists,)
-        plt.savefig(f"{file_name}_{folder}.png", transparent=False)
+if movie:
+    ani = FuncAnimation(fig,
+                        update,
+                        frames=frames,
+                        fargs=(artists,),
+                        blit=True)
+    ani.save(f"{file_name}_{given}.mp4", writer="ffmpeg", fps=10)
+else:
+    update(frame0, artists,)
+    plt.savefig(f"{file_name}_{given}.png", transparent=False)
 
 plt.close()
 

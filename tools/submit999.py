@@ -5,7 +5,6 @@ import subprocess
 import logging
 
 hours = 23
-givens = ["given000", "given050", "given095", "given100"]
 queues = ["clk", "epyc"]
 executable = "/home/ulc/ba/mfu/code/gnr/bin/gnr"
 mail_user = "marcelinofuentes@gmail.com"
@@ -83,8 +82,12 @@ def get_job_max(path):
                 job_max = basename
     return job_max
 
-def submit_jobs(finished, given, last_job, free_slots):
+def submit_jobs(free_slots, given, last_job):
     os.chdir(given)
+    given_folders = given.split("/")
+    given_print = "/".join(given_folders[-3:])
+    print(f"{blue}Working in {given_print}{reset_format}")
+    logging.info(f"Working in {given_print}")
     job_max = get_job_max(given)
     if last_job == 0:
         job_min = get_job_min(given)
@@ -97,7 +100,7 @@ def submit_jobs(finished, given, last_job, free_slots):
     last_job = job_min + num_jobs_to_submit - 1
     print(f"{blue}Submitting jobs {job_min} to {last_job}{reset_format}")
     logging.info(f"Submitting jobs {job_min} to {last_job}")
-    job_name = f"{queue}-{os.getcwd().split('/')[-1]}"
+    job_name = f"{queue}-{last_job}"
     job_array = f"{job_min}-{last_job}"
     job_time = f"{hours}:59:00"
     cmd = ["sbatch",
@@ -131,16 +134,18 @@ def submit_jobs(finished, given, last_job, free_slots):
                 givens = folder_list(mechanism)
                 given = givens[0]
             else:
-                finished = 1
+                print(f"{bold}{yellow}All jobs submitted{reset_format}")
+                logging.info("All jobs submitted")
+                print(f"{blue}{free_slots} free slots{reset_format}\n")
+                exit()
 
-    return finished, given, last_job, free_slots
+    return free_slots, given, last_job
 
 for queue in queues:
     print(f"{bold}{cyan}\n{queue}:{reset_format}")
     free_slots = get_free_slots(queue) 
-    finished = 0
 
-    while free_slots and not finished:
+    while free_slots:
         if os.path.isfile(last_job_file):
             with open(last_job_file, "r") as f:
                 given, last_job = f.read().strip().split(",")
@@ -154,20 +159,9 @@ for queue in queues:
             givens = folder_list(mechanisms[0])
             given = givens[0]
             last_job = 0
-        given_folders = given.split("/")
-        given_print = "/".join(given_folders[-3:])
-        print(f"{blue}Working in {given_print}{reset_format}")
-        logging.info(f"Working in {given_print}")
-        finished, given, last_job, free_slots = submit_jobs(finished, given, last_job, free_slots)
-
-        if finished:
-            print(f"{bold}{yellow}All jobs submitted{reset_format}")
-            logging.info("All jobs submitted")
-            print(f"{blue}{free_slots} slots free{reset_format}\n")
-            exit()
-        else:
-            with open(last_job_file, "w") as f:
-                f.write(f"{given},{last_job}")
+        free_slots, given, last_job = submit_jobs(free_slots, given, last_job)
+        with open(last_job_file, "w") as f:
+            f.write(f"{given},{last_job}")
 
 print("")
 

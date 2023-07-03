@@ -30,22 +30,25 @@ double	gR1, gR2;				// Resource abundance: q1 = a1*R1, q2 = a2*R2
 double	ga2Init;
 double	gChooseGrainInit;			// Initial ChooseGrain
 double	gMimicGrainInit;			// Initial MimicGrain
+double	gImimicGrainInit;			// Initial ImimicGrain
 double	ga2MutationSize;			// For a2Default
 double	gGrainMutationSize;			// For ChooseGrain and MimicGrain
 double	gDeathRate;
 int	gGroupSize;				// Number of individuals that an individual can watch (including itself)
 double	gChooseCost;
 double	gMimicCost;
+double	gImimicCost;
 int	gPartnerChoice;
 int	gReciprocity;
+int	gIndirectR;
+int	gLanguage;				// Individuals access lifelong behavior of partners
+int	gShuffle;				// Shuffle partners in markets every time step
 int	gDiscrete;
 double	ga2low, ga2high;
-int	gIndirectR;
-int	gLanguage;
-double	galpha;			
-double	glogES, grho;					// Elasticity of substitution. ES = 1/(1 - rho)
-						// CES fitness function: w = (alpha*q1^rho + (1 - alpha)*q2^rho)^(1/rho)
 double	gGiven;					// Effect on partner: q2 = a2*R2*Given
+double	galpha;			
+double	glogES, grho;				// Elasticity of substitution. ES = 1/(1 - rho)
+						// CES fitness function: w = (alpha*q1^rho + (1 - alpha)*q2^rho)^(1/rho)
 
 // Functions
 
@@ -56,7 +59,7 @@ void	start_population (struct itype *i, struct itype *i_last);
 double	fitness (struct itype *i, struct itype *i_last);	
 double	ces (double q1, double q2);				// glogES, galpha
 //double	macromutate (double trait, double sum);			// gDiscrete
-double	calculate_cost	(double choose, double mimic);		// gChooseCost, gMimicCost
+double	calculate_cost	(double choose, double mimic, double imimic);	// gChooseCost, gMimicCost
 void	update_for_stats (struct itype *i, struct itype *i_last);
 
 int main (int argc, char *argv[])
@@ -171,19 +174,22 @@ void read_globals (char *filename)
 	fscanf (fp, "a2Init,%lf\n", &ga2Init);
 	fscanf (fp, "ChooseGrainInit,%lf\n", &gChooseGrainInit);
 	fscanf (fp, "MimicGrainInit,%lf\n", &gMimicGrainInit);
+	fscanf (fp, "ImimicGrainInit,%lf\n", &gImimicGrainInit);
 	fscanf (fp, "a2MutationSize,%lf\n", &ga2MutationSize);
 	fscanf (fp, "GrainMutationSize,%lf\n", &gGrainMutationSize);
 	fscanf (fp, "DeathRate,%lf\n", &gDeathRate);
 	fscanf (fp, "GroupSize,%i\n", &gGroupSize);
 	fscanf (fp, "ChooseCost,%lf\n", &gChooseCost);
 	fscanf (fp, "MimicCost,%lf\n", &gMimicCost);
+	fscanf (fp, "ImimicCost,%lf\n", &gImimicCost);
 	fscanf (fp, "PartnerChoice,%i\n", &gPartnerChoice);
 	fscanf (fp, "Reciprocity,%i\n", &gReciprocity);
+	fscanf (fp, "IndirectR,%i\n", &gIndirectR);
+	fscanf (fp, "Language,%i\n", &gLanguage);
+	fscanf (fp, "Shuffle,%i\n", &gShuffle);
 	fscanf (fp, "Discrete,%i\n", &gDiscrete);
 	fscanf (fp, "a2low,%lf\n", &ga2low);
 	fscanf (fp, "a2high,%lf\n", &ga2high);
-	fscanf (fp, "IndirectR,%i\n", &gIndirectR);
-	fscanf (fp, "Language,%i\n", &gLanguage);
 	fscanf (fp, "alpha,%lf\n", &galpha);
 	fscanf (fp, "logES,%lf\n", &glogES);
 	fscanf (fp, "Given,%lf\n", &gGiven);
@@ -199,6 +205,7 @@ void read_globals (char *filename)
 	gGroupSize = pow(2.0, gGroupSize);
 	gChooseCost = pow(2.0, gChooseCost);
 	gMimicCost = pow(2.0, gMimicCost);
+	gImimicCost = pow(2.0, gImimicCost);
 	grho = 1.0 - 1.0/pow(2.0, glogES);
 
 	/*double MRT = (ga2Max/ga1Max)*(gR2/gR1);
@@ -235,17 +242,20 @@ void write_globals (char *filename)
 	fprintf (fp, "a2Init,%f\n", ga2Init);
 	fprintf (fp, "ChooseGrainInit,%f\n", gChooseGrainInit);
 	fprintf (fp, "MimicGrainInit,%f\n", gMimicGrainInit);
+	fprintf (fp, "ImimicGrainInit,%f\n", gImimicGrainInit);
 	fprintf (fp, "a2MutationSize,%f,%f\n", ga2MutationSize, log(ga2MutationSize)/log(2));
 	fprintf (fp, "GrainMutationSize,%f,%f\n", gGrainMutationSize, log(gGrainMutationSize)/log(2));
 	fprintf (fp, "DeathRate,%f,%f\n", gDeathRate, log(gDeathRate)/log(2));
 	fprintf (fp, "GroupSize,%i,%g\n", gGroupSize, log(gGroupSize)/log(2));
 	fprintf (fp, "ChooseCost,%f,%f\n", gChooseCost, log(gChooseCost)/log(2));
 	fprintf (fp, "MimicCost,%f,%f\n", gMimicCost, log(gMimicCost)/log(2));
+	fprintf (fp, "ImimicCost,%f,%f\n", gImimicCost, log(gImimicCost)/log(2));
 	fprintf (fp, "PartnerChoice,%i\n", gPartnerChoice);
 	fprintf (fp, "Reciprocity,%i\n", gReciprocity);
-	fprintf (fp, "Discrete,%i\n", gDiscrete);
 	fprintf (fp, "IndirectR,%i\n", gIndirectR);
 	fprintf (fp, "Language,%i\n", gLanguage);
+	fprintf (fp, "Shuffle,%i\n", gShuffle);
+	fprintf (fp, "Discrete,%i\n", gDiscrete);
 
 	fclose (fp);
 }
@@ -289,7 +299,7 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 
 			update_for_stats (i_first, i_last);
 
-			if ( gIndirectR == 1 )
+			if ( gShuffle == 1 )
 			{
 				shuffle_partners (i_first, i_last, gGroupSize);
 			}
@@ -316,14 +326,15 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 					recruit->a2Default = dtnorm (i->a2Default, ga2MutationSize, ga2Min, ga2Max, rng);
 					recruit->ChooseGrain = dtnorm (i->ChooseGrain, gGrainMutationSize, ga2Min, ga2Max, rng);
 					recruit->MimicGrain =  dtnorm (i->MimicGrain, gGrainMutationSize, ga2Min, ga2Max, rng);
-					recruit->cost = calculate_cost (recruit->ChooseGrain, recruit->MimicGrain);
+					recruit->ImimicGrain =  dtnorm (i->ImimicGrain, gGrainMutationSize, ga2Min, ga2Max, rng);
+					recruit->cost = calculate_cost (recruit->ChooseGrain, recruit->MimicGrain, recruit->ImimicGrain);
 				}
 
 				kill (recruit_first, i_first, gN, gDiscrete, ga2low, ga2high);
 				free_recruits (recruit_first);
 			}
 			
-			if ( gReciprocity == 1 )
+			if ( gReciprocity == 1 || gIndirectR == 1 )
 			{
 				decide_a2 (i_first, i_last, ga2Max, gIndirectR, gDiscrete, ga2low, ga2high);
 			}
@@ -349,7 +360,8 @@ void start_population (struct itype *i, struct itype *i_last)
 	i->a2SeenSum = 0.0;
 	i->ChooseGrain = gChooseGrainInit;
 	i->MimicGrain = gMimicGrainInit;
-	i->cost = calculate_cost (i->ChooseGrain, i->MimicGrain);
+	i->ImimicGrain = gImimicGrainInit;
+	i->cost = calculate_cost (i->ChooseGrain, i->MimicGrain, i->ImimicGrain);
 	i->age = 0;
 	i->chose_partner = false;
 	i->changed_a2 = false;
@@ -413,9 +425,9 @@ double ces (double q1, double q2)
 	return w;
 }
 
-double calculate_cost (double choose, double mimic)
+double calculate_cost (double choose, double mimic, double imimic)
 {
-	double c = -gChooseCost*log(choose) - gMimicCost*log(mimic);
+	double c = -gChooseCost*log(choose) - gMimicCost*log(mimic) - gImimicCost*log(imimic);
 
 	return c;
 }

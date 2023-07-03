@@ -31,6 +31,7 @@ void stats_period (struct itype *i, struct itype *i_last, struct pruntype *prun,
 		bin[2][select_bin(aceiling, abinsize, i->a2Seen)] ++;
 		bin[3][select_bin(aceiling, abinsize, i->ChooseGrain)] ++;
 		bin[4][select_bin(aceiling, abinsize, i->MimicGrain)] ++;
+		bin[5][select_bin(aceiling, abinsize, i->ImimicGrain)] ++;
 		boolean[0] += i->chose_partner;
 		boolean[1] += i->changed_a2;
 		prun->mean[0] += w;
@@ -38,11 +39,13 @@ void stats_period (struct itype *i, struct itype *i_last, struct pruntype *prun,
 		prun->mean[2] += i->a2Seen;
 		prun->mean[3] += i->ChooseGrain;
 		prun->mean[4] += i->MimicGrain;
+		prun->mean[5] += i->ImimicGrain;
 		prun->sd[0] += w*w;
 		prun->sd[1] += i->a2Default*i->a2Default;
 		prun->sd[2] += i->a2Seen*i->a2Seen;
 		prun->sd[3] += i->ChooseGrain*i->ChooseGrain;
 		prun->sd[4] += i->MimicGrain*i->MimicGrain;
+		prun->sd[5] += i->ImimicGrain*i->ImimicGrain;
 	}
 
 	for ( int v = 0; v < CONTINUOUS_V; v++ )

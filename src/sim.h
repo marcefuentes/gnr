@@ -1,6 +1,6 @@
 #include <stdbool.h>
 
-#define CONTINUOUS_V 5
+#define CONTINUOUS_V 6
 #define BINS 64
 #define BOOLEAN_V 2
 
@@ -44,6 +44,7 @@ struct itype
 	double		wCumulative; 	
 	double		ChooseGrain;
 	double		MimicGrain;
+	double		ImimicGrain;
 	double		cost;			// Information costs
 	int		age;			// It can't be killed. It isn't known to, and doesn't know, group mates
 	bool		chose_partner;		// It has chosen a new partner
@@ -58,6 +59,7 @@ struct rtype
 	double		a2Default;
 	double		ChooseGrain;
 	double		MimicGrain;
+	double		ImimicGrain;
 	double		cost;
 	struct rtype	*next;
 };

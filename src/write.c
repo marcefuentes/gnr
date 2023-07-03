@@ -11,7 +11,8 @@ void write_headers_csv (char *filename)
 						"a2Default",
 						"a2Seen",
 						"ChooseGrain",
-						"MimicGrain" };
+						"MimicGrain",
+						"ImimicGrain" };
 
 	char headersb[BOOLEAN_V][20] = { "chose_partner",
 						"changed_a2" };
@@ -48,7 +49,8 @@ void write_headers_frq (char *filename)
 						"a2Default",
 						"a2Seen",
 						"ChooseGrain",
-						"MimicGrain" };
+						"MimicGrain",
+						"ImimicGrain" };
 
 	if ( (fp = fopen (filename, "a+")) == NULL )
 	{
@@ -144,7 +146,7 @@ void write_headers_i (char *filename)
 		file_write_error (filename);
 	}
 
-	fprintf (fp, "alpha,logES,Given,a2low,a2high,Time,a2Default,a2Decided,a2Seen,a2SeenSum,w,ChooseGrain,MimicGrain,cost,age,chose_partner,changed_a2");
+	fprintf (fp, "alpha,logES,Given,a2low,a2high,Time,a2Default,a2Decided,a2Seen,a2SeenSum,w,ChooseGrain,MimicGrain,ImimicGrain,cost,age,chose_partner,changed_a2");
 
 	fclose (fp);
 }
@@ -161,7 +163,7 @@ void write_i (char *filename, float alpha, float logES, float Given, float a2low
 
 	for ( ; i < i_last; i++ )
 	{
-		fprintf (fp, "\n%f,%f,%f,%f,%f,%i,%f,%f,%f,%f,%f,%f,%f,%f,%i,%i,%i", alpha, logES, Given, a2low, a2high, 1, i->a2Default, i->a2Decided, i->a2Seen, i->a2SeenSum, i->wCumulative - wc, i->ChooseGrain, i->MimicGrain, i->cost, i->age, i->chose_partner, i->changed_a2); 
+		fprintf (fp, "\n%f,%f,%f,%f,%f,%i,%f,%f,%f,%f,%f,%f,%f,%f,%f,%i,%i,%i", alpha, logES, Given, a2low, a2high, 1, i->a2Default, i->a2Decided, i->a2Seen, i->a2SeenSum, i->wCumulative - wc, i->ChooseGrain, i->MimicGrain, i->ImimicGrain, i->cost, i->age, i->chose_partner, i->changed_a2); 
 		wc = i->wCumulative;
 	}
 

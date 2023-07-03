@@ -87,6 +87,7 @@ void kill (struct rtype *recruit, struct itype *i_first, int n, int discrete, do
 		i->a2SeenSum = 0.0;
 		i->ChooseGrain = recruit->ChooseGrain;
 		i->MimicGrain = recruit->MimicGrain;
+		i->ImimicGrain = recruit->ImimicGrain;
 		i->cost = recruit->cost;
 		i->age = 0;
 	}

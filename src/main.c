@@ -344,9 +344,27 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 				free_recruits (recruit_first);
 			}
 			
-			if ( gReciprocity == 1 || gIndirectR == 1 )
+			if ( gDiscrete == 0)
 			{
-				decide_a2 (i_first, i_last, ga2Max, gIndirectR, gDiscrete, ga2low, ga2high);
+				if ( gIndirectR == 0 )
+				{
+					decide_a2_continuous_d (i_first, i_last, ga2Max);
+				}
+				else
+				{
+					decide_a2_continuous_i (i_first, i_last, ga2Max);
+				}
+			}
+			else
+			{
+				if ( gIndirectR == 0 )
+				{
+					decide_a2_discrete_d (i_first, i_last, ga2low, ga2high);
+				}
+				else
+				{
+					decide_a2_discrete_i (i_first, i_last, ga2low, ga2high);
+				}
 			}
 		}
 

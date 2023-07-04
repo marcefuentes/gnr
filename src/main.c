@@ -41,6 +41,7 @@ double	gImimicCost;
 int	gPartnerChoice;
 int	gReciprocity;
 int	gIndirectR;
+int	gIndependent;				// Indirect reciprocity evolves independently of direct reciprocity
 int	gLanguage;				// Individuals access lifelong behavior of partners
 int	gShuffle;				// Shuffle partners in markets every time step
 int	gDiscrete;
@@ -185,6 +186,7 @@ void read_globals (char *filename)
 	fscanf (fp, "PartnerChoice,%i\n", &gPartnerChoice);
 	fscanf (fp, "Reciprocity,%i\n", &gReciprocity);
 	fscanf (fp, "IndirectR,%i\n", &gIndirectR);
+	fscanf (fp, "Independent,%i\n", &gIndependent);
 	fscanf (fp, "Language,%i\n", &gLanguage);
 	fscanf (fp, "Shuffle,%i\n", &gShuffle);
 	fscanf (fp, "Discrete,%i\n", &gDiscrete);
@@ -253,6 +255,7 @@ void write_globals (char *filename)
 	fprintf (fp, "PartnerChoice,%i\n", gPartnerChoice);
 	fprintf (fp, "Reciprocity,%i\n", gReciprocity);
 	fprintf (fp, "IndirectR,%i\n", gIndirectR);
+	fprintf (fp, "Independent,%i\n", gIndependent);
 	fprintf (fp, "Language,%i\n", gLanguage);
 	fprintf (fp, "Shuffle,%i\n", gShuffle);
 	fprintf (fp, "Discrete,%i\n", gDiscrete);
@@ -326,7 +329,14 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 					recruit->a2Default = dtnorm (i->a2Default, ga2MutationSize, ga2Min, ga2Max, rng);
 					recruit->ChooseGrain = dtnorm (i->ChooseGrain, gGrainMutationSize, ga2Min, ga2Max, rng);
 					recruit->MimicGrain =  dtnorm (i->MimicGrain, gGrainMutationSize, ga2Min, ga2Max, rng);
-					recruit->ImimicGrain =  dtnorm (i->ImimicGrain, gGrainMutationSize, ga2Min, ga2Max, rng);
+					if (gIndependent == 1)
+					{
+						recruit->ImimicGrain =  dtnorm (i->ImimicGrain, gGrainMutationSize, ga2Min, ga2Max, rng);
+					}
+					else
+					{
+						recruit->ImimicGrain = recruit->MimicGrain;
+					}
 					recruit->cost = calculate_cost (recruit->ChooseGrain, recruit->MimicGrain, recruit->ImimicGrain);
 				}
 
@@ -427,6 +437,11 @@ double ces (double q1, double q2)
 
 double calculate_cost (double choose, double mimic, double imimic)
 {
+	if ( gIndependent == 0 )
+	{
+		imimic = 1.0;
+	}
+
 	double c = -gChooseCost*log(choose) - gMimicCost*log(mimic) - gImimicCost*log(imimic);
 
 	return c;

@@ -23,9 +23,9 @@ traits = ["ChooseGrainmean",
           "ImimicGrainmean",
           "wmean",
           "wmean"]
-titles = ["Sensitivity for\nchoosing partner",
-          "Sensitivity for\nmimicking partner",
-          "Sensitivity for\nmimicking partner",
+titles = ["Partner choice",
+          "Reciprocity",
+          "Indirect reciprocity",
           "Fitness gain",
           "Fitness deficit"]
 vmaxs = [my.aBmax,
@@ -33,7 +33,7 @@ vmaxs = [my.aBmax,
          my.aBmax,
          my.wmax,
          my.wmax]
-rows = ["rshuffle", "rnoshuffle"]
+rows = ["pr", "p", "r", "none"]
 given = "given100"
 
 movie = False

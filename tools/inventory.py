@@ -16,6 +16,9 @@ mechanisms.sort()
 for mechanism in mechanisms:
     print(f"{cyan}{mechanism}{reset_format}")
     givens = [f for f in os.listdir(mechanism) if os.path.isdir(os.path.join(mechanism, f))]
+    if len(givens) == 0:
+        print(f"  {red}empty{reset_format}")
+        continue
     givens.sort()
     for given in givens:
         given_path = os.path.join(mechanism, given)

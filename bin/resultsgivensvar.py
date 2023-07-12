@@ -32,7 +32,7 @@ vmaxs = [my.aBmax,
          my.wmax]
 givens = ["given100", "given095", "given050", "given000"]
 ngivens = [1.0, 0.95, 0.5, 0.0]
-folders = ["none"]
+mechanisms = ["none"]
 
 movie = False
 plotsize = 4
@@ -59,6 +59,9 @@ def update(t, artists):
 dfnulls = np.empty(len(givens), dtype=object) 
 for g, given in enumerate(givens):
     filelist = glob(os.path.join("none", given, "*.csv"))
+    if filelist == []:
+        print(f"No none/{given}/*.csv")
+        exit()
     dfnulls[g] = my.read_files(filelist, movie)
 
 df = dfnulls[0]
@@ -146,7 +149,7 @@ dummy_Z = np.zeros((nr, nc))
 frames = ts
 frame0 = ts[-1]
 
-for folder in folders:
+for mechanism in mechanisms:
     for g, given in enumerate(givens):
         for c, title in enumerate(titles):
             artists[g, c] = axs[g, c].imshow(dummy_Z,
@@ -161,10 +164,10 @@ for folder in folders:
                             frames=frames,
                             fargs=(artists,),
                             blit=True)
-        ani.save(f"{file_name}_{folder}.mp4", writer="ffmpeg", fps=10)
+        ani.save(f"{file_name}_{mechanism}.mp4", writer="ffmpeg", fps=10)
     else:
         update(frame0, artists,)
-        plt.savefig(f"{file_name}_{folder}.png", transparent=False)
+        plt.savefig(f"{file_name}_{mechanism}.png", transparent=False)
 
 plt.close()
 

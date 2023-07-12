@@ -61,9 +61,15 @@ def update(t, artists):
 # Data without partner choice or reciprocity
 
 filelist = glob(os.path.join("none", "given000", "*.csv"))
+if filelist == []:
+    print("No none/given000/*.csv")
+    exit()
 dfsocial = my.read_files(filelist, movie)
 
 filelist = glob(os.path.join("none", given, "*.csv"))
+if filelist == []:
+    print(f"No none/{given}/*.csv")
+    exit()
 df = my.read_files(filelist, movie)
 
 ts = df.Time.unique()
@@ -163,6 +169,9 @@ for r, row in enumerate(rows):
 dfs = np.empty(len(rows), dtype=object) 
 for r, row in enumerate(rows):
     filelist = glob(os.path.join(row, given, "*.csv"))
+    if filelist == []:
+        print(f"No {row}/{given}/*.csv")
+        exit()
     dfs[r] = my.read_files(filelist, movie)
 
 if movie:

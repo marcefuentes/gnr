@@ -46,7 +46,7 @@ for mechanism in mechanisms:
             print(f"  {given}: {yellow}ok{reset_format}")
         else:
             if f_equal_nlines + f_larger_nlines + f_smaller_nlines == 0:
-                print(f"  {given}: {red}no csv files{reset_format}")
+                print(f"  {given}: {red}0{reset_format} csv files")
             else:
                 print(f"  {given}: ", end = "")
                 if f_larger_nlines:

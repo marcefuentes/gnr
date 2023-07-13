@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 import os
+import sys
 
 nlines = 10
 input_file_extension = ".glo"
@@ -12,6 +13,9 @@ red = "\033[91m"
 yellow = "\033[33m"
 bold = "\033[1m"
 reset_format = "\033[0m"
+
+if len(sys.argv) > 1:
+    os.chdir(sys.argv[1])
 
 mechanisms = [f for f in os.listdir(os.getcwd()) if os.path.isdir(f)]
 mechanisms.sort()

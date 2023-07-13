@@ -24,7 +24,7 @@ for mechanism in mechanisms:
         given_path = os.path.join(mechanism, given)
         glo_files = [f for f in os.listdir(given_path) if f.endswith(".glo")]
         if len(glo_files) == 0:
-            print(f"  {given}: {red}no .glo files{reset_format}")
+            print(f"  {given}: {red}no glo files{reset_format}")
             continue
         f_equal_nlines = 0
         f_larger_nlines = 0
@@ -44,14 +44,20 @@ for mechanism in mechanisms:
             print(f"  {given}: {yellow}ok{reset_format}")
         else:
             if f_equal_nlines + f_larger_nlines + f_smaller_nlines == 0:
-                print(f"  {given}: {red}no .csv files{reset_format}")
+                print(f"  {given}: {red}no csv files{reset_format}")
             else:
-                print(f"  {given}:")
-                if f_larger_nlines > 0:
-                    print(f"            {red}{f_larger_nlines} files with > {nlines} lines{reset_format}")
-                if f_smaller_nlines > 0:
-                    print(f"            {red}{f_smaller_nlines} files with < {nlines} lines{reset_format}")
+                print(f"  {given}: ", end = "")
+                if f_larger_nlines:
+                    print(f"{red}{f_larger_nlines} csv files with > {nlines} lines{reset_format}")
+                if f_smaller_nlines:
+                    if f_larger_nlines:
+                        print(f"            {red}{f_smaller_nlines} csv files with < {nlines} lines{reset_format}")
+                    else:
+                        print(f"{red}{f_smaller_nlines} csv files with < {nlines} lines{reset_format}")
                 missing = len(glo_files) - f_equal_nlines - f_larger_nlines - f_smaller_nlines
-                if missing > 0:
-                    print(f"            {red}{missing} missing .csv files{reset_format}")
+                if missing:
+                    if f_larger_nlines or f_smaller_nlines:
+                        print(f"            {red}{missing} missing csv files{reset_format}")
+                    else:
+                        print(f"{red}{missing} missing csv files{reset_format}")
             

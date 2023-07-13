@@ -4,13 +4,15 @@ import os
 import subprocess
 import logging
 
-# Purpose: resubmit jobs that failed
+# Purpose: resubmit unfinished jobs
 # Usage: python resubmit.py
 
 hours = 23
 queues = ["clk", "epyc"]
 executable = "/home/ulc/ba/mfu/code/gnr/bin/gnr"
 mail_user = "marcelinofuentes@gmail.com"
+input_file_extension = ".glo"
+output_file_extensions = [".csv", ".frq", ".gl2"]
 
 log_file = "/home/ulc/ba/mfu/submit.log"
 logging.basicConfig(filename=log_file,
@@ -56,10 +58,10 @@ def get_free_slots(queue):
     print(f"{blue}{free_slots} free slots{reset_format}")
     return free_slots
 
-names = [name[:-4] for name in os.listdir() if name.endswith(".glo")]
+names = [name[:-4] for name in os.listdir() if name.endswith(input_file_extension)]
 job_array = []
 for name in names:
-    if not os.path.isfile(name + ".csv"):
+    if not os.path.isfile(name + output_file_extensions[0]):
         job_array.append(int(name))
     else:
         with open(name + ".csv") as f:

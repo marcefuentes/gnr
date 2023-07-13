@@ -3,6 +3,8 @@
 import os
 
 nlines = 10
+input_file_extension = ".glo"
+output_file_extensions = [".csv", ".frq", ".gl2"]
 
 blue = "\033[94m"
 cyan = "\033[96m"
@@ -22,25 +24,25 @@ for mechanism in mechanisms:
     givens.sort()
     for given in givens:
         given_path = os.path.join(mechanism, given)
-        glo_files = [f for f in os.listdir(given_path) if f.endswith(".glo")]
-        if len(glo_files) == 0:
+        input_files = [f for f in os.listdir(given_path) if f.endswith(input_file_extension)]
+        if len(input_files) == 0:
             print(f"  {given}: {red}no glo files{reset_format}")
             continue
         f_equal_nlines = 0
         f_larger_nlines = 0
         f_smaller_nlines = 0
         for f in os.listdir(given_path):
-            if f.endswith(".csv"):
-                csv_file = os.path.join(given_path, f)
-                with open(csv_file, "r") as csv:
-                    lines = csv.readlines()
+            if f.endswith(output_file_extensions[0]):
+                output_file = os.path.join(given_path, f)
+                with open(output_file, "r") as output:
+                    lines = output.readlines()
                     if len(lines) == nlines:
                         f_equal_nlines += 1
                     elif len(lines) > nlines:
                         f_larger_nlines += 1
                     elif len(lines) < nlines:
                         f_smaller_nlines += 1
-        if f_equal_nlines == len(glo_files):
+        if f_equal_nlines == len(input_files):
             print(f"  {given}: {yellow}ok{reset_format}")
         else:
             if f_equal_nlines + f_larger_nlines + f_smaller_nlines == 0:
@@ -54,7 +56,7 @@ for mechanism in mechanisms:
                         print(f"            {red}{f_smaller_nlines}{reset_format} csv files with < {nlines} lines")
                     else:
                         print(f"{red}{f_smaller_nlines}{reset_format} csv files with < {nlines} lines")
-                missing = len(glo_files) - f_equal_nlines - f_larger_nlines - f_smaller_nlines
+                missing = len(input_files) - f_equal_nlines - f_larger_nlines - f_smaller_nlines
                 if missing:
                     if f_larger_nlines or f_smaller_nlines:
                         print(f"            {red}{missing}{reset_format} missing csv files")

@@ -7,10 +7,11 @@ import logging
 # Purpose: resubmit jobs that failed
 # Usage: python resubmit.py
 
-hours = 15
+hours = 23
 queues = ["clk", "epyc"]
 executable = "/home/ulc/ba/mfu/code/gnr/bin/gnr"
 mail_user = "marcelinofuentes@gmail.com"
+numbers = range(101, 542)
 
 log_file = "/home/ulc/ba/mfu/submit.log"
 logging.basicConfig(filename=log_file,
@@ -57,12 +58,17 @@ def get_free_slots(queue):
     return free_slots
 
 job_array = []
-
-for file in os.listdir("."):
-    if file.endswith(".csv"):
-        if sum(1 for line in open(file)) < 10:
-            base = os.path.splitext(file)[0]
-            job_array.append(base)
+for number in numbers:
+    base = str(number)
+    if not os.path.isfile(base + ".csv"):
+        job_array.append(base)
+    else:
+        with open(base + ".csv") as f:
+            if sum(1 for line in f) < 10:
+                job_array.append(base)
+                for extension in [".csv", ".frq", ".gl2"]:
+                    file = base + extension
+                    os.remove(file)
 
 if len(job_array) == 0:
     print(f"{yellow}All jobs completed{reset_format}")
@@ -101,10 +107,6 @@ for queue in queues:
         result = subprocess.run(cmd, stdout=subprocess.PIPE)
         print(result.stdout.decode().strip())
         logging.info(result.stdout.decode().strip())
-        for base in job_array[:num_jobs_to_submit]:
-            for extension in [".csv", ".frq", ".gl2"]:
-                file = base + extension
-                os.remove(file)
         del job_array[:num_jobs_to_submit]
         free_slots -= num_jobs_to_submit 
 

@@ -53,7 +53,7 @@ for mechanism in mechanisms:
             print(f"{yellow}ok{reset_format}")
         else:
             if f_equal_nlines + f_larger_nlines + f_smaller_nlines == 0:
-                print(f"{red}0{reset_format} {output_file_extension[1:]} files")
+                print(f"{red}no{reset_format} {output_file_extension[1:]} files")
             else:
                 if f_larger_nlines:
                     print(f"{red}{f_larger_nlines}{reset_format} {output_file_extension[1:]} files with > {nlines} lines")

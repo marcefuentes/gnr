@@ -48,16 +48,16 @@ for mechanism in mechanisms:
             else:
                 print(f"  {given}: ", end = "")
                 if f_larger_nlines:
-                    print(f"{red}{f_larger_nlines} csv files with > {nlines} lines{reset_format}")
+                    print(f"{red}{f_larger_nlines}{reset_format} csv files with > {nlines} lines")
                 if f_smaller_nlines:
                     if f_larger_nlines:
-                        print(f"            {red}{f_smaller_nlines} csv files with < {nlines} lines{reset_format}")
+                        print(f"            {red}{f_smaller_nlines}{reset_format} csv files with < {nlines} lines")
                     else:
-                        print(f"{red}{f_smaller_nlines} csv files with < {nlines} lines{reset_format}")
+                        print(f"{red}{f_smaller_nlines}{reset_format} csv files with < {nlines} lines")
                 missing = len(glo_files) - f_equal_nlines - f_larger_nlines - f_smaller_nlines
                 if missing:
                     if f_larger_nlines or f_smaller_nlines:
-                        print(f"            {red}{missing} missing csv files{reset_format}")
+                        print(f"            {red}{missing}{reset_format} missing csv files")
                     else:
-                        print(f"{red}{missing} missing csv files{reset_format}")
+                        print(f"{red}{missing}{reset_format} missing csv files")
             

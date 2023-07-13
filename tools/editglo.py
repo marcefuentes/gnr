@@ -21,6 +21,9 @@ for folder in folders:
                         filedata = filedata.replace("PartnerChoice,0", "PartnerChoice,1")
                     if "r" in folder:
                         filedata = filedata.replace("Reciprocity,0", "Reciprocity,1")
+                    if "i" in folder:
+                        filedata = filedata.replace("Reciprocity,0", "Reciprocity,1")
+                        filedata = filedata.replace("IndirectR,0", "IndirectR,1")
                     if "l" in folder:
                         filedata = filedata.replace("Language,0", "Language,1")
                     if "8" in folder:

@@ -71,7 +71,7 @@ for number in numbers:
                     os.remove(file)
 
 if len(job_array) == 0:
-    print(f"{yellow}All jobs completed{reset_format}")
+    print(f"{yellow}{bold}All jobs completed{reset_format}")
     exit()
 
 path = os.getcwd()
@@ -84,7 +84,6 @@ for queue in queues:
     free_slots = get_free_slots(queue) 
 
     while free_slots > 0 and len(job_array) > 0:
-
         num_jobs_to_submit = min(free_slots, len(job_array))
         first_job = job_array[0]
         last_job = job_array[num_jobs_to_submit - 1]

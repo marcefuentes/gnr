@@ -11,7 +11,6 @@ hours = 23
 queues = ["clk", "epyc"]
 executable = "/home/ulc/ba/mfu/code/gnr/bin/gnr"
 mail_user = "marcelinofuentes@gmail.com"
-numbers = range(101, 542)
 
 log_file = "/home/ulc/ba/mfu/submit.log"
 logging.basicConfig(filename=log_file,
@@ -57,17 +56,17 @@ def get_free_slots(queue):
     print(f"{blue}{free_slots} free slots{reset_format}")
     return free_slots
 
+names = [name[:-4] for name in os.listdir() if name.endswith(".glo")]
 job_array = []
-for number in numbers:
-    base = str(number)
-    if not os.path.isfile(base + ".csv"):
-        job_array.append(base)
+for name in names:
+    if not os.path.isfile(name + ".csv"):
+        job_array.append(int(name))
     else:
-        with open(base + ".csv") as f:
+        with open(name + ".csv") as f:
             if sum(1 for line in f) < 10:
-                job_array.append(base)
+                job_array.append(int(name))
                 for extension in [".csv", ".frq", ".gl2"]:
-                    file = base + extension
+                    file = name + extension
                     os.remove(file)
 
 if len(job_array) == 0:

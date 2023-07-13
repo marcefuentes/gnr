@@ -23,7 +23,8 @@ yellow = "\033[33m"
 bold = "\033[1m"
 reset_format = "\033[0m"
 
-def get_qos_max_submit(queue):
+
+def get_free_slots(queue):
     command = ["sacctmgr", "-p", "show", "qos", "format=name,maxwall"]
     output = subprocess.check_output(command).decode().strip()
     qos_name = queue + "_short"
@@ -34,17 +35,26 @@ def get_qos_max_submit(queue):
             break
     if maxwall is None:
         print(f"{red}QOS {qos_name} not found{reset_format}")
-        logging.error(f"QOS "{qos_name}" not found")
+        logging.error(f"QOS {qos_name} not found")
         exit()
     if hours >= maxwall:
         qos_name = queue + "_medium"
+
     command = ["sacctmgr", "-p", "show", "qos", "format=name,maxsubmit"]
     output = subprocess.check_output(command).decode().strip()
     for line in output.split("\n"):
         if line.startswith(qos_name):
             fields = line.strip().split("|")
-            return int(fields[1])
-    print(f"{red}QOS {qos_name} not found{reset_format}")
+            total_slots = int(fields[1])
+            break
+
+    output = subprocess.check_output(f"squeue -t RUNNING,PENDING -r -o '%j' | grep -E '^{queue}' | wc -l",
+                                     shell=True)
+    filled_slots = int(output.decode().strip())
+    print(f"{blue}{filled_slots} queued jobs{reset_format}")
+    free_slots = total_slots - filled_slots
+    print(f"{blue}{free_slots} free slots{reset_format}")
+    return free_slots
 
 job_array = []
 
@@ -65,19 +75,14 @@ logging.info(f"Submitting failed jobs in {new_path}")
 
 for queue in queues:
     print(f"{bold}{cyan}\n{queue}:{reset_format}")
-    output = subprocess.check_output(f"squeue -t RUNNING,PENDING -r -o "%j" | grep -E "^{queue}" | wc -l", shell=True)
-    num_jobs_in_queue = int(output.decode().strip())
-    print(f"{blue}{num_jobs_in_queue} jobs in queue{reset_format}")
-    maxsubmit = get_qos_max_submit(queue)
-    available_slots = maxsubmit - num_jobs_in_queue 
-    print(f"{blue}{available_slots} slots available{reset_format}")
+    free_slots = get_free_slots(queue) 
 
-    while available_slots > 0 and len(job_array) > 0:
+    while free_slots > 0 and len(job_array) > 0:
 
-        num_jobs_to_submit = min(available_slots, len(job_array))
+        num_jobs_to_submit = min(free_slots, len(job_array))
         first_job = job_array[0]
         last_job = job_array[num_jobs_to_submit - 1]
-        job_name = f"{queue}-{os.getcwd().split("/")[-1]}"
+        job_name = f"{queue}-{last_job}"
         job_time = f"{hours}:59:00"
         cmd = ["sbatch",
                "--job-name", job_name,
@@ -101,13 +106,13 @@ for queue in queues:
                 file = base + extension
                 os.remove(file)
         del job_array[:num_jobs_to_submit]
-        available_slots -= num_jobs_to_submit 
+        free_slots -= num_jobs_to_submit 
 
 if len(job_array) > 0:
     print(f"{red}{len(job_array)} jobs not submitted{reset_format}")
 else:
-    print(f"{yellow}All jobs submitted{reset_format}")
-    print(f"{blue}{available_slots} slots available{reset_format}")
+    print(f"{bold}{yellow}All jobs submitted{reset_format}")
+    print(f"{blue}{free_slots} slots available{reset_format}")
 
 print("")
 

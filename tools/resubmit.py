@@ -104,9 +104,9 @@ for queue in queues:
                "--wrap", f"srun {executable} ${{SLURM_ARRAY_TASK_ID}}"]
         print(f"{blue}Submitting jobs {first_job} to {last_job}{reset_format}")
         logging.info(f"Submitting jobs {first_job} to {last_job}")
-        result = subprocess.run(cmd, stdout=subprocess.PIPE)
-        print(result.stdout.decode().strip())
-        logging.info(result.stdout.decode().strip())
+        output = subprocess.run(cmd, stdout=subprocess.PIPE)
+        print(output.stdout.decode().strip())
+        logging.info(output.stdout.decode().strip())
         del job_array[:num_jobs_to_submit]
         free_slots -= num_jobs_to_submit 
 

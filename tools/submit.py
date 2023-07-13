@@ -115,9 +115,9 @@ def submit_jobs(free_slots, given, last_job):
            "--mail-user", mail_user,
            "--array", job_array,
            "--wrap", f"srun {executable} ${{SLURM_ARRAY_TASK_ID}}"]
-    result = subprocess.run(cmd, stdout=subprocess.PIPE)
-    print(result.stdout.decode().strip())
-    logging.info(result.stdout.decode().strip())
+    output = subprocess.run(cmd, stdout=subprocess.PIPE)
+    print(output.stdout.decode().strip())
+    logging.info(output.stdout.decode().strip())
     free_slots -= num_jobs_to_submit
     if last_job == job_max:
         last_job = 0

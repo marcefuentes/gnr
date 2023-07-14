@@ -29,7 +29,7 @@ for mechanism in mechanisms:
     for given in givens:
         if given != givens[0]:
             print(" " * (len(mechanism) + 1), end = "")
-        print(f"{given} ", end = "")
+        print(f"{given}: ", end = "")
         given_path = os.path.join(mechanism, given)
         input_files = [f for f in os.listdir(given_path) if f.endswith(input_file_extension)]
         if len(input_files) == 0:

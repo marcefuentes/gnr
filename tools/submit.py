@@ -59,9 +59,9 @@ def get_free_slots(queue):
     output = subprocess.check_output(f"squeue -t RUNNING,PENDING -r -o '%j' | grep -E '^{queue}' | wc -l",
                                      shell=True)
     filled_slots = int(output.decode().strip())
-    print(f"{blue}{filled_slots} queued jobs{reset_format}")
+    print(f"{filled_slots} {blue}queued jobs{reset_format}")
     free_slots = total_slots - filled_slots
-    print(f"{blue}{free_slots} free slots{reset_format}")
+    print(f"{free_slots} {blue}free slots{reset_format}")
     return free_slots
 
 def get_job_min(path):
@@ -86,7 +86,7 @@ def submit_jobs(free_slots, given, last_job):
     os.chdir(given)
     given_folders = given.split("/")
     given_print = "/".join(given_folders[-3:])
-    print(f"{blue}Working in {given_print}{reset_format}")
+    print(f"{blue}Working in{reset_format} {given_print}")
     logging.info(f"Working in {given_print}")
     job_max = get_job_max(given)
     if last_job == 0:
@@ -98,7 +98,7 @@ def submit_jobs(free_slots, given, last_job):
         exit()
     num_jobs_to_submit = min(free_slots, job_max - job_min + 1)
     last_job = job_min + num_jobs_to_submit - 1
-    print(f"{blue}Submitting jobs {job_min} to {last_job}{reset_format}")
+    print(f"{blue}Submitting jobs{reset_format} {job_min} {blue}to{reset_format} {last_job}")
     logging.info(f"Submitting jobs {job_min} to {last_job}")
     job_name = f"{queue}-{last_job}"
     job_array = f"{job_min}-{last_job}"
@@ -136,7 +136,7 @@ def submit_jobs(free_slots, given, last_job):
             else:
                 print(f"{bold}{yellow}All jobs submitted{reset_format}")
                 logging.info("All jobs submitted")
-                print(f"{blue}{free_slots} free slots{reset_format}\n")
+                print(f"{free_slots} {blue}free slots{reset_format}\n")
                 exit()
 
     return free_slots, given, last_job
@@ -157,7 +157,7 @@ for queue in queues:
             given = givens[0]
             given_folders = given.split("/")
             given_print = "/".join(given_folders[-3:])
-            print(f"Will submit jobs in {given_print}")
+            print(f"{blue}Will submit jobs in{reset_format} {given_print}")
             user_input = input("Ok? (y/n): ")
             if user_input.lower() == "n":
                 exit()

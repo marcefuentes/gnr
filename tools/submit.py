@@ -152,12 +152,15 @@ for queue in queues:
             os.remove(last_job_file)
             last_job = int(last_job)
         else:
-            user_input = input("Submit jobs in current folder? (y/n): ")
-            if user_input.lower() == "n":
-                exit()
             mechanisms = folder_list(os.getcwd())
             givens = folder_list(mechanisms[0])
             given = givens[0]
+            given_folders = given.split("/")
+            given_print = "/".join(given_folders[-3:])
+            print(f"Will submit jobs in {given_print}")
+            user_input = input("Ok? (y/n): ")
+            if user_input.lower() == "n":
+                exit()
             last_job = 0
         free_slots, given, last_job = submit_jobs(free_slots, given, last_job)
         with open(last_job_file, "w") as f:

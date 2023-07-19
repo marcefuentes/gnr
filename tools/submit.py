@@ -98,8 +98,8 @@ def submit_jobs(free_slots, given, last_job):
         exit()
     num_jobs_to_submit = min(free_slots, job_max - job_min + 1)
     last_job = job_min + num_jobs_to_submit - 1
-    print(f"{blue}Submitting jobs{reset_format} {job_min} {blue}to{reset_format} {last_job}")
-    logging.info(f"Submitting jobs {job_min} to {last_job}")
+    print(f"{blue}Submitting jobs{reset_format} {job_min}-{last_job}")
+    logging.info(f"Submitting jobs {job_min}-{last_job} to {queue}")
     job_name = f"{queue}-{last_job}"
     job_array = f"{job_min}-{last_job}"
     job_time = f"{hours}:59:00"

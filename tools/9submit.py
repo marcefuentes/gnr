@@ -23,15 +23,6 @@ bold = "\033[1m"
 reset_format = "\033[0m"
 
 
-def folder_list(path):
-    folders = []
-    for item in os.listdir(path):
-        item_path = os.path.join(path, item)
-        if os.path.isdir(item_path):
-            folders.append(item_path)
-    folders.sort(key=lambda x: os.path.getctime(x))
-    return folders
-
 def get_free_slots(queue):
     command = ["sacctmgr", "-p", "show", "qos", "format=name,maxwall"]
     output = subprocess.check_output(command).decode().strip()
@@ -64,6 +55,15 @@ def get_free_slots(queue):
     print(f"{free_slots} {blue}free slots{reset_format}")
     return free_slots
 
+def folder_list(path):
+    folders = []
+    for item in os.listdir(path):
+        item_path = os.path.join(path, item)
+        if os.path.isdir(item_path):
+            folders.append(item_path)
+    folders.sort(key=lambda x: os.path.getctime(x))
+    return folders
+
 def get_job_min(path):
     job_min = 9999
     for file in os.listdir(path):
@@ -82,7 +82,7 @@ def get_job_max(path):
                 job_max = basename
     return job_max
 
-def submit_jobs(free_slots, given, last_job):
+def submit_jobs():
     os.chdir(given)
     given_folders = given.split("/")
     given_print = "/".join(given_folders[-3:])
@@ -124,6 +124,7 @@ def submit_jobs(free_slots, given, last_job):
         mechanism = os.path.dirname(given)
         givens = folder_list(mechanism)
         given_index = givens.index(given) + 1
+        print(f"{givens}, given_index={given_index}")
         if given_index < len(givens):
             given = givens[given_index]
         else:
@@ -138,8 +139,7 @@ def submit_jobs(free_slots, given, last_job):
                 logging.info("All jobs submitted")
                 print(f"{free_slots} {blue}free slots{reset_format}\n")
                 exit()
-
-    return free_slots, given, last_job
+    return
 
 for queue in queues:
     print(f"{bold}{cyan}\n{queue}:{reset_format}")
@@ -162,7 +162,7 @@ for queue in queues:
             if user_input.lower() == "n":
                 exit()
             last_job = 0
-        free_slots, given, last_job = submit_jobs(free_slots, given, last_job)
+        submit_jobs()
         with open(last_job_file, "w") as f:
             f.write(f"{given},{last_job}")
 

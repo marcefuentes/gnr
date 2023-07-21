@@ -19,6 +19,7 @@ blue = "\033[94m"
 cyan = "\033[96m"
 red = "\033[91m"
 yellow = "\033[33m"
+green = "\033[32m"
 bold = "\033[1m"
 reset_format = "\033[0m"
 
@@ -152,8 +153,8 @@ for queue in queues:
             given = givens[0]
             given_folders = given.split("/")
             given_print = "/".join(given_folders[-3:])
-            print(f"{blue}Will submit jobs in{reset_format} {given_print}")
-            user_input = input("Ok? (y/n): ")
+            print(f"\n{bold}Submit jobs in{reset_format} {given_print}? [{green}Yes{reset_format}/{red}No{reset_format}] ", end="")
+            user_input = input()
             if user_input.lower() == "n":
                 exit()
             last_job = 0

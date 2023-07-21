@@ -33,7 +33,7 @@ vmaxs = [my.aBmax,
          my.aBmax,
          #my.wmax,
          my.wmax]
-rows = ["pi8", "p8", "i8", "none"]
+rows = ["pi", "p", "i", "none"]
 given = "given100"
 
 movie = False

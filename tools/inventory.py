@@ -91,7 +91,7 @@ for mechanism in mechanisms:
             print(f"{red}Given = {data_dict['Given']}{reset_format}", end = " ")
             pass_params = False
         if data_dict["DeathRate"] != DeathRate:
-            print(f"{red}{DeathRate}DeathRate = {data_dict['DeathRate']}{reset_format}", end = " ")
+            print(f"{red}DeathRate = {data_dict['DeathRate']}{reset_format}", end = " ")
             pass_params = False
         if data_dict["GroupSize"] != GroupSize:
             print(f"{red}GroupSize = {data_dict['GroupSize']}{reset_format}", end = " ")

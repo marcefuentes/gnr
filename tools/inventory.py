@@ -77,7 +77,7 @@ for mechanism in mechanisms:
         input_files = [f for f in os.listdir(given_path) if f.endswith(input_file_extension)]
         if given != givens[0]:
             print(" " * given_indent, end = "")
-        print(f"{given}: ", end = "")
+        print(f"{blue}{given}{reset_format} ", end = "")
         if len(input_files) == 0:
             print(f"{red}no {input_file_extension[1:]} files{reset_format}")
             continue
@@ -115,22 +115,22 @@ for mechanism in mechanisms:
             else:
                 first = True
                 if f_equal_nlines:
-                    print(f"{red}{f_equal_nlines}{reset_format} finished", end = "")
+                    print(f"{green}{f_equal_nlines}{reset_format}", end = "")
                     first = False
                 if f_smaller_nlines:
                     if not first:
-                        print(", ", end = "")
-                    print(f"{red}{f_smaller_nlines}{reset_format} incomplete", end = "")
+                        print(" ", end = "")
+                    print(f"{yellow}{f_smaller_nlines}{reset_format}", end = "")
                     first = False
                 notstarted = len(input_files) - f_smaller_nlines - f_equal_nlines - f_larger_nlines
                 if notstarted:
                     if not first:
-                        print(", ", end = "")
-                    print(f"{red}{notstarted}{reset_format} not started", end = "")
+                        print(" ", end = "")
+                    print(f"{red}{notstarted}{reset_format}", end = "")
                     first = False
                 if f_larger_nlines:
                     if not first:
-                        print(", ", end = "")
+                        print(" ", end = "")
                     print(f"{red}{f_larger_nlines}{reset_format} > {nlines} lines", end = "")
                 print()
         else:

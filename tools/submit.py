@@ -17,9 +17,9 @@ logging.basicConfig(filename=log_file,
                     format="%(asctime)s %(levelname)s: %(message)s")
 blue = "\033[94m"
 cyan = "\033[96m"
+green = "\033[32m"
 red = "\033[91m"
 yellow = "\033[33m"
-green = "\033[32m"
 bold = "\033[1m"
 reset_format = "\033[0m"
 
@@ -96,7 +96,7 @@ def submit_jobs(free_slots, given, last_job):
         exit()
     num_jobs_to_submit = min(free_slots, job_max - job_min + 1)
     last_job = job_min + num_jobs_to_submit - 1
-    print(f"{blue}Submitting jobs{reset_format} {job_min}-{last_job} in {given_print}")
+    print(f"Submitting jobs {job_min}-{last_job} in {given_print}")
     logging.info(f"Submitting jobs {job_min}-{last_job} in {given_print} to {queue}")
     job_name = f"{queue}-{last_job}"
     job_array = f"{job_min}-{last_job}"
@@ -132,7 +132,7 @@ def submit_jobs(free_slots, given, last_job):
                 givens = folder_list(mechanism)
                 given = givens[0]
             else:
-                print(f"{bold}{yellow}All jobs submitted{reset_format}")
+                print(f"{bold}{green}All jobs submitted{reset_format}")
                 logging.info("All jobs submitted")
                 print(f"{free_slots} {blue}free slots{reset_format}\n")
                 exit()

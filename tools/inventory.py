@@ -8,6 +8,8 @@ nlines = 10
 input_file_extension = ".glo"
 output_file_extension = ".csv"
 
+given_indent = 8
+
 blue = "\033[94m"
 cyan = "\033[96m"
 red = "\033[91m"
@@ -40,7 +42,7 @@ if "_d" in current_dir:
 mechanisms = [f for f in os.listdir(os.getcwd()) if os.path.isdir(f)]
 mechanisms.sort()
 for mechanism in mechanisms:
-    print(f"{cyan}{mechanism} {reset_format}", end = "")
+    print(f"{cyan}{mechanism:<{given_indent - 1}} {reset_format}", end = "")
     if "p" in mechanism:
         PartnerChoice = 1
     else:
@@ -72,7 +74,7 @@ for mechanism in mechanisms:
         given_path = os.path.join(mechanism, given)
         input_files = [f for f in os.listdir(given_path) if f.endswith(input_file_extension)]
         if given != givens[0]:
-            print(" " * (len(mechanism) + 1), end = "")
+            print(" " * given_indent, end = "")
         print(f"{given}: ", end = "")
         if len(input_files) == 0:
             print(f"{red}no {input_file_extension[1:]} files{reset_format}")

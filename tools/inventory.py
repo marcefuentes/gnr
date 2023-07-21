@@ -12,6 +12,7 @@ given_indent = 8
 
 blue = "\033[94m"
 cyan = "\033[96m"
+green = "\033[92m"
 red = "\033[91m"
 yellow = "\033[33m"
 bold = "\033[1m"
@@ -90,8 +91,8 @@ for mechanism in mechanisms:
                 if key == "Given" or key == "DeathRate":
                     data_dict[key] = float(value)
         pass_params = True
-        for key, value in folder_dict.items():
-            if data_dict[key] != value:
+        for key, folder_value in folder_dict.items():
+            if data_dict[key] != folder_value:
                 print(f"{red}{key} {data_dict[key]}{reset_format}", end = " ")
                 pass_params = False
         if pass_params:
@@ -110,7 +111,7 @@ for mechanism in mechanisms:
                         elif len(lines) > nlines:
                             f_larger_nlines += 1
             if f_equal_nlines == len(input_files):
-                print(f"{yellow}ok{reset_format}")
+                print(f"{green}ok{reset_format}")
             else:
                 first = True
                 if f_equal_nlines:

@@ -24,53 +24,54 @@ if len(sys.argv) > 1:
         print(f"{red}Directory {sys.argv[1]} does not exist{reset_format}")
         exit()
 
-Independent = 1
-Shuffle = 1
-Discrete = 0
-DeathRate = -7
+folder_dict = {}
+folder_dict["Independent"] = 1
+folder_dict["Shuffle"] = 1
+folder_dict["Discrete"] = 0
+folder_dict["DeathRate"] = -7
 
 current_dir = os.getcwd().split("/")[-1]
 if current_dir[0] == "d":
-    Discrete = 1
+    folder_dict["Discrete"] = 1
 if "noshuffle" in current_dir:
-    Shuffle = 0
+    folder_dict["Shuffle"] = 0
 if "noImimic" in current_dir:
-    Independent = 0
+    folder_dict["Independent"] = 0
 if "_d" in current_dir:
-    DeathRate = -3
+    folder_dict["DeathRate"] = -3
 
 mechanisms = [f for f in os.listdir(os.getcwd()) if os.path.isdir(f)]
 mechanisms.sort()
 for mechanism in mechanisms:
     print(f"{cyan}{mechanism:<{given_indent - 1}} {reset_format}", end = "")
     if "p" in mechanism:
-        PartnerChoice = 1
+        folder_dict["PartnerChoice"] = 1
     else:
-        PartnerChoice = 0
+        folder_dict["PartnerChoice"] = 0
     if "i" in mechanism:
-        Reciprocity = 1
-        IndirectR = 1
+        folder_dict["Reciprocity"] = 1
+        folder_dict["IndirectR"] = 1
     elif "r" in mechanism:
-        Reciprocity = 1
-        IndirectR = 0
+        folder_dict["Reciprocity"] = 1
+        folder_dict["IndirectR"] = 0
     else:
-        Reciprocity = 0
-        IndirectR = 0
+        folder_dict["Reciprocity"] = 0
+        folder_dict["IndirectR"] = 0
     if "l" in mechanism:
-        Language = 1
+        folder_dict["Language"] = 1
     else:
-        Language = 0
+        folder_dict["Language"] = 0
     if "8" in mechanism:
-        GroupSize = 3
+        folder_dict["GroupSize"] = 3
     else:
-        GroupSize = 2
+        folder_dict["GroupSize"] = 2
     givens = [f for f in os.listdir(mechanism) if os.path.isdir(os.path.join(mechanism, f))]
     if len(givens) == 0:
         print(f"{red}empty{reset_format}")
         continue
     givens.sort()
     for given in givens:
-        Given = float(given[-3:]) / 100
+        folder_dict["Given"] = float(given[-3:]) / 100
         given_path = os.path.join(mechanism, given)
         input_files = [f for f in os.listdir(given_path) if f.endswith(input_file_extension)]
         if given != givens[0]:
@@ -79,7 +80,6 @@ for mechanism in mechanisms:
         if len(input_files) == 0:
             print(f"{red}no {input_file_extension[1:]} files{reset_format}")
             continue
-        pass_params = True
         data_dict = {}
         with open(os.path.join(given_path, input_files[0]), "r") as csvfile:
             reader = csv.reader(csvfile)
@@ -89,37 +89,11 @@ for mechanism in mechanisms:
                     data_dict[key] = int(value)
                 if key == "Given" or key == "DeathRate":
                     data_dict[key] = float(value)
-        if data_dict["Given"] != Given:
-            print(f"{red}Given {data_dict['Given']}{reset_format}", end = " ")
-            pass_params = False
-        if data_dict["DeathRate"] != DeathRate:
-            print(f"{red}DeathRate {data_dict['DeathRate']}{reset_format}", end = " ")
-            pass_params = False
-        if data_dict["GroupSize"] != GroupSize:
-            print(f"{red}GroupSize {data_dict['GroupSize']}{reset_format}", end = " ")
-            pass_params = False
-        if data_dict["PartnerChoice"] != PartnerChoice:
-            print(f"{red}PartnerChoice {data_dict['PartnerChoice']}{reset_format}", end = " ")
-            pass_params = False
-        if data_dict["Reciprocity"] != Reciprocity:
-            print(f"{red}Reciprocity {data_dict['Reciprocity']}{reset_format}", end = " ")
-            pass_params = False
-        if data_dict["IndirectR"] != IndirectR:
-            print(f"{red}IndirectR {data_dict['IndirectR']}{reset_format}", end = " ")
-            pass_params = False
-        if data_dict["Independent"] != Independent:
-            print(f"{red}Independent {data_dict['Independent']}{reset_format}", end = " ")
-            pass_params = False
-        if data_dict["Language"] != Language:
-            print(f"{red}Language {data_dict['Language']}{reset_format}", end = " ")
-            pass_params = False
-        if data_dict["Shuffle"] != Shuffle:
-            print(f"{red}Shuffle {data_dict['Shuffle']}{reset_format}", end = " ")
-            pass_params = False
-        if data_dict["Discrete"] != Discrete:
-            print(f"{red}Discrete {data_dict['Discrete']}{reset_format}", end = " ")
-            pass_params = False
-
+        pass_params = True
+        for key, value in folder_dict.items():
+            if data_dict[key] != value:
+                print(f"{red}{key} {data_dict[key]}{reset_format}", end = " ")
+                pass_params = False
         if pass_params:
             f_smaller_nlines = 0
             f_equal_nlines = 0

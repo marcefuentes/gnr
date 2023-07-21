@@ -23,15 +23,6 @@ bold = "\033[1m"
 reset_format = "\033[0m"
 
 
-def folder_list(path):
-    folders = []
-    for item in os.listdir(path):
-        item_path = os.path.join(path, item)
-        if os.path.isdir(item_path):
-            folders.append(item_path)
-    folders.sort(key=lambda x: os.path.getctime(x))
-    return folders
-
 def get_free_slots(queue):
     command = ["sacctmgr", "-p", "show", "qos", "format=name,maxwall"]
     output = subprocess.check_output(command).decode().strip()
@@ -59,10 +50,18 @@ def get_free_slots(queue):
     output = subprocess.check_output(f"squeue -t RUNNING,PENDING -r -o '%j' | grep -E '^{queue}' | wc -l",
                                      shell=True)
     filled_slots = int(output.decode().strip())
-    print(f"{filled_slots} {blue}queued jobs{reset_format}")
     free_slots = total_slots - filled_slots
-    print(f"{free_slots} {blue}free slots{reset_format}")
+    print(f"\n{filled_slots} queued jobs, {cyan}{free_slots}{reset_format} free slots in {queue}")
     return free_slots
+
+def folder_list(path):
+    folders = []
+    for item in os.listdir(path):
+        item_path = os.path.join(path, item)
+        if os.path.isdir(item_path):
+            folders.append(item_path)
+    folders.sort(key=lambda x: os.path.getctime(x))
+    return folders
 
 def get_job_min(path):
     job_min = 9999
@@ -84,22 +83,20 @@ def get_job_max(path):
 
 def submit_jobs(free_slots, given, last_job):
     os.chdir(given)
-    given_folders = given.split("/")
-    given_print = "/".join(given_folders[-3:])
-    print(f"{blue}Working in{reset_format} {given_print}")
-    logging.info(f"Working in {given_print}")
     job_max = get_job_max(given)
     if last_job == 0:
         job_min = get_job_min(given)
     else:
         job_min = last_job + 1
+    given_folders = given.split("/")
+    given_print = "/".join(given_folders[-3:])
     if os.path.isfile(os.path.join(given, str(job_min) + ".csv")):
-        print(f"{red}Found {str(job_min)}.csv. Exiting{reset_format}")
+        print(f"{red}Found {str(job_min)}.csv in {given_print}{reset_format}")
         exit()
     num_jobs_to_submit = min(free_slots, job_max - job_min + 1)
     last_job = job_min + num_jobs_to_submit - 1
-    print(f"{blue}Submitting jobs{reset_format} {job_min}-{last_job}")
-    logging.info(f"Submitting jobs {job_min}-{last_job} to {queue}")
+    print(f"{blue}Submitting jobs{reset_format} {job_min}-{last_job} in {given_print}")
+    logging.info(f"Submitting jobs {job_min}-{last_job} in {given_print} to {queue}")
     job_name = f"{queue}-{last_job}"
     job_array = f"{job_min}-{last_job}"
     job_time = f"{hours}:59:00"
@@ -142,9 +139,7 @@ def submit_jobs(free_slots, given, last_job):
     return free_slots, given, last_job
 
 for queue in queues:
-    print(f"{bold}{cyan}\n{queue}:{reset_format}")
     free_slots = get_free_slots(queue) 
-
     while free_slots:
         if os.path.isfile(last_job_file):
             with open(last_job_file, "r") as f:
@@ -166,5 +161,5 @@ for queue in queues:
         with open(last_job_file, "w") as f:
             f.write(f"{given},{last_job}")
 
-print("")
+print()
 

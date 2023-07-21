@@ -88,34 +88,34 @@ for mechanism in mechanisms:
                 if key == "Given" or key == "DeathRate":
                     data_dict[key] = float(value)
         if data_dict["Given"] != Given:
-            print(f"{red}Given = {data_dict['Given']}{reset_format}", end = " ")
+            print(f"{red}Given {data_dict['Given']}{reset_format}", end = " ")
             pass_params = False
         if data_dict["DeathRate"] != DeathRate:
-            print(f"{red}DeathRate = {data_dict['DeathRate']}{reset_format}", end = " ")
+            print(f"{red}DeathRate {data_dict['DeathRate']}{reset_format}", end = " ")
             pass_params = False
         if data_dict["GroupSize"] != GroupSize:
-            print(f"{red}GroupSize = {data_dict['GroupSize']}{reset_format}", end = " ")
+            print(f"{red}GroupSize {data_dict['GroupSize']}{reset_format}", end = " ")
             pass_params = False
         if data_dict["PartnerChoice"] != PartnerChoice:
-            print(f"{red}PartnerChoice = {data_dict['PartnerChoice']}{reset_format}", end = " ")
+            print(f"{red}PartnerChoice {data_dict['PartnerChoice']}{reset_format}", end = " ")
             pass_params = False
         if data_dict["Reciprocity"] != Reciprocity:
-            print(f"{red}Reciprocity = {data_dict['Reciprocity']}{reset_format}", end = " ")
+            print(f"{red}Reciprocity {data_dict['Reciprocity']}{reset_format}", end = " ")
             pass_params = False
         if data_dict["IndirectR"] != IndirectR:
-            print(f"{red}IndirectR = {data_dict['IndirectR']}{reset_format}", end = " ")
+            print(f"{red}IndirectR {data_dict['IndirectR']}{reset_format}", end = " ")
             pass_params = False
         if data_dict["Independent"] != Independent:
-            print(f"{red}Independent = {data_dict['Independent']}{reset_format}", end = " ")
+            print(f"{red}Independent {data_dict['Independent']}{reset_format}", end = " ")
             pass_params = False
         if data_dict["Language"] != Language:
-            print(f"{red}Language = {data_dict['Language']}{reset_format}", end = " ")
+            print(f"{red}Language {data_dict['Language']}{reset_format}", end = " ")
             pass_params = False
         if data_dict["Shuffle"] != Shuffle:
-            print(f"{red}Shuffle = {data_dict['Shuffle']}{reset_format}", end = " ")
+            print(f"{red}Shuffle {data_dict['Shuffle']}{reset_format}", end = " ")
             pass_params = False
         if data_dict["Discrete"] != Discrete:
-            print(f"{red}Discrete = {data_dict['Discrete']}{reset_format}", end = " ")
+            print(f"{red}Discrete {data_dict['Discrete']}{reset_format}", end = " ")
             pass_params = False
 
         if pass_params:

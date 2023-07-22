@@ -92,12 +92,10 @@ def submit_jobs(free_slots, given, last_job):
     given_folders = given.split("/")
     given_print = "/".join(given_folders[-3:])
     if os.path.isfile(os.path.join(given, str(job_min) + ".csv")):
-        print(f"{red}Found {str(job_min)}.csv in {given_print}{reset_format}")
+        print(f"{red}{given_print}/{str(job_min)}.csv already exists{reset_format}")
         exit()
     num_jobs_to_submit = min(free_slots, job_max - job_min + 1)
     last_job = job_min + num_jobs_to_submit - 1
-    print(f"Submitting jobs {job_min}-{last_job} in {given_print}")
-    logging.info(f"Submitting jobs {job_min}-{last_job} in {given_print} to {queue}")
     job_name = f"{queue}-{last_job}"
     job_array = f"{job_min}-{last_job}"
     job_time = f"{hours}:59:00"
@@ -113,9 +111,11 @@ def submit_jobs(free_slots, given, last_job):
            "--mail-user", mail_user,
            "--array", job_array,
            "--wrap", f"srun {executable} ${{SLURM_ARRAY_TASK_ID}}"]
-    output = subprocess.run(cmd, stdout=subprocess.PIPE)
-    print(output.stdout.decode().strip())
-    logging.info(output.stdout.decode().strip())
+    output = subprocess.run(cmd, stdout=subprocess.PIPE, text=True).stdout.strip()
+    print(output)
+    logging.info(output)
+    print(f"{given_print}/{job_array}")
+    logging.info(f"{given_print}/{job_array} to {queue}")
     free_slots -= num_jobs_to_submit
     if last_job == job_max:
         last_job = 0
@@ -134,7 +134,7 @@ def submit_jobs(free_slots, given, last_job):
             else:
                 print(f"{bold}{green}All jobs submitted{reset_format}")
                 logging.info("All jobs submitted")
-                print(f"{free_slots} {blue}free slots{reset_format}\n")
+                print(f"{cyan}{free_slots}{reset_format} free slots\n")
                 exit()
 
     return free_slots, given, last_job

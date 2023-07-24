@@ -153,7 +153,7 @@ for queue in queues:
             given = givens[0]
             given_folders = given.split("/")
             given_print = "/".join(given_folders[-3:])
-            print(f"\n{bold}Submit jobs in{reset_format} {given_print}? [{green}Yes{reset_format}/{red}No{reset_format}] ", end="")
+            print(f"\n{bold}Submit jobs in {given_print}?{reset_format} [{bold}{green}Yes{reset_format}/{bold}{red}No{reset_format}] ", end="")
             user_input = input()
             if user_input.lower() == "n":
                 exit()

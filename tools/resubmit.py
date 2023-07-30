@@ -14,7 +14,7 @@ mail_user = "marcelinofuentes@gmail.com"
 input_file_extension = ".glo"
 output_file_extensions = [".csv", ".frq", ".gl2"]
 
-log_file = "/home/ulc/ba/mfu/code/gnr/results/resubmit.log"
+log_file = "/home/ulc/ba/mfu/code/gnr/results/submit.log"
 logging.basicConfig(filename=log_file,
                     level=logging.DEBUG,
                     format="%(asctime)s %(levelname)s: %(message)s")

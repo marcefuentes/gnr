@@ -14,12 +14,13 @@ mail_user = "marcelinofuentes@gmail.com"
 input_file_extension = ".glo"
 output_file_extensions = [".csv", ".frq", ".gl2"]
 
-log_file = "/home/ulc/ba/mfu/submit.log"
+log_file = "/home/ulc/ba/mfu/code/gnr/results/resubmit.log"
 logging.basicConfig(filename=log_file,
                     level=logging.DEBUG,
                     format="%(asctime)s %(levelname)s: %(message)s")
 blue = "\033[94m"
 cyan = "\033[96m"
+green = "\033[32m"
 red = "\033[91m"
 yellow = "\033[33m"
 bold = "\033[1m"
@@ -53,9 +54,8 @@ def get_free_slots(queue):
     output = subprocess.check_output(f"squeue -t RUNNING,PENDING -r -o '%j' | grep -E '^{queue}' | wc -l",
                                      shell=True)
     filled_slots = int(output.decode().strip())
-    print(f"{blue}{filled_slots} queued jobs{reset_format}")
     free_slots = total_slots - filled_slots
-    print(f"{blue}{free_slots} free slots{reset_format}")
+    print(f"\n{filled_slots} queued jobs, {cyan}{free_slots}{reset_format} free slots in {queue}")
     return free_slots
 
 names = [name[:-4] for name in os.listdir() if name.endswith(input_file_extension)]
@@ -81,9 +81,7 @@ new_path = "/".join(path_folders[8:])
 logging.info(f"Submitting failed jobs in {new_path}")
 
 for queue in queues:
-    print(f"{bold}{cyan}\n{queue}:{reset_format}")
     free_slots = get_free_slots(queue) 
-
     while free_slots > 0 and len(job_array) > 0:
         num_jobs_to_submit = min(free_slots, len(job_array))
         first_job = job_array[0]
@@ -100,21 +98,21 @@ for queue in queues:
                "--mem=4MB",
                "--mail-type=begin,end",
                "--mail-user", mail_user,
-               "--array", ",".join(job_array[:num_jobs_to_submit]),
+               "--array", ",".join(map(str, job_array[:num_jobs_to_submit])),
                "--wrap", f"srun {executable} ${{SLURM_ARRAY_TASK_ID}}"]
-        print(f"{blue}Submitting jobs {first_job} to {last_job}{reset_format}")
-        logging.info(f"Submitting jobs {first_job} to {last_job}")
-        output = subprocess.run(cmd, stdout=subprocess.PIPE)
-        print(output.stdout.decode().strip())
-        logging.info(output.stdout.decode().strip())
+        output = subprocess.run(cmd, stdout=subprocess.PIPE, text=True).stdout.strip()
+        print(output)
+        logging.info(output)
+        print(job_array[:num_jobs_to_submit])
+        logging.info(f"{given_print}/{job_array[0]}-{job_array[num_jobs_to_submit - 1]} to {queue}")
         del job_array[:num_jobs_to_submit]
         free_slots -= num_jobs_to_submit 
 
 if len(job_array) > 0:
     print(f"{red}{len(job_array)} jobs not submitted{reset_format}")
 else:
-    print(f"{bold}{yellow}All jobs submitted{reset_format}")
-    print(f"{blue}{free_slots} slots available{reset_format}")
+    print(f"{bold}{green}All jobs submitted{reset_format}")
+    print(f"{cyan}{free_slots}{reset_format} free slots\n")
 
 print("")
 

@@ -75,10 +75,9 @@ if len(job_array) == 0:
     print(f"{yellow}{bold}All jobs completed{reset_format}")
     exit()
 
-path = os.getcwd()
-path_folders = path.split("/")
-new_path = "/".join(path_folders[8:])
-logging.info(f"Submitting failed jobs in {new_path}")
+given = os.getcwd()
+given_folders = given.split("/")
+given_print = "/".join(given_folders[-3:])
 
 for queue in queues:
     free_slots = get_free_slots(queue) 

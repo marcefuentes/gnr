@@ -111,7 +111,7 @@ for mechanism in mechanisms:
                         elif len(lines) > nlines:
                             f_larger_nlines += 1
             if f_equal_nlines == len(input_files):
-                print(f"{green}ok{reset_format}")
+                print(f"{green}{f_equal_nlines}{reset_format}")
             else:
                 notstarted = len(input_files) - f_smaller_nlines - f_equal_nlines - f_larger_nlines
                 if notstarted:

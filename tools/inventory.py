@@ -42,7 +42,7 @@ if "_d" in current_dir:
     folder_dict["DeathRate"] = -3
 
 mechanisms = [f for f in os.listdir(os.getcwd()) if os.path.isdir(f)]
-mechanisms.sort()
+mechanisms.sort(key = lambda x: os.path.getmtime(x))
 for mechanism in mechanisms:
     print(f"{cyan}{mechanism:<{given_indent - 1}} {reset_format}", end = "")
     if "p" in mechanism:

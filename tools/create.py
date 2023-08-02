@@ -46,7 +46,7 @@ for alpha in alphas:
             f.write("DeathRate,-3\n")
         else:
             f.write("DeathRate,-7\n")
-        if "8" in mechanism:
+        if "8" in variant or "8" in mechanism:
             f.write("GroupSize,3\n")
         else:
             f.write("GroupSize,2\n")

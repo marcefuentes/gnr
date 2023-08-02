@@ -74,10 +74,10 @@ for alpha in alphas:
             f.write("Language,1\n")
         else:
             f.write("Language,0\n")
-        if "noshuffle" in variant:
-            f.write("Shuffle,0\n")
-        else:
+        if "_shuffle" in variant:
             f.write("Shuffle,1\n")
+        else:
+            f.write("Shuffle,0\n")
         if "d_" in variant:
             f.write("Discrete,1\n")
         else:

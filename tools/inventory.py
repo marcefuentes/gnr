@@ -27,15 +27,15 @@ if len(sys.argv) > 1:
 
 folder_dict = {}
 folder_dict["Independent"] = 1
-folder_dict["Shuffle"] = 1
+folder_dict["Shuffle"] = 0
 folder_dict["Discrete"] = 0
 folder_dict["DeathRate"] = -7
 
 current_dir = os.getcwd().split("/")[-1]
 if current_dir[0] == "d":
     folder_dict["Discrete"] = 1
-if "noshuffle" in current_dir:
-    folder_dict["Shuffle"] = 0
+if "_shuffle" in current_dir:
+    folder_dict["Shuffle"] = 1
 if "noImimic" in current_dir:
     folder_dict["Independent"] = 0
 if "_d" in current_dir:

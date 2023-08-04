@@ -96,7 +96,7 @@ def submit_jobs(free_slots, given, last_job):
         exit()
     num_jobs_to_submit = min(free_slots, job_max - job_min + 1)
     last_job = job_min + num_jobs_to_submit - 1
-    job_name = f"{queue}-{last_job}"
+    job_name = f"{queue}-{num_jobs_to_submit}"
     job_array = f"{job_min}-{last_job}"
     job_time = f"{hours}:59:00"
     cmd = ["sbatch",

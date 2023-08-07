@@ -22,7 +22,7 @@ red = "\033[91m"
 yellow = "\033[33m"
 bold = "\033[1m"
 reset_format = "\033[0m"
-
+yesno = f"[{bold}{green}Yes{reset_format}/{bold}{red}No{reset_format}]"
 
 def get_free_slots(queue):
     command = ["sacctmgr", "-p", "show", "qos", "format=name,maxwall"]
@@ -151,7 +151,7 @@ for queue in queues:
             given = givens[0]
             given_folders = given.split("/")
             given_print = "/".join(given_folders[-3:])
-            print(f"\n{bold}Submit jobs in {given_print}?{reset_format} [{bold}{green}Yes{reset_format}/{bold}{red}No{reset_format}] ", end="")
+            print(f"\n{bold}Submit jobs in {given_print}?{reset_format} {yesno} ", end="")
             user_input = input()
             if user_input.lower() == "n":
                 exit()

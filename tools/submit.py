@@ -15,12 +15,12 @@ log_file = "/home/ulc/ba/mfu/code/gnr/results/submit.log"
 logging.basicConfig(filename=log_file,
                     level=logging.DEBUG,
                     format="%(asctime)s %(levelname)s: %(message)s")
-blue = "\033[94m"
-cyan = "\033[96m"
-green = "\033[32m"
-red = "\033[91m"
-yellow = "\033[33m"
-bold = "\033[1m"
+blue         = "\033[94m"
+cyan         = "\033[96m"
+green        = "\033[32m"
+red          = "\033[91m"
+yellow       = "\033[33m"
+bold         = "\033[1m"
 reset_format = "\033[0m"
 yesno = f"[{bold}{green}Yes{reset_format}/{bold}{red}No{reset_format}]"
 
@@ -63,7 +63,8 @@ def get_free_slots(queue):
     output = output_wc.decode().strip()
     filled_slots = int(output)
     free_slots = total_slots - filled_slots
-    print(f"\n{filled_slots} queued jobs, {cyan}{free_slots}{reset_format} free slots in {queue}")
+    print(f"\n{filled_slots} queued jobs, "
+          f"{cyan}{free_slots}{reset_format} free slots in {queue}")
 
     return free_slots
 
@@ -164,7 +165,8 @@ for queue in queues:
             given = givens[0]
             given_folders = given.split("/")
             given_print = "/".join(given_folders[-3:])
-            print(f"\n{bold}Submit jobs in {given_print}?{reset_format} {yesno} ", end="")
+            print(f"\n{bold}Submit jobs in {given_print}?{reset_format} "
+                  f"{yesno} ", end="")
             user_input = input()
             if user_input.lower() == "n":
                 exit()

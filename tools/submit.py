@@ -26,9 +26,10 @@ yesno = f"[{bold}{green}Yes{reset_format}/{bold}{red}No{reset_format}]"
 
 def get_free_slots(queue):
     command = ["sacctmgr", "-p", "show", "qos", "format=name,maxwall"]
-    output = subprocess.check_output(command).decode().strip()
+    output = subprocess.check_output(command)
+    output = output.decode().strip().split("\n")
     qos_name = queue + "_short"
-    for line in output.split("\n"):
+    for line in output:
         if line.startswith(qos_name):
             fields = line.strip().split("|")
             maxwall = int(fields[1].split(":")[0])
@@ -41,18 +42,29 @@ def get_free_slots(queue):
         qos_name = queue + "_medium"
 
     command = ["sacctmgr", "-p", "show", "qos", "format=name,maxsubmit"]
-    output = subprocess.check_output(command).decode().strip()
-    for line in output.split("\n"):
+    output = subprocess.check_output(command)
+    output = output.decode().strip().split("\n")
+    for line in output:
         if line.startswith(qos_name):
             fields = line.strip().split("|")
             total_slots = int(fields[1])
             break
 
-    output = subprocess.check_output(f"squeue -t RUNNING,PENDING -r -o '%j' | grep -E '^{queue}' | wc -l",
-                                     shell=True)
-    filled_slots = int(output.decode().strip())
+    command_squeue = ["squeue", "-t", "RUNNING,PENDING", "-r", "-o", "%j"]
+    output_squeue = subprocess.Popen(command_squeue,
+                                     stdout=subprocess.PIPE)
+    command_grep = ["grep", "-E", f"^{queue}"]
+    output_grep = subprocess.Popen(command_grep,
+                                   stdin=output_squeue.stdout,
+                                   stdout=subprocess.PIPE)
+    command_wc = ["wc", "-l"]
+    output_wc = subprocess.check_output(command_wc,
+                                        stdin=output_grep.stdout)
+    output = output_wc.decode().strip()
+    filled_slots = int(output)
     free_slots = total_slots - filled_slots
     print(f"\n{filled_slots} queued jobs, {cyan}{free_slots}{reset_format} free slots in {queue}")
+
     return free_slots
 
 def folder_list(path):
@@ -98,19 +110,20 @@ def submit_jobs(free_slots, given, last_job):
     last_job = job_min + num_jobs_to_submit - 1
     job_name = f"{queue}-{last_job}"
     job_array = f"{job_min}-{last_job}"
-    cmd = ["sbatch",
-           "--job-name", job_name,
-           "--output", f"{job_name}.%j.out",
-           "--constraint", queue,
-           "--nodes=1",
-           "--tasks=1",
-           "--time", f"{hours}:59:00",
-           "--mem=4MB",
-           "--mail-type=begin,end",
-           "--mail-user", mail_user,
-           "--array", job_array,
-           "--wrap", f"srun {executable} ${{SLURM_ARRAY_TASK_ID}}"]
-    output = subprocess.run(cmd, stdout=subprocess.PIPE, text=True).stdout.strip()
+    command = ["sbatch",
+               "--job-name", job_name,
+               "--output", f"{job_name}.%j.out",
+               "--constraint", queue,
+               "--nodes=1",
+               "--tasks=1",
+               "--time", f"{hours}:59:00",
+               "--mem=4MB",
+               "--mail-type=begin,end",
+               "--mail-user", mail_user,
+               "--array", job_array,
+               "--wrap", f"srun {executable} ${{SLURM_ARRAY_TASK_ID}}"]
+    output = subprocess.run(command, stdout=subprocess.PIPE, text=True)
+    output = output.stdout.strip()
     print(output)
     logging.info(output)
     print(f"{given_print}/{job_array}")

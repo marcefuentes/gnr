@@ -132,7 +132,6 @@ def submit_jobs(free_slots, given, last_job):
                 given = givens[0]
             else:
                 print(f"{bold}{green}All jobs submitted{reset_format}")
-                logging.info("All jobs submitted")
                 print(f"{cyan}{free_slots}{reset_format} free slots\n")
                 exit()
 

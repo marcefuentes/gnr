@@ -78,7 +78,7 @@ for alpha in alphas:
             f.write("Shuffle,1\n")
         else:
             f.write("Shuffle,0\n")
-        if "d_" in variant:
+        if "d_s" in variant or "d_n" in variant:
             f.write("Discrete,1\n")
         else:
             f.write("Discrete,0\n")

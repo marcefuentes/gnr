@@ -36,7 +36,7 @@ vmaxs = [my.aBmax,
 rows = ["pi", "p", "i", "none"]
 given = "given100"
 
-movie = False
+movie = True
 plotsize = 4
 
 # Add data to figure
@@ -55,7 +55,7 @@ def update(t, artists):
                 Z = wsocial - Z
             artists[r, c].set_array(Z) 
     if movie:
-        fig.texts[2].set_text(f"t\n{t}")
+        fig.texts[2].set_text(f"{t}")
     return artists.flatten()
 
 # Data without partner choice or reciprocity

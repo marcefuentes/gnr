@@ -55,7 +55,7 @@ def update(t, artists):
                 Z = wsocial - Z
             artists[r, c].set_array(Z) 
     if movie:
-        fig.texts[2].set_text(f"{t}")
+        fig.texts[2].set_text(t)
     return artists.flatten()
 
 # Data without partner choice or reciprocity

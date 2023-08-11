@@ -53,9 +53,9 @@ for alpha in alphas:
         else:
             f.write("GroupSize,2\n")
         # standard costs,-14
-        f.write("ChooseCost,-7\n")
-        f.write("MimicCost,-7\n")
-        f.write("ImimicCost,-7\n")
+        f.write("ChooseCost,-9\n")
+        f.write("MimicCost,-9\n")
+        f.write("ImimicCost,-9\n")
         if "p" in mechanism:
             f.write("PartnerChoice,1\n")
         else:

@@ -29,14 +29,16 @@ for alpha in alphas:
 
         f.write("Seed,1\n")
         f.write("N,12\n")
-        f.write("Runs,30\n")
-        f.write("Time,21\n")
+        # standard Runs,30
+        f.write("Runs,10\n")
+        # standard Time,21
+        f.write("Time,20\n")
         f.write("Periods,3\n")
         f.write("a1Max,1.0\n")
         f.write("a2Max,1.0\n")
         f.write("R1,2\n")
         f.write("R2,2\n")
-        f.write("a2Init,0.5\n")
+        f.write("a2Init,0.1\n")
         f.write("ChooseGrainInit,1.0\n")
         f.write("MimicGrainInit,1.0\n")
         f.write("ImimicGrainInit,1.0\n")
@@ -50,9 +52,10 @@ for alpha in alphas:
             f.write("GroupSize,3\n")
         else:
             f.write("GroupSize,2\n")
-        f.write("ChooseCost,-14\n")
-        f.write("MimicCost,-14\n")
-        f.write("ImimicCost,-14\n")
+        # standard costs,-14
+        f.write("ChooseCost,-7\n")
+        f.write("MimicCost,-7\n")
+        f.write("ImimicCost,-7\n")
         if "p" in mechanism:
             f.write("PartnerChoice,1\n")
         else:

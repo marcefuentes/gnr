@@ -36,7 +36,7 @@ vmaxs = [my.aBmax,
 rows = ["pi", "p", "i", "none"]
 given = "given100"
 
-movie = True
+movie = False
 plotsize = 4
 
 # Add data to figure

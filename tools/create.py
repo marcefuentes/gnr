@@ -30,9 +30,9 @@ for alpha in alphas:
         f.write("Seed,1\n")
         f.write("N,12\n")
         # standard Runs,30
-        f.write("Runs,10\n")
+        f.write("Runs,30\n")
         # standard Time,21
-        f.write("Time,20\n")
+        f.write("Time,21\n")
         f.write("Periods,3\n")
         f.write("a1Max,1.0\n")
         f.write("a2Max,1.0\n")
@@ -53,9 +53,9 @@ for alpha in alphas:
         else:
             f.write("GroupSize,2\n")
         # standard costs,-14
-        f.write("ChooseCost,-9\n")
-        f.write("MimicCost,-9\n")
-        f.write("ImimicCost,-9\n")
+        f.write("ChooseCost,-8\n")
+        f.write("MimicCost,-8\n")
+        f.write("ImimicCost,-8\n")
         if "p" in mechanism:
             f.write("PartnerChoice,1\n")
         else:

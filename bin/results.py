@@ -20,7 +20,7 @@ file_name = this_file.split(".")[0]
 
 traits = ["ChooseGrainmean",
           "MimicGrainmean",
-          "ImimicGrainmean",
+          "MimicGrainmean",
           #"wmean",
           "wmean"]
 titles = ["Partner choice",
@@ -33,7 +33,7 @@ vmaxs = [my.aBmax,
          my.aBmax,
          #my.wmax,
          my.wmax]
-rows = ["pi", "p", "i", "none"]
+rows = ["p", "i", "none"]
 given = "given100"
 
 movie = False

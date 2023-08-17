@@ -20,7 +20,7 @@ file_name = this_file.split(".")[0]
 
 traits = ["ChooseGrainmean",
           "MimicGrainmean",
-          "MimicGrainmean",
+          "ImimicGrainmean",
           #"wmean",
           "wmean"]
 titles = ["Partner choice",

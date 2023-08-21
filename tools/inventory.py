@@ -24,6 +24,9 @@ if len(sys.argv) > 1:
         exit()
 
 folder_dict = {}
+folder_dict["ChooseCost"] = -14
+folder_dict["MimicCost"] = -14
+folder_dict["ImimicCost"] = -14
 folder_dict["Independent"] = 1
 folder_dict["Shuffle"] = 0
 folder_dict["Discrete"] = 0
@@ -38,6 +41,10 @@ if "noImimic" in current_dir:
     folder_dict["Independent"] = 0
 if "_d" in current_dir:
     folder_dict["DeathRate"] = -3
+if "cost" in current_dir:
+    folder_dict["ChooseCost"] = -8
+    folder_dict["MimicCost"] = -8
+    folder_dict["ImimicCost"] = -8
 
 mechanisms = [f for f in os.listdir(os.getcwd()) if os.path.isdir(f)]
 mechanisms.sort(key = lambda x: os.path.getmtime(x))
@@ -83,7 +90,7 @@ for mechanism in mechanisms:
                 key, value = row
                 if value.isdigit():
                     data_dict[key] = int(value)
-                if key == "Given" or key == "DeathRate":
+                if key == "Given" or key == "DeathRate" or "Cost" in key:
                     data_dict[key] = float(value)
         pass_params = True
         for key, folder_value in folder_dict.items():

@@ -96,34 +96,30 @@ for mechanism in mechanisms:
         for key, folder_value in folder_dict.items():
             if data_dict[key] != folder_value:
                 print(f"{red}{key} {data_dict[key]}{reset_format}", end = " ")
-                pass_params = False
-        if pass_params:
-            f_smaller_nlines = 0
-            f_equal_nlines = 0
-            f_larger_nlines = 0
-            for f in os.listdir(given_path):
-                if f.endswith(output_file_extension):
-                    output_file = os.path.join(given_path, f)
-                    with open(output_file, "r") as output:
-                        lines = output.readlines()
-                        if len(lines) < nlines:
-                            f_smaller_nlines += 1
-                        elif len(lines) == nlines:
-                            f_equal_nlines += 1
-                        elif len(lines) > nlines:
-                            f_larger_nlines += 1
-            if f_equal_nlines == len(input_files):
-                print(f"{green}{f_equal_nlines}{reset_format}")
-            else:
-                notstarted = len(input_files) - f_smaller_nlines - f_equal_nlines - f_larger_nlines
-                if notstarted:
-                    print(f"{red}{notstarted}{reset_format}", end = " ")
-                if f_smaller_nlines:
-                    print(f"{yellow}{f_smaller_nlines}{reset_format}", end = " ")
-                if f_equal_nlines:
-                    print(f"{green}{f_equal_nlines}{reset_format}", end = " ")
-                if f_larger_nlines:
-                    print(f"{red}{f_larger_nlines}{reset_format} > {nlines} lines", end = "")
-                print()
+        f_smaller_nlines = 0
+        f_equal_nlines = 0
+        f_larger_nlines = 0
+        for f in os.listdir(given_path):
+            if f.endswith(output_file_extension):
+                output_file = os.path.join(given_path, f)
+                with open(output_file, "r") as output:
+                    lines = output.readlines()
+                    if len(lines) < nlines:
+                        f_smaller_nlines += 1
+                    elif len(lines) == nlines:
+                        f_equal_nlines += 1
+                    elif len(lines) > nlines:
+                        f_larger_nlines += 1
+        if f_equal_nlines == len(input_files):
+            print(f"{green}{f_equal_nlines}{reset_format}")
         else:
-            print() 
+            notstarted = len(input_files) - f_smaller_nlines - f_equal_nlines - f_larger_nlines
+            if notstarted:
+                print(f"{red}{notstarted}{reset_format}", end = " ")
+            if f_smaller_nlines:
+                print(f"{yellow}{f_smaller_nlines}{reset_format}", end = " ")
+            if f_equal_nlines:
+                print(f"{green}{f_equal_nlines}{reset_format}", end = " ")
+            if f_larger_nlines:
+                print(f"{red}{f_larger_nlines}{reset_format} > {nlines} lines", end = "")
+            print()

@@ -19,7 +19,7 @@ titles = ["Games",
           "$\it{R}$ - $\it{P}$",
           "$\it{T}$ + $\it{S}$ - 2$\it{R}$"]
 givens = [1.0, 0.95, 0.50]
-distance = 0.01
+distance = 0.2
 nr = 21
 nc = nr
 nframes = 21

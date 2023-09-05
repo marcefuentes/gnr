@@ -3,7 +3,6 @@
 import os
 import time
 
-import imageio.v2 as iio
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -138,12 +137,8 @@ for given in givens:
                     ha="right")
     plt.savefig("temp.png", transparent=False)
     text.remove()
-    frames.append(iio.imread("temp.png"))
-    os.remove("temp.png")
 
 plt.close()
-
-iio.mimsave(file_name + ".gif", frames)
 
 end_time = time.perf_counter()
 print(f"\nTime elapsed: {(end_time - start_time):.2f} seconds")

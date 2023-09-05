@@ -28,7 +28,7 @@ plotsize = 12
 
 def update(given, artists):
     for y, aBy in enumerate(aBys):
-        for x, aBx in enumerate(aBxs[:numaB-y]):
+        for x, aBx in enumerate(aBxs[:numaB-y-1]):
             lows = np.full(AA.shape, aBx)
             highs = np.full(AA.shape, aBy)
             T = my.fitness(highs, lows, given, AA, RR)
@@ -59,7 +59,7 @@ xlabel = "Effort to get $\it{B}$"
 ylabel = "Effort to get $\it{B}$"
 biglabels = plotsize*4
 ticklabels = plotsize*3
-extent = 0, num, 0, num
+extent = 0.15, num, 0, num
 step = int(numaB/2)
 plt.rcParams["pdf.fonttype"] = 42
 plt.rcParams["ps.fonttype"] = 42

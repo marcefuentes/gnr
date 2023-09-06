@@ -21,10 +21,10 @@ file_name = this_file.split(".")[0]
 traits = ["ChooseGrainmean",
           "MimicGrainmean"]
 titles = ["Games",
-          "Sensitivity for\nchoosing partner",
-          "Sensitivity for\nmimicking partner"]
-folders = ["given100", "given095", "given050"]
-subfolders = ["p", "r"]
+          "Partner choice",
+          "Direct reciprocity"]
+folders = ["p", "r"]
+subfolders = ["given100", "given095", "given050"]
 
 movie = False
 plotsize = 6
@@ -33,10 +33,10 @@ plotsize = 6
 
 def init(artists):
 
-    for f, folder in enumerate(folders):
-        lows = my.getZ(ts[0], dftraits[f, 0], "aBlow")
-        highs = my.getZ(ts[0], dftraits[f, 0], "aBhigh")
-        given = dftraits[f, 0].Given.iloc[0]
+    for f, subfolder in enumerate(subfolders):
+        lows = my.getZ(ts[0], dftraits[0, f], "a2low")
+        highs = my.getZ(ts[0], dftraits[0, f], "a2high")
+        given = dftraits[0, f].Given.iloc[0]
         T = my.fitness(highs, lows, given, AA, RR)
         R = my.fitness(highs, highs, given, AA, RR)
         P = my.fitness(lows, lows, given, AA, RR)
@@ -67,9 +67,9 @@ def init(artists):
     return artists.flatten()
 
 def update(t, artists):
-    for f, folder in enumerate(folders):
+    for f, subfolder in enumerate(subfolders):
         for c, trait in enumerate(traits):
-            Z = my.getZ(t, dftraits[f, c], trait)
+            Z = my.getZ(t, dftraits[c, f], trait)
             if "Grain" in trait:
                 Z = 1.0 - Z
             for (a, l), _ in np.ndenumerate(Z):
@@ -99,7 +99,7 @@ RR, AA = np.meshgrid(rhos, alphas)
 # Figure properties
 
 width = plotsize*len(titles)
-height = plotsize*len(folders)
+height = plotsize*len(subfolders)
 xlabel = "Substitutability of $\it{B}$"
 ylabel = "Influence of $\it{B}$"
 biglabel = plotsize*7
@@ -116,15 +116,15 @@ plt.rcParams["ps.fonttype"] = 42
 # Create figure
 
 fig = plt.figure(figsize=(width, height))
-outergrid = fig.add_gridspec(nrows=len(folders),
+outergrid = fig.add_gridspec(nrows=len(subfolders),
                              ncols=len(titles))
-axs = np.empty((len(folders),
+axs = np.empty((len(subfolders),
                 len(titles),
                 nr,
                 nc),
                dtype=object)
 
-for f, folder in enumerate(folders):
+for f, subfolder in enumerate(subfolders):
     for c, title in enumerate(titles):
         grid = outergrid[f, c].subgridspec(nrows=nr,
                                            ncols=nc,
@@ -153,11 +153,11 @@ for ax in fig.get_axes():
     for axis in ["top","bottom","left","right"]:
         ax.spines[axis].set_linewidth(0.1)
 
-for f, folder in enumerate(folders):
+for f, subfolder in enumerate(subfolders):
     for c, title in enumerate(titles):
         letter = ord("a") + f*len(titles) + c
         axs[f, c, 0, 0].set_title(chr(letter),
-                                  fontsize=lettersize,
+                                  fontsize=letterlabel,
                                   pad = 11,
                                   weight="bold",
                                   loc="left")
@@ -172,7 +172,7 @@ for f, folder in enumerate(folders):
                                                 fontsize=ticklabel)
         for e in range(0, nc, step):
             axs[f, c, -1, e].set(xticks=[xlim[1]/2.0], xticklabels=[])
-        if folder == folders[-1]:
+        if subfolder == subfolders[-1]:
             for e in range(0, nc, step):
                 axs[f, c, -1, e].set_xticklabels([f"{logess[e]:.0f}"],
                                                  fontsize=ticklabel)
@@ -193,7 +193,7 @@ dummy_y = np.zeros_like(xaxis)
 frames = ts
 frame0 = ts[-1]
 
-for f, folder in enumerate(folders):
+for f, subfolder in enumerate(subfolders):
     for c, title in enumerate(titles):
         for a, alpha in enumerate(alphas):
             for l, loges in enumerate(logess):

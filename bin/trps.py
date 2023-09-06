@@ -18,7 +18,7 @@ file_name = this_file.split(".")[0]
 # Options
 
 folders = ["given095", "given000"]
-movie = True
+movie = False
 nframes = 21 # Number of frames
 plotsize = 8
 
@@ -49,7 +49,7 @@ def update(distance, artists):
 
 aBeqs = np.empty(len(folders), dtype=object)
 for f, folder in enumerate(folders):
-    filelist = glob(os.path.join(folder, "none", "*.csv"))
+    filelist = glob(os.path.join("none", folder, "*.csv"))
     df = my.read_files(filelist, False)
     aBeqs[f] = my.getZ(1, df, "a2Seenmean")
 

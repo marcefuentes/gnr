@@ -19,7 +19,7 @@ givens = np.linspace(0.0, 1.0, num=21)
 givens = [0.95]
 
 vmax = my.wmax
-numaB = 21   # Number of subplot rows & columns
+numaB = 11   # Number of subplot rows & columns
 num = 21     # Number of alpha - loges combinations
 
 plotsize = 12
@@ -38,7 +38,6 @@ def update(given, artists):
 
             Z = my.gamecolors(T, R, P, S)
             artists[y, x].set_array(Z)
-            N = my.nodilemmacolors(T, R, P, S)
 
     return artists.flatten()
 
@@ -101,7 +100,7 @@ for ax in fig.get_axes():
 #                             pad=plotsize*5,
 #                             fontsize=plotsize*5)
 for y in range(0, numaB, step):
-    axs[y, 0].set_ylabel(f"{aBys[y]:.2f}",
+    axs[y, 0].set_ylabel(f"{aBys[y]:.1f}",
                          rotation="horizontal",
                          horizontalalignment="right",
                          verticalalignment="center",
@@ -114,7 +113,9 @@ for x in range(0, numaB, step):
 # (AxesImage)
 
 artists = np.empty_like(axs) 
-dummy_Z = np.empty_like(AA)
+# fill dummy_Z with (1.0, 1.0, 1.0, 1.0) with shape num, num
+dummy_Z = np.full((num, num, 4), (1.0, 1.0, 1.0, 1.0))
+#dummy_Z = np.empty_like(AA)
 frames = givens
 
 for y, aBy in enumerate(aBys):

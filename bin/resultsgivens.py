@@ -20,15 +20,18 @@ file_name = this_file.split(".")[0]
 
 traits = ["ChooseGrainmean",
           "MimicGrainmean",
-          "wmean",
+          "ImimicGrainmean",
+          #"wmean",
           "wmean"]
-titles = ["Sensitivity for\nchoosing partner",
-          "Sensitivity for\nmimicking partner",
-          "Fitness gain",
+titles = ["Partner choice",
+          "Direct\nreciprocity",
+          "Indirect\nreciprocity",
+          #"Fitness gain",
           "Fitness deficit"]
 vmaxs = [my.aBmax,
          my.aBmax,
-         my.wmax,
+         my.aBmax,
+         #my.wmax,
          my.wmax]
 givens = ["given100", "given095", "given050", "given000"]
 mechanisms = ["none", "p", "p8", "pr8", "pr", "r"]
@@ -52,7 +55,7 @@ def update(t, artists):
                 Z = wsocial - Z
             artists[g, c].set_array(Z) 
     if movie:
-        fig.texts[2].set_text(f"t\n{t}")
+        fig.texts[2].set_text(t)
     return artists.flatten()
 
 # Data without partner choice or reciprocity
@@ -102,10 +105,10 @@ fig, axs = plt.subplots(nrows=len(givens),
 
 left_x = axs[0, 0].get_position().x0
 right_x = axs[-1, -1].get_position().x1
-center_x = (left_x + right_x) / 2.
+center_x = (left_x + right_x) / 2
 top_y = axs[0, 0].get_position().y1
 bottom_y = axs[-1, -1].get_position().y0
-center_y = (top_y + bottom_y) / 2.
+center_y = (top_y + bottom_y) / 2
 fig.supxlabel(xlabel,
               x=center_x,
               y=bottom_y - 1.2/height,
@@ -148,7 +151,7 @@ if movie:
 artists = np.empty_like(axs) 
 dummy_Z = np.zeros((nr, nc))
 frames = ts
-frame0 = ts[-1]
+frames0 = frames[-1]
 
 for mechanism in mechanisms:
     for g, given in enumerate(givens):

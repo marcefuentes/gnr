@@ -85,9 +85,9 @@ for g, given in enumerate(givens):
         for j, rho in enumerate(rhos):
 
             xmin = 0.0
-            xmax = my.aBeq(given, alpha, rho)
-            ymin = my.aBeq(0.0, alpha, rho)
-            ymax = my.aBmax
+            xmax = 1.0
+            ymin = 0.0
+            ymax = 1.0
             x = np.linspace(xmin, xmax, num=ext)
             y = np.linspace(ymax, ymin, num=ext)
             X, Y = np.meshgrid(x, y)

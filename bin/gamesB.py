@@ -15,8 +15,8 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-numaB = 21  # Number of subplot rows & columns
-num = 129   # Number of alpha - loges combinations
+numi = 129 # Number of inner plot values
+numo = 21  # Number of outer plot values
 
 movie = False
 if movie:
@@ -29,7 +29,7 @@ plotsize = 12
 
 def update(given, artists):
     for y, aBy in enumerate(aBys):
-        for x, aBx in enumerate(aBxs[:numaB-y-1]):
+        for x, aBx in enumerate(aBxs[:numo-y-1]):
             lows = np.full(AA.shape, aBx)
             highs = np.full(AA.shape, aBy)
             T = my.fitness(highs, lows, given, AA, RR)
@@ -44,12 +44,12 @@ def update(given, artists):
 
 # Data
 
-alphas = np.linspace(my.alphamax, my.alphamin, num=num)
-logess = np.linspace(my.logesmin, my.logesmax, num=num)
+alphas = np.linspace(my.alphamax, my.alphamin, num=numi)
+logess = np.linspace(my.logesmin, my.logesmax, num=numi)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
-aBxs = np.linspace(0.0, 1.0, num=numaB)
-aBys = np.linspace(1.0, 0.0, num=numaB)
+aBxs = np.linspace(0.0, 1.0, num=numo)
+aBys = np.linspace(1.0, 0.0, num=numo)
 
 # Figure properties
 
@@ -59,18 +59,16 @@ xlabel = "Effort to get $\it{B}$"
 ylabel = "Effort to get $\it{B}$"
 biglabel = plotsize*4
 ticklabel = plotsize*3
-# set extent so that the image is square and there is no white space between subplots
-extent = 0.15, 1.0-0.15, 0.15, 1.0-0.15
-#extent = 0.15, num, 0, num
-step = int(numaB/2)
+extent = 0, numi, 0, numi
+step = int(numo/2)
 plt.rcParams["pdf.fonttype"] = 42
 plt.rcParams["ps.fonttype"] = 42
 
 # Create figure
 
 fig = plt.figure(figsize=(width, height))
-grid = fig.add_gridspec(nrows=numaB,
-                        ncols=numaB,
+grid = fig.add_gridspec(nrows=numo,
+                        ncols=numo,
                         left=0.22,
                         right=0.9,
                         top=0.86,
@@ -99,13 +97,13 @@ for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])
     for axis in ["top","bottom","left","right"]:
         ax.spines[axis].set_linewidth(0.2)
-for y in range(0, numaB, step):
+for y in range(0, numo, step):
     axs[y, 0].set_ylabel(f"{aBys[y]:.1f}",
                          rotation="horizontal",
                          horizontalalignment="right",
                          verticalalignment="center",
                          fontsize=ticklabel)
-for x in range(0, numaB, step):
+for x in range(0, numo, step):
     axs[-1, x].set_xlabel(f"{aBxs[x]:.1f}",
                           fontsize=ticklabel)
 if movie:
@@ -120,7 +118,7 @@ if movie:
 # (AxesImage)
 
 artists = np.empty_like(axs) 
-dummy_Z = np.full((num, num, 4), (1.0, 1.0, 1.0, 1.0))
+dummy_Z = np.full((numi, numi, 4), my.colormap["greyTS"])
 frames = givens
 frames0 = frames[0]
 

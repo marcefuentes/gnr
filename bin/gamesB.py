@@ -30,12 +30,12 @@ plotsize = 12
 def update(given, artists):
     for y, aBy in enumerate(aBys):
         for x, aBx in enumerate(aBxs[:numo-y-1]):
-            lows = np.full(AA.shape, aBx)
-            highs = np.full(AA.shape, aBy)
-            T = my.fitness(highs, lows, given, AA, RR)
-            R = my.fitness(highs, highs, given, AA, RR)
-            P = my.fitness(lows, lows, given, AA, RR)
-            S = my.fitness(lows, highs, given, AA, RR)
+            XX = np.full(AA.shape, aBx)
+            YY = np.full(AA.shape, aBy)
+            T = my.fitness(YY, XX, given, AA, RR)
+            R = my.fitness(YY, YY, given, AA, RR)
+            P = my.fitness(XX, XX, given, AA, RR)
+            S = my.fitness(XX, YY, given, AA, RR)
             Z = my.gamecolors(T, R, P, S)
             artists[y, x].set_array(Z)
     if movie:
@@ -48,8 +48,8 @@ alphas = np.linspace(my.alphamax, my.alphamin, num=numi)
 logess = np.linspace(my.logesmin, my.logesmax, num=numi)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
-aBxs = np.linspace(0.0, 1.0, num=numo)
-aBys = np.linspace(1.0, 0.0, num=numo)
+aBxs = np.linspace(0.0, my.aBmax, num=numo)
+aBys = np.linspace(my.aBmax, 0.0, num=numo)
 
 # Figure properties
 

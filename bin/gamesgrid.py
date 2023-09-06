@@ -15,13 +15,14 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-givens = np.linspace(0.0, 1.0, num=21)
-givens = [0.95]
+numaB = 21  # Number of subplot rows & columns
+num = 129   # Number of alpha - loges combinations
 
-vmax = my.wmax
-numaB = 11   # Number of subplot rows & columns
-num = 21     # Number of alpha - loges combinations
-
+movie = False
+if movie:
+    givens = np.linspace(0.0, 1.0, num=41)
+else:
+    givens = [0.95]
 plotsize = 12
 
 # Add data to figure
@@ -35,10 +36,10 @@ def update(given, artists):
             R = my.fitness(highs, highs, given, AA, RR)
             P = my.fitness(lows, lows, given, AA, RR)
             S = my.fitness(lows, highs, given, AA, RR)
-
             Z = my.gamecolors(T, R, P, S)
             artists[y, x].set_array(Z)
-
+    if movie:
+        fig.texts[2].set_text(f"{given:.2f}")
     return artists.flatten()
 
 # Data
@@ -56,9 +57,11 @@ width = plotsize
 height = plotsize
 xlabel = "Effort to get $\it{B}$"
 ylabel = "Effort to get $\it{B}$"
-biglabels = plotsize*4
-ticklabels = plotsize*3
-extent = 0.15, num, 0, num
+biglabel = plotsize*4
+ticklabel = plotsize*3
+# set extent so that the image is square and there is no white space between subplots
+extent = 0.15, 1.0-0.15, 0.15, 1.0-0.15
+#extent = 0.15, num, 0, num
 step = int(numaB/2)
 plt.rcParams["pdf.fonttype"] = 42
 plt.rcParams["ps.fonttype"] = 42
@@ -86,54 +89,58 @@ center_y = (top_y + bottom_y) / 2
 fig.supxlabel(xlabel,
               x=center_x,
               y=bottom_y*0.2,
-              fontsize=biglabels)
+              fontsize=biglabel)
 fig.supylabel(ylabel,
               x=left_x*0.2,
               y=center_y,
-              fontsize=biglabels)
+              fontsize=biglabel)
 
 for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])
     for axis in ["top","bottom","left","right"]:
         ax.spines[axis].set_linewidth(0.2)
-#axs[0, int(num/2)].set_title(f"0",
-#                             pad=plotsize*5,
-#                             fontsize=plotsize*5)
 for y in range(0, numaB, step):
     axs[y, 0].set_ylabel(f"{aBys[y]:.1f}",
                          rotation="horizontal",
                          horizontalalignment="right",
                          verticalalignment="center",
-                         fontsize=ticklabels)
+                         fontsize=ticklabel)
 for x in range(0, numaB, step):
     axs[-1, x].set_xlabel(f"{aBxs[x]:.1f}",
-                          fontsize=ticklabels)
+                          fontsize=ticklabel)
+if movie:
+    fig.text(right_x,
+             bottom_y*0.5,
+             "t\n0",
+             fontsize=biglabel,
+             color="grey",
+             ha="right")
 
 # Assign axs objects to variables
 # (AxesImage)
 
 artists = np.empty_like(axs) 
-# fill dummy_Z with (1.0, 1.0, 1.0, 1.0) with shape num, num
 dummy_Z = np.full((num, num, 4), (1.0, 1.0, 1.0, 1.0))
-#dummy_Z = np.empty_like(AA)
 frames = givens
+frames0 = frames[0]
 
 for y, aBy in enumerate(aBys):
     for x, aBx in enumerate(aBxs):
-        artists[y, x] = axs[y, x].imshow(dummy_Z, extent=extent)
+        artists[y, x] = axs[y, x].imshow(dummy_Z,
+                                         extent=extent)
 
 # Add data and save figure
 
-if len(givens) > 1:
+if movie:
     ani = FuncAnimation(fig,
                         update,
                         frames=frames,
                         fargs=(artists,),
                         blit=True)
-    ani.save(file_name + ".mp4", writer="ffmpeg", fps=10)
+    ani.save(f"{file_name}.mp4", writer="ffmpeg", fps=10)
 else:
-    update(frames[0], artists,)
-    plt.savefig(file_name + ".png", transparent=False)
+    update(frames0, artists,)
+    plt.savefig(f"{file_name}.png", transparent=False)
 
 plt.close()
 

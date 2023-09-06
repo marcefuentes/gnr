@@ -108,10 +108,10 @@ fig, axs = plt.subplots(nrows=len(rows),
 
 left_x = axs[0, 0].get_position().x0
 right_x = axs[-1, -1].get_position().x1
-center_x = (left_x + right_x) / 2.
+center_x = (left_x + right_x) / 2
 top_y = axs[0, 0].get_position().y1
 bottom_y = axs[-1, -1].get_position().y0
-center_y = (top_y + bottom_y) / 2.
+center_y = (top_y + bottom_y) / 2
 fig.supxlabel(xlabel,
               x=center_x,
               y=bottom_y - 1.2/height,
@@ -154,7 +154,7 @@ if movie:
 artists = np.empty_like(axs) 
 dummy_Z = np.zeros((nr, nc))
 frames = ts
-frame0 = ts[-1]
+frames0 = frames[-1]
 
 for r, row in enumerate(rows):
     for c, title in enumerate(titles):
@@ -180,7 +180,7 @@ if movie:
                         blit=True)
     ani.save(f"{file_name}_{given}.mp4", writer="ffmpeg", fps=10)
 else:
-    update(frame0, artists,)
+    update(frames0, artists,)
     plt.savefig(f"{file_name}_{given}.png", transparent=False)
 
 plt.close()

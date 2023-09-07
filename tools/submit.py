@@ -4,7 +4,7 @@ import os
 import subprocess
 import logging
 
-hours = 23
+hours = 5
 queues = ["clk", "epyc"]
 executable = "/home/ulc/ba/mfu/code/gnr/bin/gnr"
 mail_user = "marcelinofuentes@gmail.com"

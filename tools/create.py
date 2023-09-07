@@ -60,8 +60,12 @@ else:
 
 if "d_s" in variant or "d_n" in variant:
     discrete = 1
+    a2init = 0.6
+    a2high = 0.8
 else:
     discrete = 0
+    a2init = 0.1
+    a2high = 0.1
 
 # create subfolder path variant/mechanism/given in current directory
 path = variant + "/" + mechanism + "/" + given
@@ -82,13 +86,16 @@ for alpha in alphas:
         # standard Runs,30
         f.write("Runs,30\n")
         # standard Time,21
-        f.write("Time,21\n")
+        if discrete:
+            f.write("Time,20\n")
+        else:
+            f.write("Time,21\n")
         f.write("Periods,3\n")
         f.write("a1Max,1.0\n")
         f.write("a2Max,1.0\n")
         f.write("R1,2\n")
         f.write("R2,2\n")
-        f.write("a2Init,0.1\n")
+        f.write(f"a2Init,{a2init}\n")
         f.write("ChooseGrainInit,1.0\n")
         f.write("MimicGrainInit,1.0\n")
         f.write("ImimicGrainInit,1.0\n")
@@ -106,8 +113,8 @@ for alpha in alphas:
         f.write(f"Language,{language}\n")
         f.write(f"Shuffle,{shuffle}\n")
         f.write(f"Discrete,{discrete}\n")
-        f.write(f"a2low,0.0\n")
-        f.write(f"a2high,0.0\n")
+        f.write(f"a2low,{a2init}\n")
+        f.write(f"a2high,{a2high}\n")
         f.write(f"alpha,{alpha:.6}\n")
         f.write(f"logES,{loges}\n")
         f.write(f"Given,{Given}\n")

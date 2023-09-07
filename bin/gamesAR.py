@@ -126,7 +126,9 @@ frames0 = frames[0]
 for y, alpha in enumerate(alphas):
     for x, rho in enumerate(rhos):
         artists[y, x] = axs[y, x].imshow(dummy_Z,
-                                         extent=extent)
+                                         extent=extent,
+                                         aspect="auto",
+                                         interpolation="nearest")
 
 # Add data and save figure
 

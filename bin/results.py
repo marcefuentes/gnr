@@ -21,17 +21,14 @@ file_name = this_file.split(".")[0]
 traits = ["ChooseGrainmean",
           "MimicGrainmean",
           "ImimicGrainmean",
-          #"wmean",
           "wmean"]
 titles = ["Partner choice",
           "Direct\nreciprocity",
           "Indirect\nreciprocity",
-          #"Fitness gain",
           "Fitness deficit"]
 vmaxs = [my.aBmax,
          my.aBmax,
          my.aBmax,
-         #my.wmax,
          my.wmax]
 rows = ["pi", "p", "i", "none"]
 given = "given100"

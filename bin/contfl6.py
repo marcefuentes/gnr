@@ -22,8 +22,8 @@ traits = ["ChooseGrainmean",
           "MimicGrainmean",
           "ImimicGrainmean"]
 titles = ["Partner choice",
-          "Direct\nreciprocity",
-          "Indirect\nreciprocity"]
+          "Direct reciprocity",
+          "Indirect reciprocity"]
 
 numaB = 64
 plotsize = 6
@@ -64,9 +64,9 @@ width = plotsize*len(titles)
 height = plotsize
 xlabel = "Substitutability of $\it{B}$"
 ylabel = "Influence of $\it{B}$"
-biglabel = plotsize*7
-letterlabel = plotsize*5
-ticklabel = plotsize*4
+biglabel = plotsize*4
+letterlabel = plotsize*3
+ticklabel = plotsize*3
 xlim = [0., my.aBmax]
 ylim = [0., 1.]
 step = int(nr/2)
@@ -77,7 +77,12 @@ plt.rcParams["ps.fonttype"] = 42
 
 fig = plt.figure(figsize=(width, height))
 outergrid = fig.add_gridspec(nrows=1,
-                             ncols=len(titles))
+                             ncols=len(titles),
+                             left=0.1,
+                             right=0.9,
+                             top=0.85,
+                             bottom=0.17)
+
 axs = np.empty((len(titles),
                 nr,
                 nc),
@@ -98,28 +103,28 @@ bottom_y = axs[-1, -1, -1].get_position().y0
 center_y = (top_y + bottom_y) / 2
 fig.supxlabel(xlabel,
               x=center_x,
-              y=bottom_y*0.3,
+              y=bottom_y*0.2,
               fontsize=biglabel)
 fig.supylabel(ylabel,
-              x=left_x*0.1,
+              x=left_x*0.4,
               y=center_y,
               fontsize=biglabel)
 
 for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])
     ax.set(xlim=xlim, ylim=ylim)
-    for axis in ["top","bottom","left","right"]:
+    for axis in ["top", "bottom", "left", "right"]:
         ax.spines[axis].set_linewidth(0.1)
 
 for c, title in enumerate(titles):
-    letter = ord("a") + len(titles) + c
+    letter = ord("a") + c
     axs[c, 0, 0].set_title(chr(letter),
                            fontsize=letterlabel,
                            pad = 11,
                            weight="bold",
                            loc="left")
     axs[c, 0, 10].set_title(title,
-                            pad=plotsize*9,
+                            pad=plotsize*5,
                             fontsize=biglabel)
     for a in range(0, nr, step):
         axs[c, a, 0].set(yticks=[ylim[1]/2.0], yticklabels=[])
@@ -152,8 +157,6 @@ for a, alpha in enumerate(alphas):
         #        marker="o",
         #        markersize=1.5,
         #        color="white")
-        color = cm.viridis(Z[0, a, e]/my.aBmax)
-        ax.set_facecolor(color)
 
         ax = axs[1, a, e]
         y = (my.repeats*my.cost + jj - ji)/(my.repeats*ii - ij - ji + 2.*jj - my.repeats*jj) 
@@ -163,8 +166,6 @@ for a, alpha in enumerate(alphas):
                 marker="o",
                 markersize=1.5,
                 color="white")
-        color = cm.viridis(Z[1, a, e]/my.aBmax)
-        ax.set_facecolor(color)
 
         ax = axs[2, a, e]
         ax.plot(xaxis, y, color="white", linewidth=0.7)
@@ -173,9 +174,10 @@ for a, alpha in enumerate(alphas):
                 marker="o",
                 markersize=1.5,
                 color="white")
-        color = cm.viridis(Z[2, a, e]/my.aBmax)
-        ax.set_facecolor(color)
 
+        for c, title in enumerate(titles):
+            color = cm.viridis(Z[c, a, e]/my.aBmax)
+            axs[c, a, e].set_facecolor(color)
 
 # Finish
 

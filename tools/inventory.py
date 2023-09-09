@@ -35,6 +35,22 @@ folder_dict["DeathRate"] = -7
 current_dir = os.getcwd().split("/")[-1]
 if current_dir[0] == "d":
     folder_dict["Discrete"] = 1
+    if "_0" in current_dir:
+        folder_dict["a2Init"] = 0.2
+        folder_dict["a2Low"] = 0.2
+        folder_dict["a2High"] = 0.4
+    elif "_1" in current_dir:
+        folder_dict["a2Init"] = 0.2
+        folder_dict["a2Low"] = 0.2
+        folder_dict["a2High"] = 0.6
+    elif "_2" in current_dir:
+        folder_dict["a2Init"] = 0.4
+        folder_dict["a2Low"] = 0.4
+        folder_dict["a2High"] = 0.8
+    else:
+        folder_dict["a2Init"] = 0.6
+        folder_dict["a2Low"] = 0.6
+        folder_dict["a2High"] = 0.8
 if "_shuffle" in current_dir:
     folder_dict["Shuffle"] = 1
 if "noImimic" in current_dir:

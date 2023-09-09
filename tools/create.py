@@ -60,8 +60,18 @@ else:
 
 if "d_s" in variant or "d_n" in variant:
     discrete = 1
-    a2init = 0.6
-    a2high = 0.8
+    if "_0" in variant:
+        a2init = 0.2
+        a2high = 0.4
+    elif "_1" in variant:
+        a2init = 0.2
+        a2high = 0.6
+    elif "_2" in variant:
+        a2init = 0.4
+        a2high = 0.8
+    else:
+        a2init = 0.6
+        a2high = 0.8
 else:
     discrete = 0
     a2init = 0.1

@@ -74,7 +74,7 @@ def folder_list(path):
         item_path = os.path.join(path, item)
         if os.path.isdir(item_path):
             folders.append(item_path)
-    folders.sort(key=lambda x: os.path.getctime(x))
+    folders.sort()
     return folders
 
 def get_job_min(path):

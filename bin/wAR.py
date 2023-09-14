@@ -15,8 +15,8 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-numi = 21 # Number of inner plot values
-numo = 11  # Number of outer plot values
+numi = 129 # Number of inner plot values
+numo = 21  # Number of outer plot values
 
 movie = False
 if movie:
@@ -28,15 +28,22 @@ plotsize = 12
 # Add data to figure
 
 def update(given, artists):
-    for y, aBy in enumerate(aBys):
-        for x, aBx in enumerate(aBxs[:numo-y-1]):
-            XX = np.full(AA.shape, aBx)
-            YY = np.full(AA.shape, aBy)
+    for y, alpha in enumerate(alphas):
+        AA = np.full([numi, numi], alpha)
+        for x, rho in enumerate(rhos):
+            RR = np.full([numi, numi], rho)
             T = my.fitness(YY, XX, given, AA, RR)
             R = my.fitness(YY, YY, given, AA, RR)
             P = my.fitness(XX, XX, given, AA, RR)
             S = my.fitness(XX, YY, given, AA, RR)
-            Z = my.gamecolors(T, R, P, S)
+            w = my.eqw(T, R, P, S)
+            T = my.fitness(YY, XX, 0.0, AA, RR)
+            R = my.fitness(YY, YY, 0.0, AA, RR)
+            P = my.fitness(XX, XX, 0.0, AA, RR)
+            S = my.fitness(XX, YY, 0.0, AA, RR)
+            wsocial = my.eqw(T, R, P, S)
+            Z = wsocial - w
+            Z[XX >= YY] = 0.0
             artists[y, x].set_array(Z)
     if movie:
         fig.texts[2].set_text(f"{given:.2f}")
@@ -44,19 +51,19 @@ def update(given, artists):
 
 # Data
 
-alphas = np.linspace(my.alphamax, my.alphamin, num=numi)
-logess = np.linspace(my.logesmin, my.logesmax, num=numi)
+alphas = np.linspace(my.alphamax, my.alphamin, num=numo)
+logess = np.linspace(my.logesmin, my.logesmax, num=numo)
 rhos = 1.0 - 1.0/pow(2, logess)
-RR, AA = np.meshgrid(rhos, alphas)
-aBxs = np.linspace(0.0, my.aBmax, num=numo)
-aBys = np.linspace(my.aBmax, 0.0, num=numo)
+aBys = np.linspace(my.aBmax, 0.0, num=numi)
+aBxs = np.linspace(0.0, my.aBmax, num=numi)
+XX, YY = np.meshgrid(aBxs, aBys)
 
 # Figure properties
 
 width = plotsize
 height = plotsize
-xlabel = "Effort to get $\it{B}$"
-ylabel = "Effort to get $\it{B}$"
+xlabel = "Substitutability of $\it{B}$"
+ylabel = "Influence of $\it{B}$"
 biglabel = plotsize*4
 ticklabel = plotsize*3
 extent = 0, numi, 0, numi
@@ -98,13 +105,13 @@ for ax in fig.get_axes():
     for axis in ["top","bottom","left","right"]:
         ax.spines[axis].set_linewidth(0.2)
 for y in range(0, numo, step):
-    axs[y, 0].set_ylabel(f"{aBys[y]:.1f}",
+    axs[y, 0].set_ylabel(f"{alphas[y]:.1f}",
                          rotation="horizontal",
                          horizontalalignment="right",
                          verticalalignment="center",
                          fontsize=ticklabel)
 for x in range(0, numo, step):
-    axs[-1, x].set_xlabel(f"{aBxs[x]:.1f}",
+    axs[-1, x].set_xlabel(f"{logess[x]:.0f}",
                           fontsize=ticklabel)
 if movie:
     fig.text(right_x,
@@ -118,14 +125,16 @@ if movie:
 # (AxesImage)
 
 artists = np.empty_like(axs) 
-dummy_Z = np.full((numi, numi, 4), my.colormap["greyTS"])
+dummy_Z = np.full(XX.shape, 0.0)
 frames = givens
 frames0 = frames[0]
 
-for y, aBy in enumerate(aBys):
-    for x, aBx in enumerate(aBxs):
+for y, alpha in enumerate(alphas):
+    for x, rho in enumerate(rhos):
         artists[y, x] = axs[y, x].imshow(dummy_Z,
                                          extent=extent,
+                                         vmin=0.0,
+                                         vmax=my.wmax,
                                          aspect="auto",
                                          interpolation="nearest")
 

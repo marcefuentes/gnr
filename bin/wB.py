@@ -18,7 +18,7 @@ file_name = this_file.split(".")[0]
 numi = 129 # Number of inner plot values
 numo = 21  # Number of outer plot values
 
-movie = True
+movie = False
 if movie:
     givens = np.linspace(0.0, 1.0, num=41)
 else:

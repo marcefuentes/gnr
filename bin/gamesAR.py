@@ -15,14 +15,14 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-numi = 129 # Number of inner plot values
-numo = 21  # Number of outer plot values
+numi = 11 # Number of inner plot values
+numo = 11  # Number of outer plot values
 
 movie = False
 if movie:
     givens = np.linspace(0.0, 1.0, num=41)
 else:
-    givens = [0.95]
+    givens = [1.00]
 plotsize = 12
 
 # Add data to figure

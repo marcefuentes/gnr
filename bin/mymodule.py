@@ -164,6 +164,25 @@ def equilibrium(T, R, P, S, low, high, aB, weq):
 
     pass
 
+def eqw(T, R, P, S):
+
+    weq = np.full(T.shape, 0.0)
+
+    # Harmony
+    m = (R > T) & (S > P) 
+    weq[m] = R[m]
+
+    # Deadlock or prisoner"s dilemma
+    m = (T >= R) & (P >= S) 
+    weq[m] = P[m]
+
+    # Snowdrift (chicken) or leader
+    m = (T > R) & (S > P)
+    weq[m] = (P[m] - S[m])/(R[m] - S[m] - T[m] + P[m])
+    weq[m] = (T[m] + S[m])*weq[m]*(1.0 - weq[m]) + R[m]*weq[m]*weq[m] + P[m]*(1.0 - weq[m])*(1.0 - weq[m])
+
+    return weq
+
 def fitness(x, y, given, alpha, rho):
     qA = (aBmax - y)*RA/b
     qB = y*RB*(1.0 - given) + x*RB*given

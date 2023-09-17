@@ -63,7 +63,8 @@ if "cost" in current_dir:
     folder_dict["ImimicCost"] = -8
 
 mechanisms = [f for f in os.listdir(os.getcwd()) if os.path.isdir(f)]
-mechanisms.sort(key = lambda x: os.path.getmtime(x))
+#mechanisms.sort(key = lambda x: os.path.getmtime(x))
+mechanisms.sort()
 for mechanism in mechanisms:
     if "p" in mechanism:
         folder_dict["PartnerChoice"] = 1

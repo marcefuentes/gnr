@@ -15,11 +15,11 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-aBx = 0.25
-aBy = 0.80
+aBx = 0.20
+aBy = 0.40
 numi = 1025 # Number of inner plot values
 
-movie = True
+movie = False
 if movie:
     givens = np.linspace(0.0, 1.0, num=21)
 else:

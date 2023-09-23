@@ -22,7 +22,7 @@ movie = False
 if movie:
     givens = np.linspace(0.0, 1.0, num=41)
 else:
-    givens = [0.95]
+    givens = [1.00]
 plotsize = 12
 
 # Add data to figure
@@ -65,7 +65,6 @@ xlabel = "Effort to get $\it{B}$"
 ylabel = "Effort to get $\it{B}$"
 biglabel = plotsize*4
 ticklabel = plotsize*3
-extent = 0, numi, 0, numi
 step = int(numo/2)
 plt.rcParams["pdf.fonttype"] = 42
 plt.rcParams["ps.fonttype"] = 42
@@ -131,11 +130,9 @@ frames0 = frames[0]
 for y, aBy in enumerate(aBys):
     for x, aBx in enumerate(aBxs):
         artists[y, x] = axs[y, x].imshow(dummy_Z,
-                                         extent=extent,
                                          vmin=0.0,
-                                         vmax=my.wmax,
-                                         aspect="auto",
-                                         interpolation="nearest")
+                                         vmax=vmax,
+                                         aspect="auto")
 
 # Add data and save figure
 

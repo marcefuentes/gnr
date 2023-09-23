@@ -23,7 +23,7 @@ movie = False
 if movie:
     givens = np.linspace(0.0, 1.0, num=41)
 else:
-    givens = [1.0]
+    givens = [1.00]
 plotsize = 12
 
 # Add data to figure
@@ -45,7 +45,9 @@ def update(given, artists):
             #wsocial = my.eqw(T, R, P, S)
             #Z = wsocial - w
             Z = (T + S)/2 - (R + P)/2
-            Z[XX >= YY] = 0.0
+            # mask to color white if XX >= YY
+            Z[XX >= YY] = np.nan
+            
             artists[y, x].set_array(Z)
     if movie:
         fig.texts[2].set_text(f"{given:.2f}")
@@ -68,7 +70,6 @@ xlabel = "Substitutability of $\it{B}$"
 ylabel = "Influence of $\it{B}$"
 biglabel = plotsize*4
 ticklabel = plotsize*3
-extent = 0, numi, 0, numi
 step = int(numo/2)
 plt.rcParams["pdf.fonttype"] = 42
 plt.rcParams["ps.fonttype"] = 42
@@ -134,11 +135,9 @@ frames0 = frames[0]
 for y, alpha in enumerate(alphas):
     for x, rho in enumerate(rhos):
         artists[y, x] = axs[y, x].imshow(dummy_Z,
-                                         extent=extent,
                                          vmin=0.0,
                                          vmax=vmax,
-                                         aspect="auto",
-                                         interpolation="nearest")
+                                         aspect="auto")
 
 # Add data and save figure
 

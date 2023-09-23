@@ -256,7 +256,8 @@ def getZd(t, df, alpha, loges, trait):
                        index="a2high",
                        columns="a2low")
     Z = Z.sort_index(axis=0, ascending=False)
-    #Z = Z.sort_index(axis=1, ascending=True)
     Z = Z.to_numpy()
+    Z = np.vstack((Z, np.full(Z.shape[1], np.nan)))
+    Z = np.hstack((Z, np.full((Z.shape[0], 1), np.nan)))
     return Z
 

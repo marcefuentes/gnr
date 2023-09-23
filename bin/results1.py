@@ -66,7 +66,6 @@ xlabel = "Substitutability of $\it{B}$"
 ylabel = "Influence of $\it{B}$"
 biglabel = plotsize*4
 ticklabel = plotsize*3
-extent = 0, numi, 0, numi
 step = int(numo/2)
 plt.rcParams["pdf.fonttype"] = 42
 plt.rcParams["ps.fonttype"] = 42
@@ -132,11 +131,9 @@ frames0 = frames[0]
 for y, alpha in enumerate(alphas):
     for x, rho in enumerate(rhos):
         artists[y, x] = axs[y, x].imshow(dummy_Z,
-                                         extent=extent,
                                          vmin=0.0,
                                          vmax=vmax,
-                                         aspect="auto",
-                                         interpolation="nearest")
+                                         aspect="auto")
 
 # Add data and save figure
 

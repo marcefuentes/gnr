@@ -15,14 +15,14 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-numi = 1025 # Number of inner plot values
+numi = 11 # Number of inner plot values
 numo = 11  # Number of outer plot values
 
 movie = False
 if movie:
     givens = np.linspace(0.0, 1.0, num=41)
 else:
-    givens = [0.95]
+    givens = [1.0]
 plotsize = 12
 
 # Add data to figure
@@ -36,13 +36,14 @@ def update(given, artists):
             R = my.fitness(YY, YY, given, AA, RR)
             P = my.fitness(XX, XX, given, AA, RR)
             S = my.fitness(XX, YY, given, AA, RR)
-            w = my.eqw(T, R, P, S)
-            T = my.fitness(YY, XX, 0.0, AA, RR)
-            R = my.fitness(YY, YY, 0.0, AA, RR)
-            P = my.fitness(XX, XX, 0.0, AA, RR)
-            S = my.fitness(XX, YY, 0.0, AA, RR)
-            wsocial = my.eqw(T, R, P, S)
-            Z = wsocial - w
+            #w = my.eqw(T, R, P, S)
+            #T = my.fitness(YY, XX, 0.0, AA, RR)
+            #R = my.fitness(YY, YY, 0.0, AA, RR)
+            #P = my.fitness(XX, XX, 0.0, AA, RR)
+            #S = my.fitness(XX, YY, 0.0, AA, RR)
+            #wsocial = my.eqw(T, R, P, S)
+            #Z = wsocial - w
+            Z = (T + S)/2 - (R + P)/2
             Z[XX >= YY] = 0.0
             artists[y, x].set_array(Z)
     if movie:

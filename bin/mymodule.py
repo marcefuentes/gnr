@@ -249,3 +249,14 @@ def getZ(t, df, trait):
     Z = Z.to_numpy()
     return Z
 
+def getZd(t, df, alpha, loges, trait):
+    m = (df.Time == t) & (df.alpha == alpha) & (df.logES == loges)
+    Z = pd.pivot_table(df.loc[m],
+                       values=trait,
+                       index="a2high",
+                       columns="a2low")
+    Z = Z.sort_index(axis=0, ascending=False)
+    #Z = Z.sort_index(axis=1, ascending=True)
+    Z = Z.to_numpy()
+    return Z
+

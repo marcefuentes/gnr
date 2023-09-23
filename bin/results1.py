@@ -1,11 +1,13 @@
 #! /usr/bin/env python
 
+from glob import glob
 import os
 import time
 
 from matplotlib.animation import FuncAnimation
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 import mymodule as my
 
@@ -15,50 +17,46 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-numi = 11 # Number of inner plot values
-numo = 11  # Number of outer plot values
-vmax = my.wmax
+trait = "MimicGrainmean"
+title = "Direct\nreciprocity"
+vmax = my.aBmax
 
 movie = False
-if movie:
-    givens = np.linspace(0.0, 1.0, num=41)
-else:
-    givens = [1.0]
 plotsize = 12
 
 # Add data to figure
 
-def update(given, artists):
+def update(t, artists):
     for y, alpha in enumerate(alphas):
-        AA = np.full([numi, numi], alpha)
-        for x, rho in enumerate(rhos):
-            RR = np.full([numi, numi], rho)
-            T = my.fitness(YY, XX, given, AA, RR)
-            R = my.fitness(YY, YY, given, AA, RR)
-            P = my.fitness(XX, XX, given, AA, RR)
-            S = my.fitness(XX, YY, given, AA, RR)
-            #w = my.eqw(T, R, P, S)
-            #T = my.fitness(YY, XX, 0.0, AA, RR)
-            #R = my.fitness(YY, YY, 0.0, AA, RR)
-            #P = my.fitness(XX, XX, 0.0, AA, RR)
-            #S = my.fitness(XX, YY, 0.0, AA, RR)
-            #wsocial = my.eqw(T, R, P, S)
-            #Z = wsocial - w
-            Z = (T + S)/2 - (R + P)/2
-            Z[XX >= YY] = 0.0
-            artists[y, x].set_array(Z)
+        for x, loges in enumerate(logess):
+            Z = my.getZd(t, df, alpha, loges, trait)
+            if "Grain" in trait:
+                Z = 1.0 - Z
+            if "gain" in title:
+                wnull = my.getZ(t, df, "wmean")
+                Z = Z - wnull
+            if "deficit" in title:
+                Z = wsocial - Z
+            artists[y, x].set_array(Z) 
     if movie:
-        fig.texts[2].set_text(f"{given:.2f}")
+        fig.texts[2].set_text(t)
     return artists.flatten()
 
-# Data
+# Data without partner choice or reciprocity
 
-alphas = np.linspace(my.alphamax, my.alphamin, num=numo)
-logess = np.linspace(my.logesmin, my.logesmax, num=numo)
+# create a list of csv files in current directory
+filelist = glob("*.csv")
+if filelist == []:
+    print("No *.csv")
+    exit()
+df = my.read_files(filelist, movie)
+
+ts = df.Time.unique()
+alphas = np.sort(df.alpha.unique())[::-1]
+logess = np.sort(df.logES.unique())
 rhos = 1.0 - 1.0/pow(2, logess)
-aBxs = np.linspace(0.0, my.aBmax, num=numi)
-aBys = np.linspace(my.aBmax, 0.0, num=numi)
-XX, YY = np.meshgrid(aBxs, aBys)
+numo = len(alphas)
+numi = df.a2low.nunique()
 
 # Figure properties
 
@@ -114,7 +112,7 @@ for y in range(0, numo, step):
                          fontsize=ticklabel)
 for x in range(0, numo, step):
     axs[-1, x].set_xlabel(f"{logess[x]:.0f}",
-                          fontsize=ticklabel)
+                               fontsize=ticklabel)
 if movie:
     fig.text(right_x,
              bottom_y*0.5,
@@ -127,8 +125,8 @@ if movie:
 # (AxesImage)
 
 artists = np.empty_like(axs) 
-dummy_Z = np.full(XX.shape, 0.0)
-frames = givens
+dummy_Z = np.full([numi, numi], 0.0)
+frames = ts
 frames0 = frames[0]
 
 for y, alpha in enumerate(alphas):

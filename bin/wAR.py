@@ -15,8 +15,8 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-numi = 129 # Number of inner plot values
-numo = 21  # Number of outer plot values
+numi = 1025 # Number of inner plot values
+numo = 11  # Number of outer plot values
 
 movie = False
 if movie:

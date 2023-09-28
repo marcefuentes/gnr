@@ -17,9 +17,9 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-trait = "MimicGrainmean"
+trait = "wmean"
 title = "Direct\nreciprocity"
-vmax = my.aBmax
+vmax = my.wmax
 
 movie = False
 plotsize = 12
@@ -30,6 +30,8 @@ def update(t, artists):
     for y, alpha in enumerate(alphas):
         for x, loges in enumerate(logess):
             Z = my.getZd(t, df, alpha, loges, trait)
+            #a2lows = my.getZd(t, df, alpha, loges, "a2low")
+            #Z = Z - a2lows
             if "Grain" in trait:
                 Z = 1.0 - Z
             if "gain" in title:

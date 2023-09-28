@@ -241,20 +241,20 @@ def read_files(filelist, alltimes):
 
 def getZ(t, df, trait):
     m = df.Time == t
-    Z = pd.pivot_table(df.loc[m],
-                       values=trait,
-                       index="alpha",
-                       columns="logES")
+    Z = pd.pivot(df.loc[m],
+                 values=trait,
+                 index="alpha",
+                 columns="logES")
     Z = Z.sort_index(axis=0, ascending=False)
     Z = Z.to_numpy()
     return Z
 
 def getZd(t, df, alpha, loges, trait):
     m = (df.Time == t) & (df.alpha == alpha) & (df.logES == loges)
-    Z = pd.pivot_table(df.loc[m],
-                       values=trait,
-                       index="a2high",
-                       columns="a2low")
+    Z = pd.pivot(df.loc[m],
+                 values=trait,
+                 index="a2high",
+                 columns="a2low")
     Z = Z.sort_index(axis=0, ascending=False)
     Z = Z.to_numpy()
     Z = np.vstack((Z, np.full(Z.shape[1], np.nan)))

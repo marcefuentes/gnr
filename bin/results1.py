@@ -18,7 +18,7 @@ file_name = this_file.split(".")[0]
 # Options
 
 trait = "wmean"
-title = "Direct\nreciprocity"
+title = "Fitness deficit"
 vmax = my.wmax
 
 movie = False
@@ -38,6 +38,7 @@ def update(t, artists):
                 wnull = my.getZ(t, df, "wmean")
                 Z = Z - wnull
             if "deficit" in title:
+                wsocial = my.getZd(t, dfsocial, alpha, loges, trait)
                 Z = wsocial - Z
             artists[y, x].set_array(Z) 
     if movie:
@@ -47,6 +48,13 @@ def update(t, artists):
 # Data without partner choice or reciprocity
 
 # create a list of csv files in current directory
+if "deficit" in title:
+    filelist = glob("../../none/given000/*.csv")
+    if filelist == []:
+        print("No *.csv")
+        exit()
+    dfsocial = my.read_files(filelist, movie)
+
 filelist = glob("*.csv")
 if filelist == []:
     print("No *.csv")

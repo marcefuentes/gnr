@@ -39,7 +39,8 @@ def update(t, artists):
                 Z = Z - wnull
             if "deficit" in title:
                 wsocial = my.getZd(t, dfsocial, alpha, loges, trait)
-                Z = wsocial - Z
+                wnone = my.getZd(t, dfnone, alpha, loges, trait)
+                Z = wsocial - wnone
             artists[y, x].set_array(Z) 
     if movie:
         fig.texts[2].set_text(t)
@@ -54,6 +55,11 @@ if "deficit" in title:
         print("No *.csv")
         exit()
     dfsocial = my.read_files(filelist, movie)
+    filelist = glob("../../none/given100/*.csv")
+    if filelist == []:
+        print("No *.csv")
+        exit()
+    dfnone = my.read_files(filelist, movie)
 
 filelist = glob("*.csv")
 if filelist == []:
@@ -108,6 +114,11 @@ fig.supylabel(ylabel,
               x=left_x*0.2,
               y=center_y,
               fontsize=biglabel)
+fig.text(center_x,
+         top_y*1.05,
+         title,
+         fontsize=biglabel,
+         ha="center")
 
 for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])

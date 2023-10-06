@@ -17,6 +17,7 @@ file_name = this_file.split(".")[0]
 
 numo = 11  # Number of outer plot values
 numi = 11 # Number of inner plot values
+vmin = -my.wmax
 vmax = my.wmax
 
 movie = False
@@ -44,7 +45,7 @@ def update(given, artists):
             #S = my.fitness(XX, YY, 0.0, AA, RR)
             #wsocial = my.eqw(T, R, P, S)
             #Z = wsocial - w
-            Z = P - S
+            Z = (T + S)/2.0 - R
             #Z = np.where(R < P, (T + S)/2 - P, Z)
             Z[XX >= YY] = np.nan
             
@@ -135,7 +136,7 @@ frames0 = frames[0]
 for y, alpha in enumerate(alphas):
     for x, rho in enumerate(rhos):
         artists[y, x] = axs[y, x].imshow(dummy_Z,
-                                         vmin=0.0,
+                                         vmin=vmin,
                                          vmax=vmax,
                                          aspect="auto")
 

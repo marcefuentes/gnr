@@ -23,7 +23,7 @@ title = "Reciprocity"
 vmax = my.aBmax
 
 movie = False
-plotsize = 12
+plotsize = 24
 
 # Add data to figure
 
@@ -43,18 +43,15 @@ def init(artists):
             #Rn = (R - Mi)/(Ma - Mi)
             #Pn = (P - Mi)/(Ma - Mi)
             #Sn = (S - Mi)/(Ma - Mi)
-            Tn, Rn, Pn, Sn = T, R, P, S
-            y = np.stack((Tn, Rn, Pn, Sn), axis=-1)
-            linecolor = np.full(highs.shape, "white")
-            red = np.full(highs.shape, "red")
-            m = lows > highs
-            linecolor[m] = red[m]
-
-            for (high, low, i), _ in np.ndenumerate(y):
-                artists[a, r, high, low].set_ydata(y[high, low])
-                lcolor = linecolor[high, low] 
-                artists[a, r, high, low].set_color(lcolor)
-                artists[a, r, high, low].set_markerfacecolor(lcolor)
+            for y, aBy in enumerate(aBys):
+                for x, aBx in enumerate(aBxs):
+                    if aBy > aBx:
+                        artists[a, r, y, x].set_ydata([T[y, x],
+                                                       R[y, x],
+                                                       P[y, x],
+                                                       S[y, x]])
+                    else:
+                        artists[a, r, y, x].set_ydata([0.5, 0.5, 0.5, 0.5])
 
     return artists.flatten()
 
@@ -125,6 +122,8 @@ ylabel = "Influence of $\it{B}$"
 biglabel = plotsize*4
 ticklabel = plotsize*3
 step = int(numo/2)
+xlim = [0, 5]
+ylim = [-0.1, my.wmax]
 plt.rcParams["pdf.fonttype"] = 42
 plt.rcParams["ps.fonttype"] = 42
 
@@ -176,6 +175,7 @@ fig.text(center_x,
 
 for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])
+    ax.set(xlim=xlim, ylim=ylim)
     for axis in ["top","bottom","left","right"]:
         ax.spines[axis].set_linewidth(0.1)
 for y in range(0, numo, step):
@@ -211,13 +211,15 @@ for a, alpha in enumerate(alphas):
                 ax = axs[a, r, y, x] 
                 artists[a, r, y, x], = ax.plot(xaxis,
                                                dummy_y,
-                                               linewidth=0,
+                                               linewidth=0.3,
+                                               color="white",
                                                marker="o",
-                                               markersize=plotsize/300)
+                                               markerfacecolor="white",
+                                               markersize=plotsize/40)
 
 # Add data and save figure
 
-#init(artists,)
+init(artists,)
 
 if movie:
     ani = FuncAnimation(fig,

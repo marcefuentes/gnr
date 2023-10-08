@@ -18,9 +18,9 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-trait = "wmean"
-title = "Fitness deficit"
-vmax = my.wmax
+trait = "a2Seenmean"
+title = "Reciprocity"
+vmax = my.aBmax
 
 movie = False
 plotsize = 12
@@ -30,14 +30,13 @@ plotsize = 12
 def init(artists):
 
     for a, alpha in enumerate(alphas):
-        for r, (loges, rho) in enumerate(zip(rhos, logess)):
-            lows = my.getZd(ts[0], df, alpha, loges, "a2low")
-            highs = my.getZd(ts[0], df, alpha, loges, "a2high")
-            given = df.Given.iloc[0]
-            T = my.fitness(highs, lows, given, alpha, rho)
-            R = my.fitness(highs, highs, given, alpha, rho)
-            P = my.fitness(lows, lows, given, alpha, rho)
-            S = my.fitness(lows, highs, given, alpha, rho)
+        AA = np.full((numi, numi), alpha)
+        for r, rho in enumerate(rhos):
+            RR = np.full((numi, numi), rho)
+            T = my.fitness(YY, XX, given, AA, RR)
+            R = my.fitness(YY, YY, given, AA, RR)
+            P = my.fitness(XX, XX, given, AA, RR)
+            S = my.fitness(XX, YY, given, AA, RR)
             #Ma = np.maximum.reduce([T, R, P, S])
             #Mi = np.minimum.reduce([T, R, P, S])
             #Tn = (T - Mi)/(Ma - Mi)
@@ -75,7 +74,10 @@ def update(t, artists):
                 wnone = my.getZd(t, dfnone, alpha, loges, trait)
                 Z = wsocial - wnone
             for (high, low), _ in np.ndenumerate(Z):
-                bgcolor = cm.viridis(Z[high, low]/vmax)
+                if high < low:
+                    bgcolor = np.nan
+                else:
+                    bgcolor = cm.viridis(Z[high, low]/vmax)
                 artists[a, r, high, low].axes.set_facecolor(bgcolor)
     if movie:
         fig.texts[2].set_text(t)
@@ -105,8 +107,12 @@ ts = df.Time.unique()
 alphas = np.sort(df.alpha.unique())[::-1]
 logess = np.sort(df.logES.unique())
 rhos = 1.0 - 1.0/pow(2, logess)
+given = df.Given.iloc[0]
 numo = len(alphas)
 numi = df.a2low.nunique() + 1
+aBxs = np.linspace(0.0, my.aBmax, num=numi)
+aBys = np.linspace(my.aBmax, 0.0, num=numi)
+XX, YY = np.meshgrid(aBxs, aBys)
 numi2 = int((numi + 1)/2)
 
 # Figure properties

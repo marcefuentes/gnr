@@ -31,9 +31,9 @@ plotsize = 12
 
 def update(given, artists):
     for y, alpha in enumerate(alphas):
-        AA = np.full([numi, numi], alpha)
+        AA = np.full((numi, numi), alpha)
         for x, rho in enumerate(rhos):
-            RR = np.full([numi, numi], rho)
+            RR = np.full((numi, numi), rho)
             T = my.fitness(YY, XX, given, AA, RR)
             R = my.fitness(YY, YY, given, AA, RR)
             P = my.fitness(XX, XX, given, AA, RR)

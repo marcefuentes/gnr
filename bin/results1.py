@@ -46,9 +46,8 @@ def update(t, artists):
         fig.texts[2].set_text(t)
     return artists.flatten()
 
-# Data without partner choice or reciprocity
+# Data
 
-# create a list of csv files in current directory
 if "deficit" in title:
     filelist = glob("../../none/given000/*.csv")
     if filelist == []:

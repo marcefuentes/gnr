@@ -45,7 +45,7 @@ def update(given, artists):
             #S = my.fitness(XX, YY, 0.0, AA, RR)
             #wsocial = my.eqw(T, R, P, S)
             #Z = wsocial - w
-            Z = (T + S)/2.0 - R
+            Z = R - (T + S)/2
             #Z = np.where(R < P, (T + S)/2 - P, Z)
             Z[XX >= YY] = np.nan
             

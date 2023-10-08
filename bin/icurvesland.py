@@ -84,6 +84,11 @@ plt.rcParams["ps.fonttype"] = 42
 
 # Create figure
 
+axs = np.empty((2,
+                len(alphas),
+                len(rhos)),
+               dtype=object)
+
 fig = plt.figure(figsize=(width, height))
 outergrid = fig.add_gridspec(nrows=1,
                              ncols=2,
@@ -91,11 +96,6 @@ outergrid = fig.add_gridspec(nrows=1,
                              right=0.85,
                              top=0.8,
                              bottom=0.2)
-axs = np.empty((2,
-                len(alphas),
-                len(rhos)),
-               dtype=object)
-
 for g in range(2):
     grid = outergrid[g].subgridspec(nrows=num,
                                     ncols=num,

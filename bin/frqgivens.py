@@ -96,14 +96,15 @@ plt.rcParams["ps.fonttype"] = 42
 
 # Create figure
 
-fig = plt.figure(figsize=(width, height))
-outergrid = fig.add_gridspec(nrows=len(folders),
-                             ncols=len(titles))
 axs = np.empty((len(folders),
                 len(titles),
                 nr,
                 nc),
                 dtype=object)
+
+fig = plt.figure(figsize=(width, height))
+outergrid = fig.add_gridspec(nrows=len(folders),
+                             ncols=len(titles))
 
 for f, folder in enumerate(folders):
     for c, title in enumerate(titles):

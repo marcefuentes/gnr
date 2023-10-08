@@ -4,6 +4,7 @@ from glob import glob
 import os
 import time
 
+from matplotlib import cm
 from matplotlib.animation import FuncAnimation
 import matplotlib.pyplot as plt
 import numpy as np
@@ -17,51 +18,94 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-folders = ["given095", "given000"]
+trait = "MimicGrainmean"
+title = "Reciprocity"
+vmax = my.aBmax
+
 movie = False
-nframes = 21 # Number of frames
-plotsize = 8
+plotsize = 48
 
 # Add data to figure
 
-def update(distance, artists):
+def init(artists):
 
-    lows = aBeqs[0] + distance*(aBeqs[1] - aBeqs[0])
-    highs = aBeqs[0] + (distance + 1.0/nframes)*(aBeqs[1] - aBeqs[0])
-    T = my.fitness(highs, lows, given, AA, RR)
-    R = my.fitness(highs, highs, given, AA, RR)
-    P = my.fitness(lows, lows, given, AA, RR)
-    S = my.fitness(lows, highs, given, AA, RR)
-    Ma = np.maximum.reduce([T, R, P, S])
-    Mi = np.minimum.reduce([T, R, P, S])
-    Tn = (T - Mi)/(Ma - Mi)
-    Rn = (R - Mi)/(Ma - Mi)
-    Pn = (P - Mi)/(Ma - Mi)
-    Sn = (S - Mi)/(Ma - Mi)
-    y = np.stack((Tn, Rn, Pn, Sn), axis=-1)
+    for a, alpha in enumerate(alphas):
+        for r, rho in enumerate(rhos):
+            T = my.fitness(YY, XX, given, AA[:, :, a], RR[:, :, r])
+            R = my.fitness(YY, YY, given, AA[:, :, a], RR[:, :, r])
+            P = my.fitness(XX, XX, given, AA[:, :, a], RR[:, :, r])
+            S = my.fitness(XX, YY, given, AA[:, :, a], RR[:, :, r])
+            for y, aBy in enumerate(aBys):
+                for x, aBx in enumerate(aBxs):
+                    if aBy > aBx:
+                        artists[a, r, y, x].set_ydata([T[y, x],
+                                                       R[y, x],
+                                                       P[y, x],
+                                                       S[y, x]])
+                    else:
+                        artists[a, r, y, x].set_ydata([0.5, 0.5, 0.5, 0.5])
 
-    for (a, r, i), _ in np.ndenumerate(y):
-        artists[a, r].set_ydata(y[a, r])
+    return artists.flatten()
 
+def update(t, artists):
+    for a, alpha in enumerate(alphas):
+        for r, loges in enumerate(logess):
+            Z = my.getZd(t, df, alpha, loges, trait)
+            #a2lows = my.getZd(t, df, alpha, loges, "a2low")
+            #Z = Z - a2lows
+            if "Grain" in trait:
+                Z = 1.0 - Z
+            if "gain" in title:
+                wnull = my.getZ(t, df, "wmean")
+                Z = Z - wnull
+            if "deficit" in title:
+                wsocial = my.getZd(t, dfsocial, alpha, loges, trait)
+                wnone = my.getZd(t, dfnone, alpha, loges, trait)
+                Z = wsocial - wnone
+            for y, aBy in enumerate(aBys):
+                for x, aBx in enumerate(aBxs):
+                    if aBy <= aBx:
+                        artists[a, r, y, x].axes.set_facecolor("white")
+                    else:
+                        bgcolor = cm.viridis(Z[y, x]/vmax)
+                        artists[a, r, y, x].axes.set_facecolor(bgcolor)
+    if movie:
+        fig.texts[2].set_text(t)
     return artists.flatten()
 
 # Data
 
-aBeqs = np.empty(len(folders), dtype=object)
-for f, folder in enumerate(folders):
-    filelist = glob(os.path.join("none", folder, "*.csv"))
-    df = my.read_files(filelist, False)
-    aBeqs[f] = my.getZ(1, df, "a2Seenmean")
+if "deficit" in title:
+    filelist = glob("../../none/given000/*.csv")
+    if filelist == []:
+        print("No *.csv")
+        exit()
+    dfsocial = my.read_files(filelist, movie)
+    filelist = glob("../../none/given100/*.csv")
+    if filelist == []:
+        print("No *.csv")
+        exit()
+    dfnone = my.read_files(filelist, movie)
 
-given = df[0].Given.iloc[0]
-alphas = np.sort(pd.unique(df.alpha))[::-1]
-logess = np.sort(pd.unique(df.logES))
-nr = len(alphas)
-nc = len(logess)
-rhos = 1.0 - 1.0/pow(2.0, logess)
-RR, AA = np.meshgrid(rhos, alphas)
+filelist = glob("*.csv")
+if filelist == []:
+    print("No *.csv")
+    exit()
+df = my.read_files(filelist, movie)
 
-distances = np.linspace(0.0, 1.0 - 1.0/nframes, num=nframes)
+ts = df.Time.unique()
+alphas = np.sort(df.alpha.unique())[::-1]
+logess = np.sort(df.logES.unique())
+rhos = 1.0 - 1.0/pow(2, logess)
+given = df.Given.iloc[0]
+numo = len(alphas)
+numi = df.a2low.nunique() + 1
+AA = np.full((numi, numi, len(alphas)), alphas)
+RR = np.full((numi, numi, len(rhos)), rhos)
+aBxs = np.linspace(0.0, my.aBmax, num=numi)
+aBys = np.linspace(my.aBmax, 0.0, num=numi)
+XX, YY = np.meshgrid(aBxs, aBys)
+numi2 = int((numi + 1)/2)
 
 # Figure properties
 
@@ -69,55 +113,81 @@ width = plotsize
 height = plotsize
 xlabel = "Substitutability of $\it{B}$"
 ylabel = "Influence of $\it{B}$"
-biglabels = plotsize*5 + height/4
-ticklabels = plotsize*3.5
-xlim=[0, 5]
-ylim=[-0.1, 1.1]
-step = int(nc/2)
+biglabel = plotsize*4
+ticklabel = plotsize*3
+step = int(numo/2)
+xlim = [0, 5]
+ylim = [-0.1, my.wmax]
 plt.rcParams["pdf.fonttype"] = 42
 plt.rcParams["ps.fonttype"] = 42
 
 # Create figure
 
-fig = plt.figure(figsize=(width, height))
-grid = fig.add_gridspec(nrows=nr,
-                        ncols=nc,
-                        wspace=0,
-                        hspace=0,
-                        left=0.2,
-                        right=0.9,
-                        top=0.9,
-                        bottom=0.2)
-axs = grid.subplots()
+axs = np.empty([numo,
+                numo,
+                numi,
+                numi],
+               dtype=object)
 
-left_x = axs[0, 0].get_position().x0
-right_x = axs[-1, -1].get_position().x1
+fig = plt.figure(figsize=(width, height))
+outergrid = fig.add_gridspec(nrows=numo,
+                             ncols=numo,
+                             left=0.22,
+                             right=0.9,
+                             top=0.86,
+                             bottom=0.176,
+                             wspace=0,
+                             hspace=0)
+
+for a, alpha in enumerate(alphas):
+    for r, rho in enumerate(rhos):
+        grid = outergrid[a, r].subgridspec(nrows=numi,
+                                           ncols=numi,
+                                           wspace=0,
+                                           hspace=0)
+        axs[a, r] = grid.subplots()
+
+left_x = axs[0, 0, 0, 0].get_position().x0
+right_x = axs[-1, -1, -1, -1].get_position().x1
 center_x = (left_x + right_x) / 2
-top_y = axs[0, 0].get_position().y1
-bottom_y = axs[-1, -1].get_position().y0
+top_y = axs[0, 0, 0, 0].get_position().y1
+bottom_y = axs[-1, -1, -1, -1].get_position().y0
 center_y = (top_y + bottom_y) / 2
 fig.supxlabel(xlabel,
               x=center_x,
               y=bottom_y*0.2,
-              fontsize=biglabels)
+              fontsize=biglabel)
 fig.supylabel(ylabel,
               x=left_x*0.2,
               y=center_y,
-              fontsize=biglabels)
+              fontsize=biglabel)
+fig.text(center_x,
+         top_y*1.05,
+         title,
+         fontsize=biglabel,
+         ha="center")
 
 for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])
     ax.set(xlim=xlim, ylim=ylim)
     for axis in ["top","bottom","left","right"]:
         ax.spines[axis].set_linewidth(0.1)
-
-for i in range(0, nc, step):
-    axs[i, 0].set(yticks=[ylim[1]/2])
-    axs[i, 0].set_yticklabels([alphas[i]],
-                              fontsize=ticklabels)
-    axs[-1, i].set(xticks=[xlim[1]/2])
-    axs[-1, i].set_xticklabels([f"{logess[i]:.0f}"],
-                               fontsize=ticklabels)
+for y in range(0, numo, step):
+    axs[y, 0, numi2, 0].set_ylabel(f"{alphas[y]:.1f}",
+                                   rotation="horizontal",
+                                   horizontalalignment="right",
+                                   verticalalignment="center",
+                                   fontsize=ticklabel)
+for x in range(0, numo, step):
+    axs[-1, x, -1, numi2].set_xlabel(f"{logess[x]:.0f}",
+                                    fontsize=ticklabel)
+if movie:
+    fig.text(right_x,
+             bottom_y*0.5,
+             "t\n0",
+             fontsize=biglabel,
+             color="grey",
+             ha="right")
 
 # Assign axs objects to variables
 # (Line2D)
@@ -125,19 +195,25 @@ for i in range(0, nc, step):
 artists = np.empty_like(axs) 
 xaxis = [1, 2, 3, 4]
 dummy_y = np.zeros_like(xaxis)
-frames = distances
-frame0 = distances[0]
+frames = ts
+frames0 = frames[0]
 
 for a, alpha in enumerate(alphas):
     for r, rho in enumerate(rhos):
-        ax = axs[a, r]
-        artists[a, r], = ax.plot(xaxis,
-                                 dummy_y,
-                                 linewidth=1,
-                                 marker="o",
-                                 markersize=plotsize/3)
+        for y in range(numi):
+            for x in range(numi):
+                ax = axs[a, r, y, x] 
+                artists[a, r, y, x], = ax.plot(xaxis,
+                                               dummy_y,
+                                               linewidth=0.3,
+                                               color="white",
+                                               marker="o",
+                                               markerfacecolor="white",
+                                               markersize=plotsize/40)
 
 # Add data and save figure
+
+init(artists,)
 
 if movie:
     ani = FuncAnimation(fig,
@@ -145,10 +221,10 @@ if movie:
                         frames=frames,
                         fargs=(artists,),
                         blit=True)
-    ani.save(file_name + ".mp4", writer="ffmpeg", fps=10)
+    ani.save(f"{file_name}.mp4", writer="ffmpeg", fps=10)
 else:
-    update(frame0, artists,)
-    plt.savefig(file_name + ".png", transparent=False)
+    update(frames0, artists,)
+    plt.savefig(f"{file_name}.png", transparent=False)
 
 plt.close()
 

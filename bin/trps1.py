@@ -73,12 +73,13 @@ def update(t, artists):
                 wsocial = my.getZd(t, dfsocial, alpha, loges, trait)
                 wnone = my.getZd(t, dfnone, alpha, loges, trait)
                 Z = wsocial - wnone
-            for (high, low), _ in np.ndenumerate(Z):
-                if high < low:
-                    bgcolor = np.nan
-                else:
-                    bgcolor = cm.viridis(Z[high, low]/vmax)
-                artists[a, r, high, low].axes.set_facecolor(bgcolor)
+            for y, aBy in enumerate(aBys):
+                for x, aBx in enumerate(aBxs):
+                    if aBy <= aBx:
+                        artists[a, r, y, x].axes.set_facecolor("white")
+                    else:
+                        bgcolor = cm.viridis(Z[y, x]/vmax)
+                        artists[a, r, y, x].axes.set_facecolor(bgcolor)
     if movie:
         fig.texts[2].set_text(t)
     return artists.flatten()
@@ -129,6 +130,12 @@ plt.rcParams["ps.fonttype"] = 42
 
 # Create figure
 
+axs = np.empty([numo,
+                numo,
+                numi,
+                numi],
+               dtype=object)
+
 fig = plt.figure(figsize=(width, height))
 outergrid = fig.add_gridspec(nrows=numo,
                              ncols=numo,
@@ -138,12 +145,6 @@ outergrid = fig.add_gridspec(nrows=numo,
                              bottom=0.176,
                              wspace=0,
                              hspace=0)
-
-axs = np.empty([numo,
-                numo,
-                numi,
-                numi],
-               dtype=object)
 
 for a, alpha in enumerate(alphas):
     for r, rho in enumerate(rhos):
@@ -205,14 +206,14 @@ frames0 = frames[0]
 
 for a, alpha in enumerate(alphas):
     for r, rho in enumerate(rhos):
-        for i in range(numi):
-            for j in range(numi):
-                ax = axs[a, r, i, j] 
-                artists[a, r, i, j], = ax.plot(xaxis,
+        for y in range(numi):
+            for x in range(numi):
+                ax = axs[a, r, y, x] 
+                artists[a, r, y, x], = ax.plot(xaxis,
                                                dummy_y,
-                                               linewidth=1,
+                                               linewidth=0,
                                                marker="o",
-                                               markersize=plotsize/3)
+                                               markersize=plotsize/300)
 
 # Add data and save figure
 

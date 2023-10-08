@@ -170,7 +170,7 @@ fig.text(center_x,
 for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])
     for axis in ["top","bottom","left","right"]:
-        ax.spines[axis].set_linewidth(0.2)
+        ax.spines[axis].set_linewidth(0.1)
 for y in range(0, numo, step):
     axs[y, 0, numi2, 0].set_ylabel(f"{alphas[y]:.1f}",
                                    rotation="horizontal",

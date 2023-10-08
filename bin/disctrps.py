@@ -180,7 +180,7 @@ if movie:
     fig.text(right_x,
              bottom_y*0.5,
              "t\n0",
-             fontsize=biglabels,
+             fontsize=biglabel,
              color="grey",
              ha="right")
 
@@ -191,7 +191,7 @@ artists = np.empty_like(axs)
 xaxis = [1, 2, 3, 4]
 dummy_y = np.zeros_like(xaxis)
 frames = ts
-frame0 = ts[-1]
+frames0 = frames[0]
 
 for f, subfolder in enumerate(subfolders):
     for c, title in enumerate(titles):
@@ -214,10 +214,10 @@ if movie:
                         frames=frames,
                         fargs=(artists,),
                         blit=True)
-    ani.save(file_name + ".mp4", writer="ffmpeg", fps=10)
+    ani.save(f"{file_name}.mp4", writer="ffmpeg", fps=10)
 else:
-    update(frame0, artists,)
-    plt.savefig(file_name + ".png", transparent=False)
+    update(frames0, artists,)
+    plt.savefig(f"{file_name}.png", transparent=False)
 
 plt.close()
 

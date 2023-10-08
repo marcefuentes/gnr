@@ -18,7 +18,7 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-trait = "a2Seenmean"
+trait = "MimicGrainmean"
 title = "Reciprocity"
 vmax = my.aBmax
 

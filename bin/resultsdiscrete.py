@@ -19,7 +19,10 @@ file_name = this_file.split(".")[0]
 
 trait = "wmean"
 title = "Fitness deficit"
-vmax = my.wmax
+if "wmean" in trait:
+    vmax = my.wmax
+else:
+    vmax = my.aBmax
 
 movie = False
 plotsize = 12
@@ -38,9 +41,8 @@ def update(t, artists):
                 wnull = my.getZ(t, df, "wmean")
                 Z = Z - wnull
             if "deficit" in title:
-                wsocial = my.getZd(t, dfsocial, alpha, loges, trait)
-                wnone = my.getZd(t, dfnone, alpha, loges, trait)
-                Z = wsocial - wnone
+                Zsocial = my.getZd(t, dfsocial, alpha, loges, trait)
+                Z = Zsocial - Z
             artists[y, x].set_array(Z) 
     if movie:
         fig.texts[2].set_text(t)
@@ -54,11 +56,6 @@ if "deficit" in title:
         print("No *.csv")
         exit()
     dfsocial = my.read_files(filelist, movie)
-    filelist = glob("../../none/given100/*.csv")
-    if filelist == []:
-        print("No *.csv")
-        exit()
-    dfnone = my.read_files(filelist, movie)
 
 filelist = glob("*.csv")
 if filelist == []:
@@ -163,10 +160,10 @@ if movie:
                         frames=frames,
                         fargs=(artists,),
                         blit=True)
-    ani.save(f"{file_name}.mp4", writer="ffmpeg", fps=10)
+    ani.save(f"{title}.mp4", writer="ffmpeg", fps=10)
 else:
     update(frames0, artists,)
-    plt.savefig(f"{file_name}.png", transparent=False)
+    plt.savefig(f"{title}.png", transparent=False)
 
 plt.close()
 

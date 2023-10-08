@@ -18,9 +18,12 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-trait = "MimicGrainmean"
-title = "Reciprocity"
-vmax = my.aBmax
+trait = "wmean"
+title = "Fitness deficit"
+if "wmean" in trait:
+    vmax = my.wmax
+else:
+    vmax = my.aBmax
 
 movie = False
 plotsize = 48
@@ -100,8 +103,8 @@ rhos = 1.0 - 1.0/pow(2, logess)
 given = df.Given.iloc[0]
 numo = len(alphas)
 numi = df.a2low.nunique() + 1
-AA = np.full((numi, numi, len(alphas)), alphas)
-RR = np.full((numi, numi, len(rhos)), rhos)
+AA = np.full((numi, numi, numo), alphas)
+RR = np.full((numi, numi, numo), rhos)
 aBxs = np.linspace(0.0, my.aBmax, num=numi)
 aBys = np.linspace(my.aBmax, 0.0, num=numi)
 XX, YY = np.meshgrid(aBxs, aBys)

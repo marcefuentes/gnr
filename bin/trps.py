@@ -126,10 +126,10 @@ plt.rcParams["ps.fonttype"] = 42
 
 # Create figure
 
-axs = np.empty([numo,
+axs = np.empty((numo,
                 numo,
                 numi,
-                numi],
+                numi),
                dtype=object)
 
 fig = plt.figure(figsize=(width, height))
@@ -224,10 +224,10 @@ if movie:
                         frames=frames,
                         fargs=(artists,),
                         blit=True)
-    ani.save(f"{file_name}.mp4", writer="ffmpeg", fps=10)
+    ani.save(f"{title}_trps.mp4", writer="ffmpeg", fps=10)
 else:
     update(frames0, artists,)
-    plt.savefig(f"{file_name}.png", transparent=False)
+    plt.savefig(f"{title}_trps.png", transparent=False)
 
 plt.close()
 

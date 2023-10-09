@@ -18,7 +18,7 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-trait = "MimicGrainmean"
+trait = "a2Seenmean"
 title = trait
 if "wmean" in trait:
     vmax = my.wmax
@@ -62,14 +62,15 @@ def update(t, artists):
                 wnull = my.getZ(t, df, "wmean")
                 Z = Z - wnull
             if "deficit" in title:
-                wsocial = my.getZd(t, dfsocial, alpha, loges, trait)
-                wnone = my.getZd(t, dfnone, alpha, loges, trait)
-                Z = wsocial - wnone
+                Zsocial = my.getZd(t, dfsocial, alpha, loges, trait)
+                Z = Zsocial - Z
             for y, aBy in enumerate(aBys):
                 for x, aBx in enumerate(aBxs):
                     if aBy <= aBx:
                         artists[a, r, y, x].axes.set_facecolor("white")
                     else:
+                        if "a2" in trait:
+                            Z = (Z - XX)/(YY - XX)
                         bgcolor = cm.viridis(Z[y, x]/vmax)
                         artists[a, r, y, x].axes.set_facecolor(bgcolor)
     if movie:
@@ -84,11 +85,6 @@ if "deficit" in title:
         print("No *.csv")
         exit()
     dfsocial = my.read_files(filelist, movie)
-    filelist = glob("../../none/given100/*.csv")
-    if filelist == []:
-        print("No *.csv")
-        exit()
-    dfnone = my.read_files(filelist, movie)
 
 filelist = glob("*.csv")
 if filelist == []:

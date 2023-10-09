@@ -17,7 +17,7 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-trait = "MimicGrainmean"
+trait = "a2Seenmean"
 title = trait
 if "wmean" in trait:
     vmax = my.wmax
@@ -30,8 +30,8 @@ plotsize = 12
 # Add data to figure
 
 def update(t, artists):
-    for y, alpha in enumerate(alphas):
-        for x, loges in enumerate(logess):
+    for a, alpha in enumerate(alphas):
+        for r, loges in enumerate(logess):
             Z = my.getZd(t, df, alpha, loges, trait)
             #a2lows = my.getZd(t, df, alpha, loges, "a2low")
             #Z = Z - a2lows

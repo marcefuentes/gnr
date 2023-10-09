@@ -30,27 +30,27 @@ plotsize = 12
 # Add data to figure
 
 def update(t, artists):
-    for a, alpha in enumerate(alphas):
-        for r, loges in enumerate(logess):
-            Z = my.getZd(t, df, alpha, loges, trait)
+    for i in range(numo):
+        for j in range(numo):
+            Z = my.getZd(t, df, alphas[i], logess[j], trait)
             if "Grain" in trait:
                 Z = 1.0 - Z
             if "gain" in title:
                 wnull = my.getZ(t, df, "wmean")
                 Z = Z - wnull
             if "deficit" in title:
-                Zsocial = my.getZd(t, dfsocial, alpha, loges, trait)
+                Zsocial = my.getZd(t, dfsocial, alphas[i], logess[j], trait)
                 Z = Zsocial - Z
             if "a2" in trait:
                 Z = (Z - a2lows)/(a2highs - a2lows)
-            artists[a, r].set_array(Z) 
+            artists[i, j].set_array(Z) 
     if movie:
-        fig.texts[2].set_text(t)
+        fig.texts[3].set_text(t)
     return artists.flatten()
 
 # Data
 
-if "deficit" in t itle:
+if "deficit" in title:
     filelist = glob("../../none/given000/*.csv")
     if filelist == []:
         print("No *.csv")
@@ -121,16 +121,16 @@ fig.text(center_x,
 for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])
     for axis in ["top","bottom","left","right"]:
-        ax.spines[axis].set_linewidth(0.2)
-for y in range(0, numo, step):
-    axs[y, 0].set_ylabel(f"{alphas[y]:.1f}",
+        ax.spines[axis].set_linewidth(0.1)
+for i in range(0, numo, step):
+    axs[i, 0].set_ylabel(f"{alphas[i]:.1f}",
                          rotation="horizontal",
                          horizontalalignment="right",
                          verticalalignment="center",
                          fontsize=ticklabel)
-for x in range(0, numo, step):
-    axs[-1, x].set_xlabel(f"{logess[x]:.0f}",
-                               fontsize=ticklabel)
+for j in range(0, numo, step):
+    axs[-1, j].set_xlabel(f"{logess[j]:.0f}",
+                          fontsize=ticklabel)
 if movie:
     fig.text(right_x,
              bottom_y*0.5,
@@ -147,9 +147,9 @@ dummy_Z = np.full((1, 1), 0.0)
 frames = ts
 frames0 = frames[0]
 
-for y, alpha in enumerate(alphas):
-    for x, rho in enumerate(rhos):
-        artists[y, x] = axs[y, x].imshow(dummy_Z,
+for i in range(numo):
+    for j in range(numo):
+        artists[i, j] = axs[i, j].imshow(dummy_Z,
                                          vmin=0.0,
                                          vmax=vmax,
                                          aspect="auto")

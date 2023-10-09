@@ -32,47 +32,43 @@ plotsize = 48
 
 def init(artists):
 
-    for a, alpha in enumerate(alphas):
-        for r, rho in enumerate(rhos):
-            T = my.fitness(YY, XX, given, AA[:, :, a], RR[:, :, r])
-            R = my.fitness(YY, YY, given, AA[:, :, a], RR[:, :, r])
-            P = my.fitness(XX, XX, given, AA[:, :, a], RR[:, :, r])
-            S = my.fitness(XX, YY, given, AA[:, :, a], RR[:, :, r])
-            for i, y in enumerate(ys):
-                for j, x in enumerate(xs):
-                    if y > x:
-                        artists[a, r, i, j].set_ydata([T[i, j],
-                                                       R[i, j],
-                                                       P[i, j],
-                                                       S[i, j]])
-                    else:
-                        artists[a, r, i, j].set_ydata([0.5, 0.5, 0.5, 0.5])
+    for i in range(numo):
+        for j in range(numo):
+            T = my.fitness(YY, XX, given, AA[:, :, i], RR[:, :, j])
+            R = my.fitness(YY, YY, given, AA[:, :, i], RR[:, :, j])
+            P = my.fitness(XX, XX, given, AA[:, :, i], RR[:, :, j])
+            S = my.fitness(XX, YY, given, AA[:, :, i], RR[:, :, j])
+            for k in range(numi):
+                for l in range(numi):
+                    if ys[k] > xs[l]:
+                        artists[i, j, k, l].set_ydata([T[k, l],
+                                                       R[k, l],
+                                                       P[k, l],
+                                                       S[k, l]])
 
     return artists.flatten()
 
 def update(t, artists):
-    for a, alpha in enumerate(alphas):
-        for r, loges in enumerate(logess):
-            Z = my.getZd(t, df, alpha, loges, trait)
+    for i in range(numo):
+        for j in range(numo):
+            Z = my.getZd(t, df, alphas[i], logess[j], trait)
             if "Grain" in trait:
                 Z = 1.0 - Z
             if "gain" in title:
                 wnull = my.getZ(t, df, "wmean")
                 Z = Z - wnull
             if "deficit" in title:
-                Zsocial = my.getZd(t, dfsocial, alpha, loges, trait)
+                Zsocial = my.getZd(t, dfsocial, alphas[i], logess[j], trait)
                 Z = Zsocial - Z
             if "a2" in trait:
                 Z = (Z - a2lows)/(a2highs - a2lows)
-            for i, y in enumerate(ys):
-                for j, x in enumerate(xs):
-                    if y > x:
-                        bgcolor = cm.viridis(Z[i, j]/vmax)
-                        artists[a, r, i, j].axes.set_facecolor(bgcolor)
-                    else:
-                        artists[a, r, i, j].axes.set_facecolor("white")
+            for k in range(numi):
+                for l in range(numi):
+                    if ys[k] > xs[l]:
+                        bgcolor = cm.viridis(Z[k, l]/vmax)
+                        artists[i, j, k, l].axes.set_facecolor(bgcolor)
     if movie:
-        fig.texts[2].set_text(t)
+        fig.texts[3].set_text(t)
     return artists.flatten()
 
 # Data
@@ -141,13 +137,13 @@ outergrid = fig.add_gridspec(nrows=numo,
                              wspace=0,
                              hspace=0)
 
-for a, alpha in enumerate(alphas):
-    for r, rho in enumerate(rhos):
-        grid = outergrid[a, r].subgridspec(nrows=numi,
+for i in range(numo):
+    for j in range(numo):
+        grid = outergrid[i, j].subgridspec(nrows=numi,
                                            ncols=numi,
                                            wspace=0,
                                            hspace=0)
-        axs[a, r] = grid.subplots()
+        axs[i, j] = grid.subplots()
 
 left_x = axs[0, 0, 0, 0].get_position().x0
 right_x = axs[-1, -1, -1, -1].get_position().x1
@@ -174,15 +170,15 @@ for ax in fig.get_axes():
     ax.set(xlim=xlim, ylim=ylim)
     for axis in ["top","bottom","left","right"]:
         ax.spines[axis].set_linewidth(0.1)
-for y in range(0, numo, step):
-    axs[y, 0, numi2, 0].set_ylabel(f"{alphas[y]:.1f}",
+for i in range(0, numo, step):
+    axs[i, 0, numi2, 0].set_ylabel(f"{alphas[i]:.1f}",
                                    rotation="horizontal",
                                    horizontalalignment="right",
                                    verticalalignment="center",
                                    fontsize=ticklabel)
-for x in range(0, numo, step):
-    axs[-1, x, -1, numi2].set_xlabel(f"{logess[x]:.0f}",
-                                    fontsize=ticklabel)
+for j in range(0, numo, step):
+    axs[-1, j, -1, numi2].set_xlabel(f"{logess[j]:.0f}",
+                                     fontsize=ticklabel)
 if movie:
     fig.text(right_x,
              bottom_y*0.5,
@@ -196,16 +192,16 @@ if movie:
 
 artists = np.empty_like(axs) 
 xaxis = [1, 2, 3, 4]
-dummy_y = np.zeros_like(xaxis)
+dummy_y = [0.5, 0.5, 0.5, 0.5]
 frames = ts
 frames0 = frames[0]
 
-for a, alpha in enumerate(alphas):
-    for r, rho in enumerate(rhos):
-        for y in range(numi):
-            for x in range(numi):
-                ax = axs[a, r, y, x] 
-                artists[a, r, y, x], = ax.plot(xaxis,
+for i in range(numo):
+    for j in range(numo):
+        for k in range(numi):
+            for l in range(numi):
+                ax = axs[i, j, k, l] 
+                artists[i, j, k, l], = ax.plot(xaxis,
                                                dummy_y,
                                                linewidth=0.3,
                                                color="white",

@@ -17,8 +17,8 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-trait = "wmean"
-title = "Fitness deficit"
+trait = "MimicGrainmean"
+title = trait
 if "wmean" in trait:
     vmax = my.wmax
 else:

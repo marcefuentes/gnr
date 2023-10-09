@@ -17,7 +17,7 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-trait = "wmean"
+trait = "a2Seenmean"
 title = trait
 if "wmean" in trait:
     vmax = my.wmax
@@ -70,7 +70,6 @@ rhos = 1.0 - 1.0/pow(2, logess)
 numo = len(alphas)
 a2highs = my.getZd(ts[0], df, alphas[0], logess[0], "a2high")
 a2lows = my.getZd(ts[0], df, alphas[0], logess[0], "a2low")
-numi = df.a2high.nunique()
 
 # Figure properties
 
@@ -143,7 +142,7 @@ if movie:
 # (AxesImage)
 
 artists = np.empty_like(axs) 
-dummy_Z = np.full((numi, numi), 0.0)
+dummy_Z = np.full((1, 1), 0.0)
 frames = ts
 frames0 = frames[0]
 

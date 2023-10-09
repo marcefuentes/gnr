@@ -17,7 +17,7 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-trait = "a2Seenmean"
+trait = "wmean"
 title = trait
 if "wmean" in trait:
     vmax = my.wmax
@@ -33,8 +33,6 @@ def update(t, artists):
     for a, alpha in enumerate(alphas):
         for r, loges in enumerate(logess):
             Z = my.getZd(t, df, alpha, loges, trait)
-            #a2lows = my.getZd(t, df, alpha, loges, "a2low")
-            #Z = Z - a2lows
             if "Grain" in trait:
                 Z = 1.0 - Z
             if "gain" in title:
@@ -43,7 +41,9 @@ def update(t, artists):
             if "deficit" in title:
                 Zsocial = my.getZd(t, dfsocial, alpha, loges, trait)
                 Z = Zsocial - Z
-            artists[y, x].set_array(Z) 
+            if "a2" in trait:
+                Z = (Z - a2lows)/(a2highs - a2lows)
+            artists[a, r].set_array(Z) 
     if movie:
         fig.texts[2].set_text(t)
     return artists.flatten()
@@ -68,7 +68,9 @@ alphas = np.sort(df.alpha.unique())[::-1]
 logess = np.sort(df.logES.unique())
 rhos = 1.0 - 1.0/pow(2, logess)
 numo = len(alphas)
-numi = df.a2low.nunique()
+a2highs = my.getZd(ts[0], df, alphas[0], logess[0], "a2high")
+a2lows = my.getZd(ts[0], df, alphas[0], logess[0], "a2low")
+numi = df.a2high.nunique()
 
 # Figure properties
 
@@ -141,7 +143,7 @@ if movie:
 # (AxesImage)
 
 artists = np.empty_like(axs) 
-dummy_Z = np.full([numi, numi], 0.0)
+dummy_Z = np.full((numi, numi), 0.0)
 frames = ts
 frames0 = frames[0]
 

@@ -38,15 +38,15 @@ def init(artists):
             R = my.fitness(YY, YY, given, AA[:, :, a], RR[:, :, r])
             P = my.fitness(XX, XX, given, AA[:, :, a], RR[:, :, r])
             S = my.fitness(XX, YY, given, AA[:, :, a], RR[:, :, r])
-            for y, aBy in enumerate(aBys):
-                for x, aBx in enumerate(aBxs):
-                    if aBy > aBx:
-                        artists[a, r, y, x].set_ydata([T[y, x],
-                                                       R[y, x],
-                                                       P[y, x],
-                                                       S[y, x]])
+            for i, y in enumerate(ys):
+                for j, x in enumerate(xs):
+                    if y > x:
+                        artists[a, r, i, j].set_ydata([T[i, j],
+                                                       R[i, j],
+                                                       P[i, j],
+                                                       S[i, j]])
                     else:
-                        artists[a, r, y, x].set_ydata([0.5, 0.5, 0.5, 0.5])
+                        artists[a, r, i, j].set_ydata([0.5, 0.5, 0.5, 0.5])
 
     return artists.flatten()
 
@@ -54,8 +54,6 @@ def update(t, artists):
     for a, alpha in enumerate(alphas):
         for r, loges in enumerate(logess):
             Z = my.getZd(t, df, alpha, loges, trait)
-            #a2lows = my.getZd(t, df, alpha, loges, "a2low")
-            #Z = Z - a2lows
             if "Grain" in trait:
                 Z = 1.0 - Z
             if "gain" in title:
@@ -64,15 +62,15 @@ def update(t, artists):
             if "deficit" in title:
                 Zsocial = my.getZd(t, dfsocial, alpha, loges, trait)
                 Z = Zsocial - Z
-            for y, aBy in enumerate(aBys):
-                for x, aBx in enumerate(aBxs):
-                    if aBy <= aBx:
-                        artists[a, r, y, x].axes.set_facecolor("white")
+            if "a2" in trait:
+                Z = (Z - a2lows)/(a2highs - a2lows)
+            for i, y in enumerate(ys):
+                for j, x in enumerate(xs):
+                    if y > x:
+                        bgcolor = cm.viridis(Z[i, j]/vmax)
+                        artists[a, r, i, j].axes.set_facecolor(bgcolor)
                     else:
-                        if "a2" in trait:
-                            Z = (Z - XX)/(YY - XX)
-                        bgcolor = cm.viridis(Z[y, x]/vmax)
-                        artists[a, r, y, x].axes.set_facecolor(bgcolor)
+                        artists[a, r, i, j].axes.set_facecolor("white")
     if movie:
         fig.texts[2].set_text(t)
     return artists.flatten()
@@ -93,18 +91,23 @@ if filelist == []:
 df = my.read_files(filelist, movie)
 
 ts = df.Time.unique()
+given = df.Given.iloc[0]
 alphas = np.sort(df.alpha.unique())[::-1]
 logess = np.sort(df.logES.unique())
 rhos = 1.0 - 1.0/pow(2, logess)
-given = df.Given.iloc[0]
 numo = len(alphas)
-numi = df.a2low.nunique() + 1
+if "a2" in trait:
+    a2highs = my.getZd(ts[0], df, alphas[0], logess[0], "a2high")
+    a2lows = my.getZd(ts[0], df, alphas[0], logess[0], "a2low")
+ys = np.sort(df.a2high.unique())[::-1]
+xs = np.sort(df.a2low.unique())
+ys = np.append(ys, 0.0)
+xs = np.append(xs, my.aBmax)
+XX, YY = np.meshgrid(xs, ys)
+numi = len(ys)
 AA = np.full((numi, numi, numo), alphas)
 RR = np.full((numi, numi, numo), rhos)
-aBxs = np.linspace(0.0, my.aBmax, num=numi)
-aBys = np.linspace(my.aBmax, 0.0, num=numi)
-XX, YY = np.meshgrid(aBxs, aBys)
-numi2 = int((numi + 1)/2)
+numi2 = int(numi/2)
 
 # Figure properties
 

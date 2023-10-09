@@ -50,7 +50,7 @@ def update(t, artists):
 
 # Data
 
-if "deficit" in title:
+if "deficit" in t itle:
     filelist = glob("../../none/given000/*.csv")
     if filelist == []:
         print("No *.csv")
@@ -68,8 +68,9 @@ alphas = np.sort(df.alpha.unique())[::-1]
 logess = np.sort(df.logES.unique())
 rhos = 1.0 - 1.0/pow(2, logess)
 numo = len(alphas)
-a2highs = my.getZd(ts[0], df, alphas[0], logess[0], "a2high")
-a2lows = my.getZd(ts[0], df, alphas[0], logess[0], "a2low")
+if "a2" in trait:
+    a2highs = my.getZd(ts[0], df, alphas[0], logess[0], "a2high")
+    a2lows = my.getZd(ts[0], df, alphas[0], logess[0], "a2low")
 
 # Figure properties
 

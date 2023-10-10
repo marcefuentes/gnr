@@ -19,10 +19,7 @@ numi = 11 # Number of inner plot values
 numo = 11  # Number of outer plot values
 
 movie = False
-if movie:
-    givens = np.linspace(0.0, 1.0, num=41)
-else:
-    givens = [1.00]
+givens = np.linspace(0.0, 1.0, num=41)
 plotsize = 12
 
 # Add data to figure
@@ -35,7 +32,7 @@ def update(given, artists):
             P = my.fitness(XX, XX, given, alpha, rho)
             S = my.fitness(XX, YY, given, alpha, rho)
             Z = my.gamecolors(T, R, P, S)
-            Z[XX >= YY] = [0.9, 0.9, 0.9, 1.0]
+            Z[XX >= YY] = [1.0, 1.0, 1.0, 1.0]
             artists[i, j].set_array(Z)
     if movie:
         fig.texts[2].set_text(f"{given:.2f}")
@@ -118,7 +115,6 @@ if movie:
 artists = np.empty_like(axs) 
 dummy_Z = np.full((numi, numi, 4), my.colormap["greyTS"])
 frames = givens
-frames0 = frames[0]
 
 for y, alpha in enumerate(alphas):
     for x, rho in enumerate(rhos):
@@ -135,7 +131,7 @@ if movie:
                         blit=True)
     ani.save(f"{file_name}.mp4", writer="ffmpeg", fps=10)
 else:
-    update(frames0, artists,)
+    update(frames[-1], artists,)
     plt.savefig(f"{file_name}.png", transparent=False)
 
 plt.close()

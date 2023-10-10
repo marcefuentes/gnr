@@ -145,7 +145,6 @@ if movie:
 artists = np.empty_like(axs) 
 dummy_Z = np.full((1, 1), 0.0)
 frames = ts
-frames0 = frames[-1]
 
 for i in range(numo):
     for j in range(numo):
@@ -164,7 +163,7 @@ if movie:
                         blit=True)
     ani.save(f"{title}.mp4", writer="ffmpeg", fps=10)
 else:
-    update(frames0, artists,)
+    update(frames[-1], artists,)
     plt.savefig(f"{title}.png", transparent=False)
 
 plt.close()

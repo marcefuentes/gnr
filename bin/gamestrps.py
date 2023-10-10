@@ -1,14 +1,11 @@
 #! /usr/bin/env python
 
-from glob import glob
 import os
 import time
 
-from matplotlib import cm
 from matplotlib.animation import FuncAnimation
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 
 import mymodule as my
 
@@ -18,19 +15,16 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-trait = "a2Seenmean"
-title = trait
-if "wmean" in trait:
-    vmax = my.wmax
-else:
-    vmax = my.aBmax
+numi = 11 # Number of inner plot values
+numo = 11  # Number of outer plot values
 
 movie = False
+givens = np.linspace(0.0, 1.0, num=41)
 plotsize = 48
 
 # Add data to figure
 
-def init(artists):
+def update(given, artists):
     for i, alpha in enumerate(alphas):
         for j, rho in enumerate(rhos):
             for k, y in enumerate(ys):
@@ -40,61 +34,20 @@ def init(artists):
                         R = my.fitness(y, y, given, alpha, rho)
                         P = my.fitness(x, x, given, alpha, rho)
                         S = my.fitness(x, y, given, alpha, rho)
+                        Z = my.gamecolors(T, R, P, S)
                         artists[i, j, k, l].set_ydata([T, R, P, S])
-    return artists.flatten()
-
-def update(t, artists):
-    for i, alpha in enumerate(alphas):
-        for j, loges in enumerate(logess):
-            Z = my.getZd(t, df, alpha, loges, trait)
-            if "Grain" in trait:
-                Z = 1.0 - Z
-            if "gain" in title:
-                wnull = my.getZ(t, df, "wmean")
-                Z = Z - wnull
-            if "deficit" in title:
-                Zsocial = my.getZd(t, dfsocial, alpha, loges, trait)
-                Z = Zsocial - Z
-            if "a2" in trait:
-                Z = (Z - a2lows)/(a2highs - a2lows)
-                if (alpha == 0.1) and (loges == -5.0):
-                    print(Z)
-            for k, y in enumerate(ys):
-                for l, x in enumerate(xs):
-                    if y > x:
-                        bgcolor = cm.viridis(Z[k, l]/vmax)
-                        artists[i, j, k, l].axes.set_facecolor(bgcolor)
+                        artists[i, j, k, l].axes.set_facecolor(Z)
     if movie:
         fig.texts[3].set_text(t)
     return artists.flatten()
 
 # Data
 
-if "deficit" in title:
-    filelist = glob("../../none/given000/*.csv")
-    if filelist == []:
-        print("No *.csv")
-        exit()
-    dfsocial = my.read_files(filelist, movie)
-
-filelist = glob("*.csv")
-if filelist == []:
-    print("No *.csv")
-    exit()
-df = my.read_files(filelist, movie)
-
-ts = df.Time.unique()
-given = df.Given.iloc[0]
-alphas = np.sort(df.alpha.unique())[::-1]
-logess = np.sort(df.logES.unique())
+alphas = np.linspace(my.alphamax, my.alphamin, num=numo)
+logess = np.linspace(my.logesmin, my.logesmax, num=numo)
 rhos = 1.0 - 1.0/pow(2, logess)
-numo = len(alphas)
-if "a2" in trait:
-    a2highs = my.getZd(ts[0], df, alphas[0], logess[0], "a2high")
-    a2lows = my.getZd(ts[0], df, alphas[0], logess[0], "a2low")
-ys = np.sort(df.a2high.unique())[::-1]
-xs = np.sort(df.a2low.unique())
-numi = len(ys) + 1
+ys = np.linspace(my.aBmax, 0.0, num=numi)
+xs = np.linspace(0.0, my.aBmax, num=numi)
 numi2 = int(numi/2)
 
 # Figure properties
@@ -151,11 +104,6 @@ fig.supylabel(ylabel,
               x=left_x*0.2,
               y=center_y,
               fontsize=biglabel)
-fig.text(center_x,
-         top_y*1.05,
-         title,
-         fontsize=biglabel,
-         ha="center")
 
 for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])
@@ -185,7 +133,7 @@ if movie:
 artists = np.empty_like(axs) 
 xaxis = [1, 2, 3, 4]
 dummy_y = [0.5, 0.5, 0.5, 0.5]
-frames = ts
+frames = givens
 
 for i in range(numo):
     for j in range(numo):
@@ -202,18 +150,16 @@ for i in range(numo):
 
 # Add data and save figure
 
-init(artists,)
-
 if movie:
     ani = FuncAnimation(fig,
                         update,
                         frames=frames,
                         fargs=(artists,),
                         blit=True)
-    ani.save(f"{title}_trps.mp4", writer="ffmpeg", fps=10)
+    ani.save(f"{file_name}.mp4", writer="ffmpeg", fps=10)
 else:
     update(frames[-1], artists,)
-    plt.savefig(f"{title}_trps.png", transparent=False)
+    plt.savefig(f"{file_name}.png", transparent=False)
 
 plt.close()
 

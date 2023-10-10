@@ -18,7 +18,7 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-trait = "MimicGrainmean"
+trait = "ChooseGrainmean"
 title = trait
 if "wmean" in trait:
     vmax = my.wmax

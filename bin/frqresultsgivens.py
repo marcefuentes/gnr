@@ -169,7 +169,6 @@ artists = np.empty_like(axs)
 x = np.arange(64)
 dummy_y = np.zeros_like(x)
 frames = ts
-frame0 = ts[-1]
 
 for folder in folders:
     for g, given in enumerate(givens):
@@ -197,7 +196,7 @@ for folder in folders:
                             blit=True)
         ani.save(f"{file_name}_{folder}.mp4", writer="ffmpeg", fps=10)
     else:
-        update(frame0, artists,)
+        update(frames[-1], artists,)
         plt.savefig(f"{file_name}_{folder}.png", transparent=False)
 
 plt.close()

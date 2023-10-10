@@ -171,7 +171,6 @@ artists = np.empty_like(axs)
 x = np.arange(64)
 dummy_y = np.zeros_like(x)
 frames = ts
-frame0 = ts[-1]
 
 for r, row in enumerate(rows):
     for c, title in enumerate(titles):
@@ -198,7 +197,7 @@ if movie:
                         blit=True)
     ani.save(f"{file_name}_{given}.mp4", writer="ffmpeg", fps=10)
 else:
-    update(frame0, artists,)
+    update(frames[-1], artists,)
     plt.savefig(f"{file_name}_{given}.png", transparent=False)
 
 plt.close()

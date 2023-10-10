@@ -147,7 +147,6 @@ if movie:
 artists = np.empty_like(axs) 
 dummy_Z = np.zeros((nr, nc))
 frames = ts
-frame0 = ts[-1]
 
 for mechanism in mechanisms:
     for g, given in enumerate(givens):
@@ -166,7 +165,7 @@ for mechanism in mechanisms:
                             blit=True)
         ani.save(f"{file_name}_{mechanism}.mp4", writer="ffmpeg", fps=10)
     else:
-        update(frame0, artists,)
+        update(frames[-1], artists,)
         plt.savefig(f"{file_name}_{mechanism}.png", transparent=False)
 
 plt.close()

@@ -28,17 +28,15 @@ plotsize = 12
 # Add data to figure
 
 def update(given, artists):
-    for y, alpha in enumerate(alphas):
-        AA = np.full([numi, numi], alpha)
-        for x, rho in enumerate(rhos):
-            RR = np.full([numi, numi], rho)
-            T = my.fitness(YY, XX, given, AA, RR)
-            R = my.fitness(YY, YY, given, AA, RR)
-            P = my.fitness(XX, XX, given, AA, RR)
-            S = my.fitness(XX, YY, given, AA, RR)
+    for i, alpha in enumerate(alphas):
+        for j, rho in enumerate(rhos):
+            T = my.fitness(YY, XX, given, alpha, rho)
+            R = my.fitness(YY, YY, given, alpha, rho)
+            P = my.fitness(XX, XX, given, alpha, rho)
+            S = my.fitness(XX, YY, given, alpha, rho)
             Z = my.gamecolors(T, R, P, S)
             Z[XX >= YY] = [0.9, 0.9, 0.9, 1.0]
-            artists[y, x].set_array(Z)
+            artists[i, j].set_array(Z)
     if movie:
         fig.texts[2].set_text(f"{given:.2f}")
     return artists.flatten()
@@ -48,9 +46,9 @@ def update(given, artists):
 alphas = np.linspace(my.alphamax, my.alphamin, num=numo)
 logess = np.linspace(my.logesmin, my.logesmax, num=numo)
 rhos = 1.0 - 1.0/pow(2, logess)
-aBys = np.linspace(my.aBmax, 0.0, num=numi)
-aBxs = np.linspace(0.0, my.aBmax, num=numi)
-XX, YY = np.meshgrid(aBxs, aBys)
+ys = np.linspace(my.aBmax, 0.0, num=numi)
+xs = np.linspace(0.0, my.aBmax, num=numi)
+XX, YY = np.meshgrid(xs, ys)
 
 # Figure properties
 
@@ -97,14 +95,14 @@ for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])
     for axis in ["top","bottom","left","right"]:
         ax.spines[axis].set_linewidth(0.2)
-for y in range(0, numo, step):
-    axs[y, 0].set_ylabel(f"{alphas[y]:.1f}",
+for i in range(0, numo, step):
+    axs[i, 0].set_ylabel(f"{alphas[i]:.1f}",
                          rotation="horizontal",
                          horizontalalignment="right",
                          verticalalignment="center",
                          fontsize=ticklabel)
-for x in range(0, numo, step):
-    axs[-1, x].set_xlabel(f"{logess[x]:.0f}",
+for j in range(0, numo, step):
+    axs[-1, j].set_xlabel(f"{logess[j]:.0f}",
                           fontsize=ticklabel)
 if movie:
     fig.text(right_x,

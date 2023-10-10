@@ -21,14 +21,15 @@ repeats = 1.0/(1.0 - pow(1.0 - deathrate, 2.0))
 
 colormap = {
     "transparent":  (1.0, 1.0, 1.0, 0.0),
+    "red":          (1.0, 0.0, 0.0, 1.0),
     "white" :       (1.0, 1.0, 1.0, 1.0),
     "grey" :        (0.7, 0.7, 0.7, 1.0),
     "greyTS" :      (0.9, 0.9, 0.9, 1.0),
-    "red" :         (0.7, 0.1, 0.1, 1.0),
-    "redTS" :       (1.0, 0.5, 0.5, 1.0),
-    "harmonyTS" :   (1.0, 0.0, 0.0, 1.0),
+    "harmonyTS" :   (1.0, 0.5, 0.9, 1.0),
     "snowdrift" :   (0.7, 0.0, 0.7, 1.0),
     "snowdriftTS" : (1.0, 0.3, 1.0, 1.0),
+    "drift" :       (0.7, 0.5, 0.7, 1.0),
+    "driftTS" :     (1.0, 0.7, 1.0, 1.0),
     "leader" :      (1.0, 0.3, 0.5, 1.0),
     "prisoner" :    (0.0, 0.1, 0.3, 1.0),
     "prisonerTS" :  (0.3, 0.5, 0.8, 1.0),
@@ -36,12 +37,8 @@ colormap = {
     "deadlock" :    (0.9, 1.0, 0.9, 1.0),
 }
 
-def red(T, R, P, S):
-    m = (P == S)
-    return m
-
 def harmony(T, R, P, S):
-    m = (T < R) & (R > P) & (P < S)
+    m = (T < R) & (R > P) & (P <= S)
     return m
 
 def deadlock(T, R, P, S):
@@ -49,11 +46,15 @@ def deadlock(T, R, P, S):
     return m
 
 def prisoner(T, R, P, S):
-    m = (T > R) & (R > P) & (P > S)
+    m = ((T > R) & (R > P) & (P >= S)) 
     return m
 
 def snowdrift(T, R, P, S):
     m = (T > R) & (R > P) & (P < S)
+    return m
+
+def drift(T, R, P, S):
+    m = (T == R) & (R > P) & (P == S)
     return m
 
 def leader(T, R, P, S):
@@ -75,13 +76,6 @@ def nodilemma(T, R, P, S):
 def diagonal(T, R, P, S):
     m = (T == R) & (R == P) & (P == S)
     return m
-
-def redcolors(T, R, P, S, Z):
-    m = red(T, R, P, S)
-    Z[m] = colormap["red"]
-    Z[TS(m, T, R, S)] = colormap["redTS"]
-    Z[diagonal(T, R, P, S)] = colormap["white"]
-    return Z
 
 def harmonycolors(T, R, P, S, Z):
     m = harmony(T, R, P, S)
@@ -116,6 +110,13 @@ def snowdriftcolors(T, R, P, S, Z):
     Z[diagonal(T, R, P, S)] = colormap["white"]
     return Z
 
+def driftcolors(T, R, P, S, Z):
+    m = drift(T, R, P, S)
+    Z[m] = colormap["drift"]
+    Z[TS(m, T, R, S)] = colormap["driftTS"]
+    Z[diagonal(T, R, P, S)] = colormap["white"]
+    return Z
+
 def leadercolors(T, R, P, S, Z):
     m = leader(T, R, P, S)
     Z[m] = colormap["leader"]
@@ -136,11 +137,11 @@ def nodilemmacolorsg(T, R, P, S):
 
 def gamecolors(T, R, P, S):
     Z = np.full([*T.shape, 4], colormap["red"])
-    Z = redcolors(T, R, P, S, Z)
     Z = harmonycolors(T, R, P, S, Z)
     Z = deadlockcolors(T, R, P, S, Z)
     Z = prisonercolors(T, R, P, S, Z)
     Z = snowdriftcolors(T, R, P, S, Z)
+    Z = driftcolors(T, R, P, S, Z)
     Z = leadercolors(T, R, P, S, Z)
     return Z
 

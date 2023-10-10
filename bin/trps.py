@@ -57,6 +57,8 @@ def update(t, artists):
                 Z = Zsocial - Z
             if "a2" in trait:
                 Z = (Z - a2lows)/(a2highs - a2lows)
+                if (alpha == 0.1) and (loges == -5.0):
+                    print(Z)
             for k, y in enumerate(ys):
                 for l, x in enumerate(xs):
                     if y > x:

@@ -15,7 +15,7 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-numi = 11 # Number of inner plot values
+numi = 256 # Number of inner plot values
 numo = 11  # Number of outer plot values
 
 movie = False
@@ -91,7 +91,7 @@ fig.supylabel(ylabel,
 for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])
     for axis in ["top","bottom","left","right"]:
-        ax.spines[axis].set_linewidth(0.2)
+        ax.spines[axis].set_linewidth(0.1)
 for i in range(0, numo, step):
     axs[i, 0].set_ylabel(f"{alphas[i]:.1f}",
                          rotation="horizontal",

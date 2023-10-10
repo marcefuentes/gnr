@@ -25,6 +25,7 @@ colormap = {
     "white" :       (1.0, 1.0, 1.0, 1.0),
     "grey" :        (0.7, 0.7, 0.7, 1.0),
     "greyTS" :      (0.9, 0.9, 0.9, 1.0),
+    "harmony" :     (1.0, 0.9, 1.0, 1.0),
     "harmonyTS" :   (1.0, 0.8, 0.9, 1.0),
     "snowdrift" :   (0.7, 0.0, 0.7, 1.0),
     "snowdriftTS" : (1.0, 0.3, 1.0, 1.0),
@@ -79,14 +80,14 @@ def diagonal(T, R, P, S):
 
 def harmonycolors(T, R, P, S, Z):
     m = harmony(T, R, P, S)
-    Z[m] = colormap["white"]
-    Z[TS(m, T, P, S)] = colormap["harmonyTS"]
+    Z[m] = colormap["harmony"]
+    Z[TS(m, T, R, S)] = colormap["harmonyTS"]
     Z[diagonal(T, R, P, S)] = colormap["white"]
     return Z
 
 def deadlockcolors(T, R, P, S, Z):
     m = deadlock(T, R, P, S)
-    Z[m] = colormap["white"]
+    Z[m] = colormap["deadlock"]
     Z[TS(m, T, P, S)] = colormap["deadlockTS"]
     Z[diagonal(T, R, P, S)] = colormap["white"]
     return Z

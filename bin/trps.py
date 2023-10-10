@@ -18,8 +18,8 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-trait = "a2Seenmean"
-title = trait
+trait = "wmean"
+title = trait + "_deficit"
 if "wmean" in trait:
     vmax = my.wmax
 else:
@@ -121,22 +121,22 @@ axs = np.empty((numo,
                dtype=object)
 
 fig = plt.figure(figsize=(width, height))
-outergrid = fig.add_gridspec(nrows=numo,
-                             ncols=numo,
-                             left=0.22,
-                             right=0.9,
-                             top=0.86,
-                             bottom=0.176,
-                             wspace=0,
-                             hspace=0)
+grid = fig.add_gridspec(nrows=numo,
+                        ncols=numo,
+                        left=0.22,
+                        right=0.9,
+                        top=0.86,
+                        bottom=0.176,
+                        wspace=0,
+                        hspace=0)
 
 for i in range(numo):
     for j in range(numo):
-        grid = outergrid[i, j].subgridspec(nrows=numi,
+        innergrid = grid[i, j].subgridspec(nrows=numi,
                                            ncols=numi,
                                            wspace=0,
                                            hspace=0)
-        axs[i, j] = grid.subplots()
+        axs[i, j] = innergrid.subplots()
 
 left_x = axs[0, 0, 0, 0].get_position().x0
 right_x = axs[-1, -1, -1, -1].get_position().x1

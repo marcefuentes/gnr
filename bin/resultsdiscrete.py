@@ -30,16 +30,16 @@ plotsize = 12
 # Add data to figure
 
 def update(t, artists):
-    for i in range(numo):
-        for j in range(numo):
-            Z = my.getZd(t, df, alphas[i], logess[j], trait)
+    for i, alpha in enumerate(alphas):
+        for j, loges in enumerate(logess):
+            Z = my.getZd(t, df, alpha, loges, trait)
             if "Grain" in trait:
                 Z = 1.0 - Z
             if "gain" in title:
                 wnull = my.getZ(t, df, "wmean")
                 Z = Z - wnull
             if "deficit" in title:
-                Zsocial = my.getZd(t, dfsocial, alphas[i], logess[j], trait)
+                Zsocial = my.getZd(t, dfsocial, alpha, loges, trait)
                 Z = Zsocial - Z
             if "a2" in trait:
                 Z = (Z - a2lows)/(a2highs - a2lows)

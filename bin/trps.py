@@ -92,10 +92,7 @@ if "a2" in trait:
     a2lows = my.getZd(ts[0], df, alphas[0], logess[0], "a2low")
 ys = np.sort(df.a2high.unique())[::-1]
 xs = np.sort(df.a2low.unique())
-ys = np.append(ys, 0.0)
-xs = np.append(xs, my.aBmax)
-XX, YY = np.meshgrid(xs, ys)
-numi = len(ys)
+numi = len(ys) + 1
 numi2 = int(numi/2)
 
 # Figure properties

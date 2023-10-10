@@ -31,40 +31,38 @@ plotsize = 48
 # Add data to figure
 
 def init(artists):
-
-    for i in range(numo):
-        for j in range(numo):
-            T = my.fitness(YY, XX, given, AA[:, :, i], RR[:, :, j])
-            R = my.fitness(YY, YY, given, AA[:, :, i], RR[:, :, j])
-            P = my.fitness(XX, XX, given, AA[:, :, i], RR[:, :, j])
-            S = my.fitness(XX, YY, given, AA[:, :, i], RR[:, :, j])
-            for k in range(numi):
-                for l in range(numi):
-                    if ys[k] > xs[l]:
+    for i, alpha in enumerate(alphas):
+        for j, rho in enumerate(rhos):
+            T = my.fitness(YY, XX, given, alpha, rho)
+            R = my.fitness(YY, YY, given, alpha, rho)
+            P = my.fitness(XX, XX, given, alpha, rho)
+            S = my.fitness(XX, YY, given, alpha, rho)
+            for k, y in enumerate(ys):
+                for l, x in enumerate(xs):
+                    if y > x:
                         artists[i, j, k, l].set_ydata([T[k, l],
                                                        R[k, l],
                                                        P[k, l],
                                                        S[k, l]])
-
     return artists.flatten()
 
 def update(t, artists):
-    for i in range(numo):
-        for j in range(numo):
-            Z = my.getZd(t, df, alphas[i], logess[j], trait)
+    for i, alpha in enumerate(alphas):
+        for j, loges in enumerate(logess):
+            Z = my.getZd(t, df, alpha, loges, trait)
             if "Grain" in trait:
                 Z = 1.0 - Z
             if "gain" in title:
                 wnull = my.getZ(t, df, "wmean")
                 Z = Z - wnull
             if "deficit" in title:
-                Zsocial = my.getZd(t, dfsocial, alphas[i], logess[j], trait)
+                Zsocial = my.getZd(t, dfsocial, alpha, loges, trait)
                 Z = Zsocial - Z
             if "a2" in trait:
                 Z = (Z - a2lows)/(a2highs - a2lows)
-            for k in range(numi):
-                for l in range(numi):
-                    if ys[k] > xs[l]:
+            for k, y in enumerate(ys):
+                for l, x in enumerate(xs):
+                    if y > x:
                         bgcolor = cm.viridis(Z[k, l]/vmax)
                         artists[i, j, k, l].axes.set_facecolor(bgcolor)
     if movie:

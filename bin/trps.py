@@ -33,17 +33,14 @@ plotsize = 48
 def init(artists):
     for i, alpha in enumerate(alphas):
         for j, rho in enumerate(rhos):
-            T = my.fitness(YY, XX, given, alpha, rho)
-            R = my.fitness(YY, YY, given, alpha, rho)
-            P = my.fitness(XX, XX, given, alpha, rho)
-            S = my.fitness(XX, YY, given, alpha, rho)
             for k, y in enumerate(ys):
                 for l, x in enumerate(xs):
                     if y > x:
-                        artists[i, j, k, l].set_ydata([T[k, l],
-                                                       R[k, l],
-                                                       P[k, l],
-                                                       S[k, l]])
+                        T = my.fitness(y, x, given, alpha, rho)
+                        R = my.fitness(y, y, given, alpha, rho)
+                        P = my.fitness(x, x, given, alpha, rho)
+                        S = my.fitness(x, y, given, alpha, rho)
+                        artists[i, j, k, l].set_ydata([T, R, P, S])
     return artists.flatten()
 
 def update(t, artists):
@@ -99,8 +96,6 @@ ys = np.append(ys, 0.0)
 xs = np.append(xs, my.aBmax)
 XX, YY = np.meshgrid(xs, ys)
 numi = len(ys)
-AA = np.full((numi, numi, numo), alphas)
-RR = np.full((numi, numi, numo), rhos)
 numi2 = int(numi/2)
 
 # Figure properties

@@ -18,8 +18,8 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-trait = "wmean"
-title = trait + "_deficit"
+trait = "a2Seenmean"
+title = trait
 if "wmean" in trait:
     vmax = my.wmax
 else:
@@ -184,7 +184,7 @@ artists = np.empty_like(axs)
 xaxis = [1, 2, 3, 4]
 dummy_y = [0.5, 0.5, 0.5, 0.5]
 frames = ts
-frames0 = frames[0]
+frames0 = frames[-1]
 
 for i in range(numo):
     for j in range(numo):

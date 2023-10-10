@@ -145,7 +145,7 @@ if movie:
 artists = np.empty_like(axs) 
 dummy_Z = np.full((1, 1), 0.0)
 frames = ts
-frames0 = frames[0]
+frames0 = frames[-1]
 
 for i in range(numo):
     for j in range(numo):

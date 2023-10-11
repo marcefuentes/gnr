@@ -17,7 +17,7 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-factor = "S"
+factor = "TSselected"
 trait = "MimicGrainmean"
 
 movie = False
@@ -28,20 +28,29 @@ plotsize = 12
 def update(t, artists):
     df_t = df[df.Time == t]
     rhos = 1.0 - 1.0/pow(2, df_t.logES)
-    x = [my.fitness(df_t.a2high, df_t.a2low, df_t.Given, df_t.alpha, rhos),
-         my.fitness(df_t.a2high, df_t.a2high, df_t.Given, df_t.alpha, rhos),
-         my.fitness(df_t.a2low, df_t.a2low, df_t.Given, df_t.alpha, rhos),
-         my.fitness(df_t.a2low, df_t.a2high, df_t.Given, df_t.alpha, rhos)]
-    y = df_t[trait]
-    for i, artist in enumerate(artists):
-        new_offsets = np.dstack((x[i], y)).reshape(-1, 2)
-        artist.set_offsets(new_offsets)
+    T = my.fitness(df_t.a2high, df_t.a2low, df_t.Given, df_t.alpha, rhos)
+    R = my.fitness(df_t.a2high, df_t.a2high, df_t.Given, df_t.alpha, rhos)
+    P = my.fitness(df_t.a2low, df_t.a2low, df_t.Given, df_t.alpha, rhos)
+    S = my.fitness(df_t.a2low, df_t.a2high, df_t.Given, df_t.alpha, rhos)
+    e = np.array(R - P)
+    e = e.ravel()
+    f = np.array(P - S)
+    f = f.ravel()
+    y0 = np.array(df_t[trait])
+    y0 = y0.ravel()
+    x0 = np.array(R - (T + S)/2.0)
+    x0 = x0.ravel()
+    mask = (e > 0.0) & (e < 1.0) & (f > 0.0) & (f < 0.3)
+    y = y0[mask]
+    x = x0[mask]
+    new_offsets = np.dstack((x, y)).reshape(-1, 2)
+    artists.set_offsets(new_offsets)
 
     if movie:
         fig.texts[1].set_text(t)
-        return artist, fig.texts[1]
+        return artists, fig.texts[1]
     else:
-        return artist
+        return artists
 
 # Data
 
@@ -68,7 +77,7 @@ plt.rcParams["ps.fonttype"] = 42
 
 fig, ax = plt.subplots(figsize=(width, height))
 
-ax.set_xlim(0, my.wmax)
+ax.set_xlim(-my.wmax, my.wmax)
 ax.set_ylim(0, my.aBmax)
 ax.set_xlabel(factor, fontsize=biglabel)
 ax.set_ylabel(trait, fontsize=biglabel)
@@ -84,14 +93,11 @@ if movie:
 # Assign axs objects to variables
 # (Axes)
 
-dummy_x = [0.0, 0.0]
+dummy_x = [-1.0, 0.0]
 dummy_y = [0.0, 0.0] 
 frames = ts
 
-artists = [ax.scatter(dummy_x, dummy_y, s=0.4, c="green"),
-           ax.scatter(dummy_x, dummy_y, s=0.4, c="red"),
-           ax.scatter(dummy_x, dummy_y, s=0.4, c="pink"),
-           ax.scatter(dummy_x, dummy_y, s=0.4, c="skyblue")]
+artists = ax.scatter(dummy_x, dummy_y, s=0.4, c="blue")
 
 if movie:
     ani = FuncAnimation(fig,

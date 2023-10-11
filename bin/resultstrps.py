@@ -18,7 +18,7 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-trait = "ChooseGrainmean"
+trait = "MimicGrainmean"
 title = trait
 if "wmean" in trait:
     vmax = my.wmax
@@ -41,6 +41,8 @@ def init(artists):
                         P = my.fitness(x, x, given, alpha, rho)
                         S = my.fitness(x, y, given, alpha, rho)
                         artists[i, j, k, l].set_ydata([T, R, P, S])
+                        if (R < P) or (P - S > 0.3) or ((T + S)/2.0 < R) or (T - R < 0.5):
+                            artists[i, j, k, l].set_color("skyblue")
     return artists.flatten()
 
 def update(t, artists):

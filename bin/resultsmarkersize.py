@@ -40,9 +40,9 @@ def init(artists):
                         P0 = P[i, j, k, l]
                         T0 = T[i, j, k, l]
                         S0 = S[i, j, k, l]
-                        condition = (T0 > R0) & (R0 > P0) & (P0 < S0) & (T0 + S0 > R0*2.0)
+                        condition = (T0 > R0) & (R0 > P0) & (P0 < S0) & (T0 + S0 < 2*R0)
                         if condition:
-                            size = [(S0 - P0)*40]
+                            size = [(T0 - R0)*40]
                             artists[i, j, k, l].set_sizes(size)
     return artists.flatten()
 
@@ -67,7 +67,7 @@ def update(t, artists):
                         P0 = P[i, j, k, l]
                         T0 = T[i, j, k, l]
                         S0 = S[i, j, k, l]
-                        condition = (T0 > R0) & (R0 > P0) & (P0 < S0) & (T0 + S0 > R0*2.0)
+                        condition = (T0 > R0) & (R0 > P0) & (P0 < S0) & (T0 + S0 < 2*R0)
                         if condition:
                             bgcolor = cm.viridis(Z[k, l]/vmax)
                             artists[i, j, k, l].axes.set_facecolor(bgcolor)

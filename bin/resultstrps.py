@@ -36,7 +36,7 @@ def init(artists):
                         R = my.fitness(y, y, given, alpha, rho)
                         P = my.fitness(x, x, given, alpha, rho)
                         S = my.fitness(x, y, given, alpha, rho)
-                        condition = (T > R) & (R > P) & (P < S)
+                        condition = (T > R) & (R > P) & (P < S) & (T + S < 2*R)
                         artists[i, j, k, l].set_ydata([T, R, P, S])
                         if condition:
                             artists[i, j, k, l].set_color("white")

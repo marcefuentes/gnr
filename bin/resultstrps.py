@@ -40,8 +40,13 @@ def init(artists):
                         R = my.fitness(y, y, given, alpha, rho)
                         P = my.fitness(x, x, given, alpha, rho)
                         S = my.fitness(x, y, given, alpha, rho)
+                        RP = R < P
+                        PS = P - S < 0.3
+                        TSR = (T + S)/2.0 > P
                         artists[i, j, k, l].set_ydata([T, R, P, S])
-                        if (R < P) or (P - S > 0.3) or ((T + S)/2.0 < R) or (T - R < 0.5):
+                        if RP and TSR:
+                            artists[i, j, k, l].set_color("white")
+                        else:
                             artists[i, j, k, l].set_color("skyblue")
     return artists.flatten()
 

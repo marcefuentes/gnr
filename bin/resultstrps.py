@@ -114,7 +114,7 @@ biglabel = plotsize*4
 ticklabel = plotsize*3
 step = int(numo/2)
 xlim = [0, 5]
-ylim = [-0.1, my.wmax]
+ylim = [-0.1, vmax]
 plt.rcParams["pdf.fonttype"] = 42
 plt.rcParams["ps.fonttype"] = 42
 

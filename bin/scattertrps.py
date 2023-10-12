@@ -38,9 +38,9 @@ def update(t, artists):
     PS = PS.ravel()
     y0 = np.array(df_t[trait])
     y0 = y0.ravel()
-    x0 = np.array(R - (T + S)/2.0)
+    x0 = np.array(T - R)
     x0 = x0.ravel()
-    mask = (RP > 0.0) & (RP < 1.0) & (PS > 0.0) & (PS < 0.3)
+    mask = (RP < 0.0)
     y = y0[mask]
     x = x0[mask]
     new_offsets = np.dstack((x, y)).reshape(-1, 2)

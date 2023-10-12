@@ -17,9 +17,7 @@ file_name = this_file.split(".")[0]
 
 numi = 11 # Number of inner plot values
 numo = 11  # Number of outer plot values
-
 movie = False
-givens = np.linspace(0.0, 1.0, num=41)
 plotsize = 48
 
 # Add data to figure
@@ -43,6 +41,11 @@ def update(given, artists):
 
 # Data
 
+if movie:
+    givens = np.linspace(0.0, 1.0, num=41)
+else:
+    g = float(os.getcwd()[-3:])/100
+    print(f"Given: {g}")
 alphas = np.linspace(my.alphamax, my.alphamin, num=numo)
 logess = np.linspace(my.logesmin, my.logesmax, num=numo)
 rhos = 1.0 - 1.0/pow(2, logess)
@@ -133,7 +136,8 @@ if movie:
 artists = np.empty_like(axs) 
 xaxis = [1, 2, 3, 4]
 dummy_y = [0.5, 0.5, 0.5, 0.5]
-frames = givens
+if movie:
+    frames = givens
 
 for i in range(numo):
     for j in range(numo):
@@ -158,7 +162,7 @@ if movie:
                         blit=True)
     ani.save(f"{file_name}.mp4", writer="ffmpeg", fps=10)
 else:
-    update(frames[-1], artists,)
+    update(g, artists,)
     plt.savefig(f"{file_name}.png", transparent=False)
 
 plt.close()

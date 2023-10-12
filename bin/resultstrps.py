@@ -18,12 +18,8 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-trait = "MimicGrainmean"
+trait = "a2Seenmean"
 title = trait
-if "wmean" in trait:
-    vmax = my.wmax
-else:
-    vmax = my.aBmax
 
 movie = False
 plotsize = 48
@@ -40,11 +36,9 @@ def init(artists):
                         R = my.fitness(y, y, given, alpha, rho)
                         P = my.fitness(x, x, given, alpha, rho)
                         S = my.fitness(x, y, given, alpha, rho)
-                        RP = R < P
-                        PS = P - S < 0.3
-                        TSR = (T + S)/2.0 > P
+                        condition = R < P
                         artists[i, j, k, l].set_ydata([T, R, P, S])
-                        if RP and TSR:
+                        if condition:
                             artists[i, j, k, l].set_color("white")
                         else:
                             artists[i, j, k, l].set_color("skyblue")
@@ -64,8 +58,6 @@ def update(t, artists):
                 Z = Zsocial - Z
             if "a2" in trait:
                 Z = (Z - a2lows)/(a2highs - a2lows)
-                if (alpha == 0.1) and (loges == -5.0):
-                    print(Z)
             for k, y in enumerate(ys):
                 for l, x in enumerate(xs):
                     if y > x:
@@ -103,6 +95,10 @@ ys = np.sort(df.a2high.unique())[::-1]
 xs = np.sort(df.a2low.unique())
 numi = len(ys) + 1
 numi2 = int(numi/2)
+if "wmean" in trait:
+    vmax = my.wmax
+else:
+    vmax = my.aBmax
 
 # Figure properties
 

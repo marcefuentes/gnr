@@ -19,10 +19,6 @@ file_name = this_file.split(".")[0]
 
 trait = "a2Seenmean"
 title = trait
-if "wmean" in trait:
-    vmax = my.wmax
-else:
-    vmax = my.aBmax
 
 movie = False
 plotsize = 12
@@ -71,6 +67,10 @@ numo = len(alphas)
 if "a2" in trait:
     a2highs = my.getZd(ts[0], df, alphas[0], logess[0], "a2high")
     a2lows = my.getZd(ts[0], df, alphas[0], logess[0], "a2low")
+if "wmean" in trait:
+    vmax = my.wmax
+else:
+    vmax = my.aBmax
 
 # Figure properties
 

@@ -18,7 +18,7 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-trait = "a2Seenmean"
+trait = "MimicGrainmean"
 title = trait
 
 movie = False
@@ -36,7 +36,7 @@ def init(artists):
                         R = my.fitness(y, y, given, alpha, rho)
                         P = my.fitness(x, x, given, alpha, rho)
                         S = my.fitness(x, y, given, alpha, rho)
-                        condition = R < P
+                        condition = (T > R) & (R > P) & (P < S)
                         artists[i, j, k, l].set_ydata([T, R, P, S])
                         if condition:
                             artists[i, j, k, l].set_color("white")

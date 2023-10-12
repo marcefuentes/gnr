@@ -36,19 +36,10 @@ def init(artists):
             for k, y in enumerate(ys):
                 for l, x in enumerate(xs):
                     if y > x:
-                        T = my.fitness(y, x, given, alpha, rho)
-                        R = my.fitness(y, y, given, alpha, rho)
-                        P = my.fitness(x, x, given, alpha, rho)
-                        S = my.fitness(x, y, given, alpha, rho)
-                        RP = R < P
-                        PS = P - S < 0.3
-                        TSR = (T + S)/2.0 > P
-                        artists[i, j, k, l].set_ydata([T, R, P, S])
-                        if RP:
-                            artists[i, j, k, l].set_color("white")
-                            artists[i, j, k, l].set_size(T - R)
-                        else:
-                            artists[i, j, k, l].set_color("skyblue")
+                        condition = R[i, j, k, l] < P[i, j, k, l]
+                        if condition:
+                            size = [(T[i, j, k, l] - P[i, j, k, l])*10]
+                            artists[i, j, k, l].set_sizes(size)
     return artists.flatten()
 
 def update(t, artists):
@@ -65,13 +56,13 @@ def update(t, artists):
                 Z = Zsocial - Z
             if "a2" in trait:
                 Z = (Z - a2lows)/(a2highs - a2lows)
-                if (alpha == 0.1) and (loges == -5.0):
-                    print(Z)
             for k, y in enumerate(ys):
                 for l, x in enumerate(xs):
                     if y > x:
-                        bgcolor = cm.viridis(Z[k, l]/vmax)
-                        artists[i, j, k, l].axes.set_facecolor(bgcolor)
+                        condition = R[i, j, k, l] < P[i, j, k, l]
+                        if condition:
+                            bgcolor = cm.viridis(Z[k, l]/vmax)
+                            artists[i, j, k, l].axes.set_facecolor(bgcolor)
     if movie:
         fig.texts[3].set_text(t)
     return artists.flatten()
@@ -102,8 +93,22 @@ if "a2" in trait:
     a2lows = my.getZd(ts[0], df, alphas[0], logess[0], "a2low")
 ys = np.sort(df.a2high.unique())[::-1]
 xs = np.sort(df.a2low.unique())
+ysplus = np.append(ys, 0.0)
+xsplus = np.append(xs, 1.0)
+XX, YY = np.meshgrid(xsplus, ysplus)
 numi = len(ys) + 1
 numi2 = int(numi/2)
+
+T = np.zeros((numo, numo, numi, numi))
+R = np.zeros((numo, numo, numi, numi))
+P = np.zeros((numo, numo, numi, numi))
+S = np.zeros((numo, numo, numi, numi))
+for i, alpha in enumerate(alphas):
+    for j, rho in enumerate(rhos):
+        T[i, j] = my.fitness(YY, XX, given, alpha, rho)
+        R[i, j] = my.fitness(YY, YY, given, alpha, rho)
+        P[i, j] = my.fitness(XX, XX, given, alpha, rho)
+        S[i, j] = my.fitness(XX, YY, given, alpha, rho)
 
 # Figure properties
 
@@ -114,8 +119,8 @@ ylabel = "Influence of $\it{B}$"
 biglabel = plotsize*4
 ticklabel = plotsize*3
 step = int(numo/2)
-xlim = [0, 5]
-ylim = [-0.1, vmax]
+xlim = [0, 1]
+ylim = [0, 1]
 plt.rcParams["pdf.fonttype"] = 42
 plt.rcParams["ps.fonttype"] = 42
 
@@ -191,8 +196,8 @@ if movie:
 # (Axes)
 
 artists = np.empty_like(axs) 
-xaxis = [2.5]
-dummy_y = [vmax/2.0]
+xaxis = [0.5]
+dummy_y = [0.5]
 frames = ts
 
 for i in range(numo):
@@ -200,12 +205,10 @@ for i in range(numo):
         for k in range(numi):
             for l in range(numi):
                 ax = axs[i, j, k, l] 
-                artists[i, j, k, l], = ax.scatter(xaxis,
-                                                  dummy_y,
-                                                  color="white",
-                                                  marker="o",
-                                                  markerfacecolor="white",
-                                                  markersize=0)
+                artists[i, j, k, l] = ax.scatter(xaxis,
+                                                 dummy_y,
+                                                 color="white",
+                                                 marker="o")
 
 # Add data and save figure
 
@@ -217,10 +220,10 @@ if movie:
                         frames=frames,
                         fargs=(artists,),
                         blit=True)
-    ani.save(f"{title}_trps.mp4", writer="ffmpeg", fps=10)
+    ani.save(f"{title}_size.mp4", writer="ffmpeg", fps=10)
 else:
     update(frames[-1], artists,)
-    plt.savefig(f"{title}_trps.png", transparent=False)
+    plt.savefig(f"{title}_size.png", transparent=False)
 
 plt.close()
 

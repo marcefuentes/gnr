@@ -78,7 +78,7 @@ plt.rcParams["ps.fonttype"] = 42
 fig, ax = plt.subplots(figsize=(width, height))
 
 ax.set_xlim(-my.wmax, my.wmax)
-ax.set_ylim(0, my.aBmax)
+ax.set_ylim(0, my.a2max)
 ax.set_xlabel(factor, fontsize=biglabel)
 ax.set_ylabel(trait, fontsize=biglabel)
 

@@ -23,7 +23,7 @@ title = trait
 if "wmean" in trait:
     vmax = my.wmax
 else:
-    vmax = my.aBmax
+    vmax = my.a2max
 
 movie = False
 plotsize = 48

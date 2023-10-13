@@ -15,8 +15,8 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-aBx = 0.20
-aBy = 0.40
+a2x = 0.20
+a2y = 0.40
 numi = 1025 # Number of inner plot values
 
 movie = False
@@ -49,8 +49,8 @@ alphas = np.linspace(ymax, ymin, num=numi)
 logess = np.linspace(xmin, xmax, num=numi)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
-XX = np.full(AA.shape, aBx)
-YY = np.full(AA.shape, aBy)
+XX = np.full(AA.shape, a2x)
+YY = np.full(AA.shape, a2y)
 
 # Figure properties
 

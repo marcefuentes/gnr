@@ -28,10 +28,10 @@ plotsize = 12
 # Add data to figure
 
 def update(given, artists):
-    for y, aBy in enumerate(aBys):
-        for x, aBx in enumerate(aBxs[:numo-y-1]):
-            XX = np.full(AA.shape, aBx)
-            YY = np.full(AA.shape, aBy)
+    for y, a2y in enumerate(a2ys):
+        for x, a2x in enumerate(a2xs[:numo-y-1]):
+            XX = np.full(AA.shape, a2x)
+            YY = np.full(AA.shape, a2y)
             T = my.fitness(YY, XX, given, AA, RR)
             R = my.fitness(YY, YY, given, AA, RR)
             P = my.fitness(XX, XX, given, AA, RR)
@@ -54,8 +54,8 @@ alphas = np.linspace(my.alphamax, my.alphamin, num=numi)
 logess = np.linspace(my.logesmin, my.logesmax, num=numi)
 rhos = 1.0 - 1.0/pow(2, logess)
 RR, AA = np.meshgrid(rhos, alphas)
-aBxs = np.linspace(0.0, my.aBmax, num=numo)
-aBys = np.linspace(my.aBmax, 0.0, num=numo)
+a2xs = np.linspace(0.0, my.a2max, num=numo)
+a2ys = np.linspace(my.a2max, 0.0, num=numo)
 
 # Figure properties
 
@@ -103,13 +103,13 @@ for ax in fig.get_axes():
     for axis in ["top","bottom","left","right"]:
         ax.spines[axis].set_linewidth(0.2)
 for y in range(0, numo, step):
-    axs[y, 0].set_ylabel(f"{aBys[y]:.1f}",
+    axs[y, 0].set_ylabel(f"{a2ys[y]:.1f}",
                          rotation="horizontal",
                          horizontalalignment="right",
                          verticalalignment="center",
                          fontsize=ticklabel)
 for x in range(0, numo, step):
-    axs[-1, x].set_xlabel(f"{aBxs[x]:.1f}",
+    axs[-1, x].set_xlabel(f"{a2xs[x]:.1f}",
                           fontsize=ticklabel)
 if movie:
     fig.text(right_x,
@@ -127,8 +127,8 @@ dummy_Z = np.full(AA.shape, 0.0)
 frames = givens
 frames0 = frames[0]
 
-for y, aBy in enumerate(aBys):
-    for x, aBx in enumerate(aBxs):
+for y, a2y in enumerate(a2ys):
+    for x, a2x in enumerate(a2xs):
         artists[y, x] = axs[y, x].imshow(dummy_Z,
                                          vmin=0.0,
                                          vmax=vmax,

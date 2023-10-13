@@ -25,7 +25,7 @@ traits = ["a2Seen",
 titles = ["Production of $\it{B}$",
           "Sensitivity for\nchoosing partner",
           "Fitness"]
-vmaxs = [my.aBmax, my.aBmax, my.wmax]
+vmaxs = [my.a2max, my.a2max, my.wmax]
 folders = ["none", "r"]
 
 subfolder = "given100"
@@ -58,7 +58,7 @@ def update(t, artists):
             artists[f, c].set_ydata(y)
             y = dmean[trait + "mean"].iloc[0]
             if "Grain" in trait:
-                y = my.aBmax - y
+                y = my.a2max - y
             bgcolor = cm.viridis(y/vmaxs[c])
             artists[f, c].axes.set_facecolor(bgcolor)
     if movie:

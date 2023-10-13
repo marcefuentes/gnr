@@ -28,9 +28,9 @@ titles = ["Partner choice",
           "Indirect\nreciprocity",
           #"Fitness gain",
           "Fitness deficit"]
-vmaxs = [my.aBmax,
-         my.aBmax,
-         my.aBmax,
+vmaxs = [my.a2max,
+         my.a2max,
+         my.a2max,
          #my.wmax,
          my.wmax]
 givens = ["given100", "given095", "given050", "given000"]

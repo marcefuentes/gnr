@@ -43,8 +43,8 @@ def update(given, artists):
 alphas = np.linspace(my.alphamax, my.alphamin, num=numo)
 logess = np.linspace(my.logesmin, my.logesmax, num=numo)
 rhos = 1.0 - 1.0/pow(2, logess)
-ys = np.linspace(my.aBmax, 0.0, num=numi)
-xs = np.linspace(0.0, my.aBmax, num=numi)
+ys = np.linspace(my.a2max, 0.0, num=numi)
+xs = np.linspace(0.0, my.a2max, num=numi)
 XX, YY = np.meshgrid(xs, ys)
 
 # Figure properties

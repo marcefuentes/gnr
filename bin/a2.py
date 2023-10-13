@@ -52,9 +52,9 @@ logess = np.linspace(my.logesmin, my.logesmax, num=numo)
 rhos = 1.0 - 1.0/pow(2, logess)
 AA = np.full((numi, numi, numo), alphas)
 RR = np.full((numi, numi, numo), rhos)
-aBxs = np.linspace(0.0, my.aBmax, num=numi)
-aBys = np.linspace(my.aBmax, 0.0, num=numi)
-XX, YY = np.meshgrid(aBxs, aBys)
+a2xs = np.linspace(0.0, my.a2max, num=numi)
+a2ys = np.linspace(my.a2max, 0.0, num=numi)
+XX, YY = np.meshgrid(a2xs, a2ys)
 
 # Figure properties
 

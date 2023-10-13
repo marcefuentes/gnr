@@ -27,9 +27,9 @@ titles = ["Production of $\it{B}$",
           "Sensitivity for\nchoosing partner",
           "Sensitivity for\nmimicking partner",
           "Fitness"]
-vmaxs = [my.aBmax,
-         my.aBmax,
-         my.aBmax,
+vmaxs = [my.a2max,
+         my.a2max,
+         my.a2max,
          my.wmax]
 rows = ["pr", "p", "r", "none"]
 given = "given100"

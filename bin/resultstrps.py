@@ -98,7 +98,7 @@ numi2 = int(numi/2)
 if "wmean" in trait:
     vmax = my.wmax
 else:
-    vmax = my.aBmax
+    vmax = my.a2max
 
 # Figure properties
 

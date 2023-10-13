@@ -6,11 +6,11 @@ import pandas as pd
 RA = 2.0
 RB = 2.0
 aAmax = 1.0
-aBmax = 1.0
-wmax = 2.0 # For RA = 2.0, RB = 2.0, aAmax = 1.0, aBmax = 1.0,
+a2max = 1.0
+wmax = 2.0 # For RA = 2.0, RB = 2.0, aAmax = 1.0, a2max = 1.0,
            # given = 1.0 and any values of alpha and rho
 Rq = RB/RA
-b = aBmax/aAmax
+b = a2max/aAmax
 alphamin = 0.1
 alphamax = 0.9
 logesmin = -5.0
@@ -147,22 +147,22 @@ def gamecolors(T, R, P, S):
     Z = leadercolors(T, R, P, S, Z)
     return Z
 
-def equilibrium(T, R, P, S, low, high, aB, weq):
+def equilibrium(T, R, P, S, low, high, a2, weq):
 
     # Harmony
     m = (R > T) & (S > P) 
-    aB[m] = high[m]
+    a2[m] = high[m]
     weq[m] = R[m]
 
     # Deadlock or prisoner"s dilemma
     m = (T >= R) & (P >= S) 
-    aB[m] = low[m]
+    a2[m] = low[m]
     weq[m] = P[m]
 
     # Snowdrift (chicken) or leader
     m = (T > R) & (S > P)
     weq[m] = (P[m] - S[m])/(R[m] - S[m] - T[m] + P[m])
-    aB[m] = high[m]*weq[m] + low[m]*(1.0 - weq[m])
+    a2[m] = high[m]*weq[m] + low[m]*(1.0 - weq[m])
     weq[m] = (T[m] + S[m])*weq[m]*(1.0 - weq[m]) + R[m]*weq[m]*weq[m] + P[m]*(1.0 - weq[m])*(1.0 - weq[m])
 
     pass
@@ -187,7 +187,7 @@ def eqw(T, R, P, S):
     return weq
 
 def fitness(x, y, given, alpha, rho):
-    qA = (aBmax - y)*RA/b
+    qA = (a2max - y)*RA/b
     qB = y*RB*(1.0 - given) + x*RB*given
     w = qA*qB
     if not isinstance(qA, np.ndarray):
@@ -206,14 +206,14 @@ def fitness(x, y, given, alpha, rho):
     w[m] = pow((1.0 - alpha[m])*pow(qA[m], rho[m]) + alpha[m]*pow(qB[m], rho[m]), 1.0/rho[m])
     return w
 
-def aBeq(given, alpha, rho):
+def a2eq(given, alpha, rho):
     if given < 1.0:
         MRT = b*Rq*(1.0 - given)
         Q = Rq*pow(MRT*alpha/(1.0 - alpha), 1.0/(rho - 1.0))
-        aB = aBmax/(1.0 + Q*b)
+        a2 = a2max/(1.0 + Q*b)
     else:
-        aB = alpha*0.0
-    return aB
+        a2 = alpha*0.0
+    return a2
 
 def indifference(qs, w, alpha, rho):
     qB = np.full(qs.shape, 1000.0)

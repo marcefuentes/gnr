@@ -25,7 +25,7 @@ titles = ["Partner choice",
           "Direct reciprocity",
           "Indirect reciprocity"]
 
-numaB = 64
+numa2 = 64
 plotsize = 6
 r = 0.1
 
@@ -34,13 +34,13 @@ r = 0.1
 filelist = glob("../../none/given000/*.csv")
 df = my.read_files(filelist, False)
 t = df.Time.iloc[0]
-aBsocials = my.getZ(t, df, "a2Seenmean")
+a2socials = my.getZ(t, df, "a2Seenmean")
 wsocials = my.getZ(t, df, "wmean")
 
 folder = os.path.basename(os.getcwd())
 filelist = glob(os.path.join("../../none", folder, "*.csv"))
 df = my.read_files(filelist, False)
-aBprivates = my.getZ(t, df, "a2Seenmean")
+a2privates = my.getZ(t, df, "a2Seenmean")
 wprivates = my.getZ(t, df, "wmean")
 
 filelist = glob("*.csv")
@@ -51,7 +51,7 @@ nr = len(alphas)
 nc = len(logess)
 rhos = 1. - 1./pow(2., logess)
 given = df.Given.iloc[0]
-xaxis = np.linspace(0.01, my.aBmax - 0.01, num=numaB)
+xaxis = np.linspace(0.01, my.a2max - 0.01, num=numa2)
 Z = np.zeros((len(traits), len(alphas), len(rhos)))
 for c, trait in enumerate(traits):
     Z[c] = my.getZ(t, df, trait)
@@ -67,7 +67,7 @@ ylabel = "Influence of $\it{B}$"
 biglabel = plotsize*4
 letterlabel = plotsize*3
 ticklabel = plotsize*3
-xlim = [0., my.aBmax]
+xlim = [0., my.a2max]
 ylim = [0., 1.]
 step = int(nr/2)
 plt.rcParams["pdf.fonttype"] = 42
@@ -141,18 +141,18 @@ for c, title in enumerate(titles):
 for a, alpha in enumerate(alphas):
     for e, rho in enumerate(rhos):
 
-        aBs = np.full(xaxis.shape, aBprivates[a, e])
+        a2s = np.full(xaxis.shape, a2privates[a, e])
 
         ax = axs[0, a, e]
         ii = my.fitness(xaxis, xaxis, given, alpha, rho)
-        ji = my.fitness(aBs, xaxis, given, alpha, rho)
-        jj = my.fitness(aBs, aBs, given, alpha, rho)
-        ij = my.fitness(xaxis, aBs, given, alpha, rho)
+        ji = my.fitness(a2s, xaxis, given, alpha, rho)
+        jj = my.fitness(a2s, a2s, given, alpha, rho)
+        ij = my.fitness(xaxis, a2s, given, alpha, rho)
         y = (jj - ii*r - ji*(1.0 - r))/((1.0 - r)*(ii - ij - ji + jj))
-        mask = xaxis < aBprivates[a, e]
+        mask = xaxis < a2privates[a, e]
         y[mask] = np.nan
         ax.plot(xaxis, y, color="white", linewidth=0.7)
-        #ax.plot(aBprivates[a, e],
+        #ax.plot(a2privates[a, e],
         #        wprivates[a, e],
         #        marker="o",
         #        markersize=1.5,
@@ -161,7 +161,7 @@ for a, alpha in enumerate(alphas):
         ax = axs[1, a, e]
         y = (my.repeats*my.cost + jj - ji)/(my.repeats*ii - ij - ji + 2.*jj - my.repeats*jj) 
         ax.plot(xaxis, y, color="white", linewidth=0.7)
-        ax.plot(aBprivates[a, e],
+        ax.plot(a2privates[a, e],
                 wprivates[a, e],
                 marker="o",
                 markersize=1.5,
@@ -169,14 +169,14 @@ for a, alpha in enumerate(alphas):
 
         ax = axs[2, a, e]
         ax.plot(xaxis, y, color="white", linewidth=0.7)
-        ax.plot(aBprivates[a, e],
+        ax.plot(a2privates[a, e],
                 wprivates[a, e],
                 marker="o",
                 markersize=1.5,
                 color="white")
 
         for c, title in enumerate(titles):
-            color = cm.viridis(Z[c, a, e]/my.aBmax)
+            color = cm.viridis(Z[c, a, e]/my.a2max)
             axs[c, a, e].set_facecolor(color)
 
 # Finish

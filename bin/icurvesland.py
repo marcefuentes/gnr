@@ -21,7 +21,7 @@ givens = [0.0]
 
 vmax = my.wmax
 num = 3     # Number of subplot rows & columns
-numaB = 256 # Number of points along each curve
+numa2 = 256 # Number of points along each curve
 n_ic = 5    # Number of indifference curves
 
 plotsize = 6
@@ -29,9 +29,9 @@ plotsize = 6
 # Add data to figure
 
 def update(given, budgets, icurves):
-    aBprivate = my.aBeq(given, AA, RR)
-    w = my.fitness(aBprivate, aBprivate, given, AA, RR)
-    qB_partner = aBprivate*my.RB
+    a2private = my.a2eq(given, AA, RR)
+    w = my.fitness(a2private, a2private, given, AA, RR)
+    qB_partner = a2private*my.RB
     budget_own = budget0*(1.0 - given)
     #axs[0, int(num/2)].title.set_text(f"{given*100:.0f}%")
 
@@ -43,8 +43,8 @@ def update(given, budgets, icurves):
             icurves[0, a, r].set_ydata(icy)
             color = cm.viridis(w[a, r]/vmax)
             icurves[0, a, r].set_color(color)
-            aBp = aBprivate[a, r]/2.0
-            landscape = my.fitness(aBp, icx/2.0, given, alpha, rho)
+            a2p = a2private[a, r]/2.0
+            landscape = my.fitness(a2p, icx/2.0, given, alpha, rho)
             icurves[1, a, r].set_ydata(landscape)
 
     return np.concatenate([budgets.flatten(), icurves.flatten()])
@@ -56,13 +56,13 @@ logess = np.linspace(my.logesmin, my.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
 a1 = np.array([0.0, my.aAmax])
 budgetx = a1*my.RA
-budget0 = (my.aBmax - my.b*a1)*my.RB
+budget0 = (my.a2max - my.b*a1)*my.RB
 icx = np.linspace(0.001*my.RA,
                   (my.aAmax - 0.001)*my.RA,
-                  num=numaB)
+                  num=numa2)
 RR, AA = np.meshgrid(rhos, alphas)
 ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
-ics = np.zeros((num, num, n_ic, numaB))
+ics = np.zeros((num, num, n_ic, numa2))
 for i, alpha in enumerate(alphas):
     for j, rho in enumerate(rhos):
         for k, w in enumerate(ws):
@@ -77,7 +77,7 @@ ylabel = "Influence of $\it{B}$"
 biglabels = plotsize*4
 ticklabels = plotsize*3
 xlim=[0.0, my.aAmax*my.RA]
-ylim=[0.0, my.aBmax*my.RB]
+ylim=[0.0, my.a2max*my.RB]
 step = int(num/2)
 plt.rcParams["pdf.fonttype"] = 42
 plt.rcParams["ps.fonttype"] = 42

@@ -71,7 +71,7 @@ def update(t, artists):
             if "Grain" in trait:
                 Z = 1.0 - Z
             for (a, l), _ in np.ndenumerate(Z):
-                bgcolor = cm.viridis(Z[a, l]/my.aBmax)
+                bgcolor = cm.viridis(Z[a, l]/my.a2max)
                 artists[f, c + 1, a, l].axes.set_facecolor(bgcolor)
     if movie:
         fig.texts[2].set_text(f"t\n{t}")

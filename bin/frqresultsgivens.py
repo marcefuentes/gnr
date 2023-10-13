@@ -27,9 +27,9 @@ titles = ["Production of $\it{B}$",
           "Sensitivity for\nchoosing partner",
           "Sensitivity for\nmimicking partner",
           "Fitness"]
-vmaxs = [my.aBmax,
-         my.aBmax,
-         my.aBmax,
+vmaxs = [my.a2max,
+         my.a2max,
+         my.a2max,
          my.wmax]
 givens = ["given100", "given095", "given050", "given000"]
 folders = ["none", "p", "p8", "pr8", "pr", "r"]

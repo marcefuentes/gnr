@@ -24,11 +24,11 @@ traits = ["ChooseGrainmean",
           "MimicGrainmean"]
 titles_traits = ["Sensitivity for\nchoosing partner",
                  "Sensitivity for\nmimicking partner"]
-vmaxs = [my.aBmax, my.aBmax]
+vmaxs = [my.a2max, my.a2max]
 folders = ["given100", "given095", "given050"]
 subfolders = ["p", "r"]
 
-numaB = 64
+numa2 = 64
 theory = False
 plotsize = 6
 
@@ -56,7 +56,7 @@ nr = len(alphas)
 nc = len(logess)
 rhos = 1. - 1./pow(2., logess)
 RR, AA = np.meshgrid(rhos, alphas)
-xaxis = np.linspace(0.01, my.aBmax - 0.01, num=numaB)
+xaxis = np.linspace(0.01, my.a2max - 0.01, num=numa2)
 
 # Figure properties
 
@@ -68,7 +68,7 @@ biglabel = plotsize*7
 midlabel = plotsize*6
 letterlabel = plotsize*5
 ticklabel = plotsize*4
-xlim = [0., my.aBmax]
+xlim = [0., my.a2max]
 ylim = [0., my.wmax]
 step = int(nr/2)
 xticks = [0, nc/2 - 0.5, nc - 1]
@@ -166,7 +166,7 @@ for f, folder in enumerate(folders):
                                                     verticalalignment="center",
                                                     fontsize=ticklabel)
         for e in range(0, nc, step):
-            axlines[f, c, -1, e].set(xticks=[my.aBmax/2.], xticklabels=[]) 
+            axlines[f, c, -1, e].set(xticks=[my.a2max/2.], xticklabels=[]) 
         if folder == folders[-1]:
             for e in range(0, nc, step):
                 axlines[-1, c, -1, e].set_xticklabels([f"{logess[e]:.0f}"],
@@ -196,31 +196,31 @@ for f, folder in enumerate(folders):
 # Add data
 
 if theory:
-    aBsocials = my.aBeq(0., AA, RR)
+    a2socials = my.a2eq(0., AA, RR)
 else:
-    aBsocials = my.getZ(t, dfsocial, "a2Seenmean")
-wss = my.fitness(aBsocials, aBsocials, 0., AA, RR) 
+    a2socials = my.getZ(t, dfsocial, "a2Seenmean")
+wss = my.fitness(a2socials, a2socials, 0., AA, RR) 
 
 for f, folder in enumerate(folders):
 
     given = dfprivates[f].Given.iloc[0]
     if theory:
-        aBprivates = my.aBeq(given, AA, RR)
+        a2privates = my.a2eq(given, AA, RR)
     else:
-        aBprivates = my.getZ(t, dfprivates[f], "a2Seenmean")
-    wps = my.fitness(aBprivates, aBprivates, given, AA, RR)
+        a2privates = my.getZ(t, dfprivates[f], "a2Seenmean")
+    wps = my.fitness(a2privates, a2privates, given, AA, RR)
 
     for a, alpha in enumerate(alphas):
         for e, rho in enumerate(rhos):
 
-            aBs = np.full(xaxis.shape, aBprivates[a, e])
+            a2s = np.full(xaxis.shape, a2privates[a, e])
 
-            y = my.fitness(aBs, xaxis, given, alpha, rho)
+            y = my.fitness(a2s, xaxis, given, alpha, rho)
             color = cm.viridis((wss[a, e] - wps[a, e])/my.wmax)
             ax = axlines[f, 0, a, e]
             ax.plot(xaxis, y, color="green", linewidth=0.7)
-            ax.plot(aBprivates[a, e], wps[a, e], marker="o", markersize=1, color="green")
-            y = my.fitness(xaxis, aBs, given, alpha, rho)
+            ax.plot(a2privates[a, e], wps[a, e], marker="o", markersize=1, color="green")
+            y = my.fitness(xaxis, a2s, given, alpha, rho)
             ax.plot(xaxis, y, color="orange", linewidth=0.7)
             color = cm.viridis((wss[a, e] - wps[a, e])/my.wmax)
             #ax.set_facecolor(color)
@@ -229,7 +229,7 @@ for f, folder in enumerate(folders):
             color = cm.viridis((my.wmax - y[0])/my.wmax)
             ax = axlines[f, 1, a, e]
             ax.plot(xaxis, y, color="green", linewidth=0.7)
-            ax.plot(aBprivates[a, e], wps[a, e], marker="o", markersize=1, color="green")
+            ax.plot(a2privates[a, e], wps[a, e], marker="o", markersize=1, color="green")
             #ax.set_facecolor(color)
 
     for c, trait in enumerate(traits):

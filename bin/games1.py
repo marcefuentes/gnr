@@ -46,12 +46,12 @@ rho = 1.0 - 1.0/pow(2, loges)
 AA = np.full([numi, numi], alpha)
 RR = np.full([numi, numi], rho)
 xmin = 0.0
-xmax = my.aBmax
+xmax = my.a2max
 ymin = 0.0
-ymax = my.aBmax
-aBys = np.linspace(xmax, xmin, num=numi)
-aBxs = np.linspace(xmin, xmax, num=numi)
-XX, YY = np.meshgrid(aBxs, aBys)
+ymax = my.a2max
+a2ys = np.linspace(xmax, xmin, num=numi)
+a2xs = np.linspace(xmin, xmax, num=numi)
+XX, YY = np.meshgrid(a2xs, a2ys)
 
 # Figure properties
 

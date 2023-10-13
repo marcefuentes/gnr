@@ -26,8 +26,8 @@ titles = ["Production of $\it{B}$",
           "Byproduct help",
           "Fitness",
           "Fitness deficit"]
-vmaxs = [my.aBmax,
-         my.aBmax,
+vmaxs = [my.a2max,
+         my.a2max,
          my.wmax,
          my.wmax]
 givens = ["given100", "given095", "given050", "given000"]

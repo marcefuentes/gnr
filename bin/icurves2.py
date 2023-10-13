@@ -19,7 +19,7 @@ givens = [1.0, 0.95, 0.5, 0.0]
 
 vmax = my.wmax
 num = 3     # Number of subplot rows & columns
-numaB = 64  # Number of points along each curve
+numa2 = 64  # Number of points along each curve
 n_ic = 5    # Number of indifference curves
 
 plotsize = 6
@@ -29,9 +29,9 @@ plotsize = 6
 def init(budgets, icurves):
 
     for g, given in enumerate(givens):
-        aBprivate = my.aBeq(given, AA, RR)
-        w = my.fitness(aBprivate, aBprivate, given, AA, RR)
-        qB_partner = aBprivate*my.RB
+        a2private = my.a2eq(given, AA, RR)
+        w = my.fitness(a2private, a2private, given, AA, RR)
+        qB_partner = a2private*my.RB
         budget_own = budget0*(1.0 - given)
 
         for a, alpha in enumerate(alphas):
@@ -52,13 +52,13 @@ logess = np.linspace(my.logesmin, my.logesmax, num=num)
 rhos = 1.0 - 1.0/pow(2, logess)
 a1 = np.array([0.0, my.aAmax])
 budgetx = a1*my.RA
-budget0 = (my.aBmax - my.b*a1)*my.RB
+budget0 = (my.a2max - my.b*a1)*my.RB
 icx = np.linspace(0.001*my.RA,
                   (my.aAmax - 0.001)*my.RA,
-                  num=numaB)
+                  num=numa2)
 RR, AA = np.meshgrid(rhos, alphas)
 ws = np.linspace(2.0/(n_ic + 1), 2.0*n_ic/(n_ic + 1), num=n_ic)
-ics = np.zeros((num, num, n_ic, numaB))
+ics = np.zeros((num, num, n_ic, numa2))
 for i, alpha in enumerate(alphas):
     for j, rho in enumerate(rhos):
         for k, w in enumerate(ws):
@@ -73,7 +73,7 @@ ylabel = "Influence of $\it{B}$"
 biglabels = plotsize*5
 ticklabels = plotsize*3
 xlim=[0.0, my.aAmax*my.RA]
-ylim=[0.0, my.aBmax*my.RB] 
+ylim=[0.0, my.a2max*my.RB] 
 step = int(num/2)
 plt.rcParams["pdf.fonttype"] = 42
 plt.rcParams["ps.fonttype"] = 42

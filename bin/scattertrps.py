@@ -17,7 +17,7 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-factor = "snowdriftTS_RP"
+factor = "snowdriftTS_TR"
 trait = "MimicGrainmean"
 
 movie = False
@@ -37,7 +37,7 @@ def update(t, artists):
     R = R.ravel()
     P = P.ravel()
     S = S.ravel()
-    x = R - P
+    x = T - R
     mask = (R > P) & (T + S > 2*R)
     new_x = x[mask]
     new_y = y[mask]

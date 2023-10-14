@@ -17,7 +17,7 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-factor = "snowdriftTS T - R"
+factor = "snowdriftTS_RP"
 trait = "MimicGrainmean"
 
 movie = False
@@ -33,7 +33,7 @@ def update(t, artists):
     P = my.fitness(df_t.a2low, df_t.a2low, df_t.Given, df_t.alpha, rhos)
     S = my.fitness(df_t.a2low, df_t.a2high, df_t.Given, df_t.alpha, rhos)
     y = df_t[trait].values.ravel()
-    x = (T - R).ravel()
+    x = (R - P).ravel()
     mask = (T + S).ravel() > 2*R.ravel()
     new_x = x[mask]
     new_y = y[mask]

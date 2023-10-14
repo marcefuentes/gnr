@@ -17,7 +17,7 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-factor = "snowdriftTS_TR"
+factor = "snowdriftTS_PS"
 trait = "MimicGrainmean"
 
 movie = False
@@ -27,18 +27,8 @@ plotsize = 12
 
 def update(t, artists):
     df_t = df[df.Time == t]
-    rhos = 1.0 - 1.0/pow(2, df_t.logES)
-    T = my.fitness(df_t.a2high, df_t.a2low, df_t.Given, df_t.alpha, rhos)
-    R = my.fitness(df_t.a2high, df_t.a2high, df_t.Given, df_t.alpha, rhos)
-    P = my.fitness(df_t.a2low, df_t.a2low, df_t.Given, df_t.alpha, rhos)
-    S = my.fitness(df_t.a2low, df_t.a2high, df_t.Given, df_t.alpha, rhos)
     y = df_t[trait].values.ravel()
-    T = T.ravel()
-    R = R.ravel()
-    P = P.ravel()
-    S = S.ravel()
-    x = T - R
-    mask = (R > P) & (T + S > 2*R)
+    mask = (R > P) & (T > R + 0.75) & (R > P) & (P < S) & (T + S > 2*R)
     new_x = x[mask]
     new_y = y[mask]
     offsets = np.column_stack((new_x, new_y))
@@ -59,6 +49,17 @@ if filelist == []:
 df = my.read_files(filelist, movie)
 
 ts = df.Time.unique()
+df_t = df[df.Time == ts[0]]
+a2highs = df_t.a2high.values.ravel()
+a2lows = df_t.a2low.values.ravel()
+givens = df_t.Given.values.ravel()
+alphas = df_t.alpha.values.ravel()
+rhos = 1.0 - 1.0/pow(2, df_t.logES.values.ravel())
+T = my.fitness(a2highs, a2lows, givens, alphas, rhos)
+R = my.fitness(a2highs, a2highs, givens, alphas, rhos)
+P = my.fitness(a2lows, a2lows, givens, alphas, rhos)
+S = my.fitness(a2lows, a2highs, givens, alphas, rhos)
+x = P - S
 
 # Figure properties
 
@@ -79,6 +80,9 @@ ax.set_xlim(-my.wmax, my.wmax)
 ax.set_ylim(0, my.a2max)
 ax.set_xlabel(factor, fontsize=biglabel)
 ax.set_ylabel(trait, fontsize=biglabel)
+
+# add gridlines on both axes
+ax.grid(True, which="both", color="grey", linestyle="--", alpha=0.5)
 
 if movie:
     fig.text(right_x,

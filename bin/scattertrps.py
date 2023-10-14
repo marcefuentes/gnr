@@ -17,7 +17,7 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-factor = "TSselected"
+factor = "snowdriftTS T - R"
 trait = "MimicGrainmean"
 
 movie = False
@@ -32,19 +32,13 @@ def update(t, artists):
     R = my.fitness(df_t.a2high, df_t.a2high, df_t.Given, df_t.alpha, rhos)
     P = my.fitness(df_t.a2low, df_t.a2low, df_t.Given, df_t.alpha, rhos)
     S = my.fitness(df_t.a2low, df_t.a2high, df_t.Given, df_t.alpha, rhos)
-    RP = np.array(R - P)
-    RP = RP.ravel()
-    PS = np.array(P - S)
-    PS = PS.ravel()
-    y0 = np.array(df_t[trait])
-    y0 = y0.ravel()
-    x0 = np.array(T - R)
-    x0 = x0.ravel()
-    mask = (RP < 0.0)
-    y = y0[mask]
-    x = x0[mask]
-    new_offsets = np.dstack((x, y)).reshape(-1, 2)
-    artists.set_offsets(new_offsets)
+    y = df_t[trait].values.ravel()
+    x = (T - R).ravel()
+    mask = (T + S).ravel() > 2*R.ravel()
+    new_x = x[mask]
+    new_y = y[mask]
+    offsets = np.column_stack((new_x, new_y))
+    artists.set_offsets(offsets)
 
     if movie:
         fig.texts[1].set_text(t)
@@ -105,10 +99,10 @@ if movie:
                         frames=frames,
                         fargs=(artists,),
                         blit=True)
-    ani.save(f"{factor}_{trait}.mp4", writer="ffmpeg", fps=10)
+    ani.save(f"{trait}_{factor}.mp4", writer="ffmpeg", fps=10)
 else:
     update(frames[-1], artists,)
-    plt.savefig(f"{factor}_{trait}.png", transparent=False)
+    plt.savefig(f"{trait}_{factor}_scatter.png", transparent=False)
 
 plt.close()
 

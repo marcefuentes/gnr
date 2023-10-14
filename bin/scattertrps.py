@@ -33,8 +33,12 @@ def update(t, artists):
     P = my.fitness(df_t.a2low, df_t.a2low, df_t.Given, df_t.alpha, rhos)
     S = my.fitness(df_t.a2low, df_t.a2high, df_t.Given, df_t.alpha, rhos)
     y = df_t[trait].values.ravel()
-    x = (R - P).ravel()
-    mask = (T + S).ravel() > 2*R.ravel()
+    T = T.ravel()
+    R = R.ravel()
+    P = P.ravel()
+    S = S.ravel()
+    x = R - P
+    mask = (R > P) & (T + S > 2*R)
     new_x = x[mask]
     new_y = y[mask]
     offsets = np.column_stack((new_x, new_y))

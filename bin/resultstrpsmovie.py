@@ -26,7 +26,7 @@ plotsize = 8
 # Add data to figure
 
 def update(t, artist, text):
-    artist.set_ydata([T[t], R[t], P[t], S[t]])
+    artist.set_ydata([T[t], R[t], S[t], P[t]])
     bgcolor = cm.viridis(traitcolors[t])
     artist.axes.set_facecolor(bgcolor)
     artist.axes.lines[0].set_ydata([(T[t] + S[t])/2, (T[t] + S[t])/2])
@@ -72,7 +72,7 @@ xlim = [0, 5]
 ylim = [0.0, my.wmax]
 xticks = [1, 2, 3, 4]
 yticks = [0.0, my.wmax/2, my.wmax]
-xticklabels = ["T", "R", "P", "S"]
+xticklabels = ["T", "R", "S", "P"]
 plt.rcParams["pdf.fonttype"] = 42
 plt.rcParams["ps.fonttype"] = 42
 
@@ -113,7 +113,7 @@ ani = FuncAnimation(fig,
                     frames=frames,
                     fargs=(artist, text),
                     blit=True)
-ani.save(f"{trait}_trps.mp4", writer="ffmpeg", fps=10)
+ani.save(f"{trait}_trps.mp4", writer="ffmpeg", fps=30)
 
 plt.close()
 

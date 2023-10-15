@@ -73,7 +73,7 @@ def update(t, artists):
                         S0 = S[i, j, k, l]
                         condition = (T0 > R0) & (R0 > P0) & (P0 < S0) & (T0 + S0 < 2*R0) & (P0 == 0.0)
                         if not condition:
-                            bgcolor = (bgcolor[0], bgcolor[1], bgcolor[2], 0.3)
+                            bgcolor = (bgcolor[0], bgcolor[1], bgcolor[2], 0.7)
                         artists[i, j, k, l].axes.set_facecolor(bgcolor)
     if movie:
         fig.texts[3].set_text(t)

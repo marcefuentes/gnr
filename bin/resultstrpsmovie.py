@@ -111,7 +111,7 @@ artist, = ax.plot(xaxis,
 ani = FuncAnimation(fig,
                     update,
                     frames=frames,
-                    fargs=(artist, text,),
+                    fargs=(artist, text),
                     blit=True)
 ani.save(f"{trait}_trps.mp4", writer="ffmpeg", fps=10)
 

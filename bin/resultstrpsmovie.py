@@ -30,7 +30,7 @@ def update(t, artist, text):
     bgcolor = cm.viridis(my.a2max - traitcolors[t])
     artist.axes.set_facecolor(bgcolor)
     artist.axes.lines[0].set_ydata([(T[t] + S[t])/2, (T[t] + S[t])/2])
-    text.set_text(f"{trait}\nalpha {alphas[t]:.1f}\nlogES  {logESs[t]:2.0f}\na2high {a2highs[t]:.1f}\na2low {a2lows[t]:.1f}")
+    text.set_text(f"{trait}: {traitcolors[t]:.1f}\nalpha {alphas[t]:.1f}\nlogES  {logESs[t]:2.0f}\na2high {a2highs[t]:.1f}\na2low {a2lows[t]:.1f}")
 
     return artist, text
 
@@ -54,7 +54,7 @@ T = my.fitness(a2highs, a2lows, givens, alphas, rhos)
 R = my.fitness(a2highs, a2highs, givens, alphas, rhos)
 P = my.fitness(a2lows, a2lows, givens, alphas, rhos)
 S = my.fitness(a2lows, a2highs, givens, alphas, rhos)
-mask = (T > R) & (R > P) & (P < S) & (T + S > 2.0*R) & (P > 0.0)
+mask = (T > R) & (R > P) & (P < S) & (T + S < 2.0*R) & (P == 0.0)
 T = T[mask]
 R = R[mask]
 P = P[mask]

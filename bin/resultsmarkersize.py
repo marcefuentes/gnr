@@ -36,14 +36,17 @@ def init(artists):
             for k, y in enumerate(ys):
                 for l, x in enumerate(xs):
                     if y > x:
+                        artists[i, j, k, l].set_color("white")
+                        artists[i, j, k, l].axes.set_facecolor("white")
                         R0 = R[i, j, k, l]
                         P0 = P[i, j, k, l]
                         T0 = T[i, j, k, l]
                         S0 = S[i, j, k, l]
-                        condition = (T0 > R0) & (R0 > P0) & (P0 < S0) & (T0 + S0 > 2.0*R0) & ( P0 == 0.0)
+                        condition = (T0 > R0) & (R0 > P0) & (P0 < S0) & (T0 + S0 < 2.0*R0) & (P0 == 0.0)
                         if condition:
-                            size = [(T0 - R0)*10]
+                            size = [(T0 - R0)*100]
                             artists[i, j, k, l].set_sizes(size)
+                        
     return artists.flatten()
 
 def update(t, artists):
@@ -67,7 +70,7 @@ def update(t, artists):
                         P0 = P[i, j, k, l]
                         T0 = T[i, j, k, l]
                         S0 = S[i, j, k, l]
-                        condition = (T0 > R0) & (R0 > P0) & (P0 < S0) & (T0 + S0 > 2*R0)
+                        condition = (T0 > R0) & (R0 > P0) & (P0 < S0) & (T0 + S0 < 2*R0) & (P0 == 0.0)
                         if condition:
                             bgcolor = cm.viridis(Z[k, l]/vmax)
                             artists[i, j, k, l].axes.set_facecolor(bgcolor)
@@ -215,8 +218,9 @@ for i in range(numo):
                 ax = axs[i, j, k, l] 
                 artists[i, j, k, l] = ax.scatter(xaxis,
                                                  dummy_y,
-                                                 color="white",
+                                                 color=(0.9, 0.9, 0.9, 1.0),
                                                  marker="o")
+                ax.set_facecolor((0.9, 0.9, 0.9, 1.0))
 
 # Add data and save figure
 

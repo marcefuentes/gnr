@@ -36,16 +36,16 @@ def init(artists):
             for k, y in enumerate(ys):
                 for l, x in enumerate(xs):
                     if y > x:
-                        artists[i, j, k, l].set_color("white")
-                        artists[i, j, k, l].axes.set_facecolor("white")
                         R0 = R[i, j, k, l]
                         P0 = P[i, j, k, l]
                         T0 = T[i, j, k, l]
                         S0 = S[i, j, k, l]
-                        condition = (T0 > R0) & (R0 > P0) & (P0 < S0) & (T0 + S0 < 2.0*R0) & (P0 == 0.0)
+                        condition = (T0 > R0) & (R0 > P0) & (P0 < S0) & (T0 + S0 < 2*R0) & (P0 == 0.0)
                         if condition:
                             size = [(T0 - R0)*100]
-                            artists[i, j, k, l].set_sizes(size)
+                        else:
+                            size = [0.0]
+                        artists[i, j, k, l].set_sizes(size)
                         
     return artists.flatten()
 
@@ -66,14 +66,15 @@ def update(t, artists):
             for k, y in enumerate(ys):
                 for l, x in enumerate(xs):
                     if y > x:
+                        bgcolor = cm.viridis(Z[k, l]/vmax)
                         R0 = R[i, j, k, l]
                         P0 = P[i, j, k, l]
                         T0 = T[i, j, k, l]
                         S0 = S[i, j, k, l]
                         condition = (T0 > R0) & (R0 > P0) & (P0 < S0) & (T0 + S0 < 2*R0) & (P0 == 0.0)
-                        if condition:
-                            bgcolor = cm.viridis(Z[k, l]/vmax)
-                            artists[i, j, k, l].axes.set_facecolor(bgcolor)
+                        if not condition:
+                            bgcolor = (bgcolor[0], bgcolor[1], bgcolor[2], 0.3)
+                        artists[i, j, k, l].axes.set_facecolor(bgcolor)
     if movie:
         fig.texts[3].set_text(t)
     return artists.flatten()
@@ -218,9 +219,8 @@ for i in range(numo):
                 ax = axs[i, j, k, l] 
                 artists[i, j, k, l] = ax.scatter(xaxis,
                                                  dummy_y,
-                                                 color=(0.9, 0.9, 0.9, 1.0),
+                                                 c="white",
                                                  marker="o")
-                ax.set_facecolor((0.9, 0.9, 0.9, 1.0))
 
 # Add data and save figure
 

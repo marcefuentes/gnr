@@ -36,12 +36,12 @@ def init(artists):
                         R = my.fitness(y, y, given, alpha, rho)
                         P = my.fitness(x, x, given, alpha, rho)
                         S = my.fitness(x, y, given, alpha, rho)
-                        condition = (T > R) & (R > P) & (P < S) & (T + S > 2*R) & (P == 0)
-                        artists[i, j, k, l].set_ydata([T, R, P, S])
+                        condition = (T > R) & (R > P) & (P < S) & (T + S > 2.0*R) & (P == 0.0)
                         if condition:
                             artists[i, j, k, l].set_color("white")
                         else:
                             artists[i, j, k, l].set_color("skyblue")
+                        artists[i, j, k, l].set_ydata([T, R, P, S])
     return artists.flatten()
 
 def update(t, artists):

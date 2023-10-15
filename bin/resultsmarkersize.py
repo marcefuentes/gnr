@@ -20,10 +20,6 @@ file_name = this_file.split(".")[0]
 
 trait = "MimicGrainmean"
 title = trait
-if "wmean" in trait:
-    vmax = my.wmax
-else:
-    vmax = my.a2max
 
 movie = False
 plotsize = 48
@@ -46,7 +42,6 @@ def init(artists):
                         else:
                             size = [0.0]
                         artists[i, j, k, l].set_sizes(size)
-                        
     return artists.flatten()
 
 def update(t, artists):
@@ -110,6 +105,10 @@ xsplus = np.append(xs, 1.0)
 XX, YY = np.meshgrid(xsplus, ysplus)
 numi = len(ys) + 1
 numi2 = int(numi/2)
+if "wmean" in trait:
+    vmax = my.wmax
+else:
+    vmax = my.a2max
 
 T = np.zeros((numo, numo, numi, numi))
 R = np.zeros((numo, numo, numi, numi))

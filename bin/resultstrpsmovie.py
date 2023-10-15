@@ -82,7 +82,7 @@ fig, ax = plt.subplots(figsize=(width, height))
 
 text = ax.text(0.95,
                0.82,
-               "dummy",
+               "dummy text",
                fontsize=ticklabel/2,
                color="white",
                ha="right",

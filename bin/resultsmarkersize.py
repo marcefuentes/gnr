@@ -32,11 +32,11 @@ def init(artists):
             for k, y in enumerate(ys):
                 for l, x in enumerate(xs):
                     if y > x:
+                        T0 = T[i, j, k, l]
                         R0 = R[i, j, k, l]
                         P0 = P[i, j, k, l]
-                        T0 = T[i, j, k, l]
                         S0 = S[i, j, k, l]
-                        condition = (T0 > R0) & (R0 > P0) & (P0 < S0) & (T0 + S0 < 2*R0) & (P0 == 0.0)
+                        condition = (T0 > R0) & (R0 > P0) & (P0 < S0) & (T0 + S0 < 2.0*R0) & (P0 == 0.0)
                         if condition:
                             size = [(T0 - R0)*100]
                         else:
@@ -62,14 +62,16 @@ def update(t, artists):
                 for l, x in enumerate(xs):
                     if y > x:
                         bgcolor = cm.viridis(Z[k, l]/vmax)
+                        T0 = T[i, j, k, l]
                         R0 = R[i, j, k, l]
                         P0 = P[i, j, k, l]
-                        T0 = T[i, j, k, l]
                         S0 = S[i, j, k, l]
-                        condition = (T0 > R0) & (R0 > P0) & (P0 < S0) & (T0 + S0 < 2*R0) & (P0 == 0.0)
-                        if not condition:
+                        condition = (T0 > R0) & (R0 > P0) & (P0 < S0) & (T0 + S0 < 2.0*R0) & (P0 == 0.0)
+                        if condition:
+                            artists[i, j, k, l].axes.set_facecolor(bgcolor)
+                        else:
                             bgcolor = (bgcolor[0], bgcolor[1], bgcolor[2], 0.7)
-                        artists[i, j, k, l].axes.set_facecolor(bgcolor)
+                            artists[i, j, k, l].axes.set_facecolor(bgcolor)
     if movie:
         fig.texts[3].set_text(t)
     return artists.flatten()

@@ -30,7 +30,7 @@ def update(t, artist, text):
     bgcolor = cm.viridis(my.a2max - traitcolors[t])
     artist.axes.set_facecolor(bgcolor)
     artist.axes.lines[0].set_ydata([(T[t] + S[t])/2, (T[t] + S[t])/2])
-    text.set_text(f"{trait}: {traitcolors[t]:.1f}\nalpha {alphas[t]:.1f}\nlogES  {logESs[t]:2.0f}\na2high {a2highs[t]:.1f}\na2low {a2lows[t]:.1f}")
+    text.set_text(f"{trait} {traitcolors[t]:.2f}\nalpha {alphas[t]:.2f}\nlogES   {logESs[t]:2.0f}\na2high {a2highs[t]:.1f}\na2low {a2lows[t]:.1f}\n{t+1}/{len(traitcolors)}")
 
     return artist, text
 

@@ -17,7 +17,7 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-trait = "a2Seenmean"
+trait = "MimicGrainmean"
 title = trait
 
 movie = False
@@ -30,7 +30,7 @@ def update(t, artists):
         for j, loges in enumerate(logess):
             Z = my.getZd(t, df, alpha, loges, trait)
             if "Grain" in trait:
-                Z = 1.0 - Z
+                Z = a2highs - a2lows - Z
             if "gain" in title:
                 wnull = my.getZ(t, df, "wmean")
                 Z = Z - wnull
@@ -64,9 +64,8 @@ alphas = np.sort(df.alpha.unique())[::-1]
 logess = np.sort(df.logES.unique())
 rhos = 1.0 - 1.0/pow(2, logess)
 numo = len(alphas)
-if "a2" in trait:
-    a2highs = my.getZd(ts[0], df, alphas[0], logess[0], "a2high")
-    a2lows = my.getZd(ts[0], df, alphas[0], logess[0], "a2low")
+a2highs = my.getZd(ts[0], df, alphas[0], logess[0], "a2high")
+a2lows = my.getZd(ts[0], df, alphas[0], logess[0], "a2low")
 if "wmean" in trait:
     vmax = my.wmax
 else:

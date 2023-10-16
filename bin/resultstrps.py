@@ -37,9 +37,8 @@ def init(artists):
                         P = my.fitness(x, x, given, alpha, rho)
                         S = my.fitness(x, y, given, alpha, rho)
                         condition = (T > R) & (R > P) & (P < S) & (T + S < 2.0*R) & (P == 0.0)
-                        if condition:
-                            artists[i, j, k, l].set_color("white")
-                        else:
+                        if not condition:
+                            artists[i, j, k, l].set_markerfacecolor("skyblue")
                             artists[i, j, k, l].set_color("skyblue")
                         artists[i, j, k, l].set_ydata([T, R, P, S])
     return artists.flatten()
@@ -197,11 +196,11 @@ for i in range(numo):
                 ax = axs[i, j, k, l] 
                 artists[i, j, k, l], = ax.plot(xaxis,
                                                dummy_y,
-                                               linewidth=0.3,
+                                               linewidth=0.5,
                                                color="white",
-                                               marker="o",
+                                               marker="s",
                                                markerfacecolor="white",
-                                               markersize=plotsize/40)
+                                               markersize=plotsize/20)
 
 # Add data and save figure
 

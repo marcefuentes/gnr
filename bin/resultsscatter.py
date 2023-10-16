@@ -17,7 +17,7 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-factor = "snowdriftTS_PS"
+factor = "snowdriftP0_RS"
 trait = "MimicGrainmean"
 
 movie = False
@@ -28,10 +28,10 @@ plotsize = 12
 def update(t, artists):
     df_t = df[df.Time == t]
     y = df_t[trait].values.ravel()
-    mask = (R > P) & (T > R + 0.75) & (R > P) & (P < S) & (T + S > 2*R)
-    new_x = x[mask]
-    new_y = y[mask]
-    offsets = np.column_stack((new_x, new_y))
+    mask = (R > P) & (T > R) & (R > P) & (P < S) & (T + S < 2.0*R) & (P == 0.0)
+    x = R[mask] - S[mask]
+    y = y[mask]
+    offsets = np.column_stack((x, y))
     artists.set_offsets(offsets)
 
     if movie:
@@ -59,7 +59,6 @@ T = my.fitness(a2highs, a2lows, givens, alphas, rhos)
 R = my.fitness(a2highs, a2highs, givens, alphas, rhos)
 P = my.fitness(a2lows, a2lows, givens, alphas, rhos)
 S = my.fitness(a2lows, a2highs, givens, alphas, rhos)
-x = P - S
 
 # Figure properties
 

@@ -34,7 +34,7 @@ def update(given, artists):
     P = my.fitness(XX, XX, given, AA, RR)
     S = my.fitness(XX, YY, given, AA, RR)
     Z = my.gamecolors(T, R, P, S)
-    Z[XX >= YY] = [0.9, 0.9, 0.9, 1.0]
+    Z[XX >= YY] = my.colormap(["GreyTS"])
     artist.set_array(Z)
     if movie:
         fig.texts[0].set_text(f"{given:.2f}")

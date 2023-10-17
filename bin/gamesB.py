@@ -22,7 +22,7 @@ movie = False
 if movie:
     givens = np.linspace(0.0, 1.0, num=41)
 else:
-    givens = [0.00]
+    givens = [0.95]
 plotsize = 12
 
 # Add data to figure

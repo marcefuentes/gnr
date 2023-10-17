@@ -15,8 +15,8 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-numi = 129 # Number of inner plot values
-numo = 21  # Number of outer plot values
+numi = 257 # Number of inner plot values
+numo = 11  # Number of outer plot values
 
 movie = False
 if movie:
@@ -123,7 +123,7 @@ if movie:
 # (AxesImage)
 
 artists = np.empty_like(axs) 
-dummy_Z = np.full(AA.shape, 0.0)
+dummy_Z = np.full((numi, numi, 4), my.colormap["greyTS"])
 frames = givens
 frames0 = frames[0]
 
@@ -131,7 +131,7 @@ for y, a2y in enumerate(a2ys):
     for x, a2x in enumerate(a2xs):
         artists[y, x] = axs[y, x].imshow(dummy_Z,
                                          vmin=0.0,
-                                         vmax=vmax,
+                                         vmax=my.wmax,
                                          aspect="auto")
 
 # Add data and save figure

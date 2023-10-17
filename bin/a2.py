@@ -15,32 +15,32 @@ file_name = this_file.split(".")[0]
 
 # Options
 
+numi = 257 # Number of inner plot values
 numo = 11  # Number of outer plot values
-numi = 11 # Number of inner plot values
-vmin = 0.0
-vmax = 1.0
 
 movie = False
 if movie:
     givens = np.linspace(0.0, 1.0, num=41)
 else:
-    givens = [1.00]
+    givens = [0.0]
 plotsize = 12
 
 # Add data to figure
 
 def update(given, artists):
-    for a, alpha in enumerate(alphas):
-        for r, rho in enumerate(rhos):
-            T = my.fitness(YY, XX, given, AA[:, :, a], RR[:, :, r])
-            R = my.fitness(YY, YY, given, AA[:, :, a], RR[:, :, r])
-            P = my.fitness(XX, XX, given, AA[:, :, a], RR[:, :, r])
-            S = my.fitness(XX, YY, given, AA[:, :, a], RR[:, :, r])
-            Z = (P - S)/(P - S - T + R)
-            Z = np.where(Z < 0.0, 0.0, Z)
-            Z = np.where(Z > 1.0, 1.0, Z)
+    for y, alpha in enumerate(alphas):
+        AA = np.full([numi, numi], alpha)
+        for x, rho in enumerate(rhos):
+            RR = np.full([numi, numi], rho)
+            T = my.fitness(YY, XX, given, AA, RR)
+            R = my.fitness(YY, YY, given, AA, RR)
+            P = my.fitness(XX, XX, given, AA, RR)
+            S = my.fitness(XX, YY, given, AA, RR)
+            Z = (P - S) / (P - T + R - S)
+            Z[Z < 0.0] = 0.0
+            Z[Z > 1.0] = 1.0
             Z[XX >= YY] = np.nan
-            artists[a, r].set_array(Z)
+            artists[y, x].set_array(Z)
     if movie:
         fig.texts[2].set_text(f"{given:.2f}")
     return artists.flatten()
@@ -50,8 +50,6 @@ def update(given, artists):
 alphas = np.linspace(my.alphamax, my.alphamin, num=numo)
 logess = np.linspace(my.logesmin, my.logesmax, num=numo)
 rhos = 1.0 - 1.0/pow(2, logess)
-AA = np.full((numi, numi, numo), alphas)
-RR = np.full((numi, numi, numo), rhos)
 a2xs = np.linspace(0.0, my.a2max, num=numi)
 a2ys = np.linspace(my.a2max, 0.0, num=numi)
 XX, YY = np.meshgrid(a2xs, a2ys)
@@ -129,8 +127,8 @@ frames0 = frames[0]
 for y, alpha in enumerate(alphas):
     for x, rho in enumerate(rhos):
         artists[y, x] = axs[y, x].imshow(dummy_Z,
-                                         vmin=vmin,
-                                         vmax=vmax,
+                                         vmin=0.0,
+                                         vmax=my.a2max,
                                          aspect="auto")
 
 # Add data and save figure

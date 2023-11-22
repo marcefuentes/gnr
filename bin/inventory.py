@@ -82,18 +82,16 @@ for mechanism in mechanisms:
         if len(input_files) == 0:
             print(f"{red}no {input_file_extension[1:]} files{reset_format}")
             continue
-        data_dict = {}
         with open(os.path.join(given_path, input_files[0]), "r") as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
                 key, value = row
-                data_dict[key] = value
-                if key == "Given" or key == "DeathRate":
-                    data_dict[key] = float(value)
-        pass_params = True
-        for key, folder_value in folder_dict.items():
-            if data_dict[key] != folder_dict[key]:
-                print(f"{red}{key} {data_dict[key]} {folder_dict[key]}{reset_format}", end = " ")
+                if key == "Given":
+                    if float(value) != folder_dict[key]:
+                        print(f"{red}{key} {folder_dict[key]} {value}{reset_format}", end = " ")
+                elif key in folder_dict:
+                    if int(value) != folder_dict[key]:
+                        print(f"{red}{key} {folder_dict[key]} {value}{reset_format}", end = " ")
         f_smaller_nlines = 0
         f_equal_nlines = 0
         f_larger_nlines = 0

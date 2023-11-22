@@ -91,9 +91,9 @@ for mechanism in mechanisms:
             reader = csv.reader(csvfile)
             for row in reader:
                 key, value = row
-                if value.isdigit():
-                    data_dict[key] = int(value)
-                if key == "Given" or key == "DeathRate" or key == "Cost":
+                #if value.isdigit():
+                data_dict[key] = value
+                if key == "Given" or key == "DeathRate":
                     data_dict[key] = float(value)
         pass_params = True
         for key, folder_value in folder_dict.items():

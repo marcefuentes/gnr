@@ -29,14 +29,21 @@ folder_dict["Shuffle"] = 0
 folder_dict["Discrete"] = 0
 folder_dict["DeathRate"] = -7
 
+# get the name, not the full path, of the current folder
+
 current_folder = os.getcwd()
-current_folder_as_list = current_folder.split("/")[-1]
-if "_shuffle" in current_folder_as_list:
+variant = current_folder.split("/")[-1]
+if "_shuffle" in variant:
     folder_dict["Shuffle"] = 1
-if "noImimic" in current_folder_as_list:
+if "noImimic" in variant:
     folder_dict["Independent"] = 0
-if "_d" in current_folder_as_list:
+if "_d" in variant:
     folder_dict["DeathRate"] = -3
+cost_index = variant.find("cost")
+cost = variant[cost_index + 4:cost_index + 6]
+folder_dict["ChooseCost"] = -int(cost)
+folder_dict["MimicCost"] = -int(cost)
+folder_dict["ImimicCost"] = -int(cost)
 
 mechanisms = [f for f in os.listdir(current_folder) if os.path.isdir(f)]
 mechanisms.sort()
@@ -58,21 +65,10 @@ for mechanism in mechanisms:
         folder_dict["Language"] = 1
     else:
         folder_dict["Language"] = 0
-    if "_8" in current_folder_as_list or "_8" in mechanism:
+    if "_8" in variant or "_8" in mechanism:
         folder_dict["GroupSize"] = 3
     else:
         folder_dict["GroupSize"] = 2
-    cost_index = current_folder.find("cost")
-    if cost_index != -1:
-        cost = current_folder[cost_index + 4:]
-        if cost.isdigit():
-            folder_dict["ChooseCost"] = -int(cost)
-            folder_dict["MimicCost"] = -int(cost)
-            folder_dict["ImimicCost"] = -int(cost)
-        else:
-            print(f"{red}{cost}{reset_format}")
-    else:
-        print(f"{red}Cost not found{reset_format}")
     givens = [f for f in os.listdir(mechanism) if os.path.isdir(os.path.join(mechanism, f))]
     if len(givens) == 0:
         print(f"{red}empty{reset_format}")

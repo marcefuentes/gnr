@@ -24,43 +24,18 @@ if len(sys.argv) > 1:
         exit()
 
 folder_dict = {}
-folder_dict["ChooseCost"] = -14
-folder_dict["MimicCost"] = -14
-folder_dict["ImimicCost"] = -14
 folder_dict["Independent"] = 1
 folder_dict["Shuffle"] = 0
 folder_dict["Discrete"] = 0
 folder_dict["DeathRate"] = -7
 
 current_dir = os.getcwd().split("/")[-1]
-if current_dir[0] == "d":
-    folder_dict["Discrete"] = 1
-#    if "_0" in current_dir:
-#        folder_dict["a2Init"] = 0.2
-#        folder_dict["a2low"] = 0.2
-#        folder_dict["a2high"] = 0.4
-#    elif "_1" in current_dir:
-#        folder_dict["a2Init"] = 0.2
-#        folder_dict["a2low"] = 0.2
-#        folder_dict["a2high"] = 0.6
-#    elif "_2" in current_dir:
-#        folder_dict["a2Init"] = 0.4
-#        folder_dict["a2low"] = 0.4
-#        folder_dict["a2high"] = 0.8
-#    else:
-#        folder_dict["a2Init"] = 0.6
-#        folder_dict["a2low"] = 0.6
-#        folder_dict["a2high"] = 0.8
 if "_shuffle" in current_dir:
     folder_dict["Shuffle"] = 1
 if "noImimic" in current_dir:
     folder_dict["Independent"] = 0
 if "_d" in current_dir:
     folder_dict["DeathRate"] = -3
-if "cost" in current_dir:
-    folder_dict["ChooseCost"] = -8
-    folder_dict["MimicCost"] = -8
-    folder_dict["ImimicCost"] = -8
 
 mechanisms = [f for f in os.listdir(os.getcwd()) if os.path.isdir(f)]
 #mechanisms.sort(key = lambda x: os.path.getmtime(x))
@@ -83,10 +58,12 @@ for mechanism in mechanisms:
         folder_dict["Language"] = 1
     else:
         folder_dict["Language"] = 0
-    if "8" in current_dir or "8" in mechanism:
+    if "_8" in current_dir or "_8" in mechanism:
         folder_dict["GroupSize"] = 3
     else:
         folder_dict["GroupSize"] = 2
+    # get the two-digit number after the string "cost" in "mechanism" and store it in variable "cost"
+
     givens = [f for f in os.listdir(mechanism) if os.path.isdir(os.path.join(mechanism, f))]
     if len(givens) == 0:
         print(f"{red}empty{reset_format}")

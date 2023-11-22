@@ -29,16 +29,16 @@ folder_dict["Shuffle"] = 0
 folder_dict["Discrete"] = 0
 folder_dict["DeathRate"] = -7
 
-current_dir = os.getcwd().split("/")[-1]
-if "_shuffle" in current_dir:
+current_folder = os.getcwd()
+current_folder_as_list = current_folder.split("/")[-1]
+if "_shuffle" in current_folder_as_list:
     folder_dict["Shuffle"] = 1
-if "noImimic" in current_dir:
+if "noImimic" in current_folder_as_list:
     folder_dict["Independent"] = 0
-if "_d" in current_dir:
+if "_d" in current_folder_as_list:
     folder_dict["DeathRate"] = -3
 
-mechanisms = [f for f in os.listdir(os.getcwd()) if os.path.isdir(f)]
-#mechanisms.sort(key = lambda x: os.path.getmtime(x))
+mechanisms = [f for f in os.listdir(current_folder) if os.path.isdir(f)]
 mechanisms.sort()
 for mechanism in mechanisms:
     if "p" in mechanism:
@@ -58,12 +58,21 @@ for mechanism in mechanisms:
         folder_dict["Language"] = 1
     else:
         folder_dict["Language"] = 0
-    if "_8" in current_dir or "_8" in mechanism:
+    if "_8" in current_folder_as_list or "_8" in mechanism:
         folder_dict["GroupSize"] = 3
     else:
         folder_dict["GroupSize"] = 2
-    # get the two-digit number after the string "cost" in "mechanism" and store it in variable "cost"
-
+    cost_index = current_folder.find("cost")
+    if cost_index != -1:
+        cost = current_folder[cost_index + 4:]
+        if cost.isdigit():
+            folder_dict["ChooseCost"] = -int(cost)
+            folder_dict["MimicCost"] = -int(cost)
+            folder_dict["ImimicCost"] = -int(cost)
+        else:
+            print(f"{red}{cost}{reset_format}")
+    else:
+        print(f"{red}Cost not found{reset_format}")
     givens = [f for f in os.listdir(mechanism) if os.path.isdir(os.path.join(mechanism, f))]
     if len(givens) == 0:
         print(f"{red}empty{reset_format}")
@@ -84,7 +93,7 @@ for mechanism in mechanisms:
                 key, value = row
                 if value.isdigit():
                     data_dict[key] = int(value)
-                if key == "Given" or key == "DeathRate" or "Cost" or "a2" in key:
+                if key == "Given" or key == "DeathRate" or key == "Cost":
                     data_dict[key] = float(value)
         pass_params = True
         for key, folder_value in folder_dict.items():

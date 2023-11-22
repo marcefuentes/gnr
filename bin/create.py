@@ -62,8 +62,7 @@ alphas = np.linspace(0.1, 0.9, num)
 logess = np.linspace(-5.0, 5.0, num)
 Given = float(given[-3:]) / 100
 # cost must be the number following the string "cost" in the variant name. This number has two digits.
-cost = float(variant[variant.find("cost") + 4:variant.find("cost") + 6])
-cost = pow(2, -cost)
+cost = -int(variant[variant.find("cost") + 4:variant.find("cost") + 6])
 a2init = 0.1
 
 c = 101
@@ -102,7 +101,7 @@ for alpha in alphas:
         f.write(f"Shuffle,{shuffle}\n")
         f.write(f"Discrete,0\n")
         f.write(f"a2low,{a2init}\n")
-        f.write(f"a2high,{a2high}\n")
+        f.write(f"a2high,{a2init}\n")
         f.write(f"alpha,{alpha:.6}\n")
         f.write(f"logES,{loges}\n")
         f.write(f"Given,{Given}\n")

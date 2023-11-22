@@ -65,7 +65,7 @@ for mechanism in mechanisms:
         folder_dict["Language"] = 1
     else:
         folder_dict["Language"] = 0
-    if "_8" in variant or "_8" in mechanism:
+    if "_8" in variant or "8" in mechanism:
         folder_dict["GroupSize"] = 3
     else:
         folder_dict["GroupSize"] = 2
@@ -92,8 +92,8 @@ for mechanism in mechanisms:
                     data_dict[key] = float(value)
         pass_params = True
         for key, folder_value in folder_dict.items():
-            if data_dict[key] != folder_value:
-                print(f"{red}{key} {data_dict[key]} {folder_value}{reset_format}", end = " ")
+            if data_dict[key] != folder_dict[key]:
+                print(f"{red}{key} {data_dict[key]} {folder_dict[key]}{reset_format}", end = " ")
         f_smaller_nlines = 0
         f_equal_nlines = 0
         f_larger_nlines = 0

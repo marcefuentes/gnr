@@ -91,14 +91,13 @@ for mechanism in mechanisms:
             reader = csv.reader(csvfile)
             for row in reader:
                 key, value = row
-                #if value.isdigit():
                 data_dict[key] = value
                 if key == "Given" or key == "DeathRate":
                     data_dict[key] = float(value)
         pass_params = True
         for key, folder_value in folder_dict.items():
             if data_dict[key] != folder_value:
-                print(f"{red}{key} {data_dict[key]}{reset_format}", end = " ")
+                print(f"{red}{key} {data_dict[key]} {folder_value}{reset_format}", end = " ")
         f_smaller_nlines = 0
         f_equal_nlines = 0
         f_larger_nlines = 0

@@ -23,11 +23,6 @@ if "8" in variant or "8" in mechanism:
 else:
     groupsize = 2
 
-if "cost" in variant:
-    cost = -8
-else:
-    cost = -14
-
 if "p" in mechanism:
     partnerchoice = 1
 else:
@@ -58,25 +53,6 @@ if "_shuffle" in variant:
 else:
     shuffle = 0
 
-if "d_s" in variant or "d_n" in variant:
-    discrete = 1
-    if "_0" in variant:
-        a2init = 0.2
-        a2high = 0.4
-    elif "_1" in variant:
-        a2init = 0.2
-        a2high = 0.6
-    elif "_2" in variant:
-        a2init = 0.4
-        a2high = 0.8
-    else:
-        a2init = 0.6
-        a2high = 0.8
-else:
-    discrete = 0
-    a2init = 0.1
-    a2high = 0.1
-
 # create subfolder path variant/mechanism/given in current directory
 path = variant + "/" + mechanism + "/" + given
 os.makedirs(path, exist_ok=True)
@@ -85,6 +61,11 @@ num = 21
 alphas = np.linspace(0.1, 0.9, num)
 logess = np.linspace(-5.0, 5.0, num)
 Given = float(given[-3:]) / 100
+# cost must be the number following the string "cost" in the variant name. This number has two digits.
+cost = float(variant[variant.find("cost") + 4:variant.find("cost") + 6])
+cost = pow(2, -cost)
+a2init = 0.1
+
 c = 101
 
 for alpha in alphas:
@@ -96,10 +77,7 @@ for alpha in alphas:
         # standard Runs,30
         f.write("Runs,30\n")
         # standard Time,21
-        if discrete:
-            f.write("Time,20\n")
-        else:
-            f.write("Time,21\n")
+        f.write("Time,21\n")
         f.write("Periods,3\n")
         f.write("a1Max,1.0\n")
         f.write("a2Max,1.0\n")
@@ -122,7 +100,7 @@ for alpha in alphas:
         f.write(f"Independent,{independent}\n")
         f.write(f"Language,{language}\n")
         f.write(f"Shuffle,{shuffle}\n")
-        f.write(f"Discrete,{discrete}\n")
+        f.write(f"Discrete,0\n")
         f.write(f"a2low,{a2init}\n")
         f.write(f"a2high,{a2high}\n")
         f.write(f"alpha,{alpha:.6}\n")

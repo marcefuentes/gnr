@@ -27,10 +27,6 @@ titles = ["Partner choice",
           "Direct\nreciprocity",
           "Indirect\nreciprocity",
           "Fitness deficit"]
-vmaxs = [my.a2max,
-         my.a2max,
-         my.a2max,
-         my.a2max]
 rows = ["pi", "p", "i", "none"]
 given = "given100"
 
@@ -157,13 +153,13 @@ for r, row in enumerate(rows):
     for c, title in enumerate(titles):
         artists[r, c] = axs[r, c].imshow(dummy_Z,
                                          vmin=0,
-                                         vmax=vmaxs[c])
+                                         vmax=1)
 
 axins = inset_axes(axs[-1, -1],
                    width="5%",
                    height="100%",
                    loc="upper right",
-                   bbox_to_anchor=(0.05, 0., 1, 1),
+                   bbox_to_anchor=(1220, 540, 300, 500),
                    borderpad=0)
 cbar = fig.colorbar(artists[-1, -1],
                     cax=axins,

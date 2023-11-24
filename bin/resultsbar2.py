@@ -162,11 +162,12 @@ for r, row in enumerate(rows):
 axins = inset_axes(axs[-1, -1],
                    width="5%",
                    height="100%",
-                   loc="upper right")
+                   loc="upper right",
+                   bbox_to_anchor=(0.05, 0., 1, 1),
+                   borderpad=0)
 cbar = fig.colorbar(artists[-1, -1],
                     cax=axins,
                     ticks=[0, 0.5, 1])
-
 cbar.ax.tick_params(labelsize=ticklabel)
 
 # Add data and save figure

@@ -71,7 +71,7 @@ def update(t, artists):
             if "Grain" in trait:
                 Z = 1.0 - Z
             for (a, l), _ in np.ndenumerate(Z):
-                bgcolor = cm.viridis(Z[a, l]/my.aBmax)
+                bgcolor = cm.viridis(Z[a, l]/my.a2max)
                 artists[f, c + 1, a, l].axes.set_facecolor(bgcolor)
     if movie:
         fig.texts[2].set_text(f"t\n{t}")
@@ -194,7 +194,6 @@ x = [0.5]
 y = [0.5]
 dummy_z = [0.0]
 frames = ts
-frame0 = ts[-1]
 
 for f, folder in enumerate(folders):
     for c, title in enumerate(titles):
@@ -218,7 +217,7 @@ if movie:
                         blit=True)
     ani.save(file_name + ".mp4", writer="ffmpeg", fps=10)
 else:
-    update(frame0, artists,)
+    update(frames[-1], artists,)
     plt.savefig(file_name + ".png", transparent=False)
 
 plt.close()

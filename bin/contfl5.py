@@ -25,7 +25,7 @@ titles = ["Sensitivity for\nchoosing partner",
 folders = ["p", "r"]
 givens = ["given100", "given095", "given050", "given000"]
 
-numaB = 64
+numa2 = 64
 theory = False
 plotsize = 4
 
@@ -53,7 +53,7 @@ nr = len(alphas)
 nc = len(logess)
 rhos = 1.0 - 1.0/pow(2.0, logess)
 RR, AA = np.meshgrid(rhos, alphas)
-xaxis = np.linspace(0.01, my.aBmax - 0.01, num=numaB)
+xaxis = np.linspace(0.01, my.a2max - 0.01, num=numa2)
 
 # Figure properties
 
@@ -64,7 +64,7 @@ ylabel = "Influence of $\it{B}$"
 biglabel = plotsize*6
 letterlabel = plotsize*5
 ticklabel = plotsize*4
-xlim = [0.0, my.aBmax]
+xlim = [0.0, my.a2max]
 ylim = [0.0, my.wmax]
 step = int(nr/2)
 plt.rcParams["pdf.fonttype"] = 42
@@ -137,20 +137,20 @@ for g, given in enumerate(givens):
 # Add data
 
 if theory:
-    aBsocials = my.aBeq(0.0, AA, RR)
+    a2socials = my.a2eq(0.0, AA, RR)
 else:
-    aBsocials = my.getZ(t, dfsocial, "a2Seenmean")
-#wsocials = my.fitness(aBsocials, aBsocials, given, AA, RR)
+    a2socials = my.getZ(t, dfsocial, "a2Seenmean")
+#wsocials = my.fitness(a2socials, a2socials, given, AA, RR)
 wsocials = my.getZ(t, dfsocial, "wmean")
 
 for g, given in enumerate(givens):
 
     given = dfprivates[g].Given.iloc[0]
     if theory:
-        aBprivates = my.aBeq(given, AA, RR)
+        a2privates = my.a2eq(given, AA, RR)
     else:
-        aBprivates = my.getZ(t, dfprivates[g], "a2Seenmean")
-    wprivates = my.fitness(aBprivates, aBprivates, given, AA, RR)
+        a2privates = my.getZ(t, dfprivates[g], "a2Seenmean")
+    wprivates = my.fitness(a2privates, a2privates, given, AA, RR)
     #wprivates = my.getZ(t, dfprivates[g], "wmean")
 
     Z = np.zeros((len(traits), len(alphas), len(rhos)))
@@ -162,13 +162,13 @@ for g, given in enumerate(givens):
     for a, alpha in enumerate(alphas):
         for e, rho in enumerate(rhos):
 
-            aBs = np.full(xaxis.shape, aBprivates[a, e])
+            a2s = np.full(xaxis.shape, a2privates[a, e])
 
             ax = axs[g, 0, a, e]
-            y = my.fitness(aBs, aBs, given, alpha, rho)
-            y = y - my.fitness(aBs, xaxis, given, alpha, rho)
+            y = my.fitness(a2s, a2s, given, alpha, rho)
+            y = y - my.fitness(a2s, xaxis, given, alpha, rho)
             ax.plot(xaxis, y, color="black", linewidth=1.5)
-            color = cm.viridis(Z[0, a, e]/my.aBmax)
+            color = cm.viridis(Z[0, a, e]/my.a2max)
             rgba_color = color[0], color[1], color[2], 0.5
             ax.set_facecolor(rgba_color)
 
@@ -176,7 +176,7 @@ for g, given in enumerate(givens):
             y = my.fitness(xaxis, xaxis, given, alpha, rho)
             mask = y < wprivates[a, e] 
             ax.scatter(xaxis[mask], y[mask], s=0.5, c=y[mask], cmap="viridis", vmin=0, vmax=my.wmax)
-            color = cm.viridis(Z[1, a, e]/my.aBmax)
+            color = cm.viridis(Z[1, a, e]/my.a2max)
             rgba_color = color[0], color[1], color[2], 0.5
             ax.set_facecolor(rgba_color)
 

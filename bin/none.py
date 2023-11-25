@@ -19,12 +19,12 @@ file_name = this_file.split(".")[0]
 
 titles = ["Production of $\it{B}$\nin theory",
           "Production of $\it{B}$\nin simulations",
-          "Fitness\nin theory",
+          #"Fitness\nin theory",
           "Fitness\nin simulations",
           "Fitness deficit\nin simulations"]
-vmaxs = [my.aBmax,
-         my.aBmax,
-         my.wmax,
+vmaxs = [my.a2max,
+         my.a2max,
+         #my.wmax,
          my.wmax,
          my.wmax]
 givens_theory = [1.0, 0.95, 0.5, 0.]
@@ -115,16 +115,16 @@ for c, title in enumerate(titles):
  
 wsocial = my.getZ(t, dfs[-1], "wmean") 
 for g, given in enumerate(givens_theory):
-    aB_theory = my.aBeq(given, AA, RR)
-    axs[g, 0].imshow(aB_theory, vmin=0, vmax=vmaxs[0])
-    aB = my.getZ(t, dfs[g], "a2Seenmean")
-    axs[g, 1].imshow(aB, vmin=0, vmax=vmaxs[1])
-    w_theory = my.fitness(aB_theory, aB_theory, given, AA, RR)
-    axs[g, 2].imshow(w_theory, vmin=0, vmax=vmaxs[2])
+    a2_theory = my.a2eq(given, AA, RR)
+    axs[g, 0].imshow(a2_theory, vmin=0, vmax=vmaxs[0])
+    a2 = my.getZ(t, dfs[g], "a2Seenmean")
+    axs[g, 1].imshow(a2, vmin=0, vmax=vmaxs[1])
+    #w_theory = my.fitness(a2_theory, a2_theory, given, AA, RR)
+    #axs[g, 2].imshow(w_theory, vmin=0, vmax=vmaxs[2])
     w = my.getZ(t, dfs[g], "wmean")
-    axs[g, 3].imshow(w, vmin=0, vmax=vmaxs[3])
+    axs[g, 2].imshow(w, vmin=0, vmax=vmaxs[2])
     w = wsocial - w
-    axs[g, 4].imshow(w, vmin=0, vmax=vmaxs[4])
+    axs[g, 3].imshow(w, vmin=0, vmax=vmaxs[3])
         
 plt.savefig(file_name + ".png", transparent=False)
 

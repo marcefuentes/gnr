@@ -22,8 +22,8 @@ titles = ["Production of $\it{B}$",
           "Byproduct help",
           "Fitness",
           "Fitness deficit"]
-vmaxs = [my.aBmax,
-         my.aBmax,
+vmaxs = [my.a2max,
+         my.a2max,
          my.wmax,
          my.wmax]
 
@@ -34,11 +34,11 @@ plotsize = 4
 # Add data to figure
 
 def update(given, artists):
-    aB = my.aBeq(given, AA, RR)
-    w = my.fitness(aB, aB, given, AA, RR)
+    a2 = my.a2eq(given, AA, RR)
+    w = my.fitness(a2, a2, given, AA, RR)
     dif = wsocial - w
-    artists[0].set_array(aB)
-    artists[1].set_array(aB*given)
+    artists[0].set_array(a2)
+    artists[1].set_array(a2*given)
     artists[2].set_array(w)
     artists[3].set_array(dif)
     if movie:
@@ -53,8 +53,8 @@ alphas = np.linspace(my.alphamax, my.alphamin, num=nr)
 logess = np.linspace(my.logesmin, my.logesmax, num=nc)
 rhos = 1. - 1./pow(2., logess)
 RR, AA = np.meshgrid(rhos, alphas)
-aBsocial = my.aBeq(0., AA, RR)
-wsocial = my.fitness(aBsocial, aBsocial, 0., AA, RR)
+a2social = my.a2eq(0., AA, RR)
+wsocial = my.fitness(a2social, a2social, 0., AA, RR)
 
 # Figure properties
 
@@ -141,7 +141,6 @@ if movie:
 artists = np.empty_like(axs) 
 dummy_Z = np.zeros((nr, nc))
 frames = givens
-frame0 = givens[-1]
 
 for c, title in enumerate(titles):
     artists[c] = axs[c].imshow(dummy_Z,
@@ -158,7 +157,7 @@ if movie:
                         blit=True)
     ani.save(file_name + ".mp4", writer="ffmpeg", fps=10)
 else:
-    update(frame0, artists,)
+    update(frames[-1], artists,)
     plt.savefig(file_name + ".png", transparent=False)
 
 plt.close()

@@ -23,7 +23,7 @@ traits = ["ChooseGrain",
           "MimicGrain"]
 titles = ["Sensitivity for\nchoosing partner",
           "Sensitivity for\nmimicking partner"]
-vmaxs = [my.aBmax, my.aBmax]
+vmaxs = [my.a2max, my.a2max]
 
 folders = ["given100", "given095", "given050"]
 subfolders = ["p", "r"]
@@ -96,14 +96,15 @@ plt.rcParams["ps.fonttype"] = 42
 
 # Create figure
 
-fig = plt.figure(figsize=(width, height))
-outergrid = fig.add_gridspec(nrows=len(folders),
-                             ncols=len(titles))
 axs = np.empty((len(folders),
                 len(titles),
                 nr,
                 nc),
                 dtype=object)
+
+fig = plt.figure(figsize=(width, height))
+outergrid = fig.add_gridspec(nrows=len(folders),
+                             ncols=len(titles))
 
 for f, folder in enumerate(folders):
     for c, title in enumerate(titles):
@@ -172,7 +173,6 @@ artists = np.empty_like(axs)
 x = np.arange(64)
 dummy_y = np.zeros_like(x)
 frames = ts
-frame0 = ts[-1]
 
 for f, folder in enumerate(folders):
     for c, title in enumerate(titles):
@@ -191,7 +191,7 @@ if movie:
                         blit=True)
     ani.save(file_name + ".mp4", writer="ffmpeg", fps=10)
 else:
-    update(frame0, artists,)
+    update(frames[-1], artists,)
     plt.savefig(file_name + ".png", transparent=False)
 
 plt.close()

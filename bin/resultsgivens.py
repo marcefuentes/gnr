@@ -20,18 +20,21 @@ file_name = this_file.split(".")[0]
 
 traits = ["ChooseGrainmean",
           "MimicGrainmean",
-          "wmean",
+          "ImimicGrainmean",
+          #"wmean",
           "wmean"]
-titles = ["Sensitivity for\nchoosing partner",
-          "Sensitivity for\nmimicking partner",
-          "Fitness gain",
+titles = ["Partner choice",
+          "Direct\nreciprocity",
+          "Indirect\nreciprocity",
+          #"Fitness gain",
           "Fitness deficit"]
-vmaxs = [my.aBmax,
-         my.aBmax,
-         my.wmax,
+vmaxs = [my.a2max,
+         my.a2max,
+         my.a2max,
+         #my.wmax,
          my.wmax]
 givens = ["given100", "given095", "given050", "given000"]
-folders = ["none", "p", "p8", "pr8", "pr", "r"]
+mechanisms = ["none", "p", "p8", "pr8", "pr", "r"]
 
 movie = False
 plotsize = 4
@@ -52,7 +55,7 @@ def update(t, artists):
                 Z = wsocial - Z
             artists[g, c].set_array(Z) 
     if movie:
-        fig.texts[2].set_text(f"t\n{t}")
+        fig.texts[2].set_text(t)
     return artists.flatten()
 
 # Data without partner choice or reciprocity
@@ -60,6 +63,9 @@ def update(t, artists):
 dfnulls = np.empty(len(givens), dtype=object) 
 for g, given in enumerate(givens):
     filelist = glob(os.path.join("none", given, "*.csv"))
+    if filelist == []:
+        print(f"No none/{given}/*.csv")
+        exit()
     dfnulls[g] = my.read_files(filelist, movie)
 
 df = dfnulls[0]
@@ -99,10 +105,10 @@ fig, axs = plt.subplots(nrows=len(givens),
 
 left_x = axs[0, 0].get_position().x0
 right_x = axs[-1, -1].get_position().x1
-center_x = (left_x + right_x) / 2.
+center_x = (left_x + right_x) / 2
 top_y = axs[0, 0].get_position().y1
 bottom_y = axs[-1, -1].get_position().y0
-center_y = (top_y + bottom_y) / 2.
+center_y = (top_y + bottom_y) / 2
 fig.supxlabel(xlabel,
               x=center_x,
               y=bottom_y - 1.2/height,
@@ -145,9 +151,8 @@ if movie:
 artists = np.empty_like(axs) 
 dummy_Z = np.zeros((nr, nc))
 frames = ts
-frame0 = ts[-1]
 
-for folder in folders:
+for mechanism in mechanisms:
     for g, given in enumerate(givens):
         for c, title in enumerate(titles):
             artists[g, c] = axs[g, c].imshow(dummy_Z,
@@ -158,7 +163,10 @@ for folder in folders:
 
     dfs = np.empty(len(givens), dtype=object) 
     for g, given in enumerate(givens):
-        filelist = glob(os.path.join(folder, given, "*.csv"))
+        filelist = glob(os.path.join(mechanism, given, "*.csv"))
+        if filelist == []:
+            print(f"No {mechanism}/{given}/*.csv")
+            exit()
         dfs[g] = my.read_files(filelist, movie)
 
     if movie:
@@ -167,10 +175,10 @@ for folder in folders:
                             frames=frames,
                             fargs=(artists,),
                             blit=True)
-        ani.save(f"{file_name}_{folder}.mp4", writer="ffmpeg", fps=10)
+        ani.save(f"{file_name}_{mechanism}.mp4", writer="ffmpeg", fps=10)
     else:
-        update(frame0, artists,)
-        plt.savefig(f"{file_name}_{folder}.png", transparent=False)
+        update(frames[-1], artists,)
+        plt.savefig(f"{file_name}_{mechanism}.png", transparent=False)
 
 plt.close()
 

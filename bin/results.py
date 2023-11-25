@@ -21,19 +21,16 @@ file_name = this_file.split(".")[0]
 traits = ["ChooseGrainmean",
           "MimicGrainmean",
           "ImimicGrainmean",
-          "wmean",
           "wmean"]
-titles = ["Sensitivity for\nchoosing partner",
-          "Sensitivity for\nmimicking partner",
-          "Sensitivity for\nmimicking partner",
-          "Fitness gain",
+titles = ["Partner choice",
+          "Direct\nreciprocity",
+          "Indirect\nreciprocity",
           "Fitness deficit"]
-vmaxs = [my.aBmax,
-         my.aBmax,
-         my.aBmax,
-         my.wmax,
+vmaxs = [my.a2max,
+         my.a2max,
+         my.a2max,
          my.wmax]
-rows = ["rshuffle", "rnoshuffle"]
+rows = ["pi", "p", "i", "none"]
 given = "given100"
 
 movie = False
@@ -55,15 +52,21 @@ def update(t, artists):
                 Z = wsocial - Z
             artists[r, c].set_array(Z) 
     if movie:
-        fig.texts[2].set_text(f"t\n{t}")
+        fig.texts[2].set_text(t)
     return artists.flatten()
 
 # Data without partner choice or reciprocity
 
 filelist = glob(os.path.join("none", "given000", "*.csv"))
+if filelist == []:
+    print("No none/given000/*.csv")
+    exit()
 dfsocial = my.read_files(filelist, movie)
 
 filelist = glob(os.path.join("none", given, "*.csv"))
+if filelist == []:
+    print(f"No none/{given}/*.csv")
+    exit()
 df = my.read_files(filelist, movie)
 
 ts = df.Time.unique()
@@ -76,9 +79,9 @@ width = plotsize*len(titles)
 height = plotsize*len(rows)
 xlabel = "Substitutability of $\it{B}$"
 ylabel = "Influence of $\it{B}$"
-biglabel = plotsize*6
-letterlabel = plotsize*5
-ticklabel = plotsize*4
+biglabel = plotsize*7
+letterlabel = plotsize*6
+ticklabel = plotsize*5
 xticks = [0, nc/2 - 0.5, nc - 1]
 yticks = [0, nr/2 - 0.5, nr - 1]
 xmin = df.logES.min()
@@ -100,20 +103,18 @@ fig, axs = plt.subplots(nrows=len(rows),
                         ncols=len(titles),
                         figsize=(width, height))
 
-#fig.subplots_adjust(top=0.85, bottom=0.15)
-
 left_x = axs[0, 0].get_position().x0
 right_x = axs[-1, -1].get_position().x1
-center_x = (left_x + right_x) / 2.
+center_x = (left_x + right_x) / 2
 top_y = axs[0, 0].get_position().y1
 bottom_y = axs[-1, -1].get_position().y0
-center_y = (top_y + bottom_y) / 2.
+center_y = (top_y + bottom_y) / 2
 fig.supxlabel(xlabel,
               x=center_x,
-              y=bottom_y - 1.0/height,
+              y=bottom_y - 1.2/height,
               fontsize=biglabel)
 fig.supylabel(ylabel,
-              x=left_x - 1.2/width,
+              x=left_x - 1.45/width,
               y=center_y,
               fontsize=biglabel)
 
@@ -133,7 +134,7 @@ for i, ax in enumerate(fig.get_axes()):
 for r, row in enumerate(rows):
     axs[r, 0].set_yticklabels(yticklabels, fontsize=ticklabel)
 for c, title in enumerate(titles):
-    axs[0, c].set_title(title, pad=plotsize*8, fontsize=letterlabel)
+    axs[0, c].set_title(title, pad=plotsize*10, fontsize=letterlabel)
     axs[-1, c].set_xticklabels(xticklabels,
                                fontsize=ticklabel)
 if movie:
@@ -150,7 +151,6 @@ if movie:
 artists = np.empty_like(axs) 
 dummy_Z = np.zeros((nr, nc))
 frames = ts
-frame0 = ts[-1]
 
 for r, row in enumerate(rows):
     for c, title in enumerate(titles):
@@ -163,6 +163,9 @@ for r, row in enumerate(rows):
 dfs = np.empty(len(rows), dtype=object) 
 for r, row in enumerate(rows):
     filelist = glob(os.path.join(row, given, "*.csv"))
+    if filelist == []:
+        print(f"No {row}/{given}/*.csv")
+        exit()
     dfs[r] = my.read_files(filelist, movie)
 
 if movie:
@@ -173,7 +176,7 @@ if movie:
                         blit=True)
     ani.save(f"{file_name}_{given}.mp4", writer="ffmpeg", fps=10)
 else:
-    update(frame0, artists,)
+    update(frames[-1], artists,)
     plt.savefig(f"{file_name}_{given}.png", transparent=False)
 
 plt.close()

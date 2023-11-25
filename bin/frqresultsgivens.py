@@ -27,9 +27,9 @@ titles = ["Production of $\it{B}$",
           "Sensitivity for\nchoosing partner",
           "Sensitivity for\nmimicking partner",
           "Fitness"]
-vmaxs = [my.aBmax,
-         my.aBmax,
-         my.aBmax,
+vmaxs = [my.a2max,
+         my.a2max,
+         my.a2max,
          my.wmax]
 givens = ["given100", "given095", "given050", "given000"]
 folders = ["none", "p", "p8", "pr8", "pr", "r"]
@@ -93,15 +93,15 @@ plt.rcParams["ps.fonttype"] = 42
 
 # Create figure
 
-fig = plt.figure(figsize=(width, height))
-outergrid = fig.add_gridspec(nrows=len(givens),
-                             ncols=len(titles))
 axs = np.empty((len(givens),
                 len(titles),
                 nr,
                 nc),
                 dtype=object)
 
+fig = plt.figure(figsize=(width, height))
+outergrid = fig.add_gridspec(nrows=len(givens),
+                             ncols=len(titles))
 for g, given in enumerate(givens):
     for c, title in enumerate(titles):
         grid = outergrid[g, c].subgridspec(nrows=nr,
@@ -169,7 +169,6 @@ artists = np.empty_like(axs)
 x = np.arange(64)
 dummy_y = np.zeros_like(x)
 frames = ts
-frame0 = ts[-1]
 
 for folder in folders:
     for g, given in enumerate(givens):
@@ -197,7 +196,7 @@ for folder in folders:
                             blit=True)
         ani.save(f"{file_name}_{folder}.mp4", writer="ffmpeg", fps=10)
     else:
-        update(frame0, artists,)
+        update(frames[-1], artists,)
         plt.savefig(f"{file_name}_{folder}.png", transparent=False)
 
 plt.close()

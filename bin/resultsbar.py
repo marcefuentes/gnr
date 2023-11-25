@@ -5,6 +5,7 @@ import os
 import time
 
 from matplotlib.animation import FuncAnimation
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import matplotlib.pyplot as plt
 import matplotlib.transforms
 import numpy as np
@@ -18,21 +19,16 @@ file_name = this_file.split(".")[0]
 
 # Options
 
-traits = ["a2Seenmean",
-          "a2Seenmean",
-          "wmean",
+traits = ["ChooseGrainmean",
+          "MimicGrainmean",
+          "ImimicGrainmean",
           "wmean"]
-titles = ["Production of $\it{B}$",
-          "Byproduct help",
-          "Fitness",
+titles = ["Partner choice",
+          "Direct\nreciprocity",
+          "Indirect\nreciprocity",
           "Fitness deficit"]
-vmaxs = [my.a2max,
-         my.a2max,
-         my.wmax,
-         my.wmax]
-givens = ["given100", "given095", "given050", "given000"]
-ngivens = [1.0, 0.95, 0.5, 0.0]
-mechanisms = ["none"]
+rows = ["pi", "p", "i", "none"]
+given = "given100"
 
 movie = False
 plotsize = 4
@@ -40,31 +36,36 @@ plotsize = 4
 # Add data to figure
 
 def update(t, artists):
-    wsocial = my.getZ(t, dfnulls[-1], "wmean")
-    for g, given in enumerate(givens):
-        Z = my.getZ(t, dfnulls[g], traits[0])
-        artists[g, 0].set_array(Z) 
-        Z = Z*ngivens[g]
-        artists[g, 1].set_array(Z)
-        Z = my.getZ(t, dfnulls[g], traits[2])
-        artists[g, 2].set_array(Z)
-        Z = wsocial - Z
-        artists[g, 3].set_array(Z) 
+    wsocial = my.getZ(t, dfsocial, "wmean")
+    for r, row in enumerate(rows):
+        for c, trait in enumerate(traits):
+            Z = my.getZ(t, dfs[r], trait)
+            if "Grain" in trait:
+                Z = 1.0 - Z
+            if "gain" in titles[c]:
+                wnull = my.getZ(t, df, "wmean")
+                Z = Z - wnull
+            if "deficit" in titles[c]:
+                Z = (wsocial - Z)/my.wmax
+            artists[r, c].set_array(Z) 
     if movie:
-        fig.texts[2].set_text(f"t\n{t}")
+        fig.texts[2].set_text(t)
     return artists.flatten()
 
 # Data without partner choice or reciprocity
 
-dfnulls = np.empty(len(givens), dtype=object) 
-for g, given in enumerate(givens):
-    filelist = glob(os.path.join("none", given, "*.csv"))
-    if filelist == []:
-        print(f"No none/{given}/*.csv")
-        exit()
-    dfnulls[g] = my.read_files(filelist, movie)
+filelist = glob(os.path.join("none", "given000", "*.csv"))
+if filelist == []:
+    print("No none/given000/*.csv")
+    exit()
+dfsocial = my.read_files(filelist, movie)
 
-df = dfnulls[0]
+filelist = glob(os.path.join("none", given, "*.csv"))
+if filelist == []:
+    print(f"No none/{given}/*.csv")
+    exit()
+df = my.read_files(filelist, movie)
+
 ts = df.Time.unique()
 nr = df.alpha.nunique()
 nc = df.logES.nunique()
@@ -72,7 +73,7 @@ nc = df.logES.nunique()
 # Figure properties
 
 width = plotsize*len(titles)
-height = plotsize*len(givens)
+height = plotsize*len(rows)
 xlabel = "Substitutability of $\it{B}$"
 ylabel = "Influence of $\it{B}$"
 biglabel = plotsize*7
@@ -95,16 +96,16 @@ plt.rcParams["ps.fonttype"] = 42
 
 # Create figure
 
-fig, axs = plt.subplots(nrows=len(givens),
+fig, axs = plt.subplots(nrows=len(rows),
                         ncols=len(titles),
                         figsize=(width, height))
 
 left_x = axs[0, 0].get_position().x0
 right_x = axs[-1, -1].get_position().x1
-center_x = (left_x + right_x) / 2.
+center_x = (left_x + right_x) / 2
 top_y = axs[0, 0].get_position().y1
 bottom_y = axs[-1, -1].get_position().y0
-center_y = (top_y + bottom_y) / 2.
+center_y = (top_y + bottom_y) / 2
 fig.supxlabel(xlabel,
               x=center_x,
               y=bottom_y - 1.2/height,
@@ -127,8 +128,8 @@ for i, ax in enumerate(fig.get_axes()):
             transform=ax.transAxes,
             fontsize=letterlabel,
             weight="bold")
-for g, given in enumerate(givens):
-    axs[g, 0].set_yticklabels(yticklabels, fontsize=ticklabel)
+for r, row in enumerate(rows):
+    axs[r, 0].set_yticklabels(yticklabels, fontsize=ticklabel)
 for c, title in enumerate(titles):
     axs[0, c].set_title(title, pad=plotsize*10, fontsize=letterlabel)
     axs[-1, c].set_xticklabels(xticklabels,
@@ -148,25 +149,44 @@ artists = np.empty_like(axs)
 dummy_Z = np.zeros((nr, nc))
 frames = ts
 
-for mechanism in mechanisms:
-    for g, given in enumerate(givens):
-        for c, title in enumerate(titles):
-            artists[g, c] = axs[g, c].imshow(dummy_Z,
-                                             vmin=0,
-                                             vmax=vmaxs[c])
+for r, row in enumerate(rows):
+    for c, title in enumerate(titles):
+        artists[r, c] = axs[r, c].imshow(dummy_Z,
+                                         vmin=0,
+                                         vmax=1)
 
-    # Add data and save figure
+axins = inset_axes(axs[-1, -1],
+                   width="5%",
+                   height="100%",
+                   loc="upper right",
+                   bbox_to_anchor=(1220, 540, 300, 500),
+                   borderpad=0)
+cbar = fig.colorbar(artists[-1, -1],
+                    cax=axins,
+                    ticks=[0, 0.5, 1])
+cbar.ax.tick_params(labelsize=ticklabel)
+cbar.outline.set_edgecolor("grey")
 
-    if movie:
-        ani = FuncAnimation(fig,
-                            update,
-                            frames=frames,
-                            fargs=(artists,),
-                            blit=True)
-        ani.save(f"{file_name}_{mechanism}.mp4", writer="ffmpeg", fps=10)
-    else:
-        update(frames[-1], artists,)
-        plt.savefig(f"{file_name}_{mechanism}.png", transparent=False)
+# Add data and save figure
+
+dfs = np.empty(len(rows), dtype=object) 
+for r, row in enumerate(rows):
+    filelist = glob(os.path.join(row, given, "*.csv"))
+    if filelist == []:
+        print(f"No {row}/{given}/*.csv")
+        exit()
+    dfs[r] = my.read_files(filelist, movie)
+
+if movie:
+    ani = FuncAnimation(fig,
+                        update,
+                        frames=frames,
+                        fargs=(artists,),
+                        blit=True)
+    ani.save(f"{file_name}_{given}.mp4", writer="ffmpeg", fps=10)
+else:
+    update(frames[-1], artists,)
+    plt.savefig(f"{file_name}_{given}.png", transparent=False)
 
 plt.close()
 

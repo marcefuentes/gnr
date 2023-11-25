@@ -4,8 +4,8 @@ from glob import glob
 import os
 import time
 
-from matplotlib import gridspec
 from matplotlib.animation import FuncAnimation
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import matplotlib.pyplot as plt
 import matplotlib.transforms
 import numpy as np
@@ -27,10 +27,6 @@ titles = ["Partner choice",
           "Direct\nreciprocity",
           "Indirect\nreciprocity",
           "Fitness deficit"]
-vmaxs = [my.a2max,
-         my.a2max,
-         my.a2max,
-         my.wmax]
 rows = ["pi", "p", "i", "none"]
 given = "given100"
 
@@ -50,7 +46,7 @@ def update(t, artists):
                 wnull = my.getZ(t, df, "wmean")
                 Z = Z - wnull
             if "deficit" in titles[c]:
-                Z = wsocial - Z
+                Z = (wsocial - Z)/my.wmax
             artists[r, c].set_array(Z) 
     if movie:
         fig.texts[2].set_text(t)
@@ -100,12 +96,9 @@ plt.rcParams["ps.fonttype"] = 42
 
 # Create figure
 
-fig = plt.figure(figsize=(width, height))
-gs = gridspec.GridSpec(len(rows), len(titles) + 1, width_ratios=[1] * len(titles) + [0.05])
-axs = np.empty((len(rows), len(titles)), dtype=object)
-for r, row in enumerate(rows):
-    for c, title in enumerate(titles):
-        axs[r, c] = plt.subplot(gs[r, c])
+fig, axs = plt.subplots(nrows=len(rows),
+                        ncols=len(titles),
+                        figsize=(width, height))
 
 left_x = axs[0, 0].get_position().x0
 right_x = axs[-1, -1].get_position().x1
@@ -160,11 +153,19 @@ for r, row in enumerate(rows):
     for c, title in enumerate(titles):
         artists[r, c] = axs[r, c].imshow(dummy_Z,
                                          vmin=0,
-                                         vmax=vmaxs[c])
+                                         vmax=1)
 
-cbar_ax = plt.subplot(gs[:, -1])
-cbar = fig.colorbar(artists[0, 0], cax=cbar_ax, orientation='vertical', pad=0.1, shrink=0.5)
-cbar.ax.tick_params(axis='both', which='major', labelsize=12)
+axins = inset_axes(axs[-1, -1],
+                   width="5%",
+                   height="100%",
+                   loc="upper right",
+                   bbox_to_anchor=(1220, 540, 300, 500),
+                   borderpad=0)
+cbar = fig.colorbar(artists[-1, -1],
+                    cax=axins,
+                    ticks=[0, 0.5, 1])
+cbar.ax.tick_params(labelsize=ticklabel)
+cbar.outline.set_edgecolor("grey")
 
 # Add data and save figure
 

@@ -5,6 +5,7 @@ import time
 
 from matplotlib import cm
 from matplotlib.animation import FuncAnimation
+from matplotlib.colors import Normalize
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -19,7 +20,6 @@ file_name = this_file.split(".")[0]
 givens = np.linspace(0.0, 1.0, num=21)
 givens = [0.0]
 
-vmax = my.wmax
 num = 3     # Number of subplot rows & columns
 numa2 = 256 # Number of points along each curve
 n_ic = 5    # Number of indifference curves
@@ -41,7 +41,7 @@ def update(given, budgets, icurves):
             budgets[0, a, r].set_ydata(budgety)
             icy = my.indifference(icx, w[a, r], alpha, rho)
             icurves[0, a, r].set_ydata(icy)
-            color = cm.viridis(w[a, r]/vmax)
+            color = cm.RdBu_r(norm(w[a, r]/my.wmax))
             icurves[0, a, r].set_color(color)
             a2p = a2private[a, r]/2.0
             landscape = my.fitness(a2p, icx/2.0, given, alpha, rho)
@@ -67,6 +67,7 @@ for i, alpha in enumerate(alphas):
     for j, rho in enumerate(rhos):
         for k, w in enumerate(ws):
             ics[i, j, k] = my.indifference(icx, w, alpha, rho)
+norm = Normalize(vmin=-1, vmax=1)
 
 # Figure properties
 

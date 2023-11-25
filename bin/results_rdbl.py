@@ -162,7 +162,6 @@ cbar = fig.colorbar(artists[-1, -1],
                     cax=axins,
                     ticks=[-1, 0, 1])
 cbar.ax.tick_params(labelsize=ticklabel)
-# Set colorbar edgecolor
 #cbar.outline.set_edgecolor("grey")
 cbar.outline.set_linewidth(0.1)
 

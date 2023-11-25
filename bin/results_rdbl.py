@@ -5,6 +5,7 @@ import os
 import time
 
 from matplotlib.animation import FuncAnimation
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import matplotlib.pyplot as plt
 import matplotlib.transforms
 import numpy as np
@@ -26,14 +27,6 @@ titles = ["Partner choice",
           "Direct\nreciprocity",
           "Indirect\nreciprocity",
           "Fitness deficit"]
-vmaxs = [my.a2max,
-         my.a2max,
-         my.a2max,
-         my.wmax]
-vmins = [-my.a2max,
-         -my.a2max,
-         -my.a2max,
-         -my.wmax]
 rows = ["pi", "p", "i", "none"]
 given = "given100"
 
@@ -49,6 +42,7 @@ def update(t, artists):
                 Z = my.getZ(t, dfsocial, trait) - my.getZ(t, dfs[r], trait)
             else:
                 Z = my.getZ(t, dfs[r], trait) - my.getZ(t, dfsocial, trait) 
+                Z = Z/my.wmax
             artists[r, c].set_array(Z) 
     if movie:
         fig.texts[2].set_text(t)
@@ -155,8 +149,20 @@ for r, row in enumerate(rows):
     for c, title in enumerate(titles):
         artists[r, c] = axs[r, c].imshow(dummy_Z,
                                          cmap="RdBu_r",
-                                         vmin=vmins[c],
-                                         vmax=vmaxs[c])
+                                         vmin=-1,
+                                         vmax=1)
+
+axins = inset_axes(axs[-1, -1],
+                   width="5%",
+                   height="100%",
+                   loc="upper right",
+                   bbox_to_anchor=(1220, 540, 300, 500),
+                   borderpad=0)
+cbar = fig.colorbar(artists[-1, -1],
+                    cax=axins,
+                    ticks=[-1, 0, 1])
+cbar.ax.tick_params(labelsize=ticklabel)
+cbar.outline.set_edgecolor("grey")
 
 # Add data and save figure
 

@@ -5,6 +5,7 @@ import time
 
 from matplotlib import cm
 from matplotlib.animation import FuncAnimation
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from matplotlib.colors import Normalize
 import matplotlib.pyplot as plt
 import numpy as np
@@ -33,7 +34,6 @@ def update(given, budgets, icurves):
     w = my.fitness(a2private, a2private, given, AA, RR)
     qB_partner = a2private*my.RB
     budget_own = budget0*(1.0 - given)
-    #axs[0, int(num/2)].title.set_text(f"{given*100:.0f}%")
 
     for a, alpha in enumerate(alphas):
         for r, rho in enumerate(rhos):
@@ -41,7 +41,7 @@ def update(given, budgets, icurves):
             budgets[0, a, r].set_ydata(budgety)
             icy = my.indifference(icx, w[a, r], alpha, rho)
             icurves[0, a, r].set_ydata(icy)
-            color = cm.RdBu_r(norm(w[a, r]/my.wmax))
+            color = cm.Reds(norm(w[a, r]/my.wmax))
             icurves[0, a, r].set_color(color)
             a2p = a2private[a, r]/2.0
             landscape = my.fitness(a2p, icx/2.0, given, alpha, rho)
@@ -67,7 +67,7 @@ for i, alpha in enumerate(alphas):
     for j, rho in enumerate(rhos):
         for k, w in enumerate(ws):
             ics[i, j, k] = my.indifference(icx, w, alpha, rho)
-norm = Normalize(vmin=-1, vmax=1)
+norm = Normalize(vmin=0, vmax=1)
 
 # Figure properties
 
@@ -75,8 +75,8 @@ width = plotsize*2
 height = plotsize
 xlabel = "Substitutability of $\it{B}$"
 ylabel = "Influence of $\it{B}$"
-biglabels = plotsize*4
-ticklabels = plotsize*3
+biglabel = plotsize*4
+ticklabel = plotsize*3
 xlim=[0.0, my.aAmax*my.RA]
 ylim=[0.0, my.a2max*my.RB]
 step = int(num/2)
@@ -113,11 +113,11 @@ center_y = (top_y + bottom_y) / 2
 fig.supxlabel(xlabel,
               x=center_x,
               y=bottom_y*0.3,
-              fontsize=biglabels)
+              fontsize=biglabel)
 fig.supylabel(ylabel,
               x=left_x*0.4,
               y=center_y,
-              fontsize=biglabels)
+              fontsize=biglabel)
 
 for ax in fig.get_axes():
     ax.set(xticks=[], yticks=[])
@@ -137,10 +137,10 @@ for g in range(2):
                                     rotation="horizontal",
                                     horizontalalignment="right",
                                     verticalalignment="center",
-                                    fontsize=ticklabels)
+                                    fontsize=ticklabel)
     for r in range(0, num, step):
         axs[g, -1, r].set_xlabel(f"{logess[r]:.0f}",
-                                 fontsize=ticklabels)
+                                 fontsize=ticklabel)
 
 # Assign axs objects to variables
 # (Line2D)
@@ -165,6 +165,19 @@ for g in range(2):
                                                   dummy_icy,
                                                   linewidth=4,
                                                   alpha=0.8)
+
+# Add colorbar
+axins = inset_axes(axs[0, -1, -1],
+                   width="5%",
+                   height="100%",
+                   loc="upper right",
+                   bbox_to_anchor=(880, 225, 200, 150),
+                   borderpad=0)
+cbar = fig.colorbar(cm.ScalarMappable(norm=norm, cmap="Reds"),
+                    cax=axins,
+                    ticks=[0, 0.5, 1])
+cbar.ax.tick_params(labelsize=ticklabel)
+cbar.outline.set_linewidth(0.2)
 
 # Add data and save figure
 

@@ -171,7 +171,7 @@ axins = inset_axes(axs[0, -1, -1],
                    width="5%",
                    height="100%",
                    loc="upper right",
-                   bbox_to_anchor=(880, 225, 200, 150),
+                   bbox_to_anchor=(880, 200, 200, 200),
                    borderpad=0)
 cbar = fig.colorbar(cm.ScalarMappable(norm=norm, cmap="Reds"),
                     cax=axins,

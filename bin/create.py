@@ -18,7 +18,9 @@ if "_d" in variant:
 else:
     deathrate = -7
 
-if "8" in variant or "8" in mechanism:
+if "16" in variant or "16" in mechanism:
+    groupsize = 4
+elif "8" in variant or "8" in mechanism:
     groupsize = 3
 else:
     groupsize = 2

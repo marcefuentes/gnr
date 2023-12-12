@@ -39,9 +39,11 @@ def update(t, artists):
     for r, row in enumerate(rows):
         for c, trait in enumerate(traits):
             if "Grain" in trait:
-                Z = my.getZ(t, dfsocial, trait) - my.getZ(t, dfs[r], trait)
+                Z = (my.getZ(t, dfsocial, trait)
+                     - my.getZ(t, dfs[r], trait))
             else:
-                Z = my.getZ(t, dfs[r], trait) - my.getZ(t, dfsocial, trait) 
+                Z = (my.getZ(t, dfs[r], trait)
+                     - my.getZ(t, dfsocial, trait))
                 Z = Z/my.wmax
             artists[r, c].set_array(Z) 
     if movie:
@@ -128,8 +130,7 @@ for r, row in enumerate(rows):
     axs[r, 0].set_yticklabels(yticklabels, fontsize=ticklabel)
 for c, title in enumerate(titles):
     axs[0, c].set_title(title, pad=plotsize*10, fontsize=letterlabel)
-    axs[-1, c].set_xticklabels(xticklabels,
-                               fontsize=ticklabel)
+    axs[-1, c].set_xticklabels(xticklabels, fontsize=ticklabel)
 if movie:
     fig.text(right_x,
              bottom_y*0.5,

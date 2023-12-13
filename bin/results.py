@@ -27,7 +27,7 @@ titles = ["Partner choice",
           "Direct\nreciprocity",
           "Indirect\nreciprocity",
           "Fitness"]
-rows = ["pi", "p", "i", "none"]
+rows = ["pi16", "p16", "i16", "none"]
 given = "given100"
 
 movie = False

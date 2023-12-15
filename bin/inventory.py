@@ -33,7 +33,7 @@ folder_dict["DeathRate"] = -7
 
 current_folder = os.getcwd()
 variant = current_folder.split("/")[-1]
-if "_shuffle" in variant:
+if "noshuffle" not in variant:
     folder_dict["Shuffle"] = 1
 if "noImimic" in variant:
     folder_dict["Independent"] = 0

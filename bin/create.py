@@ -50,10 +50,10 @@ if "l" in mechanism:
 else:
     language = 0
 
-if "_shuffle" in variant:
-    shuffle = 1
-else:
+if "noshuffle" in variant:
     shuffle = 0
+else:
+    shuffle = 1
 
 # create subfolder path variant/mechanism/given in current directory
 path = variant + "/" + mechanism + "/" + given

@@ -65,7 +65,9 @@ for mechanism in mechanisms:
         folder_dict["Language"] = 1
     else:
         folder_dict["Language"] = 0
-    if "_8" in variant or "8" in mechanism:
+    if "_16" in variant or "16" in mechanism:
+        folder_dict["GroupSize"] = 4
+    elif "_8" in variant or "8" in mechanism:
         folder_dict["GroupSize"] = 3
     else:
         folder_dict["GroupSize"] = 2

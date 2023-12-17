@@ -27,7 +27,7 @@ titles = ["Partner choice",
           "Direct\nreciprocity",
           "Indirect\nreciprocity",
           "Fitness"]
-rows = ["pi16", "p16", "i16", "none"]
+rows = ["pi", "p", "i", "none"]
 given = "given100"
 
 movie = False
@@ -39,10 +39,13 @@ def update(t, artists):
     for r, row in enumerate(rows):
         for c, trait in enumerate(traits):
             if "Grain" in trait:
-                Z = (my.getZ(t, dfsocial, trait)
-                     - my.getZ(t, dfs[r], trait))
+                if "none" in row:
+                    Z = my.a2max - my.getZ(t, dfnone, trait)
+                else:
+                    Z = (my.getZ(t, dfnone, trait)
+                         - my.getZ(t, dfrows[r], trait))
             else:
-                Z = (my.getZ(t, dfs[r], trait)
+                Z = (my.getZ(t, dfrows[r], trait)
                      - my.getZ(t, dfsocial, trait))
                 Z = Z/my.wmax
             artists[r, c].set_array(Z) 
@@ -62,11 +65,11 @@ filelist = glob(os.path.join("none", given, "*.csv"))
 if filelist == []:
     print(f"No none/{given}/*.csv")
     exit()
-df = my.read_files(filelist, movie)
+dfnone = my.read_files(filelist, movie)
 
-ts = df.Time.unique()
-nr = df.alpha.nunique()
-nc = df.logES.nunique()
+ts = dfnone.Time.unique()
+nr = dfnone.alpha.nunique()
+nc = dfnone.logES.nunique()
 
 # Figure properties
 
@@ -79,10 +82,10 @@ letterlabel = plotsize*6
 ticklabel = plotsize*5
 xticks = [0, nc/2 - 0.5, nc - 1]
 yticks = [0, nr/2 - 0.5, nr - 1]
-xmin = df.logES.min()
-xmax = df.logES.max()
-ymin = df.alpha.min()
-ymax = df.alpha.max()
+xmin = dfnone.logES.min()
+xmax = dfnone.logES.max()
+ymin = dfnone.alpha.min()
+ymax = dfnone.alpha.max()
 xticklabels = [f"{xmin:.0f}",
                f"{(xmin + xmax)/2.:.0f}",
                f"{xmax:.0f}"]
@@ -167,13 +170,13 @@ cbar.outline.set_linewidth(0.1)
 
 # Add data and save figure
 
-dfs = np.empty(len(rows), dtype=object) 
+dfrows = np.empty(len(rows), dtype=object) 
 for r, row in enumerate(rows):
     filelist = glob(os.path.join(row, given, "*.csv"))
     if filelist == []:
         print(f"No {row}/{given}/*.csv")
         exit()
-    dfs[r] = my.read_files(filelist, movie)
+    dfrows[r] = my.read_files(filelist, movie)
 
 if movie:
     ani = FuncAnimation(fig,

@@ -40,7 +40,7 @@ def update(t, artists):
         for c, trait in enumerate(traits):
             if "Grain" in trait:
                 if "none" in row:
-                    Z = my.a2max - my.getZ(t, dfnone, trait)
+                    Z = my.a2max/2.0 - my.getZ(t, dfnone, trait)
                 else:
                     Z = (my.getZ(t, dfnone, trait)
                          - my.getZ(t, dfrows[r], trait))

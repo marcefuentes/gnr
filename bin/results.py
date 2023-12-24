@@ -44,6 +44,8 @@ def update(t, artists):
                 else:
                     Z = (my.getZ(t, dfnone, trait)
                          - my.getZ(t, dfrows[r], trait))
+            elif "nothing" in trait:
+                Z = np.zeros((nr, nc))
             else:
                 Z = (my.getZ(t, dfrows[r], trait)
                      - my.getZ(t, dfsocial, trait))

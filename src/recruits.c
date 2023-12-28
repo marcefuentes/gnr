@@ -53,11 +53,10 @@ struct rtype *create_recruits (int deaths, double wc)
 	return head;
 }
 
-void kill (struct rtype *recruit, struct itype *i_first, int n, int discrete, double a2low, double a2high)
+void kill (struct rtype *recruit, struct itype *i_first, int n)
 {
 	struct itype *i;
 	int pick;
-	double a2mid = (a2low + a2high)/2.0;
 
 	for ( ; recruit != NULL; recruit = recruit->next )
 	{
@@ -68,22 +67,7 @@ void kill (struct rtype *recruit, struct itype *i_first, int n, int discrete, do
 
 		i = i_first + pick;
 		i->a2Default = recruit->a2Default;
-
-		if (discrete == 0)
-		{
-			i->a2Decided = i->a2Default;
-		}
-		else
-		{
-			if ( i->a2Default > a2mid )
-			{
-				i->a2Decided = a2high;
-			}
-			else
-			{
-				i->a2Decided = a2low;
-			}
-		}
+		i->a2Decided = i->a2Default;
 		i->a2SeenSum = 0.0;
 		i->ChooseGrain = recruit->ChooseGrain;
 		i->MimicGrain = recruit->MimicGrain;

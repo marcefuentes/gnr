@@ -44,8 +44,6 @@ int	gIndirectR;
 int	gIndependent;				// Indirect reciprocity evolves independently of direct reciprocity
 int	gLanguage;				// Individuals access lifelong behavior of partners
 int	gShuffle;				// Shuffle partners in markets every time step
-int	gDiscrete;
-double	ga2low, ga2high;
 double	gGiven;					// Effect on partner: q2 = a2*R2*Given
 double	galpha;			
 double	glogES, grho;				// Elasticity of substitution. ES = 1/(1 - rho)
@@ -59,7 +57,6 @@ void	caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first);
 void	start_population (struct itype *i, struct itype *i_last);
 double	fitness (struct itype *i, struct itype *i_last);	
 double	ces (double q1, double q2);				// glogES, galpha
-//double	macromutate (double trait, double sum);			// gDiscrete
 double	calculate_cost	(double choose, double mimic, double imimic);	// gChooseCost, gMimicCost
 void	update_for_stats (struct itype *i, struct itype *i_last);
 
@@ -134,7 +131,7 @@ int main (int argc, char *argv[])
 
 	if ( gRuns == 1 )
 	{
-		write_i (ics, (float)galpha, (float)glogES, (float)gGiven, (float)ga2low, (float)ga2high, i_first, i_last);
+		write_i (ics, (float)galpha, (float)glogES, (float)gGiven, i_first, i_last);
 	}
 
 	free (i_first);
@@ -189,9 +186,6 @@ void read_globals (char *filename)
 	fscanf (fp, "Independent,%i\n", &gIndependent);
 	fscanf (fp, "Language,%i\n", &gLanguage);
 	fscanf (fp, "Shuffle,%i\n", &gShuffle);
-	fscanf (fp, "Discrete,%i\n", &gDiscrete);
-	fscanf (fp, "a2low,%lf\n", &ga2low);
-	fscanf (fp, "a2high,%lf\n", &ga2high);
 	fscanf (fp, "alpha,%lf\n", &galpha);
 	fscanf (fp, "logES,%lf\n", &glogES);
 	fscanf (fp, "Given,%lf\n", &gGiven);
@@ -209,19 +203,6 @@ void read_globals (char *filename)
 	gMimicCost = pow(2.0, gMimicCost);
 	gImimicCost = pow(2.0, gImimicCost);
 	grho = 1.0 - 1.0/pow(2.0, glogES);
-
-	/*double MRT = (ga2Max/ga1Max)*(gR2/gR1);
-	double Q = (gR2/gR1)*pow(MRT*galpha/(1.0 - galpha), 1.0/(grho - 1));
-	double a2social = ga2Max/(1.0 + Q*ga2Max/ga1Max);
-	double a2eq = 0.0;
-	if ( gGiven < 1.0 )
-	{
-		MRT = MRT*(1.0 - gGiven);
-		Q = (gR2/gR1)*pow(MRT*galpha/(1.0 - galpha), 1.0/(grho - 1));
-		a2eq = ga2Max/(1.0 + Q*ga2Max/ga1Max);
-	}
-	ga2low = ga2Min + ga2Init*a2eq;
-	ga2high = a2social + ga2Init*(ga2Max - a2social);*/
 }
 
 void write_globals (char *filename)
@@ -258,7 +239,6 @@ void write_globals (char *filename)
 	fprintf (fp, "Independent,%i\n", gIndependent);
 	fprintf (fp, "Language,%i\n", gLanguage);
 	fprintf (fp, "Shuffle,%i\n", gShuffle);
-	fprintf (fp, "Discrete,%i\n", gDiscrete);
 
 	fclose (fp);
 }
@@ -292,8 +272,6 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 				prun->alpha = galpha;
 				prun->logES = glogES;
 				prun->Given = gGiven;
-				prun->a2low = ga2low;
-				prun->a2high = ga2high;
 				prun->time = t + 1;
 				prun->wmax = wmax;
 				stats_period (i_first, i_last, prun, gN, ga2Min, ga2Max);
@@ -340,7 +318,7 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 					recruit->cost = calculate_cost (recruit->ChooseGrain, recruit->MimicGrain, recruit->ImimicGrain);
 				}
 
-				kill (recruit_first, i_first, gN, gDiscrete, ga2low, ga2high);
+				kill (recruit_first, i_first, gN);
 				free_recruits (recruit_first);
 			}
 			
@@ -348,25 +326,11 @@ void caso (struct itype *i_first, struct itype *i_last, struct ptype *p_first)
 			{
 				if ( gIndirectR == 0 )
 				{
-					if ( gDiscrete == 0)
-					{
-						decide_a2_continuous_d (i_first, i_last, ga2Max);
-					}
-					else
-					{
-						decide_a2_discrete_d (i_first, i_last, ga2low, ga2high);
-					}
+					decide_a2_continuous_d (i_first, i_last, ga2Max);
 				}
 				else
 				{
-					if ( gDiscrete == 0)
-					{
-						decide_a2_continuous_i (i_first, i_last, ga2Max);
-					}
-					else
-					{
-						decide_a2_discrete_i (i_first, i_last, ga2low, ga2high);
-					}
+					decide_a2_continuous_i (i_first, i_last, ga2Max);
 				}
 			}
 		}
@@ -380,14 +344,7 @@ void start_population (struct itype *i, struct itype *i_last)
 {
 	struct itype *j;
 
-	if ( gDiscrete == 0 )
-	{
-		i->a2Decided = i->a2Default = ga2Init;
-	}
-	else
-	{
-		i->a2Decided = i->a2Default = ga2low;
-	}
+	i->a2Decided = i->a2Default = ga2Init;
 	i->a2SeenSum = 0.0;
 	i->ChooseGrain = gChooseGrainInit;
 	i->MimicGrain = gMimicGrainInit;
@@ -467,16 +424,6 @@ double calculate_cost (double choose, double mimic, double imimic)
 
 	return c;
 }
-
-/*double macromutate (double trait, double sum)
-{
-	if ( gsl_rng_uniform (rng) < gDiscrete )
-	{
-		trait =  sum - trait;
-	}
-
-	return trait;
-}*/
 
 void update_for_stats (struct itype *i, struct itype *i_last)
 {

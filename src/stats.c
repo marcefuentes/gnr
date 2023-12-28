@@ -129,8 +129,6 @@ void stats_end (struct pruntype *prun, struct pruntype *prun_last, struct ptype 
 		p->alpha = prun->alpha;
 		p->logES = prun->logES;
 		p->Given = prun->Given;
-		p->a2low = prun->a2low;
-		p->a2high = prun->a2high;
 		p->wmax = prun->wmax;
 		p->time = prun->time;
 

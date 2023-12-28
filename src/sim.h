@@ -9,7 +9,7 @@
 struct ptype
 {
 	int		time;
-	double		alpha, logES, Given, a2low, a2high, wmax;
+	double		alpha, logES, Given, wmax;
 	double		summean[CONTINUOUS_V], summean2[CONTINUOUS_V];
 	double		sumsd[CONTINUOUS_V], sumsd2[CONTINUOUS_V];
 	double		sumc[CONTINUOUS_V][BINS], sumc2[CONTINUOUS_V][BINS];
@@ -24,7 +24,7 @@ struct ptype
 struct pruntype
 {
 	int		time;
-	double		alpha, logES, Given, a2low, a2high, wmax;
+	double		alpha, logES, Given, wmax;
 	double		mean[CONTINUOUS_V];
 	double		sd[CONTINUOUS_V];
 	double		frc[CONTINUOUS_V][BINS];
@@ -68,13 +68,11 @@ struct rtype
 
 void		decide_a2_continuous_d	(struct itype *i, struct itype *i_last, double amax);
 void		decide_a2_continuous_i	(struct itype *i, struct itype *i_last, double amax);
-void		decide_a2_discrete_d	(struct itype *i, struct itype *i_last, double a2low, double a2high);
-void		decide_a2_discrete_i	(struct itype *i, struct itype *i_last, double a2low, double a2high);
 void		shuffle_partners	(struct itype *i, struct itype *i_last, int groupsize);
 void		choose_partner		(struct itype *i, struct itype *i_last, int groupsize);
 struct rtype	*create_recruits	(int deaths, double wc);
 void		free_recruits		(struct rtype *recruit);
-void		kill			(struct rtype *recruit, struct itype *i_first, int n, int discrete, double a2low, double a2high);
+void		kill			(struct rtype *recruit, struct itype *i_first, int n);
 void		stats_period		(struct itype *i, struct itype *i_last, struct pruntype *prun, int n, double amin, double amax);
 void		stats_end		(struct pruntype *prun, struct pruntype *prun_last, struct ptype *p);
 void		stats_runs		(struct ptype *p, struct ptype *p_last, int runs);
@@ -83,7 +81,7 @@ void		write_headers_i		(char *filename);
 void		write_headers_frq	(char *filename);
 void		write_stats_csv		(char *filename, struct ptype *p, struct ptype *p_last);
 void		write_stats_frq		(char *filename, struct ptype *p, struct ptype *p_last);
-void		write_i			(char *filename, float alpha, float logES, float Given, float a2low, float a2high, struct itype *i, struct itype *i_last);
+void		write_i			(char *filename, float alpha, float logES, float Given, struct itype *i, struct itype *i_last);
 void		write_time_elapsed	(char *filename, float time_elapsed);
 void		file_write_error	(char *filename);
 double		stdev			(double sum, double sum2, int n);

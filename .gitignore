@@ -1,11 +1,10 @@
+__pycache__/
+charts/
+results/
 depend
 gnr
 *.o
 *.d
 *.gl2
-*.pyc
 *.ics
 *.frq
-charts/
-final/
-results/

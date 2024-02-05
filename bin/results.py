@@ -40,15 +40,15 @@ def update(t, artists):
         for c, trait in enumerate(traits):
             if "Grain" in trait:
                 if "none" in row:
-                    Z = my.a2max/2.0 - my.getZ(t, dfnone, trait)
+                    Z = my.a2max/2.0 - my.get_Z(t, dfnone, trait)
                 else:
-                    Z = (my.getZ(t, dfnone, trait)
-                         - my.getZ(t, dfrows[r], trait))
+                    Z = (my.get_Z(t, dfnone, trait)
+                         - my.get_Z(t, dfrows[r], trait))
             elif "nothing" in trait:
                 Z = np.zeros((nr, nc))
             else:
-                Z = (my.getZ(t, dfrows[r], trait)
-                     - my.getZ(t, dfsocial, trait))
+                Z = (my.get_Z(t, dfrows[r], trait)
+                     - my.get_Z(t, dfsocial, trait))
                 Z = Z/my.wmax
             artists[r, c].set_array(Z) 
     if movie:

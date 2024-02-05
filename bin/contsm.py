@@ -34,7 +34,7 @@ plotsize = 6
 def init(artists):
 
     for f, folder in enumerate(folders):
-        lows = my.getZ(ts[-1], dfprivates[f], "a2Seenmean")
+        lows = my.get_Z(ts[-1], dfprivates[f], "a2Seenmean")
         highs = lows + 0.01
         given = dftraits[f, 0].Given.iloc[0]
         T = my.fitness(highs, lows, given, AA, RR)
@@ -67,7 +67,7 @@ def init(artists):
 def update(t, artists):
     for f, folder in enumerate(folders):
         for c, trait in enumerate(traits):
-            Z = my.getZ(t, dftraits[f, c], trait)
+            Z = my.get_Z(t, dftraits[f, c], trait)
             if "Grain" in trait:
                 Z = 1.0 - Z
             for (a, l), _ in np.ndenumerate(Z):

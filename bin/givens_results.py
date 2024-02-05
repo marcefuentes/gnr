@@ -42,14 +42,14 @@ plotsize = 4
 # Add data to figure
 
 def update(t, artists):
-    wsocial = my.getZ(t, dfs[-1], "wmean")
+    wsocial = my.get_Z(t, dfs[-1], "wmean")
     for g, given in enumerate(givens):
         for c, trait in enumerate(traits):
-            Z = my.getZ(t, dfs[g], trait)
+            Z = my.get_Z(t, dfs[g], trait)
             if "Grain" in trait:
                 Z = 1. - Z
             if "gain" in titles[c]:
-                wnull = my.getZ(t, dfnulls[g], "wmean")
+                wnull = my.get_Z(t, dfnulls[g], "wmean")
                 Z = Z - wnull
             if "deficit" in titles[c]:
                 Z = wsocial - Z

@@ -40,13 +40,13 @@ plotsize = 4
 # Add data to figure
 
 def update(t, artists):
-    wsocial = my.getZ(t, dfnulls[-1], "wmean")
+    wsocial = my.get_Z(t, dfnulls[-1], "wmean")
     for g, given in enumerate(givens):
-        Z = my.getZ(t, dfnulls[g], traits[0])
+        Z = my.get_Z(t, dfnulls[g], traits[0])
         artists[g, 0].set_array(Z) 
         Z = Z*ngivens[g]
         artists[g, 1].set_array(Z)
-        Z = my.getZ(t, dfnulls[g], traits[2])
+        Z = my.get_Z(t, dfnulls[g], traits[2])
         artists[g, 2].set_array(Z)
         Z = wsocial - Z
         artists[g, 3].set_array(Z) 

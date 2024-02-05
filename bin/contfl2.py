@@ -201,8 +201,8 @@ for f, folder in enumerate(folders):
     if theory:
         a2privates = my.a2eq(given, AA, RR)
     else:
-        a2privates = my.getZ(t, dfprivates[f], "a2Seenmean")
-        wmean = my.getZ(t, dfprivates[f], "wmean")
+        a2privates = my.get_Z(t, dfprivates[f], "a2Seenmean")
+        wmean = my.get_Z(t, dfprivates[f], "wmean")
     wpp = my.fitness(a2privates, a2privates, given, AA, RR)
 
     for a, alpha in enumerate(alphas):
@@ -237,7 +237,7 @@ for f, folder in enumerate(folders):
             ax.set_facecolor(color)
 
     for c, trait in enumerate(traits):
-        Z = my.getZ(t, dftraits[f, c], trait)
+        Z = my.get_Z(t, dftraits[f, c], trait)
         if "Grain" in trait:
             Z = 1. - Z
         aximages[f, c].imshow(Z,

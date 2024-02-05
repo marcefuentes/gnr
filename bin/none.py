@@ -30,14 +30,14 @@ plotsize = 4
 # Add data to figure
 
 def update(t, artists):
-    Zsocial = my.getZ(t, dfs[-1], "wmean")/my.wmax 
+    Zsocial = my.get_Z(t, dfs[-1], "wmean")/my.wmax 
     for g, given in enumerate(givens):
-        Z = my.getZ(t, dfs[g], "a2Seenmean")
+        Z = my.get_Z(t, dfs[g], "a2Seenmean")
         artists[g, 0].set_array(Z)
         given_float = float(given[-3:])/100
         Z = Z*given_float
         artists[g, 1].set_array(Z)
-        Z = my.getZ(t, dfs[g], "wmean")/my.wmax
+        Z = my.get_Z(t, dfs[g], "wmean")/my.wmax
         artists[g, 2].set_array(Z)
         Z = Z - Zsocial
         artists[g, 3].set_array(Z)

@@ -41,7 +41,7 @@ def update(t, artists):
             if movie:
                 m = df.Time == t
                 df = df.loc[m]
-            Z = my.getZ(t, dfmeans[f, c], trait + "mean")
+            Z = my.get_Z(t, dfmeans[f, c], trait + "mean")
             if "Grain" in trait:
                 Z = 1.0 - Z
             for a, alpha in enumerate(alphas):

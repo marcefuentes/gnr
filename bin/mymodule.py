@@ -242,7 +242,7 @@ def read_files(filelist, alltimes):
     dfc = pd.concat(df_list, ignore_index=True)
     return dfc
 
-def getZ(t, df, trait):
+def get_Z(t, df, trait):
     m = df.Time == t
     Z = pd.pivot(df.loc[m],
                  values=trait,
@@ -252,7 +252,7 @@ def getZ(t, df, trait):
     Z = Z.to_numpy()
     return Z
 
-def getZd(t, df, alpha, loges, trait):
+def get_Zd(t, df, alpha, loges, trait):
     m = (df.Time == t) & (df.alpha == alpha) & (df.logES == loges)
     Z = pd.pivot(df.loc[m],
                  values=trait,

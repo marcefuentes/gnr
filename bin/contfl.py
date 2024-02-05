@@ -201,7 +201,7 @@ for f, folder in enumerate(folders):
 if theory:
     a2socials = my.a2eq(0., AA, RR)
 else:
-    a2socials = my.getZ(t, dfsocial, "a2Seenmean")
+    a2socials = my.get_Z(t, dfsocial, "a2Seenmean")
 wss = my.fitness(a2socials, a2socials, 0., AA, RR) 
 
 for f, folder in enumerate(folders):
@@ -210,7 +210,7 @@ for f, folder in enumerate(folders):
     if theory:
         a2privates = my.a2eq(given, AA, RR)
     else:
-        a2privates = my.getZ(t, dfprivates[f], "a2Seenmean")
+        a2privates = my.get_Z(t, dfprivates[f], "a2Seenmean")
     ws = my.fitness(a2privates, a2privates, given, AA, RR)
 
     for a, alpha in enumerate(alphas):
@@ -235,7 +235,7 @@ for f, folder in enumerate(folders):
                             interpolate=True, color="black")
 
     for c, trait in enumerate(traits):
-        Z = my.getZ(t, dftraits[f, c], trait)
+        Z = my.get_Z(t, dftraits[f, c], trait)
         if "Grain" in trait:
             Z = 1. - Z
         aximages[f, c].imshow(Z,

@@ -34,14 +34,14 @@ r = 0.1
 filelist = glob("../../none/given000/*.csv")
 df = my.read_files(filelist, False)
 t = df.Time.iloc[0]
-a2socials = my.getZ(t, df, "a2Seenmean")
-wsocials = my.getZ(t, df, "wmean")
+a2socials = my.get_Z(t, df, "a2Seenmean")
+wsocials = my.get_Z(t, df, "wmean")
 
 folder = os.path.basename(os.getcwd())
 filelist = glob(os.path.join("../../none", folder, "*.csv"))
 df = my.read_files(filelist, False)
-a2privates = my.getZ(t, df, "a2Seenmean")
-wprivates = my.getZ(t, df, "wmean")
+a2privates = my.get_Z(t, df, "a2Seenmean")
+wprivates = my.get_Z(t, df, "wmean")
 
 filelist = glob("*.csv")
 df = my.read_files(filelist, False)
@@ -54,7 +54,7 @@ given = df.Given.iloc[0]
 xaxis = np.linspace(0.01, my.a2max - 0.01, num=numa2)
 Z = np.zeros((len(traits), len(alphas), len(rhos)))
 for c, trait in enumerate(traits):
-    Z[c] = my.getZ(t, df, trait)
+    Z[c] = my.get_Z(t, df, trait)
     if "Grain" in trait:
         Z[c] = 1.0 - Z[c]
 

@@ -113,15 +113,15 @@ for c, title in enumerate(titles):
                                fontsize=ticklabel)
 # Add data to figure
  
-wsocial = my.getZ(t, dfs[-1], "wmean") 
+wsocial = my.get_Z(t, dfs[-1], "wmean") 
 for g, given in enumerate(givens_theory):
     a2_theory = my.a2eq(given, AA, RR)
     axs[g, 0].imshow(a2_theory, vmin=0, vmax=vmaxs[0])
-    a2 = my.getZ(t, dfs[g], "a2Seenmean")
+    a2 = my.get_Z(t, dfs[g], "a2Seenmean")
     axs[g, 1].imshow(a2, vmin=0, vmax=vmaxs[1])
     w_theory = my.fitness(a2_theory, a2_theory, given, AA, RR)
     axs[g, 2].imshow(w_theory, vmin=0, vmax=vmaxs[2])
-    w = my.getZ(t, dfs[g], "wmean")
+    w = my.get_Z(t, dfs[g], "wmean")
     axs[g, 3].imshow(w, vmin=0, vmax=vmaxs[3])
     w = wsocial - w
     axs[g, 4].imshow(w, vmin=0, vmax=vmaxs[4])

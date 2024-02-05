@@ -139,9 +139,9 @@ for g, given in enumerate(givens):
 if theory:
     a2socials = my.a2eq(0.0, AA, RR)
 else:
-    a2socials = my.getZ(t, dfsocial, "a2Seenmean")
+    a2socials = my.get_Z(t, dfsocial, "a2Seenmean")
 #wsocials = my.fitness(a2socials, a2socials, given, AA, RR)
-wsocials = my.getZ(t, dfsocial, "wmean")
+wsocials = my.get_Z(t, dfsocial, "wmean")
 
 for g, given in enumerate(givens):
 
@@ -149,13 +149,13 @@ for g, given in enumerate(givens):
     if theory:
         a2privates = my.a2eq(given, AA, RR)
     else:
-        a2privates = my.getZ(t, dfprivates[g], "a2Seenmean")
+        a2privates = my.get_Z(t, dfprivates[g], "a2Seenmean")
     wprivates = my.fitness(a2privates, a2privates, given, AA, RR)
-    #wprivates = my.getZ(t, dfprivates[g], "wmean")
+    #wprivates = my.get_Z(t, dfprivates[g], "wmean")
 
     Z = np.zeros((len(traits), len(alphas), len(rhos)))
     for c, trait in enumerate(traits):
-        Z[c] = my.getZ(t, dftraits[c, g], trait)
+        Z[c] = my.get_Z(t, dftraits[c, g], trait)
         if "Grain" in trait:
             Z[c] = 1.0 - Z[c]
 

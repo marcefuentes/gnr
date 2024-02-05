@@ -134,12 +134,12 @@ for f, folder in enumerate(folders):
 
 # Add data
 
-highs = my.getZ(t, dfsocial, "a2Seenmean")
+highs = my.get_Z(t, dfsocial, "a2Seenmean")
 R = my.fitness(highs, highs, 0., AA, RR)
 
 for f, folder in enumerate(folders):
     given = dfprivates[f].Given.iloc[0]
-    lows = my.getZ(t, dfprivates[f], "a2Seenmean")
+    lows = my.get_Z(t, dfprivates[f], "a2Seenmean")
 #    highs = lows + 0.025
     T = my.fitness(highs, lows, given, AA, RR)
     S = my.fitness(lows, highs, given, AA, RR)
@@ -155,7 +155,7 @@ for f, folder in enumerate(folders):
 
     for c, trait in enumerate(traits):
 
-        Z = my.getZ(t, dftraits[f, c], trait)
+        Z = my.get_Z(t, dftraits[f, c], trait)
         if "Grain" in trait:
             Z = 1. - Z
         for a, alpha in enumerate(alphas):
